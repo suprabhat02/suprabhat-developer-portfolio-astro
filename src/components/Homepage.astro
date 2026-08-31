@@ -13,6 +13,7 @@ import { services } from '../data/services';
 import { getCollection } from 'astro:content';
 import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
+import geistMonoLatinFont from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
 import '../styles/homepage.css';
 import '@fontsource-variable/geist-mono';
 
@@ -47,15 +48,6 @@ const articleIllustrations = [
   '/assets/illustrations/article-accessibility.svg',
   '/assets/illustrations/article-ui-engineering.svg',
 ] as const;
-const heroRippleRows = 14;
-const heroRippleColumns = 22;
-const heroRippleCells = Array.from(
-  { length: heroRippleRows * heroRippleColumns },
-  (_, index) => ({
-    row: Math.floor(index / heroRippleColumns),
-    column: index % heroRippleColumns,
-  }),
-);
 const featured = recommendations.filter((r) =>
   featuredRecommendationIds.includes(
     r.id as (typeof featuredRecommendationIds)[number],
@@ -272,6 +264,13 @@ const schema = {
       imagesizes="(max-width: 1040px) 340px, 700px"
       fetchpriority="high"
     />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href={geistMonoLatinFont}
+      crossorigin="anonymous"
+    />
     <script
       is:inline
       type="application/ld+json"
@@ -457,22 +456,34 @@ const schema = {
       <a href="#work">{t(locale, 'nav.work', 'Work')}</a>
       <a href="#blog">{t(locale, 'nav.blog', 'Writing')}</a>
       <a href="#contact">{t(locale, 'nav.contact', 'Contact')}</a>
+      <div
+        class="mob-lang"
+        role="group"
+        aria-label={t(locale, 'language', 'Change language')}
+      >
+        <a
+          class:list={['mob-lang-btn', { 'is-active': locale === 'en' }]}
+          href="/"
+          aria-current={locale === 'en' ? 'true' : undefined}>EN</a
+        >
+        <a
+          class:list={['mob-lang-btn', { 'is-active': locale === 'es' }]}
+          href="/es/"
+          lang="es"
+          aria-current={locale === 'es' ? 'true' : undefined}>ES</a
+        >
+        <a
+          class:list={['mob-lang-btn', { 'is-active': locale === 'ar' }]}
+          href="/ar/"
+          lang="ar"
+          aria-current={locale === 'ar' ? 'true' : undefined}>AR</a
+        >
+      </div>
     </div>
 
     <main id="main">
       <!-- ── HERO BENTO ──────────────────────────────────── -->
       <section id="home" class="hero" aria-labelledby="hero-name">
-        <div class="hero-ripple-grid" aria-hidden="true">
-          {
-            heroRippleCells.map((cell) => (
-              <span
-                class="hero-ripple-cell"
-                data-ripple-row={cell.row}
-                data-ripple-column={cell.column}
-              />
-            ))
-          }
-        </div>
         <div class="hero-glow-r" aria-hidden="true"></div>
         <div class="hero-glow-l" aria-hidden="true"></div>
         <div class="wrap">
@@ -2566,35 +2577,6 @@ const schema = {
               });
           });
         }
-      })();
-    </script>
-
-    <script>
-      (function () {
-        const rippleGrid =
-          document.querySelector<HTMLElement>('.hero-ripple-grid');
-        if (
-          !rippleGrid ||
-          matchMedia('(prefers-reduced-motion: reduce)').matches
-        )
-          return;
-
-        rippleGrid.dataset.rippleReady = 'true';
-        let activeCell: HTMLElement | null = null;
-        rippleGrid.addEventListener('pointerover', function (event) {
-          const target = event.target;
-          if (!(target instanceof Element)) return;
-          const selectedCell = target.closest<HTMLElement>('.hero-ripple-cell');
-          if (!selectedCell || selectedCell === activeCell) return;
-
-          activeCell?.classList.remove('is-rippling');
-          selectedCell.classList.add('is-rippling');
-          activeCell = selectedCell;
-        });
-        rippleGrid.addEventListener('pointerleave', function () {
-          activeCell?.classList.remove('is-rippling');
-          activeCell = null;
-        });
       })();
     </script>
   </body>

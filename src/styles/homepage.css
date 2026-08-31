@@ -546,6 +546,38 @@ select {
   justify-content: center;
   cursor: pointer;
 }
+.mob-lang {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-3) 60%, transparent);
+}
+.mob-lang-btn {
+  min-width: 56px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-2);
+  text-decoration: none;
+  text-align: center;
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+.mob-lang-btn:hover {
+  color: var(--accent);
+  background: var(--accent-subtle);
+}
+.mob-lang-btn.is-active {
+  background: var(--accent);
+  color: #0a0a0a;
+}
 
 /* ══════════════════════════════════════════
    HERO
@@ -579,29 +611,6 @@ select {
     #000 0%,
     transparent 100%
   );
-}
-.hero-ripple-grid {
-  position: absolute;
-  z-index: 0;
-  top: 50%;
-  left: 50%;
-  display: grid;
-  grid-template-columns: repeat(22, 72px);
-  grid-auto-rows: 72px;
-  width: max-content;
-  transform: translate(-50%, -50%);
-  cursor: default;
-}
-.hero-ripple-cell {
-  width: 72px;
-  height: 72px;
-  border-right: 1px solid rgba(240, 126, 28, 0.08);
-  border-bottom: 1px solid rgba(240, 126, 28, 0.08);
-  background: rgba(240, 126, 28, 0.012);
-}
-.hero-ripple-cell.is-rippling {
-  background: rgba(240, 126, 28, 0.32);
-  opacity: 0.2;
 }
 .hero-glow-r {
   position: absolute;
@@ -637,9 +646,11 @@ select {
 .hero-grid {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr 400px;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
   grid-template-rows: minmax(560px, 1fr) auto;
-  gap: 16px;
+  gap: 20px;
+  max-width: 1180px;
+  margin-inline: auto;
   height: clamp(760px, 70.8vw, 906px);
   min-height: 760px;
   pointer-events: none;
@@ -647,6 +658,7 @@ select {
 .hero-content {
   grid-column: 1;
   grid-row: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -659,7 +671,7 @@ select {
   grid-column: 1;
   grid-row: 2;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 16px;
 }
 .hero-portrait-wrap {
@@ -731,12 +743,14 @@ select {
   flex-shrink: 0;
 }
 .hero-name {
-  font-size: clamp(56px, 8vw, 108px);
+  font-size: clamp(44px, 6vw, 84px);
   font-weight: 700;
-  letter-spacing: 0.06em;
-  line-height: 0.92;
+  letter-spacing: 0.04em;
+  line-height: 0.94;
   margin-bottom: 20px;
   text-transform: uppercase;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 .hero-name span {
   color: var(--accent);

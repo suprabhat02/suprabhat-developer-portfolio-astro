@@ -34,6 +34,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 7rem;
+  overflow-x: clip;
 }
 body {
   margin: 0;
@@ -43,6 +44,7 @@ body {
   font-family: var(--font);
   font-size: 1.05rem;
   line-height: 1.7;
+  overflow-x: clip;
 }
 body::before {
   content: '';
