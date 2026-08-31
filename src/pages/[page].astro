@@ -134,10 +134,6 @@ const schema = [
 ];
 ---
 
-<BaseLayout
-  {title}
-  {description}
-  page={page}
-  hideAlternates={page === 'blog'}
-  schema={schema}><PageContent {page} locale="en" /></BaseLayout
+<BaseLayout {title} {description} page={page} schema={schema}
+  ><PageContent {page} locale="en" /></BaseLayout
 >

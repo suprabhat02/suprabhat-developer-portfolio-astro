@@ -37,9 +37,11 @@ const robots =
   import.meta.env.ROBOTS === 'noindex' ? 'noindex,follow' : 'index,follow';
 
 // Loaded here so Steps 3–7 can use them without touching the frontmatter
-const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const blogCollection =
+  locale === 'es' ? 'blog-es' : locale === 'ar' ? 'blog-ar' : 'blog';
+const posts = (
+  await getCollection(blogCollection, ({ data }) => !data.draft)
+).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 const articleIllustrations = [
   '/assets/illustrations/article-performance.svg',
   '/assets/illustrations/article-accessibility.svg',
@@ -585,7 +587,9 @@ const schema = {
                   {
                     posts.slice(0, 3).map((post) => (
                       <li>
-                        <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+                        <a href={`${localePrefix(locale)}/blog/${post.id}/`}>
+                          {post.data.title}
+                        </a>
                       </li>
                     ))
                   }
@@ -683,7 +687,7 @@ const schema = {
                   <h3>{post.data.title}</h3>
                   <p>{post.data.description}</p>
                   <a
-                    href={`/blog/${post.id}/`}
+                    href={`${localePrefix(locale)}/blog/${post.id}/`}
                     class="read-link"
                     aria-label={`${t(locale, 'home.readArticle', 'Read article')}: ${post.data.title}`}
                   >

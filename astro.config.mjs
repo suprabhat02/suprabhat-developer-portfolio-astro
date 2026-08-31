@@ -8,8 +8,7 @@ export default defineConfig({
   trailingSlash: 'always',
   integrations: [
     sitemap({
-      filter: (page) =>
-        !/\/(?:404|es\/blog|ar\/blog)\/$/.test(new URL(page).pathname),
+      filter: (page) => !/\/404\/$/.test(new URL(page).pathname),
     }),
   ],
 });

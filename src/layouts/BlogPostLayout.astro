@@ -1,6 +1,13 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import { SITE_URL, DEFAULT_OG_IMAGE } from '../config/site';
+import {
+  localeMeta,
+  localePrefix,
+  defaultLocale,
+  type Locale,
+} from '../i18n/config';
+import { t } from '../i18n/messages';
 
 interface Props {
   title: string;
@@ -8,9 +15,22 @@ interface Props {
   pubDate: Date;
   updatedDate?: Date;
   tags: string[];
+  slug: string;
+  locale?: Locale;
 }
-const { title, description, pubDate, updatedDate, tags } = Astro.props;
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  tags,
+  slug,
+  locale = defaultLocale,
+} = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const backHref = `${localePrefix(locale)}/blog/`;
+const backLabel = t(locale, 'nav.blog', 'Writing');
+const dateLocale = localeMeta[locale].htmlLang;
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
@@ -18,6 +38,7 @@ const schema = {
   description,
   url: canonical.href,
   image: `${SITE_URL}${DEFAULT_OG_IMAGE}`,
+  inLanguage: localeMeta[locale].htmlLang,
   datePublished: pubDate.toISOString(),
   dateModified: (updatedDate ?? pubDate).toISOString(),
   author: {
@@ -36,25 +57,35 @@ const schema = {
     '@id': `${canonical.href}#webpage`,
   },
 };
+const pagePath = `/blog/${slug}/`;
+const alternateHref = (target: Locale) =>
+  `${SITE_URL}${localePrefix(target)}${pagePath}`;
 ---
 
 <BaseLayout
   title={`${title} — Suprabhat Kumar`}
   {description}
+  {locale}
   page="blog"
   hideAlternates
   ogType="article"
   schema={schema}
 >
+  <Fragment slot="head">
+    <link rel="alternate" hreflang="en" href={alternateHref('en')} />
+    <link rel="alternate" hreflang="es" href={alternateHref('es')} />
+    <link rel="alternate" hreflang="ar" href={alternateHref('ar')} />
+    <link rel="alternate" hreflang="x-default" href={alternateHref('en')} />
+  </Fragment>
   <article class="article-page wrap narrow">
     <header>
-      <a class="text-link" href="/blog/">Writing</a><h1>{title}</h1><p
+      <a class="text-link" href={backHref}>{backLabel}</a><h1>{title}</h1><p
         class="lead"
       >
         {description}
       </p><p class="meta">
         <time datetime={pubDate.toISOString()}
-          >{pubDate.toLocaleDateString('en', { dateStyle: 'long' })}</time
+          >{pubDate.toLocaleDateString(dateLocale, { dateStyle: 'long' })}</time
         >
       </p><ul class="tag-list">{tags.map((tag) => <li>{tag}</li>)}</ul>
     </header>

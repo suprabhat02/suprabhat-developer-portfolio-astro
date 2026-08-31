@@ -75,7 +75,6 @@ const pageLabels: Record<Locale, Partial<Record<PageName, string>>> = {
 };
 const pageLabel =
   pageLabels[locale][page] ?? page[0].toUpperCase() + page.slice(1);
-const noindex = page === 'blog';
 const title = `${pageLabel} — Suprabhat Kumar`;
 const descriptions: Record<Locale, Record<PageName, string>> = {
   es: {
@@ -99,7 +98,7 @@ const descriptions: Record<Locale, Record<PageName, string>> = {
       'Información sobre las características de accesibilidad implementadas en el portfolio de Suprabhat Kumar.',
     privacy:
       'Cómo se gestiona la información enviada mediante el formulario de contacto de Suprabhat Kumar.',
-    blog: 'Índice de artículos de ingeniería frontend de Suprabhat Kumar.',
+    blog: 'Artículos de ingeniería frontend: rendimiento, accesibilidad, arquitectura y entrega profesional de interfaces.',
   },
   ar: {
     about:
@@ -122,7 +121,7 @@ const descriptions: Record<Locale, Record<PageName, string>> = {
       'معلومات حول ميزات إمكانية الوصول المطبقة في معرض أعمال سوبرابهات كومار.',
     privacy:
       'كيفية التعامل مع المعلومات المرسلة من خلال نموذج التواصل الخاص بسوبرابهات كومار.',
-    blog: 'فهرس مقالات هندسة الواجهات الأمامية لسوبرابهات كومار.',
+    blog: 'مقالات في هندسة الواجهات الأمامية: الأداء وإمكانية الوصول والبنية وتقديم واجهات احترافية.',
   },
   en: {} as Record<PageName, string>,
 };
@@ -169,7 +168,7 @@ const schema = [
 
 {
   (
-    <BaseLayout {title} {description} {locale} {page} {noindex} {schema}>
+    <BaseLayout {title} {description} {locale} {page} {schema}>
       <PageContent {page} {locale} />
     </BaseLayout>
   )

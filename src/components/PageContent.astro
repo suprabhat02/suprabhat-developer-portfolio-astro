@@ -11,7 +11,7 @@ import { services } from '../data/services';
 import { skillGroups, skillsLead } from '../data/skills';
 import { tools } from '../data/tools';
 import { internalWorkNotice, work } from '../data/work';
-import { localePrefix, type Locale } from '../i18n/config';
+import { localePrefix, localeMeta, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
 import { getCollection } from 'astro:content';
 
@@ -27,10 +27,15 @@ const featured = recommendations.filter((item) =>
     item.id as (typeof featuredRecommendationIds)[number],
   ),
 );
-const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+const blogCollection =
+  locale === 'es' ? 'blog-es' : locale === 'ar' ? 'blog-ar' : 'blog';
+const posts = (
+  await getCollection(blogCollection, ({ data }) => !data.draft)
+).sort(
   (first, second) =>
     second.data.pubDate.valueOf() - first.data.pubDate.valueOf(),
 );
+const dateLocale = localeMeta[locale].htmlLang;
 const tx = (key: string, fallback: string) => t(locale, key, fallback);
 ---
 
@@ -576,13 +581,13 @@ const tx = (key: string, fallback: string) => t(locale, key, fallback);
             <article>
               <p class="meta">
                 <time datetime={post.data.pubDate.toISOString()}>
-                  {post.data.pubDate.toLocaleDateString('en', {
+                  {post.data.pubDate.toLocaleDateString(dateLocale, {
                     dateStyle: 'long',
                   })}
                 </time>
               </p>
               <h2>
-                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+                <a href={href(`/blog/${post.id}/`)}>{post.data.title}</a>
               </h2>
               <p>{post.data.description}</p>
               <ul class="tag-list">
