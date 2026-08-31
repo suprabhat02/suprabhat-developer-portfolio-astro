@@ -278,9 +278,6 @@ const schema = {
   </head>
 
   <body>
-    <!-- Read-only progress indicator; driven by scroll JS in Step 7 -->
-    <div class="scroll-bar" id="scroll-bar" aria-hidden="true"></div>
-
     <a href="#main" class="skip-link"
       >{t(locale, 'skip', 'Skip to main content')}</a
     >
@@ -2065,13 +2062,16 @@ const schema = {
       Global client behaviours — IIFE, zero global-scope pollution.
       Astro defers all <script> modules automatically.
       Covers: year, dropdowns, theme, language routing, mobile menu,
-              IO scroll-reveal, active nav, back-to-top, scroll progress,
+              IO scroll-reveal, active nav, back-to-top,
               hero glow + portrait parallax, heading reveal,
               stats counter, 3-D card tilt (desktop), contact form.
     -->
     <script is:inline>
       (function () {
         'use strict';
+        const prefersReducedMotion = matchMedia(
+          '(prefers-reduced-motion: reduce)',
+        ).matches;
 
         // ── Year ─────────────────────────────────────────────────────────────
         const yr = document.getElementById('yr');
@@ -2264,39 +2264,34 @@ const schema = {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        // ── Scroll progress bar ───────────────────────────────────────────────
-        const sbar = document.getElementById('scroll-bar');
-        if (sbar) {
-          window.addEventListener(
-            'scroll',
-            function () {
-              const p =
-                window.scrollY /
-                (document.documentElement.scrollHeight - window.innerHeight);
-              sbar.style.transform = 'scaleX(' + Math.min(p, 1) + ')';
-            },
-            { passive: true },
-          );
-        }
-
         // ── Hero glow parallax (desktop pointer only) ─────────────────────────
         const hGlowR = document.querySelector('.hero-glow-r');
         const heroEl = document.querySelector('.hero');
         if (
           hGlowR &&
           heroEl &&
+          !prefersReducedMotion &&
           matchMedia('(hover:hover) and (min-width:960px)').matches
         ) {
+          let heroBounds = heroEl.getBoundingClientRect();
+          let glowFrame = 0;
+          let glowX = 0;
+          let glowY = 0;
+          heroEl.addEventListener('pointerenter', function () {
+            heroBounds = heroEl.getBoundingClientRect();
+          });
           heroEl.addEventListener(
-            'mousemove',
+            'pointermove',
             function (e) {
-              const r = heroEl.getBoundingClientRect();
-              hGlowR.style.transform =
-                'translate(' +
-                ((e.clientX - r.left) / r.width - 0.5) * 30 +
-                'px,' +
-                ((e.clientY - r.top) / r.height - 0.5) * 20 +
-                'px)';
+              glowX =
+                ((e.clientX - heroBounds.left) / heroBounds.width - 0.5) * 30;
+              glowY =
+                ((e.clientY - heroBounds.top) / heroBounds.height - 0.5) * 20;
+              if (glowFrame) return;
+              glowFrame = requestAnimationFrame(function () {
+                hGlowR.style.transform = `translate(${glowX}px, ${glowY}px)`;
+                glowFrame = 0;
+              });
             },
             { passive: true },
           );
@@ -2306,6 +2301,7 @@ const schema = {
         const portrait = document.querySelector('.hero-portrait-wrap');
         if (
           portrait &&
+          !prefersReducedMotion &&
           matchMedia('(hover:hover) and (min-width:960px)').matches
         ) {
           window.addEventListener(
@@ -2389,6 +2385,11 @@ const schema = {
         document
           .querySelectorAll('.s-title,.hero-name,.cta-title')
           .forEach(function (el) {
+            if (prefersReducedMotion) {
+              el.style.opacity = '1';
+              el.style.transform = 'none';
+              return;
+            }
             el.classList.add('h-reveal');
             if ('IntersectionObserver' in window) {
               new IntersectionObserver(
@@ -2408,6 +2409,7 @@ const schema = {
 
         // ── Stats counter ─────────────────────────────────────────────────────
         document.querySelectorAll('.stat-num').forEach(function (el) {
+          if (prefersReducedMotion) return;
           const text = el.textContent.trim();
           const num = parseFloat(text);
           if (isNaN(num)) return;
@@ -2432,29 +2434,45 @@ const schema = {
         });
 
         // ── 3-D card tilt (GPU transform only, desktop hover) ─────────────────
-        if (matchMedia('(hover:hover) and (min-width:900px)').matches) {
+        if (
+          !prefersReducedMotion &&
+          matchMedia('(hover:hover) and (min-width:900px)').matches
+        ) {
           document
             .querySelectorAll(
               '.article-card,.work-card,.rec-card,.expertise-card',
             )
             .forEach(function (card) {
               card.classList.add('tilt-card');
+              let cardBounds;
+              let tiltFrame = 0;
+              let tiltX = 0;
+              let tiltY = 0;
+              card.addEventListener('pointerenter', function () {
+                cardBounds = card.getBoundingClientRect();
+              });
               card.addEventListener(
-                'mousemove',
+                'pointermove',
                 function (e) {
-                  const r = card.getBoundingClientRect();
-                  const x = ((e.clientX - r.left) / r.width - 0.5) * 14;
-                  const y = ((e.clientY - r.top) / r.height - 0.5) * -14;
-                  card.style.transform =
-                    'perspective(700px) rotateX(' +
-                    y +
-                    'deg) rotateY(' +
-                    x +
-                    'deg) scale(1.025)';
+                  if (!cardBounds) cardBounds = card.getBoundingClientRect();
+                  tiltX =
+                    ((e.clientX - cardBounds.left) / cardBounds.width - 0.5) *
+                    14;
+                  tiltY =
+                    ((e.clientY - cardBounds.top) / cardBounds.height - 0.5) *
+                    -14;
+                  if (tiltFrame) return;
+                  tiltFrame = requestAnimationFrame(function () {
+                    card.style.transform = `perspective(700px) rotateX(${tiltY}deg) rotateY(${tiltX}deg) scale(1.025)`;
+                    tiltFrame = 0;
+                  });
                 },
                 { passive: true },
               );
               card.addEventListener('mouseleave', function () {
+                if (tiltFrame) cancelAnimationFrame(tiltFrame);
+                tiltFrame = 0;
+                cardBounds = null;
                 card.style.transform =
                   'perspective(700px) rotateX(0deg) rotateY(0deg) scale(1)';
               });

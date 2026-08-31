@@ -2212,20 +2212,6 @@ textarea.f-input {
 .stat-num[data-count] {
   transition: none;
 }
-/* ── Scroll progress bar ─────────────────────────────────── */
-.scroll-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 2px;
-  background: var(--accent);
-  z-index: 100;
-  transform-origin: left;
-  transform: scaleX(0);
-  transition: transform 0.1s linear;
-  width: 100%;
-}
-
 /* Section ambient glows */
 .section-glow {
   position: relative;
