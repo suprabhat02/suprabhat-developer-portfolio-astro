@@ -24,6 +24,17 @@ test('homepage renders correct structure and passes accessibility', async ({
     'fetchpriority',
     'high',
   );
+  await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveCount(1);
+  await expect(page.locator('.site-nav a[href="#home"]')).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  await page.locator('#contact').scrollIntoViewIfNeeded();
+  await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveCount(1);
+  await expect(page.locator('.site-nav a[href="#contact"]')).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
   const deferredImages = page.locator('img:not(.hero-portrait-wrap img)');
   await expect(deferredImages).toHaveCount(await deferredImages.count());
   for (const image of await deferredImages.all()) {
@@ -91,15 +102,28 @@ test('homepage renders correct structure and passes accessibility', async ({
 
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations).toEqual([]);
+
+  await page.goto('/about/');
+  await expect(page.locator('.desktop-nav a[href="/about/"]')).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  await expect(page.locator('.desktop-nav a[aria-current="page"]')).toHaveCount(
+    1,
+  );
 });
 
 test('locale fallback and contact state are explicit', async ({ page }) => {
   await page.goto('/ar/');
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+  await expect(page.locator('.logo')).toHaveAttribute('href', '/ar/');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
     'content',
     'index,follow',
   );
+
+  await page.goto('/es/');
+  await expect(page.locator('.logo')).toHaveAttribute('href', '/es/');
 
   await page.goto('/contact/');
   await expect(
