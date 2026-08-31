@@ -36,6 +36,14 @@ test('homepage renders correct structure and passes accessibility', async ({
     'fetchpriority',
     'high',
   );
+  await expect(page.locator('.hero-portrait-wrap img')).toHaveAttribute(
+    'srcset',
+    /portrait-900\.webp 900w/,
+  );
+  await expect(page.locator('link[rel="preload"][as="image"]')).toHaveAttribute(
+    'imagesrcset',
+    /portrait-900\.webp 900w/,
+  );
   await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveCount(1);
   await expect(page.locator('.site-nav a[href="#home"]')).toHaveAttribute(
     'aria-current',
