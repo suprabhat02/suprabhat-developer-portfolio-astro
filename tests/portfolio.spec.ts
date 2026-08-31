@@ -7,6 +7,18 @@ test('homepage renders correct structure and passes accessibility', async ({
   await page.goto('/');
 
   await expect(page).toHaveTitle(/Suprabhat Kumar/);
+  await expect(page.locator('link[rel="icon"][sizes="32x32"]')).toHaveAttribute(
+    'href',
+    '/assets/favicons/favicon-32x32.png',
+  );
+  await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute(
+    'href',
+    '/assets/favicons/apple-touch-icon.png',
+  );
+  await expect(page.locator('link[rel="manifest"]')).toHaveAttribute(
+    'href',
+    '/site.webmanifest',
+  );
   // Single H1 — critical SEO requirement
   await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
 
