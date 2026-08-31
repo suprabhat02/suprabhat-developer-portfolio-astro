@@ -1,0 +1,81 @@
+# Proposed Netlify configuration for the Astro rebuild.
+# Replaces the root netlify.toml in the current repo.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[context.deploy-preview.environment]
+  ROBOTS = "noindex"
+
+# ── redirects: nothing already indexed may 404 ──────────────────────────
+[[redirects]]
+  from = "https://suprabhatkumar.com/*"
+  to = "https://suprabhat-dev.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.suprabhat-dev.com/*"
+  to = "https://suprabhat-dev.com/:splat"
+  status = 301
+  force = true
+
+# The old sitemap listed article URLs with .html; canonical is now extensionless.
+[[redirects]]
+  from = "/blog/:slug.html"
+  to = "/blog/:slug/"
+  status = 301
+
+[[redirects]]
+  from = "/blog.html"
+  to = "/blog/"
+  status = 301
+
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/sitemap-index.xml"
+  status = 301
+
+# ── headers ─────────────────────────────────────────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.web3forms.com; base-uri 'self'; form-action 'self' https://api.web3forms.com; frame-ancestors 'none'"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Content-Type-Options = "nosniff"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+    Cross-Origin-Opener-Policy = "same-origin"
+
+# Fonts and hashed build assets are immutable.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Public image and icon filenames are stable but not content-hashed. Cache for a
+# week, then validate in the background so a deploy can safely replace them.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Notes:
+# - X-Frame-Options dropped in favour of CSP frame-ancestors 'none'.
+# - X-XSS-Protection dropped; it is a no-op alongside a real CSP.
+# - Web3Forms is allowed for the legacy homepage's client-side form request.
+# - Google Fonts remains allowed while the legacy homepage is preserved verbatim.

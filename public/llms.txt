@@ -1,0 +1,22 @@
+# Suprabhat Kumar Portfolio
+
+Suprabhat Kumar is a Senior Frontend Engineer specializing in React, Next.js, TypeScript, frontend performance, Core Web Vitals, and accessibility.
+
+## Primary pages
+
+- [Home](https://suprabhat-dev.com/): Professional overview, selected work, experience, services, recommendations, FAQs, and contact details.
+- [About](https://suprabhat-dev.com/about/): Background and engineering philosophy.
+- [Skills](https://suprabhat-dev.com/skills/): Frontend engineering skills.
+- [Experience](https://suprabhat-dev.com/experience/): Professional experience.
+- [Work](https://suprabhat-dev.com/work/): Selected projects and case studies.
+- [Services](https://suprabhat-dev.com/services/): Available consulting and development services.
+- [Contact](https://suprabhat-dev.com/contact/): Contact form and direct email information.
+- [Blog](https://suprabhat-dev.com/blog/): English-language articles about frontend engineering.
+
+## Locales
+
+The homepage and primary portfolio pages are available in English, Spanish at `/es/`, and Arabic at `/ar/`. English blog articles currently have no localized equivalents; localized blog indexes are intentionally excluded from search indexing.
+
+## Crawling
+
+Use the canonical URLs above. Refer to [sitemap-index.xml](https://suprabhat-dev.com/sitemap-index.xml) for crawlable site URLs and [robots.txt](https://suprabhat-dev.com/robots.txt) for crawler directives.

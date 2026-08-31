@@ -1,0 +1,50 @@
+---
+const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY;
+import { t } from '../i18n/messages';
+import type { Locale } from '../i18n/config';
+const { locale = 'en' } = Astro.props as { locale?: Locale };
+---
+
+{
+  accessKey ? (
+    <form
+      class="contact-form"
+      action="https://api.web3forms.com/submit"
+      method="POST"
+    >
+      <input type="hidden" name="access_key" value={accessKey} />
+      <input type="hidden" name="subject" value="Portfolio enquiry" />
+      <input type="hidden" name="from_name" value="Suprabhat Kumar Portfolio" />
+      <label>
+        {t(locale, 'form.name', 'Name')}
+        <input name="name" autocomplete="name" required />
+      </label>
+      <label>
+        {t(locale, 'form.email', 'Email')}
+        <input type="email" name="email" autocomplete="email" required />
+      </label>
+      <label>
+        {t(locale, 'form.details', 'Project details')}
+        <textarea name="message" rows="6" required />
+      </label>
+      <button class="button primary" type="submit">
+        {t(locale, 'form.send', 'Send enquiry')}
+      </button>
+    </form>
+  ) : (
+    <div class="notice">
+      <>
+        <p>
+          {t(
+            locale,
+            'form.unavailable',
+            'The contact form is unavailable in this environment.',
+          )}
+        </p>
+        <a class="button primary" href="mailto:suprabhatkumar02@gmail.com">
+          {t(locale, 'form.emailSuprabhat', 'Email Suprabhat')}
+        </a>
+      </>
+    </div>
+  )
+}

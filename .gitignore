@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.astro/
+test-results/
+playwright-report/
+coverage/
+.netlify/
+suprabhat-dev-static-site.zip
+*.log
+.DS_Store
+Thumbs.db
+.env
+.env.*
+!.env.example

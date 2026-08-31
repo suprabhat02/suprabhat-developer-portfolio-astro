@@ -1,0 +1,102 @@
+---
+import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
+import { primaryNav } from '../data/navigation';
+import { t } from '../i18n/messages';
+
+interface Props {
+  locale: Locale;
+  page: string;
+}
+const { locale, page } = Astro.props;
+const prefix = localePrefix(locale);
+const localHref = (href: string) => `${prefix}${href}` || '/';
+const localeHref = (next: Locale) =>
+  `${localePrefix(next)}${page === 'home' || page === '404' ? '/' : `/${page}/`}` ||
+  '/';
+const navLabel = (key: string) =>
+  t(locale, `nav.${key}`, key[0].toUpperCase() + key.slice(1));
+---
+
+<a class="skip-link" href="#main-content"
+  >{t(locale, 'skip', 'Skip to main content')}</a
+>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href={localHref('/')} aria-label="Suprabhat Kumar, home"
+      ><span aria-hidden="true"></span>Suprabhat</a
+    >
+    <nav
+      class="desktop-nav"
+      aria-label={t(locale, 'nav.primary', 'Primary navigation')}
+    >
+      {
+        primaryNav.map((item) => (
+          <a
+            href={localHref(item.href)}
+            aria-current={page === item.key ? 'page' : undefined}
+          >
+            {navLabel(item.key)}
+          </a>
+        ))
+      }
+    </nav>
+    <div class="header-actions">
+      <details class="language-menu">
+        <summary aria-label={t(locale, 'language', 'Change language')}
+          >{locale.toUpperCase()}</summary
+        >
+        <div>
+          {
+            locales.map((item) => (
+              <a
+                href={localeHref(item)}
+                lang={localeMeta[item].htmlLang}
+                aria-current={item === locale ? 'page' : undefined}
+              >
+                {localeMeta[item].label}
+              </a>
+            ))
+          }
+        </div>
+      </details>
+      <button
+        class="theme-toggle"
+        type="button"
+        aria-label={t(locale, 'theme', 'Toggle color theme')}
+        title={t(locale, 'theme', 'Toggle color theme')}
+      >
+        <span aria-hidden="true">◐</span>
+      </button>
+      <details class="mobile-nav">
+        <summary aria-label={t(locale, 'nav.mobile', 'Mobile navigation')}
+          ><span aria-hidden="true">{t(locale, 'menu', 'Menu')}</span></summary
+        >
+        <nav aria-label={t(locale, 'nav.mobile', 'Mobile navigation')}>
+          {
+            primaryNav.map((item) => (
+              <a
+                href={localHref(item.href)}
+                aria-current={page === item.key ? 'page' : undefined}
+              >
+                {navLabel(item.key)}
+              </a>
+            ))
+          }
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>
+
+<script>
+  document
+    .querySelectorAll<HTMLButtonElement>('.theme-toggle')
+    .forEach((button) => {
+      button.addEventListener('click', () => {
+        const root = document.documentElement;
+        const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+        root.dataset.theme = next;
+        localStorage.setItem('sk-theme', next);
+      });
+    });
+</script>

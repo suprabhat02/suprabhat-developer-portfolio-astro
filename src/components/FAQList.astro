@@ -1,0 +1,19 @@
+---
+import { faqs } from '../data/faqs';
+import { t } from '../i18n/messages';
+import type { Locale } from '../i18n/config';
+const { locale = 'en' } = Astro.props as { locale?: Locale };
+---
+
+<div class="faq-list">
+  {
+    faqs.map((faq) => (
+      <details>
+        <>
+          <summary>{t(locale, `faq.${faq.id}.q`, faq.question)}</summary>
+          <p>{t(locale, `faq.${faq.id}.a`, faq.answer)}</p>
+        </>
+      </details>
+    ))
+  }
+</div>

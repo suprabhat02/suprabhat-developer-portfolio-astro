@@ -1,0 +1,2556 @@
+---
+import { SITE_URL, DEFAULT_OG_IMAGE, SITE_NAME } from '../config/site';
+import { profile } from '../data/profile';
+import { experience } from '../data/experience';
+import { tools } from '../data/tools';
+import { work } from '../data/work';
+import {
+  recommendations,
+  featuredRecommendationIds,
+} from '../data/recommendations';
+import { faqs } from '../data/faqs';
+import { services } from '../data/services';
+import { getCollection } from 'astro:content';
+import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
+import { t } from '../i18n/messages';
+import '../styles/homepage.css';
+import '@fontsource-variable/geist-mono';
+
+const { locale = 'en' } = Astro.props as { locale?: Locale };
+const meta = localeMeta[locale];
+const localeRoot = `${localePrefix(locale)}/`;
+const title =
+  locale === 'es'
+    ? 'Suprabhat Kumar — Ingeniero Frontend Sénior'
+    : locale === 'ar'
+      ? 'سوبرابهات كومار — مهندس واجهات أمامية أول'
+      : 'Suprabhat Kumar — Senior Frontend Engineer';
+const description =
+  locale === 'es'
+    ? 'Ingeniero frontend sénior con más de seis años creando productos SaaS rápidos y accesibles con React y TypeScript.'
+    : locale === 'ar'
+      ? 'مهندس واجهات أمامية أول بخبرة تزيد على ست سنوات في بناء منتجات SaaS سريعة ومتاحة باستخدام React وTypeScript.'
+      : 'Senior frontend engineer with 6+ years building fast, accessible React & TypeScript SaaS products. Dashboards, design systems, and FastAPI backends.';
+const canonical = `${SITE_URL}${localeRoot}`;
+const ogImage = `${SITE_URL}${DEFAULT_OG_IMAGE}`;
+const robots =
+  import.meta.env.ROBOTS === 'noindex' ? 'noindex,follow' : 'index,follow';
+
+// Loaded here so Steps 3–7 can use them without touching the frontmatter
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const articleIllustrations = [
+  '/assets/illustrations/article-performance.svg',
+  '/assets/illustrations/article-accessibility.svg',
+  '/assets/illustrations/article-ui-engineering.svg',
+] as const;
+const heroRippleRows = 18;
+const heroRippleColumns = 28;
+const heroRippleCells = Array.from(
+  { length: heroRippleRows * heroRippleColumns },
+  (_, index) => ({
+    row: Math.floor(index / heroRippleColumns),
+    column: index % heroRippleColumns,
+  }),
+);
+const featured = recommendations.filter((r) =>
+  featuredRecommendationIds.includes(
+    r.id as (typeof featuredRecommendationIds)[number],
+  ),
+);
+
+// Converts "May 2025" → "2025-05" for <time datetime> semantic markup
+const M: Record<string, string> = {
+  Jan: '01',
+  Feb: '02',
+  Mar: '03',
+  Apr: '04',
+  May: '05',
+  Jun: '06',
+  Jul: '07',
+  Aug: '08',
+  Sep: '09',
+  Oct: '10',
+  Nov: '11',
+  Dec: '12',
+};
+const toISO = (s: string) => {
+  const [m, y] = s.split(' ');
+  return y && M[m] ? `${y}-${M[m]}` : '';
+};
+
+// Category labels shown above each tool chip in the marquee
+const toolCategories: Record<string, string> = {
+  TypeScript: 'LANGUAGE',
+  React: 'FRONTEND',
+  'Next.js': 'FRONTEND',
+  Redux: 'STATE',
+  'Node.js': 'RUNTIME',
+  Figma: 'DESIGN',
+  'Tailwind CSS': 'STYLING',
+  Git: 'DEVOPS',
+  Sass: 'STYLING',
+  jQuery: 'FRONTEND',
+  'Claude AI': 'AI',
+  Storybook: 'TESTING',
+  Azure: 'CLOUD',
+  FastAPI: 'BACKEND',
+  PostgreSQL: 'DATABASE',
+};
+
+// Full @graph mirrors the original JSON-LD, now driven by typed data
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': `${SITE_URL}/#person`,
+      name: profile.name,
+      jobTitle: profile.title,
+      description: profile.lead,
+      url: `${SITE_URL}/`,
+      image: `${SITE_URL}${profile.portrait.src}`,
+      email: profile.email,
+      sameAs: profile.social.map((s) => s.href),
+      address: { '@type': 'Country', name: 'India' },
+      knowsAbout: [
+        'React.js',
+        'Next.js',
+        'TypeScript',
+        'JavaScript',
+        'Redux Toolkit',
+        'RTK Query',
+        'TanStack Query',
+        'Tailwind CSS',
+        'Ant Design',
+        'Chakra UI',
+        'Headless UI',
+        'FastAPI',
+        'PostgreSQL',
+        'GraphQL',
+        'Node.js',
+        'Figma',
+        'Storybook',
+        'Azure',
+        'Web Accessibility',
+        'Core Web Vitals',
+        'Design Systems',
+        'SaaS Frontend Development',
+        'Performance Optimization',
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      url: `${SITE_URL}/`,
+      name: SITE_NAME,
+      inLanguage: meta.htmlLang,
+      author: { '@id': `${SITE_URL}/#person` },
+    },
+    {
+      '@type': 'WebPage',
+      '@id': `${SITE_URL}/#webpage`,
+      url: canonical,
+      name: title,
+      description,
+      inLanguage: meta.htmlLang,
+      isPartOf: { '@id': `${SITE_URL}/#website` },
+      about: { '@id': `${SITE_URL}/#person` },
+    },
+    {
+      '@type': 'ProfessionalService',
+      '@id': `${SITE_URL}/#service`,
+      name: `${SITE_NAME} - Frontend Engineering Services`,
+      description:
+        'SaaS frontend development, dashboard UI engineering, performance optimization, design systems, React/Next.js implementation, FastAPI backend integration, accessibility-focused UI.',
+      url: `${SITE_URL}/`,
+      areaServed: 'Worldwide',
+      provider: { '@id': `${SITE_URL}/#person` },
+      serviceType: services.map((s) => s.name),
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.question,
+        acceptedAnswer: { '@type': 'Answer', text: f.answer },
+      })),
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang={meta.htmlLang} dir={meta.dir} data-theme="dark">
+  <head>
+    <script is:inline>
+      try {
+        document.documentElement.dataset.theme =
+          localStorage.getItem('sk-theme') || 'dark';
+      } catch {
+        document.documentElement.dataset.theme = 'dark';
+      }
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#0e0f1a"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#faf9f7"
+    />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={profile.name} />
+    <meta name="robots" content={robots} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta
+      property="og:locale"
+      content={locale === 'es' ? 'es_ES' : locale === 'ar' ? 'ar_AR' : 'en_US'}
+    />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Suprabhat Kumar, Senior Frontend Engineer"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@suprabhat_dev" />
+    <meta name="twitter:creator" content="@suprabhat_dev" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
+    {
+      locales.map((alternateLocale) => (
+        <link
+          rel="alternate"
+          hreflang={localeMeta[alternateLocale].htmlLang}
+          href={`${SITE_URL}${localePrefix(alternateLocale)}/`}
+        />
+      ))
+    }
+    <link rel="alternate" hreflang="x-default" href={`${SITE_URL}/`} />
+    <link
+      rel="preload"
+      as="image"
+      href="/assets/images/portrait-800.webp"
+      type="image/webp"
+      imagesrcset="/assets/images/portrait-400.webp 400w, /assets/images/portrait-550.webp 550w, /assets/images/portrait-600.webp 600w, /assets/images/portrait-800.webp 800w, /assets/images/portrait-1100.webp 1100w"
+      imagesizes="(max-width: 1040px) 340px, 700px"
+      fetchpriority="high"
+    />
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(schema)}
+    />
+  </head>
+
+  <body>
+    <!-- Read-only progress indicator; driven by scroll JS in Step 7 -->
+    <div class="scroll-bar" id="scroll-bar" aria-hidden="true"></div>
+
+    <a href="#main" class="skip-link"
+      >{t(locale, 'skip', 'Skip to main content')}</a
+    >
+
+    <!-- ── HEADER ───────────────────────────────────────── -->
+    <header class="site-header" role="banner">
+      <div class="wrap header-inner">
+        <a href="/" class="logo" aria-label={`${profile.name} — home`}>
+          <span class="logo-mark" aria-hidden="true"></span>Suprabhat
+        </a>
+
+        <!-- Absolutely-centred desktop nav; hidden below 1040px -->
+        <nav
+          class="site-nav"
+          aria-label={t(locale, 'nav.primary', 'Primary navigation')}
+        >
+          <ul>
+            <li>
+              <a href="#home" class="active">{t(locale, 'nav.home', 'Home')}</a>
+            </li>
+            <li><a href="#about">{t(locale, 'nav.about', 'About')}</a></li>
+            <li>
+              <a href="#expertise">{t(locale, 'home.expertise', 'Expertise')}</a
+              >
+            </li>
+            <li>
+              <a href="#experience"
+                >{t(locale, 'nav.experience', 'Experience')}</a
+              >
+            </li>
+            <li><a href="#work">{t(locale, 'nav.work', 'Work')}</a></li>
+            <li><a href="#blog">{t(locale, 'nav.blog', 'Writing')}</a></li>
+            <li>
+              <a href="#contact">{t(locale, 'nav.contact', 'Contact')}</a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="header-controls">
+          <!-- Language switcher — JS in Step 7 handles locale routing -->
+          <div class="hdr-dropdown" id="lang-dd">
+            <button
+              type="button"
+              class="hdr-dropdown-btn"
+              id="lang-dd-btn"
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-label={t(locale, 'language', 'Change language')}
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path
+                  d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+                ></path>
+              </svg>
+              <span id="lang-label">{locale.toUpperCase()}</span>
+              <svg
+                class="chevron"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M6 9l6 6 6-6"></path>
+              </svg>
+            </button>
+            <div class="hdr-menu" role="menu" aria-label="Language options">
+              <a
+                class:list={['hdr-menu-item', { selected: locale === 'en' }]}
+                role="menuitem"
+                href="/"
+              >
+                <span class="dot" aria-hidden="true"></span>English
+              </a>
+              <a
+                class:list={['hdr-menu-item', { selected: locale === 'es' }]}
+                role="menuitem"
+                lang="es"
+                href="/es/"
+              >
+                <span class="dot" aria-hidden="true"></span>Español
+              </a>
+              <a
+                class:list={['hdr-menu-item', { selected: locale === 'ar' }]}
+                role="menuitem"
+                lang="ar"
+                href="/ar/"
+              >
+                <span class="dot" aria-hidden="true"></span>العربية
+              </a>
+            </div>
+          </div>
+
+          <!-- Hamburger — shown below 1040px -->
+          <button
+            type="button"
+            class="mob-btn"
+            id="mob-btn"
+            aria-expanded="false"
+            aria-controls="mob-menu"
+            aria-label="Open navigation menu"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── MOBILE MENU ───────────────────────────────────── -->
+    <!-- role=dialog traps focus; JS in Step 7 wires open/close -->
+    <div
+      class="mob-menu"
+      id="mob-menu"
+      role="dialog"
+      aria-modal="true"
+      aria-label={t(locale, 'nav.mobile', 'Navigation menu')}
+    >
+      <button
+        type="button"
+        class="mob-close"
+        id="mob-close"
+        aria-label="Close navigation menu"
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <a href="#home">{t(locale, 'nav.home', 'Home')}</a>
+      <a href="#about">{t(locale, 'nav.about', 'About')}</a>
+      <a href="#expertise">{t(locale, 'home.expertise', 'Expertise')}</a>
+      <a href="#experience">{t(locale, 'nav.experience', 'Experience')}</a>
+      <a href="#work">{t(locale, 'nav.work', 'Work')}</a>
+      <a href="#blog">{t(locale, 'nav.blog', 'Writing')}</a>
+      <a href="#contact">{t(locale, 'nav.contact', 'Contact')}</a>
+    </div>
+
+    <main id="main">
+      <!-- ── HERO BENTO ──────────────────────────────────── -->
+      <section id="home" class="hero" aria-labelledby="hero-name">
+        <div class="hero-ripple-grid" aria-hidden="true">
+          {
+            heroRippleCells.map((cell) => (
+              <span
+                class="hero-ripple-cell"
+                data-ripple-row={cell.row}
+                data-ripple-column={cell.column}
+              />
+            ))
+          }
+        </div>
+        <div class="hero-glow-r" aria-hidden="true"></div>
+        <div class="hero-glow-l" aria-hidden="true"></div>
+        <div class="wrap">
+          <div class="hero-grid">
+            <!-- Cell 1 — name, stack, lead, CTAs -->
+            <div class="hero-content reveal">
+              <p class="hero-eyebrow">
+                {
+                  t(
+                    locale,
+                    'home.eyebrow',
+                    'He/Him · Senior Frontend Engineer · India',
+                  )
+                }
+                <span style="display:inline-flex;align-items:center;gap:5px">
+                  <img
+                    src="/assets/icons/india-flag-icon.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width="16"
+                    height="12"
+                    style="border-radius:2px;display:inline-block;flex-shrink:0"
+                    decoding="async"
+                  />
+                </span>
+              </p>
+              <!-- One H1, primary keyword phrase, with correct space between words for crawlers -->
+              <h1 id="hero-name" class="hero-name">
+                Suprabhat <span>Kumar</span>
+              </h1>
+              <p class="hero-sub">
+                React · TypeScript · Redux Toolkit · FastAPI · PostgreSQL
+              </p>
+              <p class="hero-lead">
+                {
+                  t(
+                    locale,
+                    'home.lead',
+                    'Frontend Software Engineer with 6+ years building high-performance SaaS platforms, enterprise dashboards, and data-intensive UI systems. I specialize in modern React architecture, performance-first delivery, and clean, scalable code.',
+                  )
+                }
+              </p>
+              <div class="hero-ctas">
+                <a href="#work" class="btn btn-primary"
+                  >{t(locale, 'action.work', 'View selected work')}</a
+                >
+                <a href="#contact" class="btn btn-outline"
+                  >{t(locale, 'action.contact', 'Get in touch')}</a
+                >
+                <!-- LinkedIn pulled from typed profile — never hardcoded -->
+                {
+                  profile.social
+                    .filter((s) => s.label === 'LinkedIn')
+                    .map((s) => (
+                      <a
+                        href={s.href}
+                        class="btn btn-ghost"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        LinkedIn ↗
+                      </a>
+                    ))
+                }
+              </div>
+            </div>
+
+            <!-- Cell 2 — portrait renders immediately; it IS the LCP element, opacity:0 would delay LCP measurement -->
+            <figure class="hero-portrait-wrap">
+              <!--
+                No loading="lazy" — this image is above the fold and already preloaded in <head>.
+                fetchpriority="high" reinforces its LCP priority to the browser.
+              -->
+              <img
+                src="/assets/images/portrait-800.webp"
+                srcset="/assets/images/portrait-400.webp 400w, /assets/images/portrait-550.webp 550w, /assets/images/portrait-600.webp 600w, /assets/images/portrait-800.webp 800w, /assets/images/portrait-1100.webp 1100w"
+                sizes="(max-width:1040px) 340px, 700px"
+                width="800"
+                height="1067"
+                alt="Suprabhat Kumar, Senior Frontend Engineer, standing on a tree-lined street in Munich"
+                fetchpriority="high"
+                decoding="async"
+              />
+              <figcaption class="hero-portrait-cap">
+                6+ years · React · Next.js · TypeScript · FastAPI
+              </figcaption>
+            </figure>
+
+            <!-- Cell 3 — two bottom bento cards: availability + latest writing -->
+            <div class="hero-bottom">
+              <div class="avail-card reveal d2">
+                <h2>{t(locale, 'home.availability', 'Availability')}</h2>
+                <p>
+                  {
+                    t(
+                      locale,
+                      'home.availabilityLead',
+                      'Open to remote freelance & contract worldwide',
+                    )
+                  }
+                </p>
+                <small
+                  >Async-first · Transparent progress · Shared milestones</small
+                >
+              </div>
+
+              <!-- Writing card renders latest 3 posts from the typed blog collection -->
+              <div class="writing-card reveal d3">
+                <h2>{t(locale, 'home.writing', 'Featured writing')}</h2>
+                <ul>
+                  {
+                    posts.slice(0, 3).map((post) => (
+                      <li>
+                        <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── STATS BAND ────────────────────────────────── -->
+      <!-- Numbers animated by JS counter; data-* not needed, .stat-num text is the seed -->
+      <aside class="stats-band" aria-label="Career highlights">
+        <div class="wrap">
+          <div class="stats-grid">
+            <div class="stat-item reveal">
+              <span class="stat-num">6+</span>
+              <span class="stat-lbl">Years experience</span>
+            </div>
+            <div class="stat-item reveal d1">
+              <span class="stat-num">5</span>
+              <span class="stat-lbl">Companies worked at</span>
+            </div>
+            <div class="stat-item reveal d2">
+              <span class="stat-num">2</span>
+              <span class="stat-lbl">Full-stack capabilities</span>
+            </div>
+            <div class="stat-item reveal d3">
+              <span class="stat-num">100%</span>
+              <span class="stat-lbl">Remote-ready worldwide</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ── FEATURED ARTICLES ─────────────────────────── -->
+      <!--
+        Cards driven by the blog content collection — adding a post automatically
+        adds it here. tags[0] surfaces as the kicker label.
+        Section marked with article schema via the BlogPosting JSON-LD on each
+        article page; the index links feed crawler discovery.
+      -->
+      <section
+        id="blog"
+        class="section section-glow section-glow-tr"
+        aria-labelledby="blog-title"
+      >
+        <div class="wrap">
+          <div
+            class="section-head"
+            style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap"
+          >
+            <div class="reveal">
+              <span class="s-eyebrow"
+                >01 — {t(locale, 'nav.blog', 'Writing')}</span
+              >
+              <h2 id="blog-title" class="s-title">
+                {t(locale, 'page.blog.title', 'Featured articles')}
+              </h2>
+              <p class="s-lead">
+                {
+                  t(
+                    locale,
+                    'home.blogLead',
+                    'Practical guides on performance, accessibility, and modern UI delivery.',
+                  )
+                }
+              </p>
+            </div>
+            <a
+              href="/blog/"
+              class="btn btn-ghost reveal"
+              style="margin-bottom:14px"
+              >{t(locale, 'home.allArticles', 'All articles')} →</a
+            >
+          </div>
+
+          <div class="articles-grid">
+            {
+              posts.slice(0, 3).map((post, i) => (
+                <article
+                  class={`article-card article-card--visual reveal${i > 0 ? ` d${i}` : ''}`}
+                >
+                  <img
+                    class="card-illustration"
+                    src={articleIllustrations[i]}
+                    alt=""
+                    aria-hidden="true"
+                    width="512"
+                    height="320"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p class="article-kicker">{post.data.tags[0]}</p>
+                  <h3>{post.data.title}</h3>
+                  <p>{post.data.description}</p>
+                  <a
+                    href={`/blog/${post.id}/`}
+                    class="read-link"
+                    aria-label={`${t(locale, 'home.readArticle', 'Read article')}: ${post.data.title}`}
+                  >
+                    {t(locale, 'home.readArticle', 'Read article')}
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </a>
+                </article>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- ── ABOUT ──────────────────────────────────────── -->
+      <!--
+        Statement and traits are editorial copy, not pulled from profile.ts —
+        they're more specific than the generic `lead` and `about` fields.
+        Trait cards use the same accent-line ::before decoration as expertise cards.
+      -->
+      <section
+        id="about"
+        class="section section-alt"
+        aria-labelledby="about-title"
+      >
+        <div class="wrap">
+          <div class="section-head">
+            <span class="s-eyebrow reveal"
+              >02 — {t(locale, 'nav.about', 'About')}</span
+            >
+            <h2 id="about-title" class="s-title reveal">
+              {t(locale, 'home.about', 'About me')}
+            </h2>
+          </div>
+
+          <p class="about-statement reveal">
+            {
+              t(
+                locale,
+                'home.aboutStatement',
+                'Frontend Software Engineer with 6+ years building high-performance SaaS platforms, enterprise dashboards, and data-intensive UI systems. Specialized in React, TypeScript, Redux Toolkit — and full-stack capable with FastAPI + PostgreSQL.',
+              )
+            }
+          </p>
+
+          <div class="about-traits">
+            <div class="trait-card trait-card--visual reveal">
+              <img
+                class="card-illustration"
+                src="/assets/illustrations/about-performance.svg"
+                alt=""
+                aria-hidden="true"
+                width="512"
+                height="320"
+                loading="lazy"
+                decoding="async"
+              />
+              <span class="trait-num">01</span>
+              <h3>
+                {t(locale, 'trait.performance.title', 'Performance-first')}
+              </h3>
+              <p>
+                {
+                  t(
+                    locale,
+                    'trait.performance.body',
+                    'I ship with performance budgets, Core Web Vitals targets, and Lighthouse 100 as a baseline — not an afterthought.',
+                  )
+                }
+              </p>
+            </div>
+            <div class="trait-card trait-card--visual reveal d1">
+              <img
+                class="card-illustration"
+                src="/assets/illustrations/about-accessibility.svg"
+                alt=""
+                aria-hidden="true"
+                width="512"
+                height="320"
+                loading="lazy"
+                decoding="async"
+              />
+              <span class="trait-num">02</span>
+              <h3>
+                {
+                  t(
+                    locale,
+                    'trait.accessibility.title',
+                    'Accessibility by default',
+                  )
+                }
+              </h3>
+              <p>
+                {
+                  t(
+                    locale,
+                    'trait.accessibility.body',
+                    'WCAG 2.2 AA compliance, keyboard navigation, ARIA, and screen reader testing on every deliverable.',
+                  )
+                }
+              </p>
+            </div>
+            <div class="trait-card trait-card--visual reveal d2">
+              <img
+                class="card-illustration"
+                src="/assets/illustrations/about-architecture.svg"
+                alt=""
+                aria-hidden="true"
+                width="512"
+                height="320"
+                loading="lazy"
+                decoding="async"
+              />
+              <span class="trait-num">03</span>
+              <h3>
+                {t(locale, 'trait.architecture.title', 'Scalable architecture')}
+              </h3>
+              <p>
+                {
+                  t(
+                    locale,
+                    'trait.architecture.body',
+                    'Reusable component libraries, design tokens, and predictable state management that teams can own long-term.',
+                  )
+                }
+              </p>
+            </div>
+            <div class="trait-card trait-card--visual reveal d3">
+              <img
+                class="card-illustration"
+                src="/assets/illustrations/about-fullstack.svg"
+                alt=""
+                aria-hidden="true"
+                width="512"
+                height="320"
+                loading="lazy"
+                decoding="async"
+              />
+              <span class="trait-num">04</span>
+              <h3>
+                {t(locale, 'trait.fullstack.title', 'Full-stack capable')}
+              </h3>
+              <p>
+                {
+                  t(
+                    locale,
+                    'trait.fullstack.body',
+                    'FastAPI + PostgreSQL backends for data-heavy platforms and real-time dashboards — end-to-end ownership.',
+                  )
+                }
+              </p>
+            </div>
+          </div>
+
+          <p class="reveal">
+            <a href="#experience" class="btn btn-outline"
+              >{t(locale, 'home.experienceCta', 'Explore experience')} →</a
+            >
+          </p>
+        </div>
+      </section>
+
+      <!-- ── EXPERTISE ────────────────────────────────── -->
+      <section
+        id="expertise"
+        class="section section-glow section-glow-tl"
+        aria-labelledby="expertise-title"
+      >
+        <div class="wrap">
+          <div class="section-head reveal">
+            <span class="s-eyebrow">03 — Expertise</span>
+            <h2 id="expertise-title" class="s-title">
+              {t(locale, 'home.expertise', 'Core expertise')}
+            </h2>
+            <p class="s-lead">
+              {
+                t(
+                  locale,
+                  'home.expertiseLead',
+                  'Full-stack capable, specializing in high-performance frontends backed by fast, type-safe APIs.',
+                )
+              }
+            </p>
+          </div>
+
+          <div class="expertise-grid">
+            <div class="expertise-card expertise-card--visual mo-reveal">
+              <img
+                class="card-illustration"
+                src="/assets/illustrations/expertise-frontend.svg"
+                alt=""
+                aria-hidden="true"
+                width="512"
+                height="320"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="expertise-icon" aria-hidden="true">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  ><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"
+                  ></polygon><line x1="12" y1="22" x2="12" y2="15.5"
+                  ></line><polyline points="22 8.5 12 15.5 2 8.5"
+                  ></polyline></svg
+                >
+              </div>
+              <h3>
+                {t(locale, 'expertise.frontend.title', 'Front-End Engineering')}
+              </h3>
+              <p>
+                {
+                  t(
+                    locale,
+                    'expertise.frontend.body',
+                    'Building scalable SaaS frontends, enterprise dashboards, and high-performance interfaces. React architecture, component systems, rendering optimization, and accessibility from day one.',
+                  )
+                }
+              </p>
+              <div class="skill-tags">
+                <span class="skill-tag">React.js</span><span class="skill-tag"
+                  >Next.js</span
+                ><span class="skill-tag">TypeScript</span><span
+                  class="skill-tag">Redux Toolkit</span
+                ><span class="skill-tag">RTK Query</span><span class="skill-tag"
+                  >TanStack Query</span
+                ><span class="skill-tag">Tailwind CSS</span><span
+                  class="skill-tag">Ant Design</span
+                ><span class="skill-tag">Chakra UI</span><span class="skill-tag"
+                  >Core Web Vitals</span
+                >
+              </div>
+            </div>
+
+            <div class="expertise-card expertise-card--visual mo-reveal">
+              <img
+                class="card-illustration"
+                src="/assets/illustrations/expertise-backend.svg"
+                alt=""
+                aria-hidden="true"
+                width="512"
+                height="320"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="expertise-icon" aria-hidden="true">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  ><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path
+                    d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path
+                    d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg
+                >
+              </div>
+              <h3>
+                {
+                  t(
+                    locale,
+                    'expertise.backend.title',
+                    'Back-End & API Integration',
+                  )
+                }
+              </h3>
+              <p>
+                {
+                  t(
+                    locale,
+                    'expertise.backend.body',
+                    'Building lightweight, high-performance REST APIs with FastAPI and PostgreSQL. Enables end-to-end ownership of data-heavy platforms, real-time dashboards, and secure API architectures.',
+                  )
+                }
+              </p>
+              <div class="skill-tags">
+                <span class="skill-tag">FastAPI</span><span class="skill-tag"
+                  >PostgreSQL</span
+                ><span class="skill-tag">REST APIs</span><span class="skill-tag"
+                  >Authentication flows</span
+                ><span class="skill-tag">Data pipelines</span><span
+                  class="skill-tag">GraphQL</span
+                ><span class="skill-tag">Node.js</span>
+              </div>
+            </div>
+
+            <div class="expertise-card expertise-card--visual mo-reveal">
+              <img
+                class="card-illustration"
+                src="/assets/illustrations/expertise-design-systems.svg"
+                alt=""
+                aria-hidden="true"
+                width="512"
+                height="320"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="expertise-icon" aria-hidden="true">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  ><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path
+                    d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"
+                  ></path></svg
+                >
+              </div>
+              <h3>
+                {
+                  t(
+                    locale,
+                    'expertise.design.title',
+                    'Design Systems & Performance',
+                  )
+                }
+              </h3>
+              <p>
+                {
+                  t(
+                    locale,
+                    'expertise.design.body',
+                    'Creating scalable component architectures and design tokens that teams ship from confidently. Core Web Vitals optimization, accessibility audits, and Lighthouse 100 delivery.',
+                  )
+                }
+              </p>
+              <div class="skill-tags">
+                <span class="skill-tag">Design systems</span><span
+                  class="skill-tag">Storybook</span
+                ><span class="skill-tag">WCAG 2.2 AA</span><span
+                  class="skill-tag">Performance budgets</span
+                ><span class="skill-tag">Figma</span><span class="skill-tag"
+                  >Azure</span
+                ><span class="skill-tag">Git</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SKILLS TABLE ───────────────────────────────── -->
+      <section
+        id="skills"
+        class="section section-alt"
+        aria-labelledby="skills-title"
+      >
+        <div class="wrap">
+          <div class="section-head reveal">
+            <span class="s-eyebrow">04 — Skills</span>
+            <h2 id="skills-title" class="s-title">
+              {t(locale, 'page.skills.eyebrow', 'Skills')}
+            </h2>
+            <p class="s-lead">
+              {
+                t(
+                  locale,
+                  'home.skillsLead',
+                  'The technical stack I use to deliver scalable, performant, accessible UI systems.',
+                )
+              }
+            </p>
+          </div>
+          <div class="skills-table">
+            <div class="skills-row">
+              <div class="skill-col mo-reveal">
+                <h3>Front-End Core</h3>
+                <ul class="skill-ul">
+                  <li>React.js + Next.js</li><li>TypeScript + JavaScript</li><li
+                  >
+                    HTML5 + CSS3 + Sass
+                  </li><li>Tailwind CSS</li>
+                </ul>
+              </div>
+              <div class="skill-col mo-reveal">
+                <h3>State &amp; Data</h3>
+                <ul class="skill-ul">
+                  <li>Redux Toolkit + RTK Query</li><li>TanStack Query</li><li>
+                    React Hooks + Context API
+                  </li><li>GraphQL</li>
+                </ul>
+              </div>
+              <div class="skill-col mo-reveal">
+                <h3>UI Libraries</h3>
+                <ul class="skill-ul">
+                  <li>Ant Design</li><li>Chakra UI</li><li>Headless UI</li><li>
+                    React Bootstrap
+                  </li>
+                </ul>
+              </div>
+              <div class="skill-col mo-reveal">
+                <h3>Back-End &amp; APIs</h3>
+                <ul class="skill-ul">
+                  <li>FastAPI (Python)</li><li>PostgreSQL</li><li>
+                    Node.js
+                  </li><li>REST API design</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <p style="margin-top:28px" class="reveal d1">
+            <a href="#contact" class="btn btn-outline"
+              >{t(locale, 'home.skillsCta', 'Discuss a technical challenge')} →</a
+            >
+          </p>
+        </div>
+      </section>
+
+      <!-- ── EXPERIENCE TIMELINE ───────────────────────── -->
+      <!-- Fully driven by experience.ts — add/edit a job there, HTML updates automatically -->
+      <section
+        id="experience"
+        class="section section-glow section-glow-br"
+        aria-labelledby="exp-title"
+      >
+        <div class="wrap">
+          <div class="section-head reveal">
+            <span class="s-eyebrow">05 — Experience</span>
+            <h2 id="exp-title" class="s-title">
+              {t(locale, 'home.experience', 'Experience')}
+            </h2>
+          </div>
+          <div class="timeline-wrap">
+            <!-- Line drawn by Motion inView animation; transform-origin:top set in CSS -->
+            <div class="tl-line" id="tl-line" aria-hidden="true"></div>
+            <ol
+              class="exp-list"
+              aria-label={t(
+                locale,
+                'home.history',
+                'Work history, newest first',
+              )}
+            >
+              {
+                experience.map((job, idx) => (
+                  <li
+                    class={`exp-entry${idx === 0 ? ' current' : ''} mo-reveal`}
+                  >
+                    <div class="dot-col" aria-hidden="true">
+                      <div class="exp-dot" />
+                    </div>
+                    <div class="exp-body">
+                      <div class="exp-head">
+                        <div>
+                          <p class="exp-company">{job.company}</p>
+                          {job.title && (
+                            <h3 class="exp-title-h3">
+                              {t(
+                                locale,
+                                `experience.${job.id}.title`,
+                                job.title,
+                              )}
+                            </h3>
+                          )}
+                          {!job.title && job.roles && (
+                            <h3 class="exp-title-h3">
+                              {job.roles
+                                .map((role) =>
+                                  t(
+                                    locale,
+                                    `experience.${job.id}.${role.promotion ? 'senior' : 'developer'}`,
+                                    role.title,
+                                  ),
+                                )
+                                .join(' → ')}
+                            </h3>
+                          )}
+                        </div>
+                        <time class="exp-date" datetime={toISO(job.start)}>
+                          {job.start} — {job.end}
+                          {job.mode && ` · ${job.mode}`}
+                          {job.location && ` · ${job.location}`}
+                          {job.duration && ` · ${job.duration}`}
+                        </time>
+                      </div>
+                      {job.bullets && (
+                        <ul class="exp-bullets">
+                          {job.bullets.map((bullet, index) => (
+                            <li>
+                              {t(
+                                locale,
+                                `experience.${job.id}.b${index + 1}`,
+                                bullet,
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      {job.roles && (
+                        <div class="sub-roles">
+                          {job.roles.map((role) => (
+                            <div>
+                              <span class="sub-role-meta">
+                                {role.start} — {role.end}
+                              </span>
+                              <h4 class="sub-role-h4">
+                                {t(
+                                  locale,
+                                  `experience.${job.id}.${role.promotion ? 'senior' : 'developer'}`,
+                                  role.title,
+                                )}
+                                {role.promotion && (
+                                  <span class="promo-badge">
+                                    {t(locale, 'home.promoted', 'Promoted')}
+                                  </span>
+                                )}
+                              </h4>
+                              <ul class="exp-bullets">
+                                {role.bullets.map((bullet, index) => (
+                                  <li>
+                                    {t(
+                                      locale,
+                                      `experience.${job.id}.${role.promotion ? 'senior' : 'developer'}.b${index + 1}`,
+                                      bullet,
+                                    )}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                ))
+              }
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── TOOLS GRID ───────────────────────────────────── -->
+      <!-- ── TOOLS MARQUEE ─────────────────────────────── -->
+      <section
+        id="tools"
+        class="section section-alt cv-auto"
+        aria-labelledby="tools-title"
+      >
+        <div class="wrap">
+          <div class="section-head reveal">
+            <span class="s-eyebrow">06 — Stack</span>
+            <h2 id="tools-title" class="s-title">
+              {t(locale, 'page.tools.title', 'Tools & technologies')}
+            </h2>
+            <p class="s-lead">
+              The stack I use to ship fast, accessible, scalable products.
+            </p>
+          </div>
+        </div>
+
+        <!--
+          Two marquee rows:
+            Row 1 (LTR direction) — chips duplicated inside the SAME track so
+            translateX(-50%) = exactly one full set width → seamless loop.
+            Row 2 (RTL direction, reversed order) — entirely aria-hidden.
+          Pure CSS @keyframes — no JS, GPU-composited transform only.
+        -->
+        <div class="tm-wrap mo-reveal" aria-label="Technology stack">
+          <!-- Row 1: scrolls left (←) -->
+          <ul class="tm-track tm-ltr" role="list">
+            {/* Semantic set — crawlers see these */}
+            {
+              tools.map((tool) => (
+                <li class="tm-item">
+                  <div class="tm-chip">
+                    <span class="tm-cat">
+                      {toolCategories[tool.name] ?? 'TOOL'}
+                    </span>
+                    <img
+                      src={tool.icon}
+                      alt={tool.name}
+                      width="36"
+                      height="36"
+                      loading="lazy"
+                      decoding="async"
+                      class:list={[{ 'tm-invert': tool.invertOnDark }]}
+                    />
+                    <span class="tm-name">{tool.name}</span>
+                  </div>
+                </li>
+              ))
+            }
+            {/* Visual duplicate — makes the loop seamless */}
+            {
+              tools.map((tool) => (
+                <li class="tm-item" aria-hidden="true">
+                  <div class="tm-chip">
+                    <span class="tm-cat">
+                      {toolCategories[tool.name] ?? 'TOOL'}
+                    </span>
+                    <img
+                      src={tool.icon}
+                      alt=""
+                      width="36"
+                      height="36"
+                      loading="lazy"
+                      decoding="async"
+                      class:list={[{ 'tm-invert': tool.invertOnDark }]}
+                    />
+                    <span class="tm-name">{tool.name}</span>
+                  </div>
+                </li>
+              ))
+            }
+          </ul>
+
+          <!-- Row 2: scrolls right (→), reversed order, wholly decorative -->
+          <ul class="tm-track tm-rtl" role="list" aria-hidden="true">
+            {
+              [...tools].reverse().map((tool) => (
+                <li class="tm-item">
+                  <div class="tm-chip">
+                    <span class="tm-cat">
+                      {toolCategories[tool.name] ?? 'TOOL'}
+                    </span>
+                    <img
+                      src={tool.icon}
+                      alt=""
+                      width="36"
+                      height="36"
+                      loading="lazy"
+                      decoding="async"
+                      class:list={[{ 'tm-invert': tool.invertOnDark }]}
+                    />
+                    <span class="tm-name">{tool.name}</span>
+                  </div>
+                </li>
+              ))
+            }
+            {
+              [...tools].reverse().map((tool) => (
+                <li class="tm-item">
+                  <div class="tm-chip">
+                    <span class="tm-cat">
+                      {toolCategories[tool.name] ?? 'TOOL'}
+                    </span>
+                    <img
+                      src={tool.icon}
+                      alt=""
+                      width="36"
+                      height="36"
+                      loading="lazy"
+                      decoding="async"
+                      class:list={[{ 'tm-invert': tool.invertOnDark }]}
+                    />
+                    <span class="tm-name">{tool.name}</span>
+                  </div>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </section>
+
+      <!-- ── SELECTED WORK ──────────────────────────────── -->
+      <section
+        id="work"
+        class="section cv-auto section-glow section-glow-tr"
+        aria-labelledby="work-title"
+      >
+        <div class="wrap">
+          <div class="section-head reveal">
+            <span class="s-eyebrow">07 — Work</span>
+            <h2 id="work-title" class="s-title">
+              {t(locale, 'home.workTitle', 'Selected internal work')}
+            </h2>
+            <p class="s-lead">
+              {
+                t(
+                  locale,
+                  'home.workLead',
+                  'A snapshot of internal product work focused on performance, accessibility, and scalable UI systems.',
+                )
+              }
+            </p>
+            <p
+              style="font-family:var(--mono);font-size:11.5px;color:var(--text-3);margin-top:8px;letter-spacing:.04em"
+            >
+              {
+                t(
+                  locale,
+                  'home.workNote',
+                  'Internal work — described without client names, screenshots, or confidential detail.',
+                )
+              }
+            </p>
+          </div>
+          <div class="work-grid">
+            {
+              work.map((item) => (
+                <article class={`work-card mo-reveal`}>
+                  <h3>{item.title}</h3>
+                  <p>{item.summary}</p>
+                  <ul class="tags" aria-label="Focus areas">
+                    {item.tags.map((tag) => (
+                      <li class="tag">{tag}</li>
+                    ))}
+                  </ul>
+                </article>
+              ))
+            }
+          </div>
+          <p style="margin-top:28px" class="reveal">
+            <a href="/work/" class="btn btn-outline"
+              >{t(locale, 'home.workCta', 'See all internal work')}</a
+            >
+          </p>
+        </div>
+      </section>
+
+      <!-- ── RECOMMENDATIONS ───────────────────────────── -->
+      <!-- featured[] filtered from typed recommendations.ts — 3 curated entries -->
+      <section
+        id="recommendations"
+        class="section section-alt cv-auto"
+        aria-labelledby="recs-title"
+      >
+        <div class="wrap">
+          <div class="section-head reveal">
+            <span class="s-eyebrow">08 — Recommendations</span>
+            <h2 id="recs-title" class="s-title">
+              {t(locale, 'home.recommendations', 'Recommendations')}
+            </h2>
+            <p class="s-lead">
+              {
+                t(
+                  locale,
+                  'home.recommendationsLead',
+                  'What cross-functional partners say about working together.',
+                )
+              }
+            </p>
+          </div>
+          <div class="recs-grid">
+            {
+              featured.map((item) => (
+                <figure class="rec-card mo-reveal">
+                  <div class="rec-quote-mark" aria-hidden="true">
+                    "
+                  </div>
+                  <blockquote>"{item.quote}"</blockquote>
+                  <figcaption class="rec-author">
+                    <img
+                      src={item.avatar}
+                      alt=""
+                      width="44"
+                      height="44"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <div>
+                      <span class="rec-name">{item.name}</span>
+                      <span class="rec-role">{item.role}</span>
+                    </div>
+                  </figcaption>
+                </figure>
+              ))
+            }
+          </div>
+          <p style="margin-top:28px" class="reveal">
+            <a href="/recommendations/" class="btn btn-ghost"
+              >{
+                t(
+                  locale,
+                  'home.recommendationsCta',
+                  'View all six recommendations',
+                )
+              } →</a
+            >
+          </p>
+        </div>
+      </section>
+
+      <!-- ── FAQ ───────────────────────────────────────── -->
+      <!--
+        Native <details>/<summary> handles open/close with zero JS.
+        faq.answer drives both the visible text and the FAQPage JSON-LD in the
+        page <head> — single source of truth, they cannot drift.
+      -->
+      <section
+        id="faq"
+        class="section cv-auto section-glow section-glow-bl"
+        aria-labelledby="faq-title"
+      >
+        <div class="wrap">
+          <div class="faq-2col">
+            <div class="reveal">
+              <span class="s-eyebrow">09 — FAQ</span>
+              <h2 id="faq-title" class="s-title">
+                {t(locale, 'page.faq.title', 'Frequently asked questions')}
+              </h2>
+              <p class="s-lead" style="margin-bottom:28px">
+                {
+                  t(
+                    locale,
+                    'home.faqLead',
+                    'Quick answers about services, pricing, and how we can collaborate.',
+                  )
+                }
+              </p>
+              <a href="#contact" class="btn btn-primary"
+                >{t(locale, 'action.start', 'Start a project')}</a
+              >
+            </div>
+            <div class="reveal d1">
+              <ul class="faq-list" role="list">
+                {
+                  faqs.map((faq) => (
+                    <li>
+                      <details>
+                        <summary>
+                          {t(locale, `faq.${faq.id}.q`, faq.question)}
+                          <span class="faq-icon" aria-hidden="true">
+                            +
+                          </span>
+                        </summary>
+                        <div class="faq-body">
+                          {t(locale, `faq.${faq.id}.a`, faq.answer)}
+                        </div>
+                      </details>
+                    </li>
+                  ))
+                }
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- \u2500\u2500 CTA BAND \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 -->
+      <section aria-labelledby="cta-title" class="cta-band">
+        <div class="cta-glow-l" aria-hidden="true"></div>
+        <div class="cta-glow-r" aria-hidden="true"></div>
+        <div class="wrap cta-inner">
+          <div class="reveal">
+            <p class="cta-tag">
+              {t(locale, 'home.ctaTag', 'Ready to collaborate')}
+            </p>
+            <h2 id="cta-title" class="cta-title">
+              {
+                t(
+                  locale,
+                  'home.ctaTitle',
+                  "Let's build something fast and accessible",
+                )
+              }
+            </h2>
+            <p class="cta-sub">
+              {
+                t(
+                  locale,
+                  'home.ctaLead',
+                  "Share a brief and I'll respond with a clear plan, timeline, and next steps.",
+                )
+              }
+            </p>
+          </div>
+          <div class="cta-btns reveal d1">
+            <a href="#contact" class="btn btn-primary"
+              >{t(locale, 'action.start', 'Start a project')}</a
+            >
+            <a href="/blog/" class="btn btn-outline"
+              >{t(locale, 'nav.blog', 'Read the blog')}</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- \u2500\u2500 CONTACT \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 -->
+      <section
+        id="contact"
+        class="section cv-auto section-glow section-glow-tl"
+        aria-labelledby="contact-title"
+      >
+        <div class="wrap">
+          <div class="section-head reveal">
+            <span class="s-eyebrow">10 \u2014 Contact</span>
+            <h2 id="contact-title" class="s-title">
+              {t(locale, 'page.contact.eyebrow', 'Contact')}
+            </h2>
+            <p class="s-lead">
+              Interested in collaborating? Let's build something polished
+              together.
+            </p>
+          </div>
+          <div class="contact-2col">
+            <div class="reveal">
+              <nav aria-label="Contact options">
+                <ul class="contact-links-list">
+                  <li>
+                    <a href={`mailto:${profile.email}`} class="c-link">
+                      <span class="c-icon" aria-hidden="true">
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          ><rect x="2" y="4" width="20" height="16" rx="2"
+                          ></rect><path d="M22 4l-10 8L2 4"></path></svg
+                        >
+                      </span>
+                      <div class="c-text">
+                        <strong>Email</strong><span>{profile.email}</span>
+                      </div>
+                    </a>
+                  </li>
+                  {
+                    profile.social
+                      .filter((s) => s.label === 'LinkedIn')
+                      .map((s) => (
+                        <li>
+                          <a
+                            href={s.href}
+                            class="c-link"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <span class="c-icon" aria-hidden="true">
+                              <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                              >
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                              </svg>
+                            </span>
+                            <div class="c-text">
+                              <>
+                                <strong>LinkedIn</strong>
+                                <span>{s.href.replace('https://', '')}</span>
+                              </>
+                            </div>
+                          </a>
+                        </li>
+                      ))
+                  }
+                  {
+                    profile.social
+                      .filter((s) => s.label === 'GitHub')
+                      .map((s) => (
+                        <li>
+                          <a
+                            href={s.href}
+                            class="c-link"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <span class="c-icon" aria-hidden="true">
+                              <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                              >
+                                <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
+                              </svg>
+                            </span>
+                            <div class="c-text">
+                              <>
+                                <strong>GitHub</strong>
+                                <span>{s.href.replace('https://', '')}</span>
+                              </>
+                            </div>
+                          </a>
+                        </li>
+                      ))
+                  }
+                </ul>
+              </nav>
+            </div>
+
+            <!-- Web3Forms \u2014 access key injected at build time from PUBLIC_WEB3FORMS_KEY env var -->
+            <form
+              class="contact-form-box reveal d1"
+              id="cform"
+              action="https://api.web3forms.com/submit"
+              method="POST"
+              aria-label={t(locale, 'home.contactForm', 'Contact form')}
+              data-error-name={t(locale, 'form.errorName', 'Enter your name.')}
+              data-error-email={t(
+                locale,
+                'form.errorEmail',
+                'Enter a valid email address.',
+              )}
+              data-error-message={t(
+                locale,
+                'form.errorMessage',
+                'Tell me about the project.',
+              )}
+              data-unconfigured={t(
+                locale,
+                'form.unconfigured',
+                'The contact form is not configured yet. Please email directly.',
+              )}
+              data-send={t(locale, 'form.send', 'Send message')}
+              data-sending={t(locale, 'form.sending', 'Sending...')}
+              data-success={t(
+                locale,
+                'form.success',
+                'Message sent! I will reply within one business day.',
+              )}
+              data-failure={t(
+                locale,
+                'form.failure',
+                'Something went wrong. Please email directly.',
+              )}
+              data-network-error={t(
+                locale,
+                'form.networkError',
+                'Network error. Please email directly.',
+              )}
+            >
+              <input
+                type="hidden"
+                name="access_key"
+                value={import.meta.env.PUBLIC_WEB3FORMS_KEY ?? ''}
+              />
+              <input
+                type="hidden"
+                name="subject"
+                value={`New portfolio enquiry \u2014 ${SITE_URL}`}
+              />
+              <input
+                type="hidden"
+                name="from_name"
+                value="Suprabhat Kumar Portfolio"
+              />
+              <input
+                type="hidden"
+                name="redirect"
+                value={`${SITE_URL}/#contact`}
+              />
+              <!-- honeypot field \u2014 visually hidden, bots fill it, humans don't -->
+              <div
+                style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)"
+                aria-hidden="true"
+              >
+                <input
+                  id="hp"
+                  name="botcheck"
+                  type="checkbox"
+                  tabindex="-1"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="f-field">
+                <label class="f-label" for="fn"
+                  >{t(locale, 'form.name', 'Name')}
+                  <span style="color:var(--accent)" aria-hidden="true">*</span
+                  ></label
+                >
+                <input
+                  class="f-input"
+                  id="fn"
+                  name="name"
+                  type="text"
+                  autocomplete="name"
+                  required
+                  aria-required="true"
+                  placeholder={t(locale, 'form.name', 'Your full name')}
+                />
+                <span class="f-error" id="fn-e" role="alert"></span>
+              </div>
+              <div class="f-field">
+                <label class="f-label" for="fe"
+                  >{t(locale, 'form.email', 'Email')}
+                  <span style="color:var(--accent)" aria-hidden="true">*</span
+                  ></label
+                >
+                <input
+                  class="f-input"
+                  id="fe"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  required
+                  aria-required="true"
+                  placeholder="you@company.com"
+                  dir="ltr"
+                />
+                <span class="f-error" id="fe-e" role="alert"></span>
+              </div>
+              <div class="f-field">
+                <label class="f-label" for="fm"
+                  >{t(locale, 'home.message', 'Message')}
+                  <span style="color:var(--accent)" aria-hidden="true">*</span
+                  ></label
+                >
+                <textarea
+                  class="f-input"
+                  id="fm"
+                  name="message"
+                  rows="5"
+                  required
+                  aria-required="true"
+                  placeholder="Describe your project or question\u2026"
+                ></textarea>
+                <span class="f-error" id="fm-e" role="alert"></span>
+              </div>
+              <div
+                style="display:flex;align-items:center;gap:18px;flex-wrap:wrap"
+              >
+                <button type="submit" class="btn btn-primary"
+                  >{t(locale, 'form.send', 'Send message')}</button
+                >
+                <output id="fstatus" aria-live="polite" class="f-status"
+                ></output>
+              </div>
+              <p style="font-size:13px;color:var(--text-3)">
+                {t(locale, 'home.preferEmail', 'Prefer email?')}&nbsp;<a
+                  href={`mailto:${profile.email}`}
+                  style="color:var(--accent)">{profile.email}</a
+                >
+              </p>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- \u2500\u2500 FOOTER \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 -->
+    <footer class="site-footer" role="contentinfo">
+      <div class="wrap footer-inner">
+        <div>
+          <p class="footer-brand-name">{profile.name}</p>
+          <!-- #yr filled by client script \u2014 prevents a stale year in static output -->
+          <p class="footer-copy">
+            &copy; {new Date().getFullYear()}
+            {profile.name}.<br />{
+              t(locale, 'home.copyright', 'All rights reserved.')
+            }
+          </p>
+        </div>
+        <nav class="foot-nav" aria-label="Site links">
+          <h3>{t(locale, 'footer.navigate', 'Navigate')}</h3>
+          <a href="#about">{t(locale, 'nav.about', 'About')}</a>
+          <a href="#expertise">{t(locale, 'home.expertise', 'Expertise')}</a>
+          <a href="#experience">{t(locale, 'nav.experience', 'Experience')}</a>
+          <a href="#work">{t(locale, 'nav.work', 'Work')}</a>
+        </nav>
+        <nav class="foot-nav" aria-label="Resources">
+          <h3>{t(locale, 'footer.more', 'More')}</h3>
+          <a href="#tools">Stack</a>
+          <a href="#recommendations"
+            >{t(locale, 'nav.recommendations', 'Recommendations')}</a
+          >
+          <a href="#faq">FAQ</a>
+          <a href="/blog/">Blog</a>
+        </nav>
+        <nav class="foot-nav" aria-label="Legal">
+          <h3>{t(locale, 'footer.legal', 'Legal')}</h3>
+          <a href="/accessibility/"
+            >{t(locale, 'nav.accessibility', 'Accessibility')}</a
+          >
+          <a href="/privacy/">{t(locale, 'nav.privacy', 'Privacy')}</a>
+          <a href="#contact">{t(locale, 'nav.contact', 'Contact')}</a>
+          <a href="/rss.xml">RSS</a>
+        </nav>
+        <div>
+          <h3
+            style="font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);margin-bottom:12px"
+          >
+            {t(locale, 'home.appearance', 'Appearance')}
+          </h3>
+          <div
+            class="ft-theme-selector"
+            aria-label={t(locale, 'theme', 'Color theme')}
+          >
+            <button
+              type="button"
+              class="ft-theme-btn"
+              data-ft="dark"
+              aria-label={t(locale, 'home.dark', 'Dark theme')}
+              aria-pressed="true">{t(locale, 'home.dark', 'Dark')}</button
+            >
+            <button
+              type="button"
+              class="ft-theme-btn"
+              data-ft="light"
+              aria-label={t(locale, 'home.light', 'Light theme')}
+              aria-pressed="false">{t(locale, 'home.light', 'Light')}</button
+            >
+            <button
+              type="button"
+              class="ft-theme-btn"
+              data-ft="system"
+              aria-label={t(locale, 'home.auto', 'Auto')}
+              aria-pressed="false">{t(locale, 'home.auto', 'Auto')}</button
+            >
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Back-to-top; hidden attr toggled by scroll JS below -->
+    <button type="button" class="btt" id="btt" aria-label="Back to top" hidden>
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M18 15l-6-6-6 6"></path>
+      </svg>
+    </button>
+
+    <!-- Step 7: back-to-top button and bundled client scripts -->
+
+    <!--
+      Motion One animations for step 5 sections.
+      Uses the Web Animations API (WAAPI) \u2014 GPU-composited, no layout thrash.
+      Bundled and tree-shaken by Vite; ~13 KB added to the page.
+      prefers-reduced-motion handled in CSS (.mo-reveal override) AND by Motion itself.
+    -->
+    <script>
+      import { animate, inView, stagger } from 'motion';
+
+      // astro:before-swap resets inline opacity so animations replay on back-navigation
+      document.addEventListener('astro:before-swap', () => {
+        document.querySelectorAll('.mo-reveal').forEach((el) => {
+          (el as HTMLElement).style.removeProperty('opacity');
+          (el as HTMLElement).style.removeProperty('transform');
+        });
+      });
+
+      function initMotionAnimations() {
+        // ── Expertise cards — spring stagger on grid entry ──────────────────
+        const stopExp = inView(
+          '.expertise-grid',
+          () => {
+            animate(
+              '.expertise-card.mo-reveal',
+              { opacity: [0, 1], y: [44, 0], scale: [0.95, 1] },
+              {
+                delay: stagger(0.13),
+                duration: 0.65,
+                ease: [0.22, 0.68, 0, 1.1],
+              },
+            );
+            stopExp();
+          },
+          { margin: '0px 0px -80px 0px' },
+        );
+
+        // ── Skill columns — slide from left with stagger ────────────────────
+        const stopSkills = inView(
+          '.skills-table',
+          () => {
+            animate(
+              '.skill-col.mo-reveal',
+              { opacity: [0, 1], x: [-28, 0] },
+              {
+                delay: stagger(0.09),
+                duration: 0.52,
+                ease: [0.22, 0.68, 0, 1.1],
+              },
+            );
+            stopSkills();
+          },
+          { margin: '0px 0px -60px 0px' },
+        );
+
+        // ── Experience — line draws top-to-bottom, entries cascade behind it ─
+        const stopTimeline = inView(
+          '#tl-line',
+          (el) => {
+            animate(
+              el,
+              { scaleY: [0, 1] },
+              { duration: 1.3, ease: [0.4, 0, 0.2, 1] },
+            );
+            animate(
+              '.exp-entry.mo-reveal',
+              { opacity: [0, 1], y: [22, 0] },
+              {
+                delay: stagger(0.16, { startDelay: 0.35 }),
+                duration: 0.55,
+                ease: [0.22, 0.68, 0, 1.1],
+              },
+            );
+            stopTimeline();
+          },
+          { margin: '0px 0px -80px 0px' },
+        );
+
+        // ── Tools marquee — fade the wrapper in as one unit; CSS handles the scroll
+        const stopTools = inView(
+          '.tm-wrap.mo-reveal',
+          () => {
+            animate(
+              '.tm-wrap.mo-reveal',
+              { opacity: [0, 1], y: [20, 0] },
+              { duration: 0.7, ease: [0.22, 0.68, 0, 1.1] },
+            );
+            stopTools();
+          },
+          { margin: '0px 0px -60px 0px' },
+        );
+
+        // ── Work cards — scale + lift stagger ─────────────────────────────────
+        const stopWork = inView(
+          '.work-grid',
+          () => {
+            animate(
+              '.work-card.mo-reveal',
+              { opacity: [0, 1], y: [38, 0], scale: [0.96, 1] },
+              {
+                delay: stagger(0.12),
+                duration: 0.62,
+                ease: [0.22, 0.68, 0, 1.1],
+              },
+            );
+            stopWork();
+          },
+          { margin: '0px 0px -80px 0px' },
+        );
+
+        // ── Rec cards — slide from the right to reinforce reading direction ────
+        const stopRecs = inView(
+          '.recs-grid',
+          () => {
+            animate(
+              '.rec-card.mo-reveal',
+              { opacity: [0, 1], x: [32, 0] },
+              {
+                delay: stagger(0.11),
+                duration: 0.58,
+                ease: [0.22, 0.68, 0, 1.1],
+              },
+            );
+            stopRecs();
+          },
+          { margin: '0px 0px -80px 0px' },
+        );
+      } // end initMotionAnimations
+
+      // Call immediately for the initial load, then re-call after every View Transition
+      initMotionAnimations();
+      document.addEventListener('astro:page-load', initMotionAnimations);
+    </script>
+
+    <!--
+      Global client behaviours — IIFE, zero global-scope pollution.
+      Astro defers all <script> modules automatically.
+      Covers: year, dropdowns, theme, language routing, mobile menu,
+              IO scroll-reveal, active nav, back-to-top, scroll progress,
+              hero glow + portrait parallax, heading reveal,
+              stats counter, 3-D card tilt (desktop), contact form.
+    -->
+    <script is:inline>
+      (function () {
+        'use strict';
+
+        // ── Year ─────────────────────────────────────────────────────────────
+        const yr = document.getElementById('yr');
+        if (yr) yr.textContent = String(new Date().getFullYear());
+
+        // ── Dropdowns ────────────────────────────────────────────────────────
+        function closeAllDropdowns() {
+          document.querySelectorAll('.hdr-dropdown').forEach(function (d) {
+            d.classList.remove('open');
+            const b = d.querySelector('.hdr-dropdown-btn');
+            if (b) b.setAttribute('aria-expanded', 'false');
+          });
+        }
+        document.querySelectorAll('.hdr-dropdown-btn').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const dd = btn.closest('.hdr-dropdown');
+            const wasOpen = dd.classList.contains('open');
+            closeAllDropdowns();
+            if (!wasOpen) {
+              dd.classList.add('open');
+              btn.setAttribute('aria-expanded', 'true');
+            }
+          });
+        });
+        document.addEventListener('click', function (e) {
+          if (!e.target.closest('.hdr-dropdown')) closeAllDropdowns();
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') closeAllDropdowns();
+        });
+
+        // ── Theme ─────────────────────────────────────────────────────────────
+        const root = document.documentElement;
+        let saved;
+        try {
+          saved = localStorage.getItem('sk-theme');
+        } catch {
+          // Storage access is optional.
+        }
+        function resolveTheme(t) {
+          return t === 'system'
+            ? matchMedia('(prefers-color-scheme:light)').matches
+              ? 'light'
+              : 'dark'
+            : t;
+        }
+        function applyTheme(t) {
+          root.setAttribute('data-theme', resolveTheme(t));
+          try {
+            localStorage.setItem('sk-theme', t);
+          } catch {
+            // Storage access is optional.
+          }
+          document.querySelectorAll('.ft-theme-btn').forEach(function (b) {
+            const sel = b.dataset.ft === t;
+            b.setAttribute('aria-pressed', String(sel));
+          });
+          closeAllDropdowns();
+        }
+        applyTheme(saved || 'dark');
+        document.querySelectorAll('.ft-theme-btn').forEach(function (b) {
+          b.addEventListener('click', function () {
+            applyTheme(b.dataset.ft);
+          });
+        });
+        try {
+          matchMedia('(prefers-color-scheme:light)').addEventListener(
+            'change',
+            function () {
+              if ((localStorage.getItem('sk-theme') || 'dark') === 'system')
+                applyTheme('system');
+            },
+          );
+        } catch {
+          // System-theme updates are optional.
+        }
+
+        // ── Mobile menu ───────────────────────────────────────────────────────
+        const mBtn = document.getElementById('mob-btn');
+        const mMenu = document.getElementById('mob-menu');
+        const mClose = document.getElementById('mob-close');
+        function openMob() {
+          mMenu.classList.add('open');
+          mBtn.setAttribute('aria-expanded', 'true');
+          document.body.style.overflow = 'hidden';
+          mClose.focus();
+        }
+        function closeMob() {
+          mMenu.classList.remove('open');
+          mBtn.setAttribute('aria-expanded', 'false');
+          document.body.style.overflow = '';
+          mBtn.focus();
+        }
+        mBtn.addEventListener('click', function () {
+          if (mMenu.classList.contains('open')) closeMob();
+          else openMob();
+        });
+        mClose.addEventListener('click', closeMob);
+        mMenu.querySelectorAll('a').forEach(function (a) {
+          a.addEventListener('click', closeMob);
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && mMenu.classList.contains('open'))
+            closeMob();
+          if (e.key !== 'Tab' || !mMenu.classList.contains('open')) return;
+          const focusable = Array.from(
+            mMenu.querySelectorAll('a[href], button:not([disabled])'),
+          );
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+          if (!first || !last) return;
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        });
+
+        // ── IO scroll-reveal (.reveal; .mo-reveal handled by Motion) ──────────
+        if ('IntersectionObserver' in window) {
+          const io = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (en) {
+                if (en.isIntersecting) {
+                  en.target.classList.add('visible');
+                  io.unobserve(en.target);
+                }
+              });
+            },
+            { rootMargin: '0px 0px -60px 0px', threshold: 0.08 },
+          );
+          document
+            .querySelectorAll(
+              '.reveal,.reveal-fade,.reveal-right,.reveal-scale',
+            )
+            .forEach(function (el) {
+              io.observe(el);
+            });
+        } else {
+          document
+            .querySelectorAll(
+              '.reveal,.reveal-fade,.reveal-right,.reveal-scale',
+            )
+            .forEach(function (el) {
+              el.classList.add('visible');
+            });
+        }
+
+        // ── Active nav tracking ───────────────────────────────────────────────
+        const navLinks = document.querySelectorAll('.site-nav a');
+        if ('IntersectionObserver' in window) {
+          const nio = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (en) {
+                if (en.isIntersecting) {
+                  navLinks.forEach(function (a) {
+                    a.classList.remove('active');
+                  });
+                  const a = document.querySelector(
+                    '.site-nav a[href="#' + en.target.id + '"]',
+                  );
+                  if (a) a.classList.add('active');
+                }
+              });
+            },
+            { rootMargin: '-30% 0px -60% 0px' },
+          );
+          document.querySelectorAll('section[id]').forEach(function (s) {
+            nio.observe(s);
+          });
+        }
+
+        // ── Back to top ───────────────────────────────────────────────────────
+        const btt = document.getElementById('btt');
+        window.addEventListener(
+          'scroll',
+          function () {
+            btt.hidden = window.scrollY < 500;
+          },
+          { passive: true },
+        );
+        btt.addEventListener('click', function () {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ── Scroll progress bar ───────────────────────────────────────────────
+        const sbar = document.getElementById('scroll-bar');
+        if (sbar) {
+          window.addEventListener(
+            'scroll',
+            function () {
+              const p =
+                window.scrollY /
+                (document.documentElement.scrollHeight - window.innerHeight);
+              sbar.style.transform = 'scaleX(' + Math.min(p, 1) + ')';
+            },
+            { passive: true },
+          );
+        }
+
+        // ── Hero glow parallax (desktop pointer only) ─────────────────────────
+        const hGlowR = document.querySelector('.hero-glow-r');
+        const heroEl = document.querySelector('.hero');
+        if (
+          hGlowR &&
+          heroEl &&
+          matchMedia('(hover:hover) and (min-width:960px)').matches
+        ) {
+          heroEl.addEventListener(
+            'mousemove',
+            function (e) {
+              const r = heroEl.getBoundingClientRect();
+              hGlowR.style.transform =
+                'translate(' +
+                ((e.clientX - r.left) / r.width - 0.5) * 30 +
+                'px,' +
+                ((e.clientY - r.top) / r.height - 0.5) * 20 +
+                'px)';
+            },
+            { passive: true },
+          );
+        }
+
+        // ── Portrait scroll parallax (desktop only) ───────────────────────────
+        const portrait = document.querySelector('.hero-portrait-wrap');
+        if (
+          portrait &&
+          matchMedia('(hover:hover) and (min-width:960px)').matches
+        ) {
+          window.addEventListener(
+            'scroll',
+            function () {
+              const r = portrait.getBoundingClientRect();
+              if (r.bottom < 0 || r.top > window.innerHeight) return;
+              const img = portrait.querySelector('img');
+              if (img)
+                img.style.transform =
+                  'translateY(' +
+                  (r.top + r.height / 2 - window.innerHeight / 2) * 0.12 +
+                  'px) scale(1.06)';
+            },
+            { passive: true },
+          );
+        }
+
+        // ── Cryptographic heading scramble ───────────────────────────────────
+        // TreeWalker walks TEXT NODES only — spans/structure preserved throughout.
+        // aria-label set once so screen readers always announce the real text.
+        const SCRAMBLE =
+          'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&*!?@=+-<>[]{}|~';
+        function scrambleReveal(el) {
+          const nodes = [];
+          const walker = document.createTreeWalker(
+            el,
+            NodeFilter.SHOW_TEXT,
+            null,
+          );
+          let n;
+          while ((n = walker.nextNode()))
+            nodes.push({ node: n, orig: n.textContent });
+          const total = nodes.reduce(function (s, o) {
+            return s + o.orig.length;
+          }, 0);
+          if (!el.hasAttribute('aria-label')) {
+            el.setAttribute(
+              'aria-label',
+              nodes
+                .map(function (o) {
+                  return o.orig;
+                })
+                .join(''),
+            );
+          }
+          el.style.transition = 'none';
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+          let t0 = null;
+          const dur = 900;
+          function frame(ts) {
+            if (!t0) t0 = ts;
+            const p = Math.min((ts - t0) / dur, 1);
+            const reveal = Math.round(Math.pow(p, 0.62) * total);
+            let pos = 0;
+            nodes.forEach(function (o) {
+              let out = '';
+              for (let i = 0; i < o.orig.length; i++) {
+                const c = o.orig[i];
+                if (pos < reveal || c === ' ' || c === '\n') {
+                  out += c;
+                } else {
+                  out += SCRAMBLE[Math.floor(Math.random() * SCRAMBLE.length)];
+                }
+                pos++;
+              }
+              o.node.textContent = out;
+            });
+            if (p < 1) {
+              requestAnimationFrame(frame);
+            } else {
+              nodes.forEach(function (o) {
+                o.node.textContent = o.orig;
+              });
+            }
+          }
+          requestAnimationFrame(frame);
+        }
+
+        document
+          .querySelectorAll('.s-title,.hero-name,.cta-title')
+          .forEach(function (el) {
+            el.classList.add('h-reveal');
+            if ('IntersectionObserver' in window) {
+              new IntersectionObserver(
+                function (entries, obs) {
+                  if (entries[0].isIntersecting) {
+                    obs.disconnect();
+                    scrambleReveal(el);
+                  }
+                },
+                { threshold: 0.2 },
+              ).observe(el);
+            } else {
+              el.style.opacity = '1';
+              el.style.transform = 'none';
+            }
+          });
+
+        // ── Stats counter ─────────────────────────────────────────────────────
+        document.querySelectorAll('.stat-num').forEach(function (el) {
+          const text = el.textContent.trim();
+          const num = parseFloat(text);
+          if (isNaN(num)) return;
+          const suffix = text.replace(String(num), '');
+          el.textContent = '0' + suffix;
+          new IntersectionObserver(
+            function (entries, obs) {
+              if (!entries[0].isIntersecting) return;
+              obs.disconnect();
+              let t0 = null;
+              function step(ts) {
+                if (!t0) t0 = ts;
+                const p = Math.min((ts - t0) / 1200, 1);
+                el.textContent =
+                  Math.round((1 - Math.pow(1 - p, 3)) * num) + suffix;
+                if (p < 1) requestAnimationFrame(step);
+              }
+              requestAnimationFrame(step);
+            },
+            { threshold: 0.5 },
+          ).observe(el);
+        });
+
+        // ── 3-D card tilt (GPU transform only, desktop hover) ─────────────────
+        if (matchMedia('(hover:hover) and (min-width:900px)').matches) {
+          document
+            .querySelectorAll(
+              '.article-card,.work-card,.rec-card,.expertise-card',
+            )
+            .forEach(function (card) {
+              card.classList.add('tilt-card');
+              card.addEventListener(
+                'mousemove',
+                function (e) {
+                  const r = card.getBoundingClientRect();
+                  const x = ((e.clientX - r.left) / r.width - 0.5) * 14;
+                  const y = ((e.clientY - r.top) / r.height - 0.5) * -14;
+                  card.style.transform =
+                    'perspective(700px) rotateX(' +
+                    y +
+                    'deg) rotateY(' +
+                    x +
+                    'deg) scale(1.025)';
+                },
+                { passive: true },
+              );
+              card.addEventListener('mouseleave', function () {
+                card.style.transform =
+                  'perspective(700px) rotateX(0deg) rotateY(0deg) scale(1)';
+              });
+            });
+        }
+
+        // ── Contact form: validation + Web3Forms fetch ─────────────────────────
+        const cform = document.getElementById('cform');
+        if (cform) {
+          cform.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const fn = document.getElementById('fn'),
+              fe = document.getElementById('fe'),
+              fm = document.getElementById('fm');
+            const fne = document.getElementById('fn-e'),
+              fee = document.getElementById('fe-e'),
+              fme = document.getElementById('fm-e');
+            const fs = document.getElementById('fstatus');
+            fne.textContent = '';
+            fee.textContent = '';
+            fme.textContent = '';
+            [fn, fe, fm].forEach(function (i) {
+              i.removeAttribute('aria-invalid');
+            });
+            let ok = true;
+            if (!fn.value.trim()) {
+              fne.textContent = cform.dataset.errorName;
+              fn.setAttribute('aria-invalid', 'true');
+              ok = false;
+            }
+            if (
+              !fe.value.trim() ||
+              !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fe.value)
+            ) {
+              fee.textContent = cform.dataset.errorEmail;
+              fe.setAttribute('aria-invalid', 'true');
+              ok = false;
+            }
+            if (!fm.value.trim()) {
+              fme.textContent = cform.dataset.errorMessage;
+              fm.setAttribute('aria-invalid', 'true');
+              ok = false;
+            }
+            if (!ok) {
+              (fn.getAttribute('aria-invalid')
+                ? fn
+                : fe.getAttribute('aria-invalid')
+                  ? fe
+                  : fm
+              ).focus();
+              return;
+            }
+            const accessKey = new FormData(cform).get('access_key');
+            if (typeof accessKey !== 'string' || !accessKey.trim()) {
+              fs.textContent = cform.dataset.unconfigured;
+              return;
+            }
+            fs.textContent = cform.dataset.sending;
+            const submit = cform.querySelector('[type="submit"]');
+            if (submit) {
+              submit.disabled = true;
+              submit.textContent = cform.dataset.sending;
+            }
+            fetch('https://api.web3forms.com/submit', {
+              method: 'POST',
+              body: new FormData(cform),
+              headers: { Accept: 'application/json' },
+            })
+              .then(function (r) {
+                if (!r.ok) throw new Error('Web3Forms request failed');
+                return r.json();
+              })
+              .then(function (res) {
+                fs.textContent = res.success
+                  ? cform.dataset.success
+                  : cform.dataset.failure;
+                if (res.success) cform.reset();
+              })
+              .catch(function () {
+                fs.textContent = cform.dataset.networkError;
+              })
+              .finally(function () {
+                if (submit) {
+                  submit.disabled = false;
+                  submit.textContent = cform.dataset.send;
+                }
+              });
+          });
+        }
+      })();
+    </script>
+
+    <script>
+      (function () {
+        const rippleGrid =
+          document.querySelector<HTMLElement>('.hero-ripple-grid');
+        if (
+          !rippleGrid ||
+          matchMedia('(prefers-reduced-motion: reduce)').matches
+        )
+          return;
+
+        rippleGrid.dataset.rippleReady = 'true';
+        let activeCell: HTMLElement | null = null;
+        rippleGrid.addEventListener('pointerover', function (event) {
+          const target = event.target;
+          if (!(target instanceof Element)) return;
+          const selectedCell = target.closest<HTMLElement>('.hero-ripple-cell');
+          if (!selectedCell || selectedCell === activeCell) return;
+
+          activeCell?.classList.remove('is-rippling');
+          selectedCell.classList.remove('is-rippling');
+          selectedCell.getBoundingClientRect();
+          selectedCell.classList.add('is-rippling');
+          activeCell = selectedCell;
+        });
+        rippleGrid.addEventListener('pointerleave', function () {
+          activeCell?.classList.remove('is-rippling');
+          activeCell = null;
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,139 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SEOHead from '../components/SEOHead.astro';
+import { ClientRouter } from 'astro:transitions';
+import { profile } from '../data/profile';
+import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
+import { SITE_NAME, SITE_URL } from '../config/site';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  locale?: Locale;
+  page?: string;
+  noindex?: boolean;
+  hideAlternates?: boolean;
+  ogType?: string;
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+}
+const {
+  title,
+  description,
+  locale = 'en',
+  page = 'home',
+  noindex: requestedNoindex = false,
+  hideAlternates = false,
+  ogType = 'website',
+  schema,
+} = Astro.props;
+const noindex = requestedNoindex || import.meta.env.ROBOTS === 'noindex';
+const meta = localeMeta[locale];
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const pagePath = page === 'home' ? '/' : `/${page}/`;
+const alternateHref = (alternateLocale: Locale) =>
+  new URL(`${localePrefix(alternateLocale)}${pagePath}`, Astro.site).href;
+const pageSchema = {
+  '@type': 'WebPage',
+  '@id': `${canonical.href}#webpage`,
+  url: canonical.href,
+  name: title,
+  description,
+  inLanguage: meta.htmlLang,
+  isPartOf: { '@id': `${SITE_URL}/#website` },
+  about: { '@id': `${SITE_URL}/#person` },
+};
+const suppliedSchemas = schema
+  ? Array.isArray(schema)
+    ? schema
+    : [schema]
+  : [];
+const combinedSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': `${SITE_URL}/#person`,
+      name: SITE_NAME,
+      jobTitle: profile.title,
+      description: profile.lead,
+      url: `${SITE_URL}/`,
+      image: `${SITE_URL}${profile.portrait.src}`,
+      email: profile.email,
+      sameAs: profile.social.map((item) => item.href),
+      address: { '@type': 'Country', name: 'India' },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      url: `${SITE_URL}/`,
+      name: SITE_NAME,
+      inLanguage: 'en',
+      author: { '@id': `${SITE_URL}/#person` },
+    },
+    pageSchema,
+    ...suppliedSchemas.map(({ '@context': _context, ...entry }) => entry),
+  ],
+};
+---
+
+<!doctype html>
+<html lang={meta.htmlLang} dir={meta.dir} data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b0c18" />
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Suprabhat Kumar"
+      href="/rss.xml"
+    />
+    {
+      !noindex &&
+        !hideAlternates &&
+        locales.map((alternateLocale) => (
+          <link
+            rel="alternate"
+            hreflang={localeMeta[alternateLocale].htmlLang}
+            href={alternateHref(alternateLocale)}
+          />
+        ))
+    }
+    {
+      !noindex && !hideAlternates && (
+        <link rel="alternate" hreflang="x-default" href={alternateHref('en')} />
+      )
+    }
+    <script is:inline>
+      try {
+        document.documentElement.dataset.theme =
+          localStorage.getItem('sk-theme') || 'dark';
+      } catch {
+        document.documentElement.dataset.theme = 'dark';
+      }
+    </script>
+    <SEOHead
+      {title}
+      {description}
+      {canonical}
+      locale={meta.htmlLang}
+      {noindex}
+      {ogType}
+      schema={combinedSchema}
+    />
+    <!-- ClientRouter: MPA → SPA navigation, native browser API, 0 KB overhead -->
+    <ClientRouter />
+  </head>
+  <body>
+    <!-- transition:persist keeps the header mounted across navigations (no flash) -->
+    <Header {locale} {page} transition:persist="site-header" />
+    <main id="main-content" transition:name="main" transition:animate="fade">
+      <slot />
+    </main>
+    <Footer {locale} />
+  </body>
+</html>

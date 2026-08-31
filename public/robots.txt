@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://suprabhat-dev.com/sitemap-index.xml
+Host: suprabhat-dev.com

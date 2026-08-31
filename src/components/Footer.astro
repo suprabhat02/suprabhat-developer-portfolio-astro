@@ -1,0 +1,49 @@
+---
+import { footerLegalNav, moreNav, primaryNav } from '../data/navigation';
+import { localePrefix, type Locale } from '../i18n/config';
+import { t } from '../i18n/messages';
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const prefix = localePrefix(locale);
+const href = (path: string) => `${prefix}${path}` || '/';
+---
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div>
+      <a class="footer-name" href={href('/')}>Suprabhat Kumar</a><p>
+        {
+          t(
+            locale,
+            'footer.lead',
+            'Senior Frontend Engineer building fast, accessible product interfaces.',
+          )
+        }
+      </p>
+    </div>
+    <nav aria-label="Site links">
+      <strong>{t(locale, 'footer.navigate', 'Navigate')}</strong>{
+        primaryNav
+          .slice(1)
+          .map((item) => <a href={href(item.href)}>{item.key}</a>)
+      }
+    </nav>
+    <nav aria-label="More links">
+      <strong>{t(locale, 'footer.more', 'More')}</strong>{
+        moreNav.map((item) => <a href={href(item.href)}>{item.key}</a>)
+      }
+    </nav>
+    <nav aria-label="Legal links">
+      <strong>{t(locale, 'footer.legal', 'Legal')}</strong>{
+        footerLegalNav.map((item) => <a href={href(item.href)}>{item.key}</a>)
+      }<a href="/rss.xml">RSS</a>
+    </nav>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© {new Date().getFullYear()} Suprabhat Kumar</span><a
+      href="#main-content">{t(locale, 'action.top', 'Back to top')}</a
+    >
+  </div>
+</footer>

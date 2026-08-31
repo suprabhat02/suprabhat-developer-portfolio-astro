@@ -1,0 +1,176 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageContent from '../../components/PageContent.astro';
+import { localePrefix, type Locale } from '../../i18n/config';
+import { t } from '../../i18n/messages';
+import { faqs } from '../../data/faqs';
+import { SITE_URL } from '../../config/site';
+
+type PageName =
+  | 'about'
+  | 'skills'
+  | 'experience'
+  | 'tools'
+  | 'work'
+  | 'recommendations'
+  | 'services'
+  | 'faq'
+  | 'contact'
+  | 'accessibility'
+  | 'privacy'
+  | 'blog';
+export function getStaticPaths() {
+  const pageNames = [
+    'about',
+    'skills',
+    'experience',
+    'tools',
+    'work',
+    'recommendations',
+    'services',
+    'faq',
+    'contact',
+    'accessibility',
+    'privacy',
+    'blog',
+  ] as const;
+  return (['es', 'ar'] as const).flatMap((locale) =>
+    pageNames.map((page) => ({
+      params: { locale, page },
+      props: { locale, page },
+    })),
+  );
+}
+const { locale, page } = Astro.props as { locale: Locale; page: PageName };
+const pageLabels: Record<Locale, Partial<Record<PageName, string>>> = {
+  en: {},
+  es: {
+    about: 'Sobre mí',
+    skills: 'Habilidades',
+    experience: 'Experiencia',
+    tools: 'Herramientas',
+    work: 'Proyectos',
+    recommendations: 'Recomendaciones',
+    services: 'Servicios',
+    faq: 'Preguntas frecuentes',
+    contact: 'Contacto',
+    accessibility: 'Accesibilidad',
+    privacy: 'Privacidad',
+    blog: 'Artículos',
+  },
+  ar: {
+    about: 'نبذة عني',
+    skills: 'المهارات',
+    experience: 'الخبرة',
+    tools: 'الأدوات',
+    work: 'الأعمال',
+    recommendations: 'التوصيات',
+    services: 'الخدمات',
+    faq: 'الأسئلة الشائعة',
+    contact: 'تواصل',
+    accessibility: 'إمكانية الوصول',
+    privacy: 'الخصوصية',
+    blog: 'المقالات',
+  },
+};
+const pageLabel =
+  pageLabels[locale][page] ?? page[0].toUpperCase() + page.slice(1);
+const noindex = page === 'blog';
+const title = `${pageLabel} — Suprabhat Kumar`;
+const descriptions: Record<Locale, Record<PageName, string>> = {
+  es: {
+    about:
+      'Perfil de Suprabhat Kumar, ingeniero frontend sénior especializado en interfaces SaaS rápidas, accesibles y mantenibles.',
+    skills:
+      'Competencias de ingeniería frontend de Suprabhat Kumar: React, Next.js, TypeScript, sistemas de diseño y accesibilidad.',
+    experience:
+      'Experiencia de Suprabhat Kumar creando interfaces SaaS y productos empresariales de alto rendimiento.',
+    tools:
+      'Herramientas y tecnologías que utiliza Suprabhat Kumar para crear productos frontend rápidos y escalables.',
+    work: 'Trabajo interno de producto seleccionado por Suprabhat Kumar, centrado en rendimiento, accesibilidad y sistemas de interfaz.',
+    recommendations:
+      'Recomendaciones de colaboradores que han trabajado con Suprabhat Kumar en ingeniería frontend.',
+    services:
+      'Servicios de ingeniería frontend: desarrollo SaaS, paneles de datos, React, sistemas de diseño, rendimiento y accesibilidad.',
+    faq: 'Respuestas a preguntas frecuentes sobre servicios, precios, colaboración remota y plazos de proyectos frontend.',
+    contact:
+      'Contacta con Suprabhat Kumar para conversar sobre ingeniería frontend, interfaces de producto y trabajo SaaS.',
+    accessibility:
+      'Información sobre las características de accesibilidad implementadas en el portfolio de Suprabhat Kumar.',
+    privacy:
+      'Cómo se gestiona la información enviada mediante el formulario de contacto de Suprabhat Kumar.',
+    blog: 'Índice de artículos de ingeniería frontend de Suprabhat Kumar.',
+  },
+  ar: {
+    about:
+      'ملف سوبرابهات كومار، مهندس واجهات أمامية أول متخصص في واجهات SaaS السريعة والمتاحة والقابلة للصيانة.',
+    skills:
+      'مهارات سوبرابهات كومار في هندسة الواجهات الأمامية: React وNext.js وTypeScript وأنظمة التصميم وإمكانية الوصول.',
+    experience:
+      'خبرة سوبرابهات كومار في إنشاء واجهات SaaS ومنتجات مؤسسية عالية الأداء.',
+    tools:
+      'الأدوات والتقنيات التي يستخدمها سوبرابهات كومار لإنشاء منتجات واجهات أمامية سريعة وقابلة للتوسع.',
+    work: 'أعمال منتجات داخلية مختارة لسوبرابهات كومار تركز على الأداء وإمكانية الوصول وأنظمة الواجهات.',
+    recommendations:
+      'توصيات من متعاونين عملوا مع سوبرابهات كومار في هندسة الواجهات الأمامية.',
+    services:
+      'خدمات هندسة الواجهات الأمامية: تطوير SaaS ولوحات البيانات وReact وأنظمة التصميم والأداء وإمكانية الوصول.',
+    faq: 'إجابات عن الأسئلة الشائعة حول الخدمات والأسعار والتعاون عن بُعد والجداول الزمنية لمشاريع الواجهات الأمامية.',
+    contact:
+      'تواصل مع سوبرابهات كومار لمناقشة هندسة الواجهات الأمامية وواجهات المنتجات وأعمال SaaS.',
+    accessibility:
+      'معلومات حول ميزات إمكانية الوصول المطبقة في معرض أعمال سوبرابهات كومار.',
+    privacy:
+      'كيفية التعامل مع المعلومات المرسلة من خلال نموذج التواصل الخاص بسوبرابهات كومار.',
+    blog: 'فهرس مقالات هندسة الواجهات الأمامية لسوبرابهات كومار.',
+  },
+  en: {} as Record<PageName, string>,
+};
+const description = descriptions[locale][page];
+const localeRoot = `${localePrefix(locale)}/`;
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: t(locale, 'nav.home', 'Home'),
+      item: `${SITE_URL}${localeRoot}`,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: pageLabel,
+      item: `${SITE_URL}${localeRoot}${page}/`,
+    },
+  ],
+};
+const schema = [
+  breadcrumbSchema,
+  ...(page === 'faq'
+    ? [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: faqs.map((faq) => ({
+            '@type': 'Question',
+            name: t(locale, `faq.${faq.id}.q`, faq.question),
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: t(locale, `faq.${faq.id}.a`, faq.answer),
+            },
+          })),
+        },
+      ]
+    : []),
+];
+---
+
+{
+  (
+    <BaseLayout {title} {description} {locale} {page} {noindex} {schema}>
+      <PageContent {page} {locale} />
+    </BaseLayout>
+  )
+}
