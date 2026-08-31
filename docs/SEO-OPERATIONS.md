@@ -4,18 +4,25 @@ Technical SEO makes the site understandable, fast, and crawlable. It cannot guar
 
 ## Domain launch checklist
 
-1. Add `suprabhat-dev.com` and `www.suprabhat-dev.com` to the Netlify site.
-2. Set `suprabhat-dev.com` as the primary domain and enforce HTTPS.
-3. If `suprabhatkumar.com` was previously live, attach it to the same Netlify site so the configured host-level 301 redirect can execute. Keep that redirect for at least one year and preferably indefinitely.
-4. Set `PUBLIC_WEB3FORMS_KEY` in the production environment.
-5. Deploy and verify these public URLs:
+1. Use the `main` branch of `suprabhat02/suprabhat-developer-portfolio-astro` as the production source. The GitHub Actions workflow builds and publishes the static site to GitHub Pages on every push.
+2. In GitHub repository Settings > Pages, set the source to GitHub Actions, configure `suprabhat-dev.com` as the custom domain, and enforce HTTPS after GitHub issues the certificate.
+3. In the Hostinger DNS zone, configure the four GitHub Pages apex `A` records and `www` CNAME. Keep the Hostinger nameservers unchanged.
+4. In GitHub repository Settings > Secrets and variables > Actions, add `PUBLIC_WEB3FORMS_KEY` using the value from the local `.env` file. This value must never be committed or copied into chat.
+5. Redeploy after adding the secret by pushing a commit to `main` or using Run workflow in the Actions tab.
+6. Deploy and verify these public URLs:
    - `https://suprabhat-dev.com/`
    - `https://suprabhat-dev.com/robots.txt`
    - `https://suprabhat-dev.com/sitemap-index.xml`
    - `https://suprabhat-dev.com/rss.xml`
    - `https://suprabhat-dev.com/assets/images/og-image.jpg`
-6. Confirm that HTTP, `www`, and the former host redirect once to the HTTPS apex URL without chains.
-7. Confirm deploy previews contain `noindex,follow` and production pages contain `index,follow`.
+7. Confirm that HTTPS is enabled and production pages contain `index,follow`.
+8. If `suprabhatkumar.com` was previously live, use a redirect-capable edge service such as Cloudflare Redirect Rules to redirect it to `https://suprabhat-dev.com/` for at least one year.
+
+## GitHub Pages platform limits
+
+GitHub Pages provides HTTPS and a global CDN, but does not allow this repository to control response headers or force HTTP/2/HTTP/3. Therefore Lighthouse may report short cache lifetimes, HTTP/1.1, or missing CSP, HSTS, COOP, and clickjacking headers even though the site scores 100 for Best Practices and SEO. Those are hosting-platform limitations, not Astro code defects.
+
+Use Cloudflare in front of GitHub Pages only if custom cache rules, modern HTTP, response security headers, and redirects are required. Configure those controls at the edge after confirming the custom domain remains correctly connected; do not attempt to emulate response headers using HTML meta tags.
 
 ## Search engine registration
 

@@ -45,8 +45,8 @@ const articleIllustrations = [
   '/assets/illustrations/article-accessibility.svg',
   '/assets/illustrations/article-ui-engineering.svg',
 ] as const;
-const heroRippleRows = 18;
-const heroRippleColumns = 28;
+const heroRippleRows = 14;
+const heroRippleColumns = 22;
 const heroRippleCells = Array.from(
   { length: heroRippleRows * heroRippleColumns },
   (_, index) => ({
@@ -2541,8 +2541,6 @@ const schema = {
           if (!selectedCell || selectedCell === activeCell) return;
 
           activeCell?.classList.remove('is-rippling');
-          selectedCell.classList.remove('is-rippling');
-          selectedCell.getBoundingClientRect();
           selectedCell.classList.add('is-rippling');
           activeCell = selectedCell;
         });
