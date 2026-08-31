@@ -20,6 +20,16 @@ test('homepage renders correct structure and passes accessibility', async ({
     'complete',
     true,
   );
+  await expect(page.locator('.hero-portrait-wrap img')).toHaveAttribute(
+    'fetchpriority',
+    'high',
+  );
+  const deferredImages = page.locator('img:not(.hero-portrait-wrap img)');
+  await expect(deferredImages).toHaveCount(await deferredImages.count());
+  for (const image of await deferredImages.all()) {
+    await expect(image).toHaveAttribute('loading', 'lazy');
+    await expect(image).toHaveAttribute('decoding', 'async');
+  }
 
   // CTA band geometry — glow orbs must stay absolutely positioned
   const ctaLayout = await page.locator('.cta-band').evaluate((band) => ({
