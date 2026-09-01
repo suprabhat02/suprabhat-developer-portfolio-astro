@@ -6,13 +6,14 @@ import { t } from '../i18n/messages';
 interface Props {
   locale: Locale;
   page: string;
+  path?: string;
 }
-const { locale, page } = Astro.props;
+const { locale, page, path } = Astro.props;
 const prefix = localePrefix(locale);
 const localHref = (href: string) => `${prefix}${href}` || '/';
-const localeHref = (next: Locale) =>
-  `${localePrefix(next)}${page === 'home' || page === '404' ? '/' : `/${page}/`}` ||
-  '/';
+const pagePath =
+  path ?? (page === 'home' || page === '404' ? '/' : `/${page}/`);
+const localeHref = (next: Locale) => `${localePrefix(next)}${pagePath}` || '/';
 const navLabel = (key: string) =>
   t(locale, `nav.${key}`, key[0].toUpperCase() + key.slice(1));
 ---
@@ -22,7 +23,10 @@ const navLabel = (key: string) =>
 >
 <header class="site-header">
   <div class="wrap header-inner">
-    <a class="brand" href={localHref('/')} aria-label="Suprabhat Kumar, home"
+    <a
+      class="brand"
+      href={localHref('/')}
+      aria-label={`Suprabhat Kumar, ${t(locale, 'nav.home', 'home')}`}
       ><span aria-hidden="true"></span>Suprabhat</a
     >
     <nav

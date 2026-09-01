@@ -9,13 +9,16 @@ Suprabhat Kumar is a Senior Frontend Engineer specializing in React, Next.js, Ty
 - [Skills](https://suprabhat-dev.com/skills/): Frontend engineering skills.
 - [Experience](https://suprabhat-dev.com/experience/): Professional experience.
 - [Work](https://suprabhat-dev.com/work/): Selected projects and case studies.
+- [Analytics command center case study](https://suprabhat-dev.com/work/analytics-command-center/): An anonymized frontend case study covering dashboard information architecture, accessibility, resilient data states, performance, and React UI engineering.
+- [Design system uplift case study](https://suprabhat-dev.com/work/design-system-uplift/): An anonymized frontend case study covering React component architecture, design tokens, accessibility defaults, and scalable UI governance.
+- [Performance modernization case study](https://suprabhat-dev.com/work/performance-modernization/): An anonymized frontend case study covering Core Web Vitals, rendering stability, asset strategy, and product UI performance.
 - [Services](https://suprabhat-dev.com/services/): Available consulting and development services.
 - [Contact](https://suprabhat-dev.com/contact/): Contact form and direct email information.
 - [Blog](https://suprabhat-dev.com/blog/): English-language articles about frontend engineering.
 
 ## Locales
 
-The homepage and primary portfolio pages are available in English, Spanish at `/es/`, and Arabic at `/ar/`. English blog articles currently have no localized equivalents; localized blog indexes are intentionally excluded from search indexing.
+The homepage, primary portfolio pages, and case studies are available in English, Spanish at `/es/`, and Arabic at `/ar/`. Blog article localization is handled per article URL.
 
 ## Crawling
 

@@ -1,9 +1,12 @@
+import type { Locale } from '../i18n/config';
+
 export interface Recommendation {
   id: string;
   quote: string;
   name: string;
   role: string;
   avatar: string;
+  quoteLang?: string;
   /** TODO(docs/TODO.md #4): provenance unconfirmed — no source link is claimed. */
   sourceUrl?: string;
 }
@@ -67,3 +70,29 @@ export const featuredRecommendationIds = [
   'sonu-gagan',
   'supriya-suman',
 ] as const;
+
+const localizedRoles: Partial<Record<Locale, Record<string, string>>> = {
+  es: {
+    'sandeep-sharma': 'Ingeniero de IA en Topsoe',
+    'pooja-verma': 'Analista sénior de calidad',
+    'sonu-gagan': 'Especialista sénior, Plataforma',
+    'supriya-suman': 'Asociada, Investigación UX',
+    suraj: 'Especialista SEO',
+    'aditi-vimal': 'Ejecutiva de asuntos regulatorios',
+  },
+  ar: {
+    'sandeep-sharma': 'مهندس ذكاء اصطناعي في Topsoe',
+    'pooja-verma': 'محللة جودة أولى',
+    'sonu-gagan': 'أخصائي أول، المنصة',
+    'supriya-suman': 'زميلة، أبحاث UX',
+    suraj: 'أخصائي SEO',
+    'aditi-vimal': 'تنفيذية شؤون تنظيمية',
+  },
+};
+
+export const getRecommendations = (locale: Locale): readonly Recommendation[] =>
+  recommendations.map((recommendation) => ({
+    ...recommendation,
+    role: localizedRoles[locale]?.[recommendation.id] ?? recommendation.role,
+    quoteLang: locale === 'en' ? undefined : 'en',
+  }));

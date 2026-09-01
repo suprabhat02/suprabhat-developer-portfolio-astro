@@ -7,8 +7,11 @@ const es: Messages = {
   'nav.primary': 'Navegación principal',
   'nav.mobile': 'Navegación móvil',
   language: 'Cambiar idioma',
+  'language.options': 'Opciones de idioma',
   theme: 'Cambiar tema de color',
   menu: 'Menú',
+  'nav.openMenu': 'Abrir menú de navegación',
+  'nav.closeMenu': 'Cerrar menú de navegación',
   'nav.home': 'Inicio',
   'nav.about': 'Sobre mí',
   'nav.skills': 'Habilidades',
@@ -49,10 +52,19 @@ const es: Messages = {
   'home.availability': 'Disponibilidad',
   'home.availabilityLead':
     'Disponible para trabajo freelance y por contrato a distancia en todo el mundo',
+  'home.availabilityMeta':
+    'Asíncrono primero · Progreso transparente · Hitos compartidos',
   'home.blogLead':
     'Guías prácticas sobre rendimiento, accesibilidad y entrega moderna de interfaces.',
   'home.allArticles': 'Todos los artículos',
   'home.readArticle': 'Leer artículo',
+  'home.portraitCaption':
+    'Más de 6 años · React · Next.js · TypeScript · FastAPI',
+  'home.statAria': 'Datos destacados de carrera',
+  'home.statYears': 'Años de experiencia',
+  'home.statCompanies': 'Empresas donde trabajé',
+  'home.statCapabilities': 'Capacidades full stack',
+  'home.statRemote': 'Listo para trabajo remoto global',
   'home.aboutStatement':
     'Ingeniero de software frontend con más de 6 años creando plataformas SaaS de alto rendimiento, paneles empresariales y sistemas de UI intensivos en datos. Especializado en React, TypeScript y Redux Toolkit, con capacidad full stack mediante FastAPI y PostgreSQL.',
   'home.experienceCta': 'Explorar experiencia',
@@ -61,6 +73,9 @@ const es: Messages = {
   'home.skillsLead':
     'El stack técnico que utilizo para ofrecer sistemas de UI escalables, rápidos y accesibles.',
   'home.skillsCta': 'Hablemos de un reto técnico',
+  'home.stackLead':
+    'El stack que uso para crear productos rápidos, accesibles y escalables.',
+  'home.stackAria': 'Stack tecnológico',
   'home.workLead':
     'Una muestra de trabajo interno de producto centrado en rendimiento, accesibilidad y sistemas de UI escalables.',
   'home.workNote':
@@ -192,6 +207,8 @@ const es: Messages = {
   'form.name': 'Nombre',
   'form.email': 'Correo electrónico',
   'form.details': 'Detalles del proyecto',
+  'form.namePlaceholder': 'Tu nombre completo',
+  'form.messagePlaceholder': 'Describe tu proyecto o pregunta…',
   'form.send': 'Enviar consulta',
   'form.unavailable':
     'El formulario de contacto no está disponible en este entorno.',
@@ -220,15 +237,46 @@ const es: Messages = {
   'faq.start.q': '¿Cómo iniciamos una colaboración?',
   'faq.start.a':
     'Envía un resumen mediante el formulario de contacto y responderé con próximos pasos, opciones de calendario y una propuesta detallada.',
+  'work.focusAreas': 'Áreas de enfoque',
+  'caseStudy.read': 'Leer caso de estudio',
+  'caseStudy.breadcrumb': 'Ruta del caso de estudio',
+  'caseStudy.snapshot': 'Resumen del proyecto',
+  'caseStudy.toc': 'En esta página',
+  'caseStudy.confidentiality': 'Nota de confidencialidad',
+  'caseStudy.outcomes': 'Resultados',
+  'caseStudy.nextSteps': 'Próximos pasos',
+  'caseStudy.relatedServices': 'Servicios relacionados',
+  'caseStudy.backToWork': 'Volver a proyectos',
+  'caseStudy.contactCta': 'Hablar de un proyecto similar',
+  'tool.category.language': 'LENGUAJE',
+  'tool.category.frontend': 'FRONTEND',
+  'tool.category.state': 'ESTADO',
+  'tool.category.runtime': 'EJECUCIÓN',
+  'tool.category.design': 'DISEÑO',
+  'tool.category.styling': 'ESTILOS',
+  'tool.category.devops': 'DEVOPS',
+  'tool.category.ai': 'IA',
+  'tool.category.testing': 'PRUEBAS',
+  'tool.category.cloud': 'CLOUD',
+  'tool.category.backend': 'BACKEND',
+  'tool.category.database': 'BASE DE DATOS',
+  'tool.category.tool': 'HERRAMIENTA',
+  'schema.serviceName': 'Suprabhat Kumar - Servicios de ingeniería frontend',
+  'schema.serviceDescription':
+    'Desarrollo frontend SaaS, ingeniería de UI para paneles, optimización de rendimiento, sistemas de diseño, implementación React/Next.js, integración backend FastAPI y UI centrada en accesibilidad.',
+  'schema.worldwide': 'Todo el mundo',
 };
 
 const ar: Messages = {
   skip: 'انتقل إلى المحتوى الرئيسي',
   'nav.primary': 'التنقل الرئيسي',
   'nav.mobile': 'تنقل الجوال',
+  'language.options': 'خيارات اللغة',
   language: 'تغيير اللغة',
   theme: 'تبديل سمة الألوان',
   menu: 'القائمة',
+  'nav.openMenu': 'فتح قائمة التنقل',
+  'nav.closeMenu': 'إغلاق قائمة التنقل',
   'nav.home': 'الرئيسية',
   'nav.about': 'نبذة عني',
   'nav.skills': 'المهارات',
@@ -269,9 +317,17 @@ const ar: Messages = {
   'home.availability': 'التوافر',
   'home.availabilityLead':
     'متاح للعمل الحر والتعاقدي عن بُعد في جميع أنحاء العالم',
+  'home.availabilityMeta': 'تواصل غير متزامن أولًا · تقدم شفاف · معالم مشتركة',
   'home.blogLead': 'أدلة عملية حول الأداء وإمكانية الوصول وتقديم واجهات حديثة.',
   'home.allArticles': 'كل المقالات',
   'home.readArticle': 'قراءة المقال',
+  'home.portraitCaption':
+    'أكثر من 6 سنوات · React · Next.js · TypeScript · FastAPI',
+  'home.statAria': 'أبرز محطات المسيرة المهنية',
+  'home.statYears': 'سنوات خبرة',
+  'home.statCompanies': 'شركات عملت معها',
+  'home.statCapabilities': 'قدرات full stack',
+  'home.statRemote': 'جاهز للعمل عن بُعد عالميًا',
   'home.aboutStatement':
     'مهندس برمجيات للواجهات الأمامية بخبرة تزيد على 6 سنوات في بناء منصات SaaS عالية الأداء ولوحات تحكم مؤسسية وأنظمة واجهات كثيفة البيانات. أتخصص في React وTypeScript وRedux Toolkit، مع خبرة شاملة عبر FastAPI وPostgreSQL.',
   'home.experienceCta': 'استكشف الخبرة',
@@ -280,6 +336,9 @@ const ar: Messages = {
   'home.skillsLead':
     'المجموعة التقنية التي أستخدمها لتقديم أنظمة واجهات قابلة للتوسع وسريعة ومتاحة.',
   'home.skillsCta': 'ناقش تحديًا تقنيًا',
+  'home.stackLead':
+    'المجموعة التقنية التي أستخدمها لشحن منتجات سريعة ومتاحة وقابلة للتوسع.',
+  'home.stackAria': 'المجموعة التقنية',
   'home.workLead':
     'لمحة عن أعمال داخلية على المنتج تركز على الأداء وإمكانية الوصول وأنظمة واجهات قابلة للتوسع.',
   'home.workNote':
@@ -400,6 +459,8 @@ const ar: Messages = {
   'form.name': 'الاسم',
   'form.email': 'البريد الإلكتروني',
   'form.details': 'تفاصيل المشروع',
+  'form.namePlaceholder': 'اسمك الكامل',
+  'form.messagePlaceholder': 'صف مشروعك أو سؤالك…',
   'form.send': 'إرسال الاستفسار',
   'form.unavailable': 'نموذج الاتصال غير متاح في هذه البيئة.',
   'form.emailSuprabhat': 'مراسلة سوبراهات',
@@ -427,6 +488,34 @@ const ar: Messages = {
   'faq.start.q': 'كيف نبدأ التعاون؟',
   'faq.start.a':
     'أرسل ملخصًا عبر نموذج الاتصال وسأرد بالخطوات التالية وخيارات الجدول الزمني ومقترح تفصيلي.',
+  'work.focusAreas': 'مجالات التركيز',
+  'caseStudy.read': 'قراءة دراسة الحالة',
+  'caseStudy.breadcrumb': 'مسار دراسة الحالة',
+  'caseStudy.snapshot': 'ملخص المشروع',
+  'caseStudy.toc': 'في هذه الصفحة',
+  'caseStudy.confidentiality': 'ملاحظة السرية',
+  'caseStudy.outcomes': 'النتائج',
+  'caseStudy.nextSteps': 'الخطوات التالية',
+  'caseStudy.relatedServices': 'الخدمات ذات الصلة',
+  'caseStudy.backToWork': 'العودة إلى الأعمال',
+  'caseStudy.contactCta': 'ناقش مشروعًا مشابهًا',
+  'tool.category.language': 'لغة',
+  'tool.category.frontend': 'واجهة أمامية',
+  'tool.category.state': 'حالة',
+  'tool.category.runtime': 'تشغيل',
+  'tool.category.design': 'تصميم',
+  'tool.category.styling': 'تنسيق',
+  'tool.category.devops': 'DevOps',
+  'tool.category.ai': 'ذكاء اصطناعي',
+  'tool.category.testing': 'اختبار',
+  'tool.category.cloud': 'سحابة',
+  'tool.category.backend': 'خلفية',
+  'tool.category.database': 'قاعدة بيانات',
+  'tool.category.tool': 'أداة',
+  'schema.serviceName': 'Suprabhat Kumar - خدمات هندسة الواجهات الأمامية',
+  'schema.serviceDescription':
+    'تطوير واجهات SaaS، وهندسة واجهات لوحات البيانات، وتحسين الأداء، وأنظمة التصميم، وتنفيذ React/Next.js، وتكامل FastAPI، وواجهات تركّز على إمكانية الوصول.',
+  'schema.worldwide': 'عالميًا',
 };
 
 const messages: Partial<Record<Locale, Messages>> = { es, ar };

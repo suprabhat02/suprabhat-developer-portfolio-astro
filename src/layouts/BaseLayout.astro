@@ -3,7 +3,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SEOHead from '../components/SEOHead.astro';
 import { ClientRouter } from 'astro:transitions';
-import { profile } from '../data/profile';
+import { getProfile } from '../data/profile';
 import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
 import { SITE_NAME, SITE_URL } from '../config/site';
 import '../styles/global.css';
@@ -13,6 +13,7 @@ interface Props {
   description: string;
   locale?: Locale;
   page?: string;
+  path?: string;
   noindex?: boolean;
   hideAlternates?: boolean;
   ogType?: string;
@@ -23,6 +24,7 @@ const {
   description,
   locale = 'en',
   page = 'home',
+  path,
   noindex: requestedNoindex = false,
   hideAlternates = false,
   ogType = 'website',
@@ -30,8 +32,9 @@ const {
 } = Astro.props;
 const noindex = requestedNoindex || import.meta.env.ROBOTS === 'noindex';
 const meta = localeMeta[locale];
+const profile = getProfile(locale);
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const pagePath = page === 'home' ? '/' : `/${page}/`;
+const pagePath = path ?? (page === 'home' ? '/' : `/${page}/`);
 const alternateHref = (alternateLocale: Locale) =>
   new URL(`${localePrefix(alternateLocale)}${pagePath}`, Astro.site).href;
 const pageSchema = {
@@ -69,7 +72,7 @@ const combinedSchema = {
       '@id': `${SITE_URL}/#website`,
       url: `${SITE_URL}/`,
       name: SITE_NAME,
-      inLanguage: 'en',
+      inLanguage: meta.htmlLang,
       author: { '@id': `${SITE_URL}/#person` },
     },
     pageSchema,
@@ -141,6 +144,7 @@ const combinedSchema = {
       locale={meta.htmlLang}
       {noindex}
       {ogType}
+      imageAlt={`${profile.name}, ${profile.title}`}
       schema={combinedSchema}
     />
     <!-- ClientRouter: MPA → SPA navigation, native browser API, 0 KB overhead -->
@@ -148,7 +152,7 @@ const combinedSchema = {
   </head>
   <body>
     <!-- transition:persist keeps the header mounted across navigations (no flash) -->
-    <Header {locale} {page} transition:persist="site-header" />
+    <Header {locale} {page} path={pagePath} transition:persist="site-header" />
     <main id="main-content" transition:name="main" transition:animate="fade">
       <slot />
     </main>

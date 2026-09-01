@@ -8,6 +8,8 @@ interface Props {
 const { locale } = Astro.props;
 const prefix = localePrefix(locale);
 const href = (path: string) => `${prefix}${path}` || '/';
+const navLabel = (key: string) =>
+  t(locale, `nav.${key}`, key[0].toUpperCase() + key.slice(1));
 ---
 
 <footer class="site-footer">
@@ -23,21 +25,25 @@ const href = (path: string) => `${prefix}${path}` || '/';
         }
       </p>
     </div>
-    <nav aria-label="Site links">
+    <nav aria-label={t(locale, 'footer.navigate', 'Site links')}>
       <strong>{t(locale, 'footer.navigate', 'Navigate')}</strong>{
         primaryNav
           .slice(1)
-          .map((item) => <a href={href(item.href)}>{item.key}</a>)
+          .map((item) => <a href={href(item.href)}>{navLabel(item.key)}</a>)
       }
     </nav>
-    <nav aria-label="More links">
+    <nav aria-label={t(locale, 'footer.more', 'More links')}>
       <strong>{t(locale, 'footer.more', 'More')}</strong>{
-        moreNav.map((item) => <a href={href(item.href)}>{item.key}</a>)
+        moreNav.map((item) => (
+          <a href={href(item.href)}>{navLabel(item.key)}</a>
+        ))
       }
     </nav>
-    <nav aria-label="Legal links">
+    <nav aria-label={t(locale, 'footer.legal', 'Legal links')}>
       <strong>{t(locale, 'footer.legal', 'Legal')}</strong>{
-        footerLegalNav.map((item) => <a href={href(item.href)}>{item.key}</a>)
+        footerLegalNav.map((item) => (
+          <a href={href(item.href)}>{navLabel(item.key)}</a>
+        ))
       }<a href="/rss.xml">RSS</a>
     </nav>
   </div>

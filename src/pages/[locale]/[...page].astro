@@ -4,6 +4,7 @@ import PageContent from '../../components/PageContent.astro';
 import { localePrefix, type Locale } from '../../i18n/config';
 import { t } from '../../i18n/messages';
 import { faqs } from '../../data/faqs';
+import { getServices } from '../../data/services';
 import { SITE_URL } from '../../config/site';
 
 type PageName =
@@ -127,6 +128,7 @@ const descriptions: Record<Locale, Record<PageName, string>> = {
 };
 const description = descriptions[locale][page];
 const localeRoot = `${localePrefix(locale)}/`;
+const services = getServices(locale);
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
@@ -160,6 +162,38 @@ const schema = [
               text: t(locale, `faq.${faq.id}.a`, faq.answer),
             },
           })),
+        },
+      ]
+    : []),
+  ...(page === 'services'
+    ? [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'ProfessionalService',
+          name: t(
+            locale,
+            'schema.serviceName',
+            'Suprabhat Kumar - Frontend Engineering Services',
+          ),
+          url: `${SITE_URL}${localeRoot}services/`,
+          provider: { '@id': `${SITE_URL}/#person` },
+          areaServed: t(locale, 'schema.worldwide', 'Worldwide'),
+          hasOfferCatalog: {
+            '@type': 'OfferCatalog',
+            name: t(
+              locale,
+              'page.services.title',
+              'Frontend engineering services',
+            ),
+            itemListElement: services.map((service) => ({
+              '@type': 'Offer',
+              itemOffered: {
+                '@type': 'Service',
+                name: service.name,
+                description: service.description,
+              },
+            })),
+          },
         },
       ]
     : []),

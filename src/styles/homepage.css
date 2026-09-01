@@ -756,6 +756,11 @@ select {
   color: var(--accent);
   display: block;
 }
+[dir='rtl'] .hero-name {
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: right;
+}
 .hero-sub {
   font-family: var(--mono);
   font-size: 12.5px;
@@ -979,6 +984,11 @@ select {
   margin-bottom: 14px;
   line-height: 0.98;
   text-transform: uppercase;
+}
+[dir='rtl'] .s-title {
+  letter-spacing: 0;
+  line-height: 1.12;
+  text-transform: none;
 }
 .s-lead {
   font-size: 17.5px;
@@ -1623,6 +1633,18 @@ select {
   flex: 1;
   line-height: 1.65;
 }
+.work-card-link {
+  align-self: flex-start;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration-color: rgba(240, 126, 28, 0.55);
+  text-underline-offset: 0.24em;
+}
+.work-card-link:hover {
+  color: var(--accent-2);
+  text-decoration-color: currentColor;
+}
 .tags {
   display: flex;
   flex-wrap: wrap;
@@ -1845,6 +1867,11 @@ details[open] .faq-icon {
   margin-bottom: 14px;
   line-height: 0.95;
   text-transform: uppercase;
+}
+[dir='rtl'] .cta-title {
+  letter-spacing: 0;
+  line-height: 1.12;
+  text-transform: none;
 }
 .cta-sub {
   font-size: 18px;
@@ -2293,6 +2320,18 @@ textarea.f-input {
   word-break: normal;
   hyphens: none;
   text-wrap: balance;
+}
+[dir='rtl'] .s-title,
+[dir='rtl'] .cta-title {
+  text-wrap: wrap;
+  overflow-wrap: anywhere;
+}
+[dir='rtl'] .s-eyebrow,
+[dir='rtl'] .hero-eyebrow,
+[dir='rtl'] .hero-portrait-cap,
+[dir='rtl'] .tm-cat {
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 /* ── NO ACCENT FLOODS. Bands become grounds with accent lines. ── */

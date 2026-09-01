@@ -1,15 +1,16 @@
 ---
 import { SITE_URL, DEFAULT_OG_IMAGE, SITE_NAME } from '../config/site';
-import { profile } from '../data/profile';
-import { experience } from '../data/experience';
+import { getProfile } from '../data/profile';
+import { getExperience } from '../data/experience';
 import { tools } from '../data/tools';
-import { work } from '../data/work';
+import { getCaseStudies } from '../data/caseStudies';
+import { getWork } from '../data/work';
 import {
-  recommendations,
+  getRecommendations,
   featuredRecommendationIds,
 } from '../data/recommendations';
 import { faqs } from '../data/faqs';
-import { services } from '../data/services';
+import { getServices } from '../data/services';
 import { getCollection } from 'astro:content';
 import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
@@ -19,7 +20,16 @@ import '@fontsource-variable/geist-mono';
 
 const { locale = 'en' } = Astro.props as { locale?: Locale };
 const meta = localeMeta[locale];
+const profile = getProfile(locale);
+const experience = getExperience(locale);
+const work = getWork(locale);
+const caseStudySlugs = new Set(
+  getCaseStudies(locale).map((caseStudy) => caseStudy.slug),
+);
+const recommendations = getRecommendations(locale);
+const services = getServices(locale);
 const localeRoot = `${localePrefix(locale)}/`;
+const pageHref = (path: string) => `${localePrefix(locale)}${path}` || '/';
 const title =
   locale === 'es'
     ? 'Suprabhat Kumar — Ingeniero Frontend Sénior'
@@ -92,6 +102,10 @@ const toolCategories: Record<string, string> = {
   FastAPI: 'BACKEND',
   PostgreSQL: 'DATABASE',
 };
+const toolCategoryLabel = (toolName: string) => {
+  const category = toolCategories[toolName] ?? 'TOOL';
+  return t(locale, `tool.category.${category.toLowerCase()}`, category);
+};
 
 // Full @graph mirrors the original JSON-LD, now driven by typed data
 const schema = {
@@ -155,11 +169,18 @@ const schema = {
     {
       '@type': 'ProfessionalService',
       '@id': `${SITE_URL}/#service`,
-      name: `${SITE_NAME} - Frontend Engineering Services`,
-      description:
+      name: t(
+        locale,
+        'schema.serviceName',
+        `${SITE_NAME} - Frontend Engineering Services`,
+      ),
+      description: t(
+        locale,
+        'schema.serviceDescription',
         'SaaS frontend development, dashboard UI engineering, performance optimization, design systems, React/Next.js implementation, FastAPI backend integration, accessibility-focused UI.',
+      ),
       url: `${SITE_URL}/`,
-      areaServed: 'Worldwide',
+      areaServed: t(locale, 'schema.worldwide', 'Worldwide'),
       provider: { '@id': `${SITE_URL}/#person` },
       serviceType: services.map((s) => s.name),
     },
@@ -167,8 +188,11 @@ const schema = {
       '@type': 'FAQPage',
       mainEntity: faqs.map((f) => ({
         '@type': 'Question',
-        name: f.question,
-        acceptedAnswer: { '@type': 'Answer', text: f.answer },
+        name: t(locale, `faq.${f.id}.q`, f.question),
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: t(locale, `faq.${f.id}.a`, f.answer),
+        },
       })),
     },
   ],
@@ -218,7 +242,7 @@ const schema = {
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Suprabhat Kumar, Senior Frontend Engineer"
+      content={`${profile.name}, ${profile.title}`}
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@suprabhat_dev" />
@@ -286,7 +310,11 @@ const schema = {
     <!-- ── HEADER ───────────────────────────────────────── -->
     <header class="site-header" role="banner">
       <div class="wrap header-inner">
-        <a href={localeRoot} class="logo" aria-label={`${profile.name} — home`}>
+        <a
+          href={localeRoot}
+          class="logo"
+          aria-label={`${profile.name} — ${t(locale, 'nav.home', 'home')}`}
+        >
           <span class="logo-mark" aria-hidden="true"></span>Suprabhat
         </a>
 
@@ -363,7 +391,11 @@ const schema = {
                 <path d="M6 9l6 6 6-6"></path>
               </svg>
             </button>
-            <div class="hdr-menu" role="menu" aria-label="Language options">
+            <div
+              class="hdr-menu"
+              role="menu"
+              aria-label={t(locale, 'language.options', 'Language options')}
+            >
               <a
                 class:list={['hdr-menu-item', { selected: locale === 'en' }]}
                 role="menuitem"
@@ -397,7 +429,7 @@ const schema = {
             id="mob-btn"
             aria-expanded="false"
             aria-controls="mob-menu"
-            aria-label="Open navigation menu"
+            aria-label={t(locale, 'nav.openMenu', 'Open navigation menu')}
           >
             <svg
               width="20"
@@ -432,7 +464,7 @@ const schema = {
         type="button"
         class="mob-close"
         id="mob-close"
-        aria-label="Close navigation menu"
+        aria-label={t(locale, 'nav.closeMenu', 'Close navigation menu')}
       >
         <svg
           width="20"
@@ -564,12 +596,18 @@ const schema = {
                 sizes="(max-width:1040px) 340px, 700px"
                 width="800"
                 height="1067"
-                alt="Suprabhat Kumar, Senior Frontend Engineer, standing on a tree-lined street in Munich"
+                alt={profile.portrait.alt}
                 fetchpriority="high"
                 decoding="async"
               />
               <figcaption class="hero-portrait-cap">
-                6+ years · React · Next.js · TypeScript · FastAPI
+                {
+                  t(
+                    locale,
+                    'home.portraitCaption',
+                    '6+ years · React · Next.js · TypeScript · FastAPI',
+                  )
+                }
               </figcaption>
             </figure>
 
@@ -587,7 +625,13 @@ const schema = {
                   }
                 </p>
                 <small
-                  >Async-first · Transparent progress · Shared milestones</small
+                  >{
+                    t(
+                      locale,
+                      'home.availabilityMeta',
+                      'Async-first · Transparent progress · Shared milestones',
+                    )
+                  }</small
                 >
               </div>
 
@@ -613,24 +657,35 @@ const schema = {
 
       <!-- ── STATS BAND ────────────────────────────────── -->
       <!-- Numbers animated by JS counter; data-* not needed, .stat-num text is the seed -->
-      <aside class="stats-band" aria-label="Career highlights">
+      <aside
+        class="stats-band"
+        aria-label={t(locale, 'home.statAria', 'Career highlights')}
+      >
         <div class="wrap">
           <div class="stats-grid">
             <div class="stat-item reveal">
               <span class="stat-num">6+</span>
-              <span class="stat-lbl">Years experience</span>
+              <span class="stat-lbl">
+                {t(locale, 'home.statYears', 'Years experience')}
+              </span>
             </div>
             <div class="stat-item reveal d1">
               <span class="stat-num">5</span>
-              <span class="stat-lbl">Companies worked at</span>
+              <span class="stat-lbl">
+                {t(locale, 'home.statCompanies', 'Companies worked at')}
+              </span>
             </div>
             <div class="stat-item reveal d2">
               <span class="stat-num">2</span>
-              <span class="stat-lbl">Full-stack capabilities</span>
+              <span class="stat-lbl">
+                {t(locale, 'home.statCapabilities', 'Full-stack capabilities')}
+              </span>
             </div>
             <div class="stat-item reveal d3">
               <span class="stat-num">100%</span>
-              <span class="stat-lbl">Remote-ready worldwide</span>
+              <span class="stat-lbl">
+                {t(locale, 'home.statRemote', 'Remote-ready worldwide')}
+              </span>
             </div>
           </div>
         </div>
@@ -671,7 +726,7 @@ const schema = {
               </p>
             </div>
             <a
-              href="/blog/"
+              href={pageHref('/blog/')}
               class="btn btn-ghost reveal"
               style="margin-bottom:14px"
               >{t(locale, 'home.allArticles', 'All articles')} →</a
@@ -880,7 +935,9 @@ const schema = {
       >
         <div class="wrap">
           <div class="section-head reveal">
-            <span class="s-eyebrow">03 — Expertise</span>
+            <span class="s-eyebrow">
+              03 — {t(locale, 'home.expertise', 'Expertise')}
+            </span>
             <h2 id="expertise-title" class="s-title">
               {t(locale, 'home.expertise', 'Core expertise')}
             </h2>
@@ -1139,7 +1196,9 @@ const schema = {
       >
         <div class="wrap">
           <div class="section-head reveal">
-            <span class="s-eyebrow">05 — Experience</span>
+            <span class="s-eyebrow">
+              05 — {t(locale, 'home.experience', 'Experience')}
+            </span>
             <h2 id="exp-title" class="s-title">
               {t(locale, 'home.experience', 'Experience')}
             </h2>
@@ -1191,10 +1250,13 @@ const schema = {
                           )}
                         </div>
                         <time class="exp-date" datetime={toISO(job.start)}>
-                          {job.start} — {job.end}
-                          {job.mode && ` · ${job.mode}`}
-                          {job.location && ` · ${job.location}`}
-                          {job.duration && ` · ${job.duration}`}
+                          {job.startLabel ?? job.start} —{' '}
+                          {job.endLabel ?? job.end}
+                          {job.mode && ` · ${job.modeLabel ?? job.mode}`}
+                          {job.location &&
+                            ` · ${job.locationLabel ?? job.location}`}
+                          {job.duration &&
+                            ` · ${job.durationLabel ?? job.duration}`}
                         </time>
                       </div>
                       {job.bullets && (
@@ -1215,7 +1277,8 @@ const schema = {
                           {job.roles.map((role) => (
                             <div>
                               <span class="sub-role-meta">
-                                {role.start} — {role.end}
+                                {role.startLabel ?? role.start} —{' '}
+                                {role.endLabel ?? role.end}
                               </span>
                               <h4 class="sub-role-h4">
                                 {t(
@@ -1262,12 +1325,20 @@ const schema = {
       >
         <div class="wrap">
           <div class="section-head reveal">
-            <span class="s-eyebrow">06 — Stack</span>
+            <span class="s-eyebrow">
+              06 — {t(locale, 'home.toolbox', 'Stack')}
+            </span>
             <h2 id="tools-title" class="s-title">
               {t(locale, 'page.tools.title', 'Tools & technologies')}
             </h2>
             <p class="s-lead">
-              The stack I use to ship fast, accessible, scalable products.
+              {
+                t(
+                  locale,
+                  'home.stackLead',
+                  'The stack I use to ship fast, accessible, scalable products.',
+                )
+              }
             </p>
           </div>
         </div>
@@ -1279,7 +1350,10 @@ const schema = {
             Row 2 (RTL direction, reversed order) — entirely aria-hidden.
           Pure CSS @keyframes — no JS, GPU-composited transform only.
         -->
-        <div class="tm-wrap mo-reveal" aria-label="Technology stack">
+        <div
+          class="tm-wrap mo-reveal"
+          aria-label={t(locale, 'home.stackAria', 'Technology stack')}
+        >
           <!-- Row 1: scrolls left (←) -->
           <ul class="tm-track tm-ltr" role="list">
             {/* Semantic set — crawlers see these */}
@@ -1287,9 +1361,7 @@ const schema = {
               tools.map((tool) => (
                 <li class="tm-item">
                   <div class="tm-chip">
-                    <span class="tm-cat">
-                      {toolCategories[tool.name] ?? 'TOOL'}
-                    </span>
+                    <span class="tm-cat">{toolCategoryLabel(tool.name)}</span>
                     <img
                       src={tool.icon}
                       alt={tool.name}
@@ -1309,9 +1381,7 @@ const schema = {
               tools.map((tool) => (
                 <li class="tm-item" aria-hidden="true">
                   <div class="tm-chip">
-                    <span class="tm-cat">
-                      {toolCategories[tool.name] ?? 'TOOL'}
-                    </span>
+                    <span class="tm-cat">{toolCategoryLabel(tool.name)}</span>
                     <img
                       src={tool.icon}
                       alt=""
@@ -1334,9 +1404,7 @@ const schema = {
               [...tools].reverse().map((tool) => (
                 <li class="tm-item">
                   <div class="tm-chip">
-                    <span class="tm-cat">
-                      {toolCategories[tool.name] ?? 'TOOL'}
-                    </span>
+                    <span class="tm-cat">{toolCategoryLabel(tool.name)}</span>
                     <img
                       src={tool.icon}
                       alt=""
@@ -1355,9 +1423,7 @@ const schema = {
               [...tools].reverse().map((tool) => (
                 <li class="tm-item">
                   <div class="tm-chip">
-                    <span class="tm-cat">
-                      {toolCategories[tool.name] ?? 'TOOL'}
-                    </span>
+                    <span class="tm-cat">{toolCategoryLabel(tool.name)}</span>
                     <img
                       src={tool.icon}
                       alt=""
@@ -1384,7 +1450,9 @@ const schema = {
       >
         <div class="wrap">
           <div class="section-head reveal">
-            <span class="s-eyebrow">07 — Work</span>
+            <span class="s-eyebrow">
+              07 — {t(locale, 'home.work', 'Work')}
+            </span>
             <h2 id="work-title" class="s-title">
               {t(locale, 'home.workTitle', 'Selected internal work')}
             </h2>
@@ -1415,17 +1483,28 @@ const schema = {
                 <article class={`work-card mo-reveal`}>
                   <h3>{item.title}</h3>
                   <p>{item.summary}</p>
-                  <ul class="tags" aria-label="Focus areas">
+                  <ul
+                    class="tags"
+                    aria-label={t(locale, 'work.focusAreas', 'Focus areas')}
+                  >
                     {item.tags.map((tag) => (
                       <li class="tag">{tag}</li>
                     ))}
                   </ul>
+                  {caseStudySlugs.has(item.id) && (
+                    <a
+                      class="work-card-link"
+                      href={pageHref(`/work/${item.id}/`)}
+                    >
+                      {t(locale, 'caseStudy.read', 'Read case study')}
+                    </a>
+                  )}
                 </article>
               ))
             }
           </div>
           <p style="margin-top:28px" class="reveal">
-            <a href="/work/" class="btn btn-outline"
+            <a href={pageHref('/work/')} class="btn btn-outline"
               >{t(locale, 'home.workCta', 'See all internal work')}</a
             >
           </p>
@@ -1441,7 +1520,9 @@ const schema = {
       >
         <div class="wrap">
           <div class="section-head reveal">
-            <span class="s-eyebrow">08 — Recommendations</span>
+            <span class="s-eyebrow">
+              08 — {t(locale, 'home.recommendations', 'Recommendations')}
+            </span>
             <h2 id="recs-title" class="s-title">
               {t(locale, 'home.recommendations', 'Recommendations')}
             </h2>
@@ -1462,7 +1543,12 @@ const schema = {
                   <div class="rec-quote-mark" aria-hidden="true">
                     "
                   </div>
-                  <blockquote>"{item.quote}"</blockquote>
+                  <blockquote
+                    lang={item.quoteLang}
+                    dir={item.quoteLang === 'en' ? 'ltr' : undefined}
+                  >
+                    "{item.quote}"
+                  </blockquote>
                   <figcaption class="rec-author">
                     <img
                       src={item.avatar}
@@ -1482,7 +1568,7 @@ const schema = {
             }
           </div>
           <p style="margin-top:28px" class="reveal">
-            <a href="/recommendations/" class="btn btn-ghost"
+            <a href={pageHref('/recommendations/')} class="btn btn-ghost"
               >{
                 t(
                   locale,
@@ -1583,7 +1669,7 @@ const schema = {
             <a href="#contact" class="btn btn-primary"
               >{t(locale, 'action.start', 'Start a project')}</a
             >
-            <a href="/blog/" class="btn btn-outline"
+            <a href={pageHref('/blog/')} class="btn btn-outline"
               >{t(locale, 'nav.blog', 'Read the blog')}</a
             >
           </div>
@@ -1598,18 +1684,27 @@ const schema = {
       >
         <div class="wrap">
           <div class="section-head reveal">
-            <span class="s-eyebrow">10 \u2014 Contact</span>
+            <span class="s-eyebrow">
+              10 — {t(locale, 'page.contact.eyebrow', 'Contact')}
+            </span>
             <h2 id="contact-title" class="s-title">
               {t(locale, 'page.contact.eyebrow', 'Contact')}
             </h2>
             <p class="s-lead">
-              Interested in collaborating? Let's build something polished
-              together.
+              {
+                t(
+                  locale,
+                  'home.contactLead',
+                  "Interested in collaborating? Let's build something polished together.",
+                )
+              }
             </p>
           </div>
           <div class="contact-2col">
             <div class="reveal">
-              <nav aria-label="Contact options">
+              <nav
+                aria-label={t(locale, 'home.contactOptions', 'Contact options')}
+              >
                 <ul class="contact-links-list">
                   <li>
                     <a href={`mailto:${profile.email}`} class="c-link">
@@ -1628,7 +1723,9 @@ const schema = {
                         >
                       </span>
                       <div class="c-text">
-                        <strong>Email</strong><span>{profile.email}</span>
+                        <strong>{t(locale, 'home.email', 'Email')}</strong><span
+                          >{profile.email}</span
+                        >
                       </div>
                     </a>
                   </li>
@@ -1747,7 +1844,7 @@ const schema = {
               <input
                 type="hidden"
                 name="subject"
-                value={`New portfolio enquiry \u2014 ${SITE_URL}`}
+                value={`New portfolio enquiry — ${SITE_URL}`}
               />
               <input
                 type="hidden"
@@ -1786,7 +1883,11 @@ const schema = {
                   autocomplete="name"
                   required
                   aria-required="true"
-                  placeholder={t(locale, 'form.name', 'Your full name')}
+                  placeholder={t(
+                    locale,
+                    'form.namePlaceholder',
+                    'Your full name',
+                  )}
                 />
                 <span class="f-error" id="fn-e" role="alert"></span>
               </div>
@@ -1822,8 +1923,11 @@ const schema = {
                   rows="5"
                   required
                   aria-required="true"
-                  placeholder="Describe your project or question\u2026"
-                ></textarea>
+                  placeholder={t(
+                    locale,
+                    'form.messagePlaceholder',
+                    'Describe your project or question…',
+                  )}></textarea>
                 <span class="f-error" id="fm-e" role="alert"></span>
               </div>
               <div
@@ -1860,28 +1964,36 @@ const schema = {
             }
           </p>
         </div>
-        <nav class="foot-nav" aria-label="Site links">
+        <nav
+          class="foot-nav"
+          aria-label={t(locale, 'footer.navigate', 'Site links')}
+        >
           <h3>{t(locale, 'footer.navigate', 'Navigate')}</h3>
           <a href="#about">{t(locale, 'nav.about', 'About')}</a>
           <a href="#expertise">{t(locale, 'home.expertise', 'Expertise')}</a>
           <a href="#experience">{t(locale, 'nav.experience', 'Experience')}</a>
           <a href="#work">{t(locale, 'nav.work', 'Work')}</a>
         </nav>
-        <nav class="foot-nav" aria-label="Resources">
+        <nav
+          class="foot-nav"
+          aria-label={t(locale, 'footer.more', 'Resources')}
+        >
           <h3>{t(locale, 'footer.more', 'More')}</h3>
-          <a href="#tools">Stack</a>
+          <a href="#tools">{t(locale, 'home.toolbox', 'Stack')}</a>
           <a href="#recommendations"
             >{t(locale, 'nav.recommendations', 'Recommendations')}</a
           >
-          <a href="#faq">FAQ</a>
-          <a href="/blog/">Blog</a>
+          <a href="#faq">{t(locale, 'nav.faq', 'FAQ')}</a>
+          <a href={pageHref('/blog/')}>{t(locale, 'nav.blog', 'Blog')}</a>
         </nav>
-        <nav class="foot-nav" aria-label="Legal">
+        <nav class="foot-nav" aria-label={t(locale, 'footer.legal', 'Legal')}>
           <h3>{t(locale, 'footer.legal', 'Legal')}</h3>
-          <a href="/accessibility/"
+          <a href={pageHref('/accessibility/')}
             >{t(locale, 'nav.accessibility', 'Accessibility')}</a
           >
-          <a href="/privacy/">{t(locale, 'nav.privacy', 'Privacy')}</a>
+          <a href={pageHref('/privacy/')}
+            >{t(locale, 'nav.privacy', 'Privacy')}</a
+          >
           <a href="#contact">{t(locale, 'nav.contact', 'Contact')}</a>
           <a href="/rss.xml">RSS</a>
         </nav>
@@ -1922,7 +2034,13 @@ const schema = {
     </footer>
 
     <!-- Back-to-top; hidden attr toggled by scroll JS below -->
-    <button type="button" class="btt" id="btt" aria-label="Back to top" hidden>
+    <button
+      type="button"
+      class="btt"
+      id="btt"
+      aria-label={t(locale, 'action.top', 'Back to top')}
+      hidden
+    >
       <svg
         width="20"
         height="20"
@@ -2335,68 +2453,9 @@ const schema = {
           );
         }
 
-        // ── Cryptographic heading scramble ───────────────────────────────────
-        // TreeWalker walks TEXT NODES only — spans/structure preserved throughout.
-        // aria-label set once so screen readers always announce the real text.
-        const SCRAMBLE =
-          'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&*!?@=+-<>[]{}|~';
-        function scrambleReveal(el) {
-          const nodes = [];
-          const walker = document.createTreeWalker(
-            el,
-            NodeFilter.SHOW_TEXT,
-            null,
-          );
-          let n;
-          while ((n = walker.nextNode()))
-            nodes.push({ node: n, orig: n.textContent });
-          const total = nodes.reduce(function (s, o) {
-            return s + o.orig.length;
-          }, 0);
-          if (!el.hasAttribute('aria-label')) {
-            el.setAttribute(
-              'aria-label',
-              nodes
-                .map(function (o) {
-                  return o.orig;
-                })
-                .join(''),
-            );
-          }
-          el.style.transition = 'none';
-          el.style.opacity = '1';
-          el.style.transform = 'none';
-          let t0 = null;
-          const dur = 900;
-          function frame(ts) {
-            if (!t0) t0 = ts;
-            const p = Math.min((ts - t0) / dur, 1);
-            const reveal = Math.round(Math.pow(p, 0.62) * total);
-            let pos = 0;
-            nodes.forEach(function (o) {
-              let out = '';
-              for (let i = 0; i < o.orig.length; i++) {
-                const c = o.orig[i];
-                if (pos < reveal || c === ' ' || c === '\n') {
-                  out += c;
-                } else {
-                  out += SCRAMBLE[Math.floor(Math.random() * SCRAMBLE.length)];
-                }
-                pos++;
-              }
-              o.node.textContent = out;
-            });
-            if (p < 1) {
-              requestAnimationFrame(frame);
-            } else {
-              nodes.forEach(function (o) {
-                o.node.textContent = o.orig;
-              });
-            }
-          }
-          requestAnimationFrame(frame);
-        }
-
+        // ── Stable heading reveal ────────────────────────────────────────────
+        // Never mutate heading text: changing glyphs/line breaks creates CLS,
+        // especially on RTL pages where bidi resolution can change per frame.
         document
           .querySelectorAll('.s-title,.hero-name,.cta-title')
           .forEach(function (el) {
@@ -2411,7 +2470,7 @@ const schema = {
                 function (entries, obs) {
                   if (entries[0].isIntersecting) {
                     obs.disconnect();
-                    scrambleReveal(el);
+                    el.classList.add('visible');
                   }
                 },
                 { threshold: 0.2 },
