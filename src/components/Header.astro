@@ -1,6 +1,5 @@
 ---
 import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
-import { primaryNav } from '../data/navigation';
 import { t } from '../i18n/messages';
 
 interface Props {
@@ -8,99 +7,490 @@ interface Props {
   page: string;
   path?: string;
 }
+
 const { locale, page, path } = Astro.props;
 const prefix = localePrefix(locale);
 const localHref = (href: string) => `${prefix}${href}` || '/';
 const pagePath =
   path ?? (page === 'home' || page === '404' ? '/' : `/${page}/`);
 const localeHref = (next: Locale) => `${localePrefix(next)}${pagePath}` || '/';
-const navLabel = (key: string) =>
-  t(locale, `nav.${key}`, key[0].toUpperCase() + key.slice(1));
+const formatLabel = (label: string, values: Record<string, string>) =>
+  Object.entries(values).reduce(
+    (current, [key, value]) => current.replace(`{${key}}`, value),
+    label,
+  );
+const currentLanguageAria = formatLabel(
+  t(
+    locale,
+    'language.current',
+    'Change language, current language: {language}',
+  ),
+  { language: localeMeta[locale].label },
+);
+const languageSwitchAria = (next: Locale) =>
+  t(
+    locale,
+    `language.switch.${next}`,
+    `Switch language to ${localeMeta[next].label}`,
+  );
+const switchToLightTheme = t(
+  locale,
+  'theme.switchLight',
+  'Switch to light color theme',
+);
+const switchToDarkTheme = t(
+  locale,
+  'theme.switchDark',
+  'Switch to dark color theme',
+);
+const headerNav = [
+  {
+    key: 'home',
+    pageKey: 'home',
+    href: '/',
+    section: '#home',
+    label: t(locale, 'nav.home', 'Home'),
+  },
+  {
+    key: 'about',
+    pageKey: 'about',
+    href: '/about/',
+    section: '#about',
+    label: t(locale, 'nav.about', 'About'),
+  },
+  {
+    key: 'expertise',
+    pageKey: 'skills',
+    href: '/skills/',
+    section: '#expertise',
+    label: t(locale, 'home.expertise', 'Expertise'),
+  },
+  {
+    key: 'experience',
+    pageKey: 'experience',
+    href: '/experience/',
+    section: '#experience',
+    label: t(locale, 'nav.experience', 'Experience'),
+  },
+  {
+    key: 'work',
+    pageKey: 'work',
+    href: '/work/',
+    section: '#work',
+    label: t(locale, 'nav.work', 'Work'),
+  },
+  {
+    key: 'blog',
+    pageKey: 'blog',
+    href: '/blog/',
+    section: '#blog',
+    label: t(locale, 'nav.blog', 'Writing'),
+  },
+  {
+    key: 'contact',
+    pageKey: 'contact',
+    href: '/contact/',
+    section: '#contact',
+    label: t(locale, 'nav.contact', 'Contact'),
+  },
+] as const;
+const navHref = (item: (typeof headerNav)[number]) =>
+  page === 'home' ? item.section : localHref(item.href);
+const isActive = (item: (typeof headerNav)[number]) =>
+  page === item.pageKey || (page === 'home' && item.key === 'home');
 ---
 
 <a class="skip-link" href="#main-content"
   >{t(locale, 'skip', 'Skip to main content')}</a
 >
-<header class="site-header">
+<header class="site-header" role="banner">
   <div class="wrap header-inner">
     <a
-      class="brand"
+      class="brand logo"
       href={localHref('/')}
       aria-label={`Suprabhat Kumar, ${t(locale, 'nav.home', 'home')}`}
-      ><span aria-hidden="true"></span>Suprabhat</a
     >
+      <span class="logo-mark" aria-hidden="true"></span>Suprabhat
+    </a>
+
     <nav
-      class="desktop-nav"
+      class="desktop-nav site-nav"
       aria-label={t(locale, 'nav.primary', 'Primary navigation')}
     >
-      {
-        primaryNav.map((item) => (
-          <a
-            href={localHref(item.href)}
-            aria-current={page === item.key ? 'page' : undefined}
-          >
-            {navLabel(item.key)}
-          </a>
-        ))
-      }
+      <ul>
+        {
+          headerNav.map((item) => (
+            <li>
+              <a
+                href={navHref(item)}
+                class:list={{ active: isActive(item) }}
+                aria-current={isActive(item) ? 'page' : undefined}
+                data-section-link={
+                  page === 'home' ? item.section.slice(1) : undefined
+                }
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
     </nav>
-    <div class="header-actions">
-      <details class="language-menu">
-        <summary aria-label={t(locale, 'language', 'Change language')}
-          >{locale.toUpperCase()}</summary
+
+    <div class="header-actions header-controls">
+      <div class="hdr-dropdown" id="lang-dd">
+        <button
+          type="button"
+          class="hdr-dropdown-btn"
+          id="lang-dd-btn"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-label={currentLanguageAria}
+          title={currentLanguageAria}
         >
-        <div>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path
+              d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+            ></path>
+          </svg>
+          <span id="lang-label">{locale.toUpperCase()}</span>
+          <svg
+            class="chevron"
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M6 9l6 6 6-6"></path>
+          </svg>
+        </button>
+        <div
+          class="hdr-menu"
+          role="menu"
+          aria-label={t(locale, 'language.options', 'Language options')}
+        >
           {
             locales.map((item) => (
               <a
+                class:list={['hdr-menu-item', { selected: item === locale }]}
                 href={localeHref(item)}
                 lang={localeMeta[item].htmlLang}
+                role="menuitem"
                 aria-current={item === locale ? 'page' : undefined}
+                aria-label={languageSwitchAria(item)}
               >
+                <span class="dot" aria-hidden="true" />
                 {localeMeta[item].label}
               </a>
             ))
           }
         </div>
-      </details>
+      </div>
+
       <button
-        class="theme-toggle"
+        class="hdr-dropdown-btn theme-toggle"
         type="button"
+        aria-pressed="false"
         aria-label={t(locale, 'theme', 'Toggle color theme')}
         title={t(locale, 'theme', 'Toggle color theme')}
+        data-label-light={switchToLightTheme}
+        data-label-dark={switchToDarkTheme}
       >
-        <span aria-hidden="true">◐</span>
-      </button>
-      <details class="mobile-nav">
-        <summary aria-label={t(locale, 'nav.mobile', 'Mobile navigation')}
-          ><span aria-hidden="true">{t(locale, 'menu', 'Menu')}</span></summary
+        <svg
+          class="theme-toggle-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
         >
-        <nav aria-label={t(locale, 'nav.mobile', 'Mobile navigation')}>
-          {
-            primaryNav.map((item) => (
-              <a
-                href={localHref(item.href)}
-                aria-current={page === item.key ? 'page' : undefined}
-              >
-                {navLabel(item.key)}
-              </a>
-            ))
-          }
-        </nav>
-      </details>
+          <g class="theme-icon-sun">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+          </g>
+          <path
+            class="theme-icon-moon"
+            d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5 7 7 0 1 0 20.5 14.5Z"></path>
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        class="mob-btn"
+        id="mob-btn"
+        aria-expanded="false"
+        aria-controls="mob-menu"
+        aria-label={t(locale, 'nav.openMenu', 'Open navigation menu')}
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
     </div>
   </div>
 </header>
 
-<script>
-  document
-    .querySelectorAll<HTMLButtonElement>('.theme-toggle')
-    .forEach((button) => {
+<div
+  class="mob-menu"
+  id="mob-menu"
+  role="dialog"
+  aria-modal="true"
+  aria-label={t(locale, 'nav.mobile', 'Navigation menu')}
+>
+  <button
+    type="button"
+    class="mob-close"
+    id="mob-close"
+    aria-label={t(locale, 'nav.closeMenu', 'Close navigation menu')}
+  >
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </button>
+  {
+    headerNav.map((item) => (
+      <a
+        href={navHref(item)}
+        aria-current={isActive(item) ? 'page' : undefined}
+      >
+        {item.label}
+      </a>
+    ))
+  }
+  <div
+    class="mob-lang"
+    role="group"
+    aria-label={t(locale, 'language.options', 'Language options')}
+  >
+    {
+      locales.map((item) => (
+        <a
+          class:list={['mob-lang-btn', { 'is-active': item === locale }]}
+          href={localeHref(item)}
+          lang={localeMeta[item].htmlLang}
+          aria-current={item === locale ? 'true' : undefined}
+          aria-label={languageSwitchAria(item)}
+        >
+          {item.toUpperCase()}
+        </a>
+      ))
+    }
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const closeAllDropdowns = () => {
+      document.querySelectorAll('.hdr-dropdown').forEach((dropdown) => {
+        dropdown.classList.remove('open');
+        dropdown
+          .querySelector('.hdr-dropdown-btn')
+          ?.setAttribute('aria-expanded', 'false');
+      });
+    };
+
+    document
+      .querySelectorAll('.hdr-dropdown .hdr-dropdown-btn')
+      .forEach((button) => {
+        button.addEventListener('click', (event) => {
+          event.stopPropagation();
+          const dropdown = button.closest('.hdr-dropdown');
+          if (!dropdown) return;
+          const shouldOpen = !dropdown.classList.contains('open');
+          closeAllDropdowns();
+          if (shouldOpen) {
+            dropdown.classList.add('open');
+            button.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+
+    document.addEventListener('click', (event) => {
+      if (!(event.target instanceof Element)) return;
+      if (!event.target.closest('.hdr-dropdown')) closeAllDropdowns();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeAllDropdowns();
+    });
+
+    const syncThemeButtons = () => {
+      const isLight = document.documentElement.dataset.theme === 'light';
+      document.querySelectorAll('.theme-toggle').forEach((button) => {
+        button.setAttribute('aria-pressed', String(isLight));
+        if (button instanceof HTMLElement) {
+          const nextLabel = isLight
+            ? button.dataset.labelDark
+            : button.dataset.labelLight;
+          if (nextLabel) {
+            button.setAttribute('aria-label', nextLabel);
+            button.setAttribute('title', nextLabel);
+          }
+        }
+      });
+    };
+
+    syncThemeButtons();
+
+    document.querySelectorAll('.theme-toggle').forEach((button) => {
       button.addEventListener('click', () => {
         const root = document.documentElement;
         const next = root.dataset.theme === 'light' ? 'dark' : 'light';
         root.dataset.theme = next;
-        localStorage.setItem('sk-theme', next);
+        syncThemeButtons();
+        try {
+          localStorage.setItem('sk-theme', next);
+        } catch {
+          // Storage access is optional.
+        }
       });
     });
+
+    const mobileButton = document.getElementById('mob-btn');
+    const mobileMenu = document.getElementById('mob-menu');
+    const mobileClose = document.getElementById('mob-close');
+    const openMobileMenu = () => {
+      if (!mobileButton || !mobileMenu || !mobileClose) return;
+      mobileMenu.classList.add('open');
+      mobileButton.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+      mobileClose.focus();
+    };
+    const closeMobileMenu = (restoreFocus = true) => {
+      if (!mobileButton || !mobileMenu) return;
+      mobileMenu.classList.remove('open');
+      mobileButton.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      if (restoreFocus) mobileButton.focus();
+    };
+
+    mobileButton?.addEventListener('click', () => {
+      if (mobileMenu?.classList.contains('open')) closeMobileMenu();
+      else openMobileMenu();
+    });
+    mobileClose?.addEventListener('click', () => closeMobileMenu());
+    mobileMenu?.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => closeMobileMenu(false));
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && mobileMenu?.classList.contains('open')) {
+        closeMobileMenu();
+      }
+      if (event.key !== 'Tab' || !mobileMenu?.classList.contains('open')) {
+        return;
+      }
+      const focusable = Array.from(
+        mobileMenu.querySelectorAll('a[href], button:not([disabled])'),
+      );
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (!first || !last) return;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+
+    const setupSectionTracking = () => {
+      const sectionLinks = Array.from(
+        document.querySelectorAll('.site-nav a[data-section-link]'),
+      );
+      const sections = sectionLinks
+        .map((link) =>
+          document.getElementById(link.getAttribute('data-section-link') || ''),
+        )
+        .filter(Boolean);
+      if (!sectionLinks.length || !sections.length) return;
+      let activeFrame = 0;
+      const setActiveLink = () => {
+        activeFrame = 0;
+        const threshold = window.innerHeight * 0.38;
+        let activeId = sections[0]?.id;
+        sections.forEach((section) => {
+          if (section.getBoundingClientRect().top <= threshold) {
+            activeId = section.id;
+          }
+        });
+        if (
+          window.innerHeight + window.scrollY >=
+          document.documentElement.scrollHeight - 4
+        ) {
+          activeId = sections[sections.length - 1]?.id;
+        }
+        sectionLinks.forEach((link) => {
+          const isActiveLink =
+            link.getAttribute('data-section-link') === activeId;
+          link.classList.toggle('active', isActiveLink);
+          if (isActiveLink) link.setAttribute('aria-current', 'page');
+          else link.removeAttribute('aria-current');
+        });
+      };
+      const queueActiveLink = () => {
+        if (activeFrame) return;
+        activeFrame = requestAnimationFrame(setActiveLink);
+      };
+      setActiveLink();
+      window.addEventListener('scroll', queueActiveLink, { passive: true });
+      window.addEventListener('resize', queueActiveLink);
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupSectionTracking, {
+        once: true,
+      });
+    } else {
+      setupSectionTracking();
+    }
+  })();
 </script>

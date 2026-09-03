@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageContent from '../../components/PageContent.astro';
-import { localePrefix, type Locale } from '../../i18n/config';
+import { localeMeta, localePrefix, type Locale } from '../../i18n/config';
 import { t } from '../../i18n/messages';
 import { faqs } from '../../data/faqs';
 import { getServices } from '../../data/services';
@@ -43,39 +43,35 @@ export function getStaticPaths() {
   );
 }
 const { locale, page } = Astro.props as { locale: Locale; page: PageName };
-const pageLabels: Record<Locale, Partial<Record<PageName, string>>> = {
-  en: {},
-  es: {
-    about: 'Sobre mí',
-    skills: 'Habilidades',
-    experience: 'Experiencia',
-    tools: 'Herramientas',
-    work: 'Proyectos',
-    recommendations: 'Recomendaciones',
-    services: 'Servicios',
-    faq: 'Preguntas frecuentes',
-    contact: 'Contacto',
-    accessibility: 'Accesibilidad',
-    privacy: 'Privacidad',
-    blog: 'Artículos',
-  },
-  ar: {
-    about: 'نبذة عني',
-    skills: 'المهارات',
-    experience: 'الخبرة',
-    tools: 'الأدوات',
-    work: 'الأعمال',
-    recommendations: 'التوصيات',
-    services: 'الخدمات',
-    faq: 'الأسئلة الشائعة',
-    contact: 'تواصل',
-    accessibility: 'إمكانية الوصول',
-    privacy: 'الخصوصية',
-    blog: 'المقالات',
-  },
+const pageLabelKeys: Record<PageName, string> = {
+  about: 'nav.about',
+  skills: 'nav.skills',
+  experience: 'nav.experience',
+  tools: 'nav.tools',
+  work: 'nav.work',
+  recommendations: 'nav.recommendations',
+  services: 'nav.services',
+  faq: 'nav.faq',
+  contact: 'nav.contact',
+  accessibility: 'nav.accessibility',
+  privacy: 'nav.privacy',
+  blog: 'nav.blog',
 };
-const pageLabel =
-  pageLabels[locale][page] ?? page[0].toUpperCase() + page.slice(1);
+const pageLabelFallbacks: Record<PageName, string> = {
+  about: 'About',
+  skills: 'Skills',
+  experience: 'Experience',
+  tools: 'Tools',
+  work: 'Work',
+  recommendations: 'Recommendations',
+  services: 'Services',
+  faq: 'FAQ',
+  contact: 'Contact',
+  accessibility: 'Accessibility',
+  privacy: 'Privacy',
+  blog: 'Blog',
+};
+const pageLabel = t(locale, pageLabelKeys[page], pageLabelFallbacks[page]);
 const title = `${pageLabel} — Suprabhat Kumar`;
 const descriptions: Record<Locale, Record<PageName, string>> = {
   es: {
@@ -127,11 +123,13 @@ const descriptions: Record<Locale, Record<PageName, string>> = {
   en: {} as Record<PageName, string>,
 };
 const description = descriptions[locale][page];
+const language = localeMeta[locale].htmlLang;
 const localeRoot = `${localePrefix(locale)}/`;
 const services = getServices(locale);
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
+  inLanguage: language,
   itemListElement: [
     {
       '@type': 'ListItem',
@@ -154,6 +152,7 @@ const schema = [
         {
           '@context': 'https://schema.org',
           '@type': 'FAQPage',
+          inLanguage: language,
           mainEntity: faqs.map((faq) => ({
             '@type': 'Question',
             name: t(locale, `faq.${faq.id}.q`, faq.question),
@@ -176,6 +175,7 @@ const schema = [
             'Suprabhat Kumar - Frontend Engineering Services',
           ),
           url: `${SITE_URL}${localeRoot}services/`,
+          inLanguage: language,
           provider: { '@id': `${SITE_URL}/#person` },
           areaServed: t(locale, 'schema.worldwide', 'Worldwide'),
           hasOfferCatalog: {
@@ -191,6 +191,7 @@ const schema = [
                 '@type': 'Service',
                 name: service.name,
                 description: service.description,
+                inLanguage: language,
               },
             })),
           },

@@ -1,5 +1,14 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
 import Homepage from '../components/Homepage.astro';
+import HomepageHead from '../components/HomepageHead.astro';
+import { getHomepageSeo } from '../data/homepageSeo';
+
+const locale = 'en';
+const { title, description, schema } = getHomepageSeo(locale);
 ---
 
-<Homepage locale="en" />
+<BaseLayout {title} {description} {schema} {locale} page="home">
+  <HomepageHead slot="head" />
+  <Homepage {locale} />
+</BaseLayout>

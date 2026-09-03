@@ -74,9 +74,11 @@ export function getStaticPaths() {
 }
 const { page } = Astro.props as { page: keyof typeof pages };
 const [title, description] = pages[page];
+const language = 'en';
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
+  inLanguage: language,
   itemListElement: [
     {
       '@type': 'ListItem',
@@ -99,6 +101,7 @@ const schema = [
         {
           '@context': 'https://schema.org',
           '@type': 'FAQPage',
+          inLanguage: language,
           mainEntity: faqs.map((faq) => ({
             '@type': 'Question',
             name: faq.question,
@@ -114,6 +117,7 @@ const schema = [
           '@type': 'ProfessionalService',
           name: 'Suprabhat Kumar — Frontend Engineering Services',
           url: `${SITE_URL}/services/`,
+          inLanguage: language,
           provider: { '@id': `${SITE_URL}/#person` },
           areaServed: 'Worldwide',
           hasOfferCatalog: {
@@ -125,6 +129,7 @@ const schema = [
                 '@type': 'Service',
                 name: service.name,
                 description: service.description,
+                inLanguage: language,
               },
             })),
           },

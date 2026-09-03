@@ -12,6 +12,14 @@ export interface CaseStudyMetric {
   value: string;
 }
 
+export type CaseStudyProofId = 'role' | 'constraints' | 'decisions';
+
+export interface CaseStudyProof {
+  id: CaseStudyProofId;
+  heading: string;
+  items: readonly string[];
+}
+
 export interface CaseStudy {
   slug: string;
   title: string;
@@ -22,13 +30,16 @@ export interface CaseStudy {
   confidentialityNote: string;
   meta: readonly CaseStudyMetric[];
   tags: readonly string[];
+  proof: readonly CaseStudyProof[];
   sections: readonly CaseStudySection[];
   outcomes: readonly string[];
   nextSteps: readonly string[];
   relatedServices: readonly string[];
 }
 
-const analyticsCommandCenter: Record<Locale, CaseStudy> = {
+type CaseStudyBase = Omit<CaseStudy, 'proof'>;
+
+const analyticsCommandCenter: Record<Locale, CaseStudyBase> = {
   en: {
     slug: 'analytics-command-center',
     title: 'Analytics command center',
@@ -398,7 +409,7 @@ const analyticsCommandCenter: Record<Locale, CaseStudy> = {
   },
 };
 
-const designSystemUplift: Record<Locale, CaseStudy> = {
+const designSystemUplift: Record<Locale, CaseStudyBase> = {
   en: {
     slug: 'design-system-uplift',
     title: 'Design system uplift',
@@ -767,7 +778,7 @@ const designSystemUplift: Record<Locale, CaseStudy> = {
   },
 };
 
-const performanceModernization: Record<Locale, CaseStudy> = {
+const performanceModernization: Record<Locale, CaseStudyBase> = {
   en: {
     slug: 'performance-modernization',
     title: 'Performance modernization',
@@ -1136,27 +1147,305 @@ const performanceModernization: Record<Locale, CaseStudy> = {
   },
 };
 
-export const caseStudies = [
-  analyticsCommandCenter.en,
-  designSystemUplift.en,
-  performanceModernization.en,
+const caseStudyProof: Record<
+  Locale,
+  Record<string, readonly CaseStudyProof[]>
+> = {
+  en: {
+    'analytics-command-center': [
+      {
+        id: 'role',
+        heading: 'My role',
+        items: [
+          'Owned the frontend architecture, interaction model, and reusable dashboard UI patterns from problem framing through implementation.',
+          'Translated product and operations needs into role-based information architecture, state contracts, and accessible React components.',
+          'Worked across product, design, and API boundaries so the dashboard could support real decision workflows instead of static reporting screens.',
+        ],
+      },
+      {
+        id: 'constraints',
+        heading: 'Constraints',
+        items: [
+          'The interface had to support multiple user roles without fragmenting the product into unrelated screen variants.',
+          'Data could be loading, delayed, filtered empty, partially available, stale, or unavailable, and each state needed clear user guidance.',
+          'Charts and metric cards had to remain understandable without depending only on color, hover behavior, screenshots, or private datasets.',
+        ],
+      },
+      {
+        id: 'decisions',
+        heading: 'Key decisions',
+        items: [
+          'Used a scan-first layout with critical KPIs before trend panels, filters, and deeper tabular investigation.',
+          'Defined explicit component state names so loading, empty, error, partial, and unavailable states stayed consistent across modules.',
+          'Paired visual charts with labels, summaries, and adjacent structured values so the data remained readable for people and machines.',
+        ],
+      },
+    ],
+    'design-system-uplift': [
+      {
+        id: 'role',
+        heading: 'My role',
+        items: [
+          'Led frontend component architecture for the shared UI layer, including reusable patterns, typed APIs, and implementation guidance.',
+          'Audited repeated product surfaces and converted high-value patterns into components teams could adopt without rewriting screens.',
+          'Collaborated with design and engineering stakeholders to keep tokens, accessibility behavior, and product constraints aligned.',
+        ],
+      },
+      {
+        id: 'constraints',
+        heading: 'Constraints',
+        items: [
+          'The system needed to improve consistency without forcing a risky redesign or blocking active product delivery.',
+          'Existing screens used local component variants, inconsistent spacing, and different handling for loading, focus, validation, and error states.',
+          'Shared components had to remain flexible enough for product teams while still preventing unsupported visual and behavioral drift.',
+        ],
+      },
+      {
+        id: 'decisions',
+        heading: 'Key decisions',
+        items: [
+          'Defined component contracts around product intent, supported states, and accessibility requirements instead of purely visual variants.',
+          'Moved recurring states such as loading, empty, disabled, selected, warning, and validation into shared primitives.',
+          'Documented usage rules, edge cases, and anti-patterns so the correct implementation path was easier than a local workaround.',
+        ],
+      },
+    ],
+    'performance-modernization': [
+      {
+        id: 'role',
+        heading: 'My role',
+        items: [
+          'Owned the frontend performance pass across rendering, asset delivery, layout stability, route behavior, and user-facing loading states.',
+          'Reviewed expensive UI paths and translated performance risk into practical engineering constraints teams could maintain.',
+          'Balanced Core Web Vitals, accessibility, and product usability so the interface felt faster without hiding useful context.',
+        ],
+      },
+      {
+        id: 'constraints',
+        heading: 'Constraints',
+        items: [
+          'Exact routes, measurements, screenshots, and proprietary performance data could not be published publicly.',
+          'The product still needed rich data screens, responsive behavior, theme support, and understandable states during delayed network responses.',
+          'Performance improvements had to avoid breaking keyboard flow, reduced-motion preferences, or the visual hierarchy users already understood.',
+        ],
+      },
+      {
+        id: 'decisions',
+        heading: 'Key decisions',
+        items: [
+          'Prioritized meaningful above-the-fold content, deferred secondary panels, and reduced non-critical work before first interaction.',
+          'Reserved dimensions for media, dynamic panels, and skeleton states to reduce avoidable layout movement.',
+          'Tightened component boundaries so frequent state changes stayed local instead of triggering broad render cascades.',
+        ],
+      },
+    ],
+  },
+  es: {
+    'analytics-command-center': [
+      {
+        id: 'role',
+        heading: 'Mi rol',
+        items: [
+          'Me encargué de la arquitectura frontend, el modelo de interacción y los patrones reutilizables del dashboard desde el análisis del problema hasta la implementación.',
+          'Convertí necesidades de producto y operaciones en arquitectura de información por roles, contratos de estado y componentes React accesibles.',
+          'Trabajé entre producto, diseño y APIs para que el dashboard soportara flujos reales de decisión, no solo pantallas estáticas de reporting.',
+        ],
+      },
+      {
+        id: 'constraints',
+        heading: 'Restricciones',
+        items: [
+          'La interfaz debía soportar varios roles de usuario sin fragmentar el producto en variantes de pantalla desconectadas.',
+          'Los datos podían estar cargando, retrasados, vacíos por filtro, parcialmente disponibles, obsoletos o no disponibles, y cada estado necesitaba una guía clara.',
+          'Los gráficos y tarjetas de métricas debían seguir siendo comprensibles sin depender solo del color, hover, capturas o datasets privados.',
+        ],
+      },
+      {
+        id: 'decisions',
+        heading: 'Decisiones clave',
+        items: [
+          'Usé un layout pensado para escaneo rápido, con KPIs críticos antes de tendencias, filtros e investigación tabular profunda.',
+          'Definí nombres explícitos de estado para mantener consistentes carga, vacío, error, parcial y no disponible entre módulos.',
+          'Acompañé los gráficos con etiquetas, resúmenes y valores estructurados cercanos para que los datos fueran legibles para personas y máquinas.',
+        ],
+      },
+    ],
+    'design-system-uplift': [
+      {
+        id: 'role',
+        heading: 'Mi rol',
+        items: [
+          'Lideré la arquitectura frontend de la capa UI compartida, incluyendo patrones reutilizables, APIs tipadas y guía de implementación.',
+          'Audité superficies de producto repetidas y convertí patrones de alto valor en componentes que los equipos podían adoptar sin reescribir pantallas.',
+          'Colaboré con diseño e ingeniería para mantener alineados tokens, comportamiento accesible y restricciones reales del producto.',
+        ],
+      },
+      {
+        id: 'constraints',
+        heading: 'Restricciones',
+        items: [
+          'El sistema debía mejorar la consistencia sin forzar un rediseño riesgoso ni bloquear entregas activas del producto.',
+          'Las pantallas existentes usaban variantes locales, espaciados inconsistentes y manejos distintos para carga, foco, validación y error.',
+          'Los componentes compartidos debían seguir siendo flexibles para los equipos, pero evitar deriva visual y de comportamiento no soportada.',
+        ],
+      },
+      {
+        id: 'decisions',
+        heading: 'Decisiones clave',
+        items: [
+          'Definí contratos de componentes alrededor de intención de producto, estados soportados y requisitos de accesibilidad, no solo variantes visuales.',
+          'Moví estados recurrentes como carga, vacío, deshabilitado, seleccionado, alerta y validación a primitivas compartidas.',
+          'Documenté reglas de uso, casos límite y anti-patrones para que el camino correcto fuera más fácil que un workaround local.',
+        ],
+      },
+    ],
+    'performance-modernization': [
+      {
+        id: 'role',
+        heading: 'Mi rol',
+        items: [
+          'Me encargué del trabajo frontend de rendimiento en renderizado, entrega de activos, estabilidad de layout, rutas y estados de carga visibles para el usuario.',
+          'Revisé recorridos UI costosos y convertí riesgos de rendimiento en restricciones prácticas que los equipos pudieran mantener.',
+          'Equilibré Core Web Vitals, accesibilidad y usabilidad para que la interfaz se sintiera más rápida sin ocultar contexto útil.',
+        ],
+      },
+      {
+        id: 'constraints',
+        heading: 'Restricciones',
+        items: [
+          'No podían publicarse rutas exactas, mediciones, capturas ni datos propietarios de rendimiento.',
+          'El producto seguía necesitando pantallas ricas en datos, comportamiento responsive, soporte de tema y estados comprensibles durante respuestas de red lentas.',
+          'Las mejoras de rendimiento no podían romper el flujo de teclado, las preferencias de movimiento reducido ni la jerarquía visual ya conocida por los usuarios.',
+        ],
+      },
+      {
+        id: 'decisions',
+        heading: 'Decisiones clave',
+        items: [
+          'Priorizé contenido significativo visible primero, diferí paneles secundarios y reduje trabajo no crítico antes de la primera interacción.',
+          'Reservé dimensiones para medios, paneles dinámicos y skeleton states para reducir movimiento de layout evitable.',
+          'Ajusté límites de componentes para que cambios frecuentes de estado quedaran locales y no dispararan cascadas amplias de render.',
+        ],
+      },
+    ],
+  },
+  ar: {
+    'analytics-command-center': [
+      {
+        id: 'role',
+        heading: 'دوري',
+        items: [
+          'تولّيت معمارية Frontend ونموذج التفاعل وأنماط لوحة البيانات القابلة لإعادة الاستخدام من صياغة المشكلة حتى التنفيذ.',
+          'حوّلت احتياجات المنتج والعمليات إلى معمارية معلومات حسب الأدوار، وعقود حالات واضحة، ومكونات React متاحة.',
+          'عملت عبر حدود المنتج والتصميم وواجهات API حتى تدعم اللوحة مسارات قرار حقيقية بدل شاشات تقارير ثابتة.',
+        ],
+      },
+      {
+        id: 'constraints',
+        heading: 'القيود',
+        items: [
+          'كان يجب أن تدعم الواجهة عدة أدوار مستخدم دون تفكيك المنتج إلى نسخ شاشة غير مترابطة.',
+          'قد تكون البيانات قيد التحميل أو متأخرة أو فارغة بسبب الفلترة أو جزئية أو قديمة أو غير متاحة، وكل حالة تحتاج إرشادًا واضحًا.',
+          'كان يجب أن تبقى الرسوم وبطاقات المقاييس مفهومة دون الاعتماد فقط على اللون أو hover أو اللقطات أو البيانات الخاصة.',
+        ],
+      },
+      {
+        id: 'decisions',
+        heading: 'القرارات الرئيسية',
+        items: [
+          'استخدمت بنية سهلة المسح تبدأ بمؤشرات KPI الحرجة قبل الاتجاهات والفلاتر والتحليل الجدولي الأعمق.',
+          'عرّفت أسماء حالات صريحة حتى تبقى حالات التحميل والفراغ والخطأ والبيانات الجزئية وعدم التوفر متسقة بين الوحدات.',
+          'دعمت الرسوم بتسميات وملخصات وقيم منظمة قريبة حتى تبقى البيانات قابلة للقراءة للناس والآلات.',
+        ],
+      },
+    ],
+    'design-system-uplift': [
+      {
+        id: 'role',
+        heading: 'دوري',
+        items: [
+          'قدت معمارية Frontend لطبقة UI المشتركة، بما في ذلك الأنماط القابلة لإعادة الاستخدام وواجهات typed وإرشادات التنفيذ.',
+          'راجعت واجهات المنتج المتكررة وحوّلت الأنماط عالية القيمة إلى مكونات يمكن للفرق اعتمادها دون إعادة كتابة الشاشات.',
+          'تعاونت مع التصميم والهندسة للحفاظ على اتساق التوكنات وسلوك الإتاحة وقيود المنتج الواقعية.',
+        ],
+      },
+      {
+        id: 'constraints',
+        heading: 'القيود',
+        items: [
+          'كان على النظام تحسين الاتساق دون فرض إعادة تصميم عالية المخاطر أو تعطيل تسليم المنتج الجاري.',
+          'استخدمت الشاشات الحالية نسخًا محلية من المكونات ومسافات غير متسقة ومعالجات مختلفة للتحميل والتركيز والتحقق والأخطاء.',
+          'كان يجب أن تبقى المكونات المشتركة مرنة لفرق المنتج مع منع الانحرافات البصرية والسلوكية غير المدعومة.',
+        ],
+      },
+      {
+        id: 'decisions',
+        heading: 'القرارات الرئيسية',
+        items: [
+          'عرّفت عقود المكونات حول هدف المنتج والحالات المدعومة ومتطلبات الإتاحة، لا حول المتغيرات البصرية فقط.',
+          'نقلت الحالات المتكررة مثل التحميل والفراغ والتعطيل والتحديد والتحذير والتحقق إلى primitives مشتركة.',
+          'وثّقت قواعد الاستخدام والحالات الحدية والأنماط الخاطئة حتى يصبح المسار الصحيح أسهل من الحل المحلي المؤقت.',
+        ],
+      },
+    ],
+    'performance-modernization': [
+      {
+        id: 'role',
+        heading: 'دوري',
+        items: [
+          'تولّيت تحسين أداء Frontend عبر العرض وتسليم الأصول وثبات التخطيط وسلوك التوجيه وحالات التحميل الظاهرة للمستخدم.',
+          'راجعت مسارات UI المكلفة وحوّلت مخاطر الأداء إلى قيود هندسية عملية يمكن للفرق الحفاظ عليها.',
+          'وازنت بين Core Web Vitals وإمكانية الوصول وقابلية الاستخدام حتى تبدو الواجهة أسرع دون إخفاء السياق المفيد.',
+        ],
+      },
+      {
+        id: 'constraints',
+        heading: 'القيود',
+        items: [
+          'لا يمكن نشر المسارات الدقيقة أو القياسات أو اللقطات أو بيانات الأداء المملوكة علنًا.',
+          'كان المنتج لا يزال يحتاج شاشات غنية بالبيانات، واستجابة للشاشات، ودعم السمات، وحالات مفهومة أثناء تأخر استجابات الشبكة.',
+          'كان يجب ألا تكسر تحسينات الأداء مسار لوحة المفاتيح أو تفضيلات تقليل الحركة أو الهرمية البصرية التي اعتادها المستخدمون.',
+        ],
+      },
+      {
+        id: 'decisions',
+        heading: 'القرارات الرئيسية',
+        items: [
+          'أعطيت أولوية للمحتوى المفيد الظاهر أولًا، وأجّلت اللوحات الثانوية، وقللت العمل غير الحرج قبل أول تفاعل.',
+          'حجزت أبعادًا للوسائط واللوحات الديناميكية وحالات skeleton لتقليل حركة layout القابلة للتجنب.',
+          'شدّدت حدود المكونات حتى تبقى تغييرات الحالة المتكررة محلية بدل إطلاق سلاسل render واسعة.',
+        ],
+      },
+    ],
+  },
+};
+
+const withProof = (caseStudy: CaseStudyBase, locale: Locale): CaseStudy => ({
+  ...caseStudy,
+  proof: caseStudyProof[locale][caseStudy.slug] ?? [],
+});
+
+export const caseStudies: readonly CaseStudy[] = [
+  withProof(analyticsCommandCenter.en, 'en'),
+  withProof(designSystemUplift.en, 'en'),
+  withProof(performanceModernization.en, 'en'),
 ] as const;
 
 const localizedCaseStudies: Record<Locale, readonly CaseStudy[]> = {
   en: [
-    analyticsCommandCenter.en,
-    designSystemUplift.en,
-    performanceModernization.en,
+    withProof(analyticsCommandCenter.en, 'en'),
+    withProof(designSystemUplift.en, 'en'),
+    withProof(performanceModernization.en, 'en'),
   ],
   es: [
-    analyticsCommandCenter.es,
-    designSystemUplift.es,
-    performanceModernization.es,
+    withProof(analyticsCommandCenter.es, 'es'),
+    withProof(designSystemUplift.es, 'es'),
+    withProof(performanceModernization.es, 'es'),
   ],
   ar: [
-    analyticsCommandCenter.ar,
-    designSystemUplift.ar,
-    performanceModernization.ar,
+    withProof(analyticsCommandCenter.ar, 'ar'),
+    withProof(designSystemUplift.ar, 'ar'),
+    withProof(performanceModernization.ar, 'ar'),
   ],
 };
 

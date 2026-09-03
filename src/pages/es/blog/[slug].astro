@@ -1,6 +1,11 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BlogPostLayout from '../../../layouts/BlogPostLayout.astro';
+import {
+  getBlogPosts,
+  getRelatedBlogPosts,
+  toBlogPostSummary,
+} from '../../../data/blog';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog-es', ({ data }) => !data.draft);
@@ -9,8 +14,12 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+const posts = await getBlogPosts('es');
+const relatedPosts = getRelatedBlogPosts(posts, post).map((relatedPost) =>
+  toBlogPostSummary('es', relatedPost),
+);
 ---
 
-<BlogPostLayout {...post.data} slug={post.id} locale="es"
+<BlogPostLayout {...post.data} slug={post.id} locale="es" {relatedPosts}
   ><Content /></BlogPostLayout
 >

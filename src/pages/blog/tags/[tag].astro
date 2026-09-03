@@ -1,0 +1,19 @@
+---
+import BlogTagPage from '../../../components/BlogTagPage.astro';
+import { getBlogPosts, getBlogTagGroups } from '../../../data/blog';
+
+export async function getStaticPaths() {
+  const locale = 'en';
+  const posts = await getBlogPosts(locale);
+  const tagGroups = await getBlogTagGroups(locale);
+
+  return tagGroups.map((group) => ({
+    params: { tag: group.slug },
+    props: { locale, group, posts },
+  }));
+}
+
+const { group, posts } = Astro.props;
+---
+
+<BlogTagPage locale="en" {group} {posts} />

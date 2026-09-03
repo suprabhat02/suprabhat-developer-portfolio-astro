@@ -1,0 +1,33 @@
+---
+import geistMonoLatinFont from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
+import { getImage } from 'astro:assets';
+import portraitImage from '../../public/assets/images/portrait-1100.webp';
+
+const portraitPreload = await getImage({
+  src: portraitImage,
+  widths: [400, 550, 600, 800, 900, 1100],
+  sizes: '(max-width: 1040px) min(440px, calc(100vw - 40px)), 32vw',
+  width: 800,
+  height: 1067,
+  format: 'webp',
+  quality: 76,
+});
+---
+
+<meta name="color-scheme" content="dark light" />
+<link
+  rel="preload"
+  as="image"
+  href={portraitPreload.src}
+  type="image/webp"
+  imagesrcset={portraitPreload.srcSet.attribute}
+  imagesizes="(max-width: 1040px) min(440px, calc(100vw - 40px)), 32vw"
+  fetchpriority="high"
+/>
+<link
+  rel="preload"
+  as="font"
+  type="font/woff2"
+  href={geistMonoLatinFont}
+  crossorigin="anonymous"
+/>

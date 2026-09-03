@@ -12,9 +12,13 @@ import { getSkills } from '../data/skills';
 import { tools } from '../data/tools';
 import { getCaseStudies } from '../data/caseStudies';
 import { getInternalWorkNotice, getWork } from '../data/work';
+import {
+  getBlogPosts,
+  getBlogTagGroupsFromPosts,
+  getBlogTagHref,
+} from '../data/blog';
 import { localePrefix, localeMeta, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
-import { getCollection } from 'astro:content';
 
 interface Props {
   page: string;
@@ -38,14 +42,8 @@ const featured = recommendations.filter((item) =>
     item.id as (typeof featuredRecommendationIds)[number],
   ),
 );
-const blogCollection =
-  locale === 'es' ? 'blog-es' : locale === 'ar' ? 'blog-ar' : 'blog';
-const posts = (
-  await getCollection(blogCollection, ({ data }) => !data.draft)
-).sort(
-  (first, second) =>
-    second.data.pubDate.valueOf() - first.data.pubDate.valueOf(),
-);
+const posts = await getBlogPosts(locale);
+const tagGroups = getBlogTagGroupsFromPosts(locale, posts);
 const dateLocale = localeMeta[locale].htmlLang;
 const tx = (key: string, fallback: string) => t(locale, key, fallback);
 ---
@@ -608,6 +606,24 @@ const tx = (key: string, fallback: string) => t(locale, key, fallback);
             'Practical guides on accessible interfaces, performance, maintainable architecture, and professional UI delivery.',
           )}
         </p>
+
+        <nav
+          class="topic-cloud"
+          aria-label={tx('blog.taxonomy.allTopics', 'All article topics')}
+        >
+          <strong>{tx('blog.taxonomy.allTopics', 'All article topics')}</strong>
+          <ul class="tag-list">
+            {tagGroups.map((group) => (
+              <li>
+                <a href={getBlogTagHref(locale, group.tag)}>
+                  <span>{group.tag}</span>
+                  <span class="tag-count">{group.count}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
         <div class="article-list">
           {posts.map((post) => (
             <article>
@@ -624,7 +640,11 @@ const tx = (key: string, fallback: string) => t(locale, key, fallback);
               <p>{post.data.description}</p>
               <ul class="tag-list">
                 {post.data.tags.map((tag) => (
-                  <li>{tag}</li>
+                  <li>
+                    <a href={getBlogTagHref(locale, tag)} rel="tag">
+                      {tag}
+                    </a>
+                  </li>
                 ))}
               </ul>
             </article>
@@ -641,21 +661,26 @@ const tx = (key: string, fallback: string) => t(locale, key, fallback);
       <div class="wrap narrow">
         <>
           <p class="eyebrow">404</p>
-          <h1>That page is not here</h1>
-          <p>The address may have changed, or the page may no longer exist.</p>
+          <h1>{tx('page.notFound.title', 'That page is not here')}</h1>
+          <p>
+            {tx(
+              'page.notFound.body',
+              'The address may have changed, or the page may no longer exist.',
+            )}
+          </p>
           <div class="actions">
             <>
               <a class="button primary" href={href('/')}>
-                Home
+                {tx('nav.home', 'Home')}
               </a>
               <a class="button" href={href('/work/')}>
-                Work
+                {tx('nav.work', 'Work')}
               </a>
               <a class="button" href={href('/blog/')}>
-                Blog
+                {tx('nav.blog', 'Blog')}
               </a>
               <a class="button" href={href('/contact/')}>
-                Contact
+                {tx('nav.contact', 'Contact')}
               </a>
             </>
           </div>

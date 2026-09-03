@@ -7,8 +7,14 @@ const es: Messages = {
   'nav.primary': 'Navegación principal',
   'nav.mobile': 'Navegación móvil',
   language: 'Cambiar idioma',
+  'language.current': 'Cambiar idioma, idioma actual: {language}',
   'language.options': 'Opciones de idioma',
+  'language.switch.en': 'Cambiar idioma a inglés',
+  'language.switch.es': 'Cambiar idioma a español',
+  'language.switch.ar': 'Cambiar idioma a árabe',
   theme: 'Cambiar tema de color',
+  'theme.switchLight': 'Cambiar a tema claro',
+  'theme.switchDark': 'Cambiar a tema oscuro',
   menu: 'Menú',
   'nav.openMenu': 'Abrir menú de navegación',
   'nav.closeMenu': 'Cerrar menú de navegación',
@@ -60,6 +66,17 @@ const es: Messages = {
   'home.readArticle': 'Leer artículo',
   'home.portraitCaption':
     'Más de 6 años · React · Next.js · TypeScript · FastAPI',
+  'home.heroCaseEyebrow': 'Caso de estudio destacado',
+  'home.heroCaseTags': 'Áreas de enfoque del proyecto',
+  'home.heroProofAria': 'Pruebas profesionales',
+  'home.heroWorkEyebrow': 'Trabajo seleccionado',
+  'home.heroWorkBody':
+    'Los casos de estudio confidenciales muestran arquitectura, restricciones, decisiones y resultados sin exponer detalles sensibles de clientes.',
+  'home.heroStackEyebrow': 'Stack principal',
+  'home.heroStackTitle': 'Sistemas React + TypeScript',
+  'home.heroStackBody':
+    'Arquitectura frontend, gestión de estado, APIs, accesibilidad, sistemas de diseño y Core Web Vitals listos para producción.',
+  'home.heroStackCta': 'Explorar especialización',
   'home.statAria': 'Datos destacados de carrera',
   'home.statYears': 'Años de experiencia',
   'home.statCompanies': 'Empresas donde trabajé',
@@ -199,11 +216,26 @@ const es: Messages = {
   'page.blog.title': 'Artículos de ingeniería frontend',
   'page.blog.lead':
     'Guías prácticas sobre interfaces accesibles, rendimiento, arquitectura mantenible y entrega profesional de UI.',
+  'blog.taxonomy.eyebrow': 'Tema',
+  'blog.taxonomy.title': 'Artículos sobre {tag}',
+  'blog.taxonomy.description':
+    'Artículos de ingeniería frontend sobre {tag}, con guías prácticas, decisiones de implementación, accesibilidad, rendimiento y entrega de UI mantenible.',
+  'blog.taxonomy.allTopics': 'Todos los temas',
+  'blog.backToAll': 'Todos los artículos',
+  'blog.relatedEyebrow': 'Leer después',
+  'blog.relatedTitle': 'Artículos frontend relacionados',
+  'page.notFound.title': 'Esa página no está aquí',
+  'page.notFound.body':
+    'La dirección puede haber cambiado o la página puede haber dejado de existir.',
   'footer.lead':
     'Ingeniero frontend sénior que crea interfaces de producto rápidas y accesibles.',
   'footer.navigate': 'Navegar',
+  'footer.siteLinks': 'Enlaces del sitio',
   'footer.more': 'Más',
+  'footer.moreLinks': 'Más enlaces',
   'footer.legal': 'Legal',
+  'footer.legalLinks': 'Enlaces legales',
+  'footer.rss': 'Feed RSS',
   'form.name': 'Nombre',
   'form.email': 'Correo electrónico',
   'form.details': 'Detalles del proyecto',
@@ -239,6 +271,7 @@ const es: Messages = {
     'Envía un resumen mediante el formulario de contacto y responderé con próximos pasos, opciones de calendario y una propuesta detallada.',
   'work.focusAreas': 'Áreas de enfoque',
   'caseStudy.read': 'Leer caso de estudio',
+  'caseStudy.projectProof': 'Prueba del proyecto',
   'caseStudy.breadcrumb': 'Ruta del caso de estudio',
   'caseStudy.snapshot': 'Resumen del proyecto',
   'caseStudy.toc': 'En esta página',
@@ -265,6 +298,7 @@ const es: Messages = {
   'schema.serviceDescription':
     'Desarrollo frontend SaaS, ingeniería de UI para paneles, optimización de rendimiento, sistemas de diseño, implementación React/Next.js, integración backend FastAPI y UI centrada en accesibilidad.',
   'schema.worldwide': 'Todo el mundo',
+  'schema.countryIndia': 'India',
 };
 
 const ar: Messages = {
@@ -273,7 +307,13 @@ const ar: Messages = {
   'nav.mobile': 'تنقل الجوال',
   'language.options': 'خيارات اللغة',
   language: 'تغيير اللغة',
+  'language.current': 'تغيير اللغة، اللغة الحالية: {language}',
+  'language.switch.en': 'تغيير اللغة إلى الإنجليزية',
+  'language.switch.es': 'تغيير اللغة إلى الإسبانية',
+  'language.switch.ar': 'تغيير اللغة إلى العربية',
   theme: 'تبديل سمة الألوان',
+  'theme.switchLight': 'التبديل إلى السمة الفاتحة',
+  'theme.switchDark': 'التبديل إلى السمة الداكنة',
   menu: 'القائمة',
   'nav.openMenu': 'فتح قائمة التنقل',
   'nav.closeMenu': 'إغلاق قائمة التنقل',
@@ -323,6 +363,17 @@ const ar: Messages = {
   'home.readArticle': 'قراءة المقال',
   'home.portraitCaption':
     'أكثر من 6 سنوات · React · Next.js · TypeScript · FastAPI',
+  'home.heroCaseEyebrow': 'دراسة حالة مختارة',
+  'home.heroCaseTags': 'مجالات تركيز المشروع',
+  'home.heroProofAria': 'إثبات مهني',
+  'home.heroWorkEyebrow': 'عمل مختار',
+  'home.heroWorkBody':
+    'تعرض دراسات الحالة السرية المعمارية والقيود والقرارات والنتائج من دون كشف تفاصيل حساسة عن العملاء.',
+  'home.heroStackEyebrow': 'المجموعة الأساسية',
+  'home.heroStackTitle': 'أنظمة React + TypeScript',
+  'home.heroStackBody':
+    'معمارية واجهات أمامية وإدارة حالة وواجهات API وإمكانية وصول وأنظمة تصميم وCore Web Vitals جاهزة للإنتاج.',
+  'home.heroStackCta': 'استكشف الخبرات',
   'home.statAria': 'أبرز محطات المسيرة المهنية',
   'home.statYears': 'سنوات خبرة',
   'home.statCompanies': 'شركات عملت معها',
@@ -452,10 +503,24 @@ const ar: Messages = {
   'page.blog.title': 'مقالات هندسة الواجهات الأمامية',
   'page.blog.lead':
     'أدلة عملية حول الواجهات المتاحة والأداء والمعمارية القابلة للصيانة وتقديم واجهات احترافية.',
+  'blog.taxonomy.eyebrow': 'موضوع',
+  'blog.taxonomy.title': 'مقالات عن {tag}',
+  'blog.taxonomy.description':
+    'مقالات في هندسة الواجهات الأمامية عن {tag}، تغطي الإرشادات العملية وقرارات التنفيذ وإمكانية الوصول والأداء وتقديم واجهات قابلة للصيانة.',
+  'blog.taxonomy.allTopics': 'كل المواضيع',
+  'blog.backToAll': 'كل المقالات',
+  'blog.relatedEyebrow': 'اقرأ التالي',
+  'blog.relatedTitle': 'مقالات واجهات أمامية ذات صلة',
+  'page.notFound.title': 'هذه الصفحة غير موجودة',
+  'page.notFound.body': 'ربما تغيّر العنوان أو لم تعد الصفحة موجودة.',
   'footer.lead': 'مهندس واجهات أمامية أول يبني واجهات منتجات سريعة ومتاحة.',
   'footer.navigate': 'التنقل',
+  'footer.siteLinks': 'روابط الموقع',
   'footer.more': 'المزيد',
+  'footer.moreLinks': 'روابط إضافية',
   'footer.legal': 'قانوني',
+  'footer.legalLinks': 'روابط قانونية',
+  'footer.rss': 'خلاصة RSS',
   'form.name': 'الاسم',
   'form.email': 'البريد الإلكتروني',
   'form.details': 'تفاصيل المشروع',
@@ -490,6 +555,7 @@ const ar: Messages = {
     'أرسل ملخصًا عبر نموذج الاتصال وسأرد بالخطوات التالية وخيارات الجدول الزمني ومقترح تفصيلي.',
   'work.focusAreas': 'مجالات التركيز',
   'caseStudy.read': 'قراءة دراسة الحالة',
+  'caseStudy.projectProof': 'إثبات المشروع',
   'caseStudy.breadcrumb': 'مسار دراسة الحالة',
   'caseStudy.snapshot': 'ملخص المشروع',
   'caseStudy.toc': 'في هذه الصفحة',
@@ -516,6 +582,7 @@ const ar: Messages = {
   'schema.serviceDescription':
     'تطوير واجهات SaaS، وهندسة واجهات لوحات البيانات، وتحسين الأداء، وأنظمة التصميم، وتنفيذ React/Next.js، وتكامل FastAPI، وواجهات تركّز على إمكانية الوصول.',
   'schema.worldwide': 'عالميًا',
+  'schema.countryIndia': 'الهند',
 };
 
 const messages: Partial<Record<Locale, Messages>> = { es, ar };

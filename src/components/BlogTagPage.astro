@@ -1,0 +1,155 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE_URL } from '../config/site';
+import type { BlogTagGroup } from '../data/blog';
+import {
+  getBlogPostHref,
+  getBlogTagHref,
+  getBlogTagGroupsFromPosts,
+  type LocalizedBlogPost,
+} from '../data/blog';
+import { localeMeta, localePrefix, type Locale } from '../i18n/config';
+import { t } from '../i18n/messages';
+
+interface Props {
+  locale: Locale;
+  group: BlogTagGroup;
+  posts: LocalizedBlogPost[];
+}
+
+const { locale, group, posts } = Astro.props;
+const language = localeMeta[locale].htmlLang;
+const prefix = localePrefix(locale);
+const dateLocale = language;
+const title = t(locale, 'blog.taxonomy.title', 'Articles tagged {tag}').replace(
+  '{tag}',
+  group.tag,
+);
+const description = t(
+  locale,
+  'blog.taxonomy.description',
+  'Frontend engineering articles about {tag}, including practical guidance, implementation tradeoffs, accessibility, performance, and maintainable UI delivery.',
+).replace('{tag}', group.tag);
+const tagGroups = getBlogTagGroupsFromPosts(locale, posts);
+const pageUrl = `${SITE_URL}${getBlogTagHref(locale, group.tag)}`;
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    inLanguage: language,
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: t(locale, 'nav.home', 'Home'),
+        item: `${SITE_URL}${prefix}/`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: t(locale, 'nav.blog', 'Writing'),
+        item: `${SITE_URL}${prefix}/blog/`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: group.tag,
+        item: pageUrl,
+      },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: title,
+    description,
+    inLanguage: language,
+    url: pageUrl,
+    itemListElement: group.posts.map((post, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `${SITE_URL}${getBlogPostHref(locale, post.id)}`,
+      name: post.data.title,
+    })),
+  },
+];
+---
+
+<BaseLayout
+  {title}
+  {description}
+  {locale}
+  page="blog"
+  path={`/blog/tags/${group.slug}/`}
+  hideAlternates
+  schema={schema}
+>
+  <section class="page section">
+    <div class="wrap narrow">
+      <p class="eyebrow">{t(locale, 'blog.taxonomy.eyebrow', 'Topic')}</p>
+      <h1>{title}</h1>
+      <p class="lead">{description}</p>
+
+      <nav
+        class="topic-cloud"
+        aria-label={t(locale, 'blog.taxonomy.allTopics', 'All article topics')}
+      >
+        <strong
+          >{t(locale, 'blog.taxonomy.allTopics', 'All article topics')}</strong
+        >
+        <ul class="tag-list">
+          {
+            tagGroups.map((tagGroup) => (
+              <li>
+                <a
+                  href={getBlogTagHref(locale, tagGroup.tag)}
+                  aria-current={
+                    tagGroup.slug === group.slug ? 'page' : undefined
+                  }
+                >
+                  <span>{tagGroup.tag}</span>
+                  <span class="tag-count">{tagGroup.count}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="article-list">
+        {
+          group.posts.map((post) => (
+            <article>
+              <p class="meta">
+                <time datetime={post.data.pubDate.toISOString()}>
+                  {post.data.pubDate.toLocaleDateString(dateLocale, {
+                    dateStyle: 'long',
+                  })}
+                </time>
+              </p>
+              <h2>
+                <a href={getBlogPostHref(locale, post.id)}>{post.data.title}</a>
+              </h2>
+              <p>{post.data.description}</p>
+              <ul class="tag-list">
+                {post.data.tags.map((tag) => (
+                  <li>
+                    <a href={getBlogTagHref(locale, tag)} rel="tag">
+                      {tag}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))
+        }
+      </div>
+
+      <div class="actions">
+        <a class="button" href={`${prefix}/blog/`}>
+          {t(locale, 'blog.backToAll', 'All articles')}
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,5 +1,8 @@
 ---
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import Homepage from '../../components/Homepage.astro';
+import HomepageHead from '../../components/HomepageHead.astro';
+import { getHomepageSeo } from '../../data/homepageSeo';
 import type { Locale } from '../../i18n/config';
 
 export function getStaticPaths() {
@@ -10,6 +13,10 @@ export function getStaticPaths() {
 }
 
 const { locale } = Astro.props as { locale: Locale };
+const { title, description, schema } = getHomepageSeo(locale);
 ---
 
-<Homepage {locale} />
+<BaseLayout {title} {description} {schema} {locale} page="home">
+  <HomepageHead slot="head" />
+  <Homepage {locale} />
+</BaseLayout>

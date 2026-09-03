@@ -2,10 +2,11 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SEOHead from '../components/SEOHead.astro';
-import { ClientRouter } from 'astro:transitions';
 import { getProfile } from '../data/profile';
 import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
+import { t } from '../i18n/messages';
 import { SITE_NAME, SITE_URL } from '../config/site';
+import { getBlogFeedHref, getBlogFeedMeta } from '../data/blog';
 import '../styles/global.css';
 
 interface Props {
@@ -37,6 +38,40 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 const pagePath = path ?? (page === 'home' ? '/' : `/${page}/`);
 const alternateHref = (alternateLocale: Locale) =>
   new URL(`${localePrefix(alternateLocale)}${pagePath}`, Astro.site).href;
+const languageAlternates = locales.map((supportedLocale) => ({
+  '@type': 'WebPage',
+  url: alternateHref(supportedLocale),
+  inLanguage: localeMeta[supportedLocale].htmlLang,
+}));
+const rssAlternates = locales.map((supportedLocale) => ({
+  href: getBlogFeedHref(supportedLocale),
+  title: getBlogFeedMeta(supportedLocale).title,
+}));
+const personKnowsAbout = [
+  'React.js',
+  'Next.js',
+  'TypeScript',
+  'JavaScript',
+  'Redux Toolkit',
+  'RTK Query',
+  'TanStack Query',
+  'Tailwind CSS',
+  'Ant Design',
+  'Chakra UI',
+  'Headless UI',
+  'FastAPI',
+  'PostgreSQL',
+  'GraphQL',
+  'Node.js',
+  'Figma',
+  'Storybook',
+  'Azure',
+  'Web Accessibility',
+  'Core Web Vitals',
+  'Design Systems',
+  'SaaS Frontend Development',
+  'Performance Optimization',
+] as const;
 const pageSchema = {
   '@type': 'WebPage',
   '@id': `${canonical.href}#webpage`,
@@ -64,18 +99,36 @@ const combinedSchema = {
       url: `${SITE_URL}/`,
       image: `${SITE_URL}${profile.portrait.src}`,
       email: profile.email,
+      inLanguage: meta.htmlLang,
       sameAs: profile.social.map((item) => item.href),
-      address: { '@type': 'Country', name: 'India' },
+      address: {
+        '@type': 'Country',
+        name: t(locale, 'schema.countryIndia', 'India'),
+      },
+      knowsAbout: personKnowsAbout,
+      knowsLanguage: locales.map((supportedLocale) => ({
+        '@type': 'Language',
+        name: localeMeta[supportedLocale].label,
+        alternateName: localeMeta[supportedLocale].htmlLang,
+      })),
     },
     {
       '@type': 'WebSite',
       '@id': `${SITE_URL}/#website`,
       url: `${SITE_URL}/`,
       name: SITE_NAME,
-      inLanguage: meta.htmlLang,
+      description,
+      inLanguage: locales.map(
+        (supportedLocale) => localeMeta[supportedLocale].htmlLang,
+      ),
       author: { '@id': `${SITE_URL}/#person` },
     },
-    pageSchema,
+    {
+      ...pageSchema,
+      workTranslation: languageAlternates.filter(
+        (alternate) => alternate.inLanguage !== meta.htmlLang,
+      ),
+    },
     ...suppliedSchemas.map(({ '@context': _context, ...entry }) => entry),
   ],
 };
@@ -106,12 +159,16 @@ const combinedSchema = {
       href="/assets/favicons/apple-touch-icon.png"
     />
     <link rel="manifest" href="/site.webmanifest" />
-    <link
-      rel="alternate"
-      type="application/rss+xml"
-      title="Suprabhat Kumar"
-      href="/rss.xml"
-    />
+    {
+      rssAlternates.map((feed) => (
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title={feed.title}
+          href={feed.href}
+        />
+      ))
+    }
     <slot name="head" />
     {
       !noindex &&
@@ -147,13 +204,10 @@ const combinedSchema = {
       imageAlt={`${profile.name}, ${profile.title}`}
       schema={combinedSchema}
     />
-    <!-- ClientRouter: MPA → SPA navigation, native browser API, 0 KB overhead -->
-    <ClientRouter />
   </head>
   <body>
-    <!-- transition:persist keeps the header mounted across navigations (no flash) -->
-    <Header {locale} {page} path={pagePath} transition:persist="site-header" />
-    <main id="main-content" transition:name="main" transition:animate="fade">
+    <Header {locale} {page} path={pagePath} />
+    <main id="main-content">
       <slot />
     </main>
     <Footer {locale} />

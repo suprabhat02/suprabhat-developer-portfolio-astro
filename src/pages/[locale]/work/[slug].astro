@@ -24,10 +24,47 @@ const localizedRoot = `${SITE_URL}${localePrefix(locale)}`;
 const url = `${localizedRoot}${pagePath}`;
 const title = caseStudy.seoTitle;
 const description = caseStudy.description;
+const outcomesLabel = t(locale, 'caseStudy.outcomes', 'Outcomes');
+const nextStepsLabel = t(locale, 'caseStudy.nextSteps', 'Next steps');
+const articleBody = [
+  caseStudy.title,
+  caseStudy.summary,
+  ...caseStudy.proof.flatMap((panel) => [panel.heading, ...panel.items]),
+  ...caseStudy.sections.flatMap((section) => [
+    section.heading,
+    ...section.body,
+    ...(section.bullets ?? []),
+  ]),
+  outcomesLabel,
+  ...caseStudy.outcomes,
+  nextStepsLabel,
+  ...caseStudy.nextSteps,
+].join('\n\n');
+const structuredParts = [
+  ...caseStudy.proof.map((panel) => ({
+    '@type': 'CreativeWork',
+    name: panel.heading,
+    text: panel.items.join(' '),
+    inLanguage: localeMeta[locale].htmlLang,
+  })),
+  ...caseStudy.sections.map((section) => ({
+    '@type': 'CreativeWork',
+    name: section.heading,
+    text: [...section.body, ...(section.bullets ?? [])].join(' '),
+    inLanguage: localeMeta[locale].htmlLang,
+  })),
+  {
+    '@type': 'CreativeWork',
+    name: outcomesLabel,
+    text: caseStudy.outcomes.join(' '),
+    inLanguage: localeMeta[locale].htmlLang,
+  },
+];
 const schema = [
   {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
+    inLanguage: localeMeta[locale].htmlLang,
     itemListElement: [
       {
         '@type': 'ListItem',
@@ -59,6 +96,8 @@ const schema = [
     inLanguage: localeMeta[locale].htmlLang,
     keywords: caseStudy.tags.join(', '),
     articleSection: caseStudy.sections.map((section) => section.heading),
+    articleBody,
+    hasPart: structuredParts,
     dateModified: '2026-09-01',
     isAccessibleForFree: true,
     author: { '@id': `${SITE_URL}/#person` },
