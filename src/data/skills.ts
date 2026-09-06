@@ -16,14 +16,19 @@ export const skillGroups: readonly SkillGroup[] = [
     items: [
       'React.js + Next.js',
       'JavaScript + TypeScript',
-      'HTML + CSS + Sass',
+      'HTML5 + CSS3 + Sass',
       'Tailwind CSS',
     ],
   },
   {
     id: 'ui-libraries',
     heading: 'UI Libraries',
-    items: ['Chakra UI', 'Headless UI', 'React Bootstrap', 'Ant Design'],
+    items: [
+      'Chakra UI',
+      'Headless UI',
+      'Bootstrap 5 + React Bootstrap',
+      'Ant Design',
+    ],
   },
   {
     id: 'state-and-data',
@@ -32,8 +37,9 @@ export const skillGroups: readonly SkillGroup[] = [
       'Git workflows',
       'Redux Toolkit',
       'React Hooks + Context API',
-      'React Query',
+      'TanStack Query',
       'GraphQL',
+      'MongoDB',
     ],
   },
 ] as const;
@@ -51,14 +57,19 @@ const localizedSkills: Partial<
         items: [
           'React.js + Next.js',
           'JavaScript + TypeScript',
-          'HTML + CSS + Sass',
+          'HTML5 + CSS3 + Sass',
           'Tailwind CSS',
         ],
       },
       {
         id: 'ui-libraries',
         heading: 'Bibliotecas de UI',
-        items: ['Chakra UI', 'Headless UI', 'React Bootstrap', 'Ant Design'],
+        items: [
+          'Chakra UI',
+          'Headless UI',
+          'Bootstrap 5 + React Bootstrap',
+          'Ant Design',
+        ],
       },
       {
         id: 'state-and-data',
@@ -67,8 +78,9 @@ const localizedSkills: Partial<
           'Flujos de trabajo con Git',
           'Redux Toolkit',
           'React Hooks + Context API',
-          'React Query',
+          'TanStack Query',
           'GraphQL',
+          'MongoDB',
         ],
       },
     ],
@@ -83,14 +95,19 @@ const localizedSkills: Partial<
         items: [
           'React.js + Next.js',
           'JavaScript + TypeScript',
-          'HTML + CSS + Sass',
+          'HTML5 + CSS3 + Sass',
           'Tailwind CSS',
         ],
       },
       {
         id: 'ui-libraries',
         heading: 'مكتبات UI',
-        items: ['Chakra UI', 'Headless UI', 'React Bootstrap', 'Ant Design'],
+        items: [
+          'Chakra UI',
+          'Headless UI',
+          'Bootstrap 5 + React Bootstrap',
+          'Ant Design',
+        ],
       },
       {
         id: 'state-and-data',
@@ -99,8 +116,9 @@ const localizedSkills: Partial<
           'سير عمل Git',
           'Redux Toolkit',
           'React Hooks + Context API',
-          'React Query',
+          'TanStack Query',
           'GraphQL',
+          'MongoDB',
         ],
       },
     ],

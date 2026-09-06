@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageContent from '../../components/PageContent.astro';
+import { type Locale } from '../../i18n/config';
+import { t } from '../../i18n/messages';
+
+export function getStaticPaths() {
+  return (['es', 'ar'] as const).map((locale) => ({
+    params: { locale },
+    props: { locale },
+  }));
+}
+
+const { locale } = Astro.props as { locale: Locale };
+const title = `${t(locale, 'page.notFound.title', 'Page not found')} — Suprabhat Kumar`;
+const description = t(
+  locale,
+  'page.notFound.lead',
+  "This URL did not resolve. Use crawlable links to return to Suprabhat Kumar's homepage, case studies, articles, or contact page.",
+);
+---
+
+<BaseLayout
+  {title}
+  {description}
+  {locale}
+  page="404"
+  path="/404/"
+  noindex
+  hideAlternates
+  hideCanonical><PageContent page="404" {locale} /></BaseLayout
+>

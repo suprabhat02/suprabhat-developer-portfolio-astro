@@ -46,6 +46,48 @@ const posts = await getBlogPosts(locale);
 const tagGroups = getBlogTagGroupsFromPosts(locale, posts);
 const dateLocale = localeMeta[locale].htmlLang;
 const tx = (key: string, fallback: string) => t(locale, key, fallback);
+const notFoundLinks = [
+  {
+    href: href('/'),
+    label: tx('page.notFound.homeLabel', 'Home'),
+    body: tx(
+      'page.notFound.homeBody',
+      'Profile summary, stack, experience, and contact paths.',
+    ),
+    iconPath:
+      'M4.5 11.5 12 5l7.5 6.5V20a1 1 0 0 1-1 1h-4.25v-5.25h-4.5V21H5.5a1 1 0 0 1-1-1v-8.5Z',
+  },
+  {
+    href: href('/work/'),
+    label: tx('page.notFound.workLabel', 'Case studies'),
+    body: tx(
+      'page.notFound.workBody',
+      'Decisions, constraints, and outcomes from frontend projects.',
+    ),
+    iconPath:
+      'M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v11A2.5 2.5 0 0 1 16.5 20h-9A2.5 2.5 0 0 1 5 17.5v-11Zm4 1.75h6M9 12h6M9 15.75h3.5',
+  },
+  {
+    href: href('/blog/'),
+    label: tx('page.notFound.blogLabel', 'Articles'),
+    body: tx(
+      'page.notFound.blogBody',
+      'Guides on performance, accessibility, and frontend architecture.',
+    ),
+    iconPath:
+      'M6.5 5h11A1.5 1.5 0 0 1 19 6.5v11A1.5 1.5 0 0 1 17.5 19h-11A1.5 1.5 0 0 1 5 17.5v-11A1.5 1.5 0 0 1 6.5 5Zm2 4h7M8.5 12h7M8.5 15h4',
+  },
+  {
+    href: href('/contact/'),
+    label: tx('page.notFound.contactLabel', 'Contact'),
+    body: tx(
+      'page.notFound.contactBody',
+      'Send project context or use direct email.',
+    ),
+    iconPath:
+      'M4.75 7.5A2.25 2.25 0 0 1 7 5.25h10a2.25 2.25 0 0 1 2.25 2.25v9A2.25 2.25 0 0 1 17 18.75H7a2.25 2.25 0 0 1-2.25-2.25v-9Zm1.75.25 5.5 4.1 5.5-4.1',
+  },
+] as const;
 ---
 
 {
@@ -79,10 +121,10 @@ const tx = (key: string, fallback: string) => t(locale, key, fallback);
           <figure class="portrait">
             <img
               src="/assets/images/portrait-800.webp"
-              srcset="/assets/images/portrait-400.webp 400w, /assets/images/portrait-550.webp 550w, /assets/images/portrait-600.webp 600w, /assets/images/portrait-800.webp 800w, /assets/images/portrait-900.webp 900w, /assets/images/portrait-1100.webp 1100w"
+              srcset="/assets/images/portrait-400.webp 400w, /assets/images/portrait-550.webp 550w, /assets/images/portrait-600.webp 600w, /assets/images/portrait-800.webp 800w, /assets/images/portrait-900.webp 900w"
               sizes="(max-width: 760px) 90vw, 42vw"
               width="800"
-              height="1000"
+              height="1067"
               alt={profile.portrait.alt}
               fetchpriority="high"
               decoding="async"
@@ -657,34 +699,104 @@ const tx = (key: string, fallback: string) => t(locale, key, fallback);
 
 {
   page === '404' && (
-    <section class="page section">
-      <div class="wrap narrow">
-        <>
-          <p class="eyebrow">404</p>
-          <h1>{tx('page.notFound.title', 'That page is not here')}</h1>
-          <p>
+    <section
+      class="page section not-found-page"
+      aria-labelledby="not-found-title"
+    >
+      <div class="wrap not-found-shell">
+        <div class="not-found-hero">
+          <p class="eyebrow">{tx('page.notFound.eyebrow', 'Error 404')}</p>
+          <div class="not-found-code" aria-hidden="true">
+            <span>4</span>
+            <span class="not-found-orb">0</span>
+            <span>4</span>
+          </div>
+          <p class="not-found-kicker">
+            {tx('page.notFound.kicker', 'Route not found')}
+          </p>
+          <h1 id="not-found-title">
+            {tx('page.notFound.title', 'That page is not here')}
+          </h1>
+          <p class="lead">
+            {tx(
+              'page.notFound.lead',
+              'This URL did not resolve, but the site is still available. Use these quick paths to return to work, writing, services, or contact.',
+            )}
+          </p>
+          <p class="not-found-body">
             {tx(
               'page.notFound.body',
               'The address may have changed, or the page may no longer exist.',
             )}
           </p>
-          <div class="actions">
-            <>
-              <a class="button primary" href={href('/')}>
-                {tx('nav.home', 'Home')}
-              </a>
-              <a class="button" href={href('/work/')}>
-                {tx('nav.work', 'Work')}
-              </a>
-              <a class="button" href={href('/blog/')}>
-                {tx('nav.blog', 'Blog')}
-              </a>
-              <a class="button" href={href('/contact/')}>
-                {tx('nav.contact', 'Contact')}
-              </a>
-            </>
+          <div
+            class="actions not-found-actions"
+            aria-label={tx('page.notFound.actionsAria', 'Recovery actions')}
+          >
+            <a class="button primary" href={href('/')}>
+              {tx('page.notFound.primaryCta', 'Back to home')}
+            </a>
+            <a class="button" href={href('/work/')}>
+              {tx('page.notFound.secondaryCta', 'View case studies')}
+            </a>
+            <a class="button" href={href('/contact/')}>
+              {tx('page.notFound.tertiaryCta', 'Contact')}
+            </a>
           </div>
-        </>
+        </div>
+
+        <aside class="not-found-panel" aria-labelledby="not-found-panel-title">
+          <p class="eyebrow">
+            {tx('page.notFound.panelTitle', 'Useful routes')}
+          </p>
+          <h2 id="not-found-panel-title">
+            {tx('page.notFound.panelTitle', 'Useful routes')}
+          </h2>
+          <p>
+            {tx(
+              'page.notFound.panelLead',
+              'Every link here is static, crawlable, localized, and accessible without JavaScript.',
+            )}
+          </p>
+          <nav aria-label={tx('page.notFound.panelTitle', 'Useful routes')}>
+            <ul class="not-found-links">
+              {notFoundLinks.map((item) => (
+                <li>
+                  <a href={item.href}>
+                    <span class="not-found-link-icon" aria-hidden="true">
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.8"
+                        focusable="false"
+                      >
+                        <path d={item.iconPath} />
+                      </svg>
+                    </span>
+                    <span>
+                      <strong>{item.label}</strong>
+                      <span>{item.body}</span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <div class="not-found-seo-note">
+            <strong>{tx('page.notFound.seoTitle', 'Indexing status')}</strong>
+            <p>
+              {tx(
+                'page.notFound.seoBody',
+                'This page is noindexed, excluded from the sitemap, and keeps internal links available for people and crawlers to recover useful content.',
+              )}
+            </p>
+          </div>
+        </aside>
       </div>
     </section>
   )

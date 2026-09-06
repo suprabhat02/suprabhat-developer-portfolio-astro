@@ -1,4 +1,8 @@
 import type { Locale } from '../i18n/config';
+import {
+  additionalCaseStudies,
+  additionalCaseStudyProof,
+} from './additionalCaseStudies';
 
 export interface CaseStudySection {
   id: string;
@@ -1422,13 +1426,17 @@ const caseStudyProof: Record<
 
 const withProof = (caseStudy: CaseStudyBase, locale: Locale): CaseStudy => ({
   ...caseStudy,
-  proof: caseStudyProof[locale][caseStudy.slug] ?? [],
+  proof:
+    caseStudyProof[locale][caseStudy.slug] ??
+    additionalCaseStudyProof[locale][caseStudy.slug] ??
+    [],
 });
 
 export const caseStudies: readonly CaseStudy[] = [
   withProof(analyticsCommandCenter.en, 'en'),
   withProof(designSystemUplift.en, 'en'),
   withProof(performanceModernization.en, 'en'),
+  ...additionalCaseStudies.en.map((caseStudy) => withProof(caseStudy, 'en')),
 ] as const;
 
 const localizedCaseStudies: Record<Locale, readonly CaseStudy[]> = {
@@ -1436,16 +1444,19 @@ const localizedCaseStudies: Record<Locale, readonly CaseStudy[]> = {
     withProof(analyticsCommandCenter.en, 'en'),
     withProof(designSystemUplift.en, 'en'),
     withProof(performanceModernization.en, 'en'),
+    ...additionalCaseStudies.en.map((caseStudy) => withProof(caseStudy, 'en')),
   ],
   es: [
     withProof(analyticsCommandCenter.es, 'es'),
     withProof(designSystemUplift.es, 'es'),
     withProof(performanceModernization.es, 'es'),
+    ...additionalCaseStudies.es.map((caseStudy) => withProof(caseStudy, 'es')),
   ],
   ar: [
     withProof(analyticsCommandCenter.ar, 'ar'),
     withProof(designSystemUplift.ar, 'ar'),
     withProof(performanceModernization.ar, 'ar'),
+    ...additionalCaseStudies.ar.map((caseStudy) => withProof(caseStudy, 'ar')),
   ],
 };
 

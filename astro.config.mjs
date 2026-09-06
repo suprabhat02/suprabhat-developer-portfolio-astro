@@ -25,7 +25,10 @@ export default defineConfig({
           ar: 'ar',
         },
       },
-      filter: (page) => !/\/404\/$/.test(new URL(page).pathname),
+      filter: (page) => {
+        const pathname = new URL(page).pathname;
+        return !/\/404(?:\/|\.html)?$/.test(pathname);
+      },
       serialize: (item) => {
         if (!item.links?.length) return item;
 

@@ -152,6 +152,7 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
 <style>
   .case-study {
     padding-bottom: clamp(4rem, 9vw, 7rem);
+    overflow-wrap: anywhere;
   }
 
   .case-study-hero {
@@ -217,6 +218,7 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
     margin: 0;
     color: var(--muted);
     font-size: 0.95rem;
+    line-height: 1.7;
   }
 
   .case-study-proof {
@@ -240,7 +242,7 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
   }
 
   .case-study-proof-card {
-    padding: clamp(1rem, 3vw, 1.35rem);
+    padding: clamp(1.15rem, 3vw, 1.55rem);
   }
 
   .case-study-proof-card h3 {
@@ -261,7 +263,7 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
   }
 
   .case-study-meta div {
-    padding: 1rem;
+    padding: clamp(1rem, 2.4vw, 1.25rem);
   }
 
   .case-study-meta dt {
@@ -276,6 +278,7 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
     color: var(--text);
     font-size: 0.95rem;
     line-height: 1.45;
+    overflow-wrap: anywhere;
   }
 
   .case-study-tags {
@@ -339,6 +342,7 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
 
   .case-study-body p {
     max-width: 78ch;
+    line-height: 1.78;
   }
 
   .bullets {
@@ -361,6 +365,31 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
 
   .case-study-panel {
     padding: clamp(1.4rem, 4vw, 2.35rem);
+  }
+
+  :global([dir='rtl']) .case-study,
+  :global([dir='rtl']) .case-study p,
+  :global([dir='rtl']) .case-study li,
+  :global([dir='rtl']) .case-study dd {
+    letter-spacing: 0;
+    line-height: 1.85;
+  }
+
+  :global([dir='rtl']) .case-study-note h2,
+  :global([dir='rtl']) .case-study-toc h2,
+  :global([dir='rtl']) .case-study-proof > h2,
+  :global([dir='rtl']) .case-study-meta dt {
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  :global([dir='rtl']) .case-study-hero h1,
+  :global([dir='rtl']) .case-study-body h2,
+  :global([dir='rtl']) .case-study-proof-card h3,
+  :global([dir='rtl']) .case-study-panel h2,
+  :global([dir='rtl']) .case-study-footer h2 {
+    letter-spacing: 0;
+    text-wrap: wrap;
   }
 
   .case-study-footer {

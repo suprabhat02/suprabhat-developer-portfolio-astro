@@ -40,6 +40,23 @@
   to = "/sitemap-index.xml"
   status = 301
 
+# Explicit localized 404 fallbacks. Keep these last so real static files and
+# canonical redirects above win first.
+[[redirects]]
+  from = "/es/*"
+  to = "/es/404/"
+  status = 404
+
+[[redirects]]
+  from = "/ar/*"
+  to = "/ar/404/"
+  status = 404
+
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
+
 # ── headers ─────────────────────────────────────────────────────────────
 [[headers]]
   for = "/*"

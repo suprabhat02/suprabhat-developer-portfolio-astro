@@ -177,7 +177,7 @@ select {
     'intro portrait'
     'proof proof';
   align-items: stretch;
-  gap: clamp(16px, 2vw, 24px);
+  gap: clamp(18px, 2.4vw, 30px);
   max-width: 1180px;
   margin-inline: auto;
 }
@@ -235,8 +235,8 @@ select {
   min-width: 0;
   display: grid;
   align-content: start;
-  gap: clamp(12px, 1.5vw, 18px);
-  padding: clamp(28px, 3.4vw, 44px);
+  gap: clamp(14px, 1.7vw, 22px);
+  padding: clamp(32px, 4.2vw, 54px);
 }
 .hero-proof-grid {
   grid-area: proof;
@@ -349,6 +349,36 @@ select {
   margin: 0;
   max-width: 52ch;
 }
+.hero-recruiter-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 2px 0 0;
+}
+.hero-recruiter-list div {
+  min-width: 0;
+  padding: 12px 13px;
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+  border-radius: var(--r-sm);
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+.hero-recruiter-list dt {
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+.hero-recruiter-list dd {
+  margin: 5px 0 0;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
 .hero-stack-list,
 .hero-case-tags {
   display: flex;
@@ -379,17 +409,17 @@ select {
 }
 .hero-case-card {
   display: grid;
-  gap: 11px;
-  padding: clamp(18px, 2vw, 24px);
+  gap: 12px;
+  padding: clamp(22px, 2.5vw, 32px);
   color: inherit;
   text-decoration: none;
 }
 .hero-proof-card {
   display: grid;
   align-content: start;
-  gap: 10px;
+  gap: 12px;
   min-height: 100%;
-  padding: clamp(18px, 2vw, 24px);
+  padding: clamp(22px, 2.5vw, 32px);
   color: inherit;
   text-decoration: none;
 }
@@ -453,7 +483,10 @@ select {
     padding-block-start: clamp(112px, 26vw, 138px);
   }
   .hero-content {
-    padding: 26px;
+    padding: 28px;
+  }
+  .hero-recruiter-list {
+    grid-template-columns: 1fr;
   }
   .homepage-shell .hero-name {
     font-size: clamp(42px, 11.5vw, 58px);
@@ -474,7 +507,7 @@ select {
 }
 @media (max-width: 420px) {
   .hero-content {
-    padding: 22px;
+    padding: 24px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -680,10 +713,10 @@ select {
   background: var(--bg-card);
   border: 1px solid rgba(240, 126, 28, 0.22);
   border-radius: var(--r);
-  padding: 28px;
+  padding: clamp(28px, 3vw, 36px);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   transition:
     transform 0.22s ease,
     box-shadow 0.22s ease,
@@ -765,7 +798,7 @@ select {
   background: var(--bg-card);
   border: 1px solid rgba(240, 126, 28, 0.22);
   border-radius: var(--r);
-  padding: 22px 24px;
+  padding: clamp(24px, 2.6vw, 32px);
   position: relative;
   overflow: hidden;
   transition:
@@ -826,7 +859,7 @@ select {
   background: var(--bg-card);
   border: 1px solid rgba(240, 126, 28, 0.22);
   border-radius: var(--r);
-  padding: 32px;
+  padding: clamp(32px, 3vw, 42px);
   transition:
     border-color 0.2s,
     box-shadow 0.2s;
@@ -1008,8 +1041,8 @@ select {
 }
 .exp-head {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 8px 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(10rem, max-content);
+  gap: 10px 18px;
   align-items: start;
   margin-bottom: 12px;
 }
@@ -1018,7 +1051,7 @@ select {
 .sub-roles > div {
   min-width: 0;
 }
-@media (max-width: 540px) {
+@media (max-width: 860px) {
   .exp-head {
     grid-template-columns: 1fr;
   }
@@ -1035,19 +1068,23 @@ select {
   font-weight: 700;
   letter-spacing: -0.025em;
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 .exp-date {
   font-family: var(--mono);
   font-size: 11px;
   color: var(--text-3);
   letter-spacing: 0.06em;
-  white-space: nowrap;
+  max-width: clamp(10rem, 18vw, 15rem);
+  white-space: normal;
   padding-top: 4px;
   text-align: right;
   overflow-wrap: anywhere;
+  line-height: 1.45;
 }
-@media (max-width: 540px) {
+@media (max-width: 860px) {
   .exp-date {
+    max-width: 100%;
     text-align: left;
   }
 }
@@ -1130,7 +1167,7 @@ select {
 [dir='rtl'] .exp-date {
   text-align: left;
 }
-@media (max-width: 540px) {
+@media (max-width: 860px) {
   [dir='rtl'] .exp-date {
     text-align: right;
   }
@@ -1198,10 +1235,10 @@ select {
   background: var(--bg-card);
   border: 1px solid rgba(240, 126, 28, 0.22);
   border-radius: var(--r);
-  padding: 30px;
+  padding: clamp(30px, 3vw, 40px);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   transition:
     transform 0.22s ease,
     box-shadow 0.22s ease,
@@ -1844,9 +1881,39 @@ textarea.f-input {
 [dir='rtl'] .s-eyebrow,
 [dir='rtl'] .hero-eyebrow,
 [dir='rtl'] .hero-portrait-cap,
-[dir='rtl'] .tm-cat {
+[dir='rtl'] .tm-cat,
+[dir='rtl'] .hero-recruiter-list dt,
+[dir='rtl'] .hero-card-kicker,
+[dir='rtl'] .article-kicker {
   letter-spacing: 0;
   text-transform: none;
+}
+[dir='rtl'] .homepage-shell {
+  letter-spacing: 0;
+}
+[dir='rtl'] .homepage-shell p,
+[dir='rtl'] .homepage-shell li,
+[dir='rtl'] .hero-lead,
+[dir='rtl'] .article-card p,
+[dir='rtl'] .work-card p,
+[dir='rtl'] .expertise-card > p,
+[dir='rtl'] .trait-card p,
+[dir='rtl'] .exp-bullets li {
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+[dir='rtl'] .hero-recruiter-list dd,
+[dir='rtl'] .hero-case-card strong,
+[dir='rtl'] .hero-proof-card strong,
+[dir='rtl'] .article-card h3,
+[dir='rtl'] .work-card h3,
+[dir='rtl'] .expertise-card h3,
+[dir='rtl'] .trait-card h3,
+[dir='rtl'] .exp-title-h3,
+[dir='rtl'] .sub-role-h4 {
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+  text-wrap: wrap;
 }
 
 /* ── NO ACCENT FLOODS. Bands become grounds with accent lines. ── */

@@ -1,0 +1,2 @@
+# Hostinger / LiteSpeed / Apache custom 404 fallback for Astro static output.
+ErrorDocument 404 /404.html

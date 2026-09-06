@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { readFile } from 'node:fs/promises';
 
 test('homepage renders correct structure and passes accessibility', async ({
   page,
@@ -27,6 +28,7 @@ test('homepage renders correct structure and passes accessibility', async ({
   await expect(page.locator('.hero-content')).toBeVisible();
   await expect(page.locator('.hero-bottom')).toBeVisible();
   await expect(page.locator('.avail-card')).toBeVisible();
+  await expect(page.locator('.hero-recruiter-list dd')).toHaveCount(3);
   await expect(page.locator('.hero-stack-list li')).toHaveCount(5);
   await expect(page.locator('.hero-proof-card')).toHaveCount(3);
   await expect(
@@ -42,11 +44,11 @@ test('homepage renders correct structure and passes accessibility', async ({
   );
   await expect(page.locator('.hero-portrait-wrap img')).toHaveAttribute(
     'srcset',
-    /900w/,
+    /880w/,
   );
   await expect(page.locator('link[rel="preload"][as="image"]')).toHaveAttribute(
     'imagesrcset',
-    /900w/,
+    /880w/,
   );
   await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveCount(1);
   await expect(page.locator('.site-nav a[href="#home"]')).toHaveAttribute(
@@ -80,14 +82,38 @@ test('homepage renders correct structure and passes accessibility', async ({
   expect(ctaLayout.leftGlowPosition).toBe('absolute');
   expect(ctaLayout.rightGlowPosition).toBe('absolute');
 
-  // New tech icons added in this rewrite
-  for (const technology of ['FastAPI', 'Azure', 'PostgreSQL']) {
+  // Tech icons stay local, crawlable by adjacent text, and reachable over HTTP.
+  for (const technology of [
+    'FastAPI',
+    'Azure',
+    'PostgreSQL',
+    'TanStack Query',
+    'Bootstrap 5',
+    'HTML5',
+    'GraphQL',
+    'MongoDB',
+  ]) {
     await expect(
       page.locator('.tm-ltr > .tm-item:not([aria-hidden]) .tm-chip', {
         hasText: technology,
       }),
     ).toHaveCount(1);
   }
+  await expect(page.locator('#skills img')).toHaveCount(0);
+  for (const skill of [
+    'HTML5 + CSS3 + Sass',
+    'TanStack Query',
+    'GraphQL',
+    'Bootstrap 5',
+    'MongoDB',
+  ]) {
+    await expect(page.locator('#skills li', { hasText: skill })).toBeVisible();
+  }
+
+  await expect(page.locator('.work-card')).toHaveCount(6);
+  await expect(
+    page.locator('.work-card-link[href="/work/frontend-quality-system/"]'),
+  ).toBeVisible();
   const technologyIconUrls = await page
     .locator('#tools img')
     .evaluateAll((images) =>
@@ -156,6 +182,56 @@ test('locale fallback and contact state are explicit', async ({ page }) => {
       'form.contact-form, .notice a[href="mailto:suprabhatkumar02@gmail.com"]',
     ),
   ).toHaveCount(1);
+
+  await page.goto('/404.html');
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    'content',
+    'noindex,follow',
+  );
+  await expect(page.locator('.not-found-page')).toBeVisible();
+  await expect(page.locator('.not-found-code')).toHaveText('404');
+  await expect(page.locator('.not-found-links a')).toHaveCount(4);
+  await expect(page.locator('.not-found-links a[href="/"]')).toBeVisible();
+  await expect(page.locator('.not-found-links a[href="/work/"]')).toBeVisible();
+  await expect(page.locator('.not-found-links a[href="/blog/"]')).toBeVisible();
+  await expect(
+    page.locator('.not-found-links a[href="/contact/"]'),
+  ).toBeVisible();
+  await expect(page.locator('link[hreflang]')).toHaveCount(0);
+  await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+  await expect(
+    page.locator('script[type="application/ld+json"]'),
+  ).not.toContainText('workTranslation');
+
+  await page.goto('/es/404/');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'es');
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    'content',
+    'noindex,follow',
+  );
+  await expect(
+    page.locator('.not-found-links a[href="/es/work/"]'),
+  ).toBeVisible();
+  await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('página');
+  await expect(
+    page.locator('script[type="application/ld+json"]'),
+  ).not.toContainText('workTranslation');
+
+  await page.goto('/ar/404/');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
+  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    'content',
+    'noindex,follow',
+  );
+  await expect(
+    page.locator('.not-found-links a[href="/ar/work/"]'),
+  ).toBeVisible();
+  await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+  await expect(
+    page.locator('script[type="application/ld+json"]'),
+  ).not.toContainText('workTranslation');
 });
 
 test('shared shell styling and controls stay consistent across locales', async ({
@@ -321,6 +397,9 @@ test('case studies expose localized proof and outcomes', async ({ page }) => {
     'analytics-command-center',
     'design-system-uplift',
     'performance-modernization',
+    'portfolio-seo-i18n-system',
+    'accessible-contact-workflow',
+    'frontend-quality-system',
   ];
   const localeChecks = [
     {
@@ -480,6 +559,30 @@ test('production SEO signals and internal links are crawlable', async ({
   expect(await robots.text()).toContain(
     'Sitemap: https://suprabhat-dev.com/sitemap-index.xml',
   );
+
+  const sitemap = await readFile(
+    new URL('../dist/sitemap-0.xml', import.meta.url),
+    'utf-8',
+  );
+  expect(sitemap).not.toContain('404');
+
+  const hostingerRootFallback = await readFile(
+    new URL('../dist/.htaccess', import.meta.url),
+    'utf-8',
+  );
+  expect(hostingerRootFallback).toContain('ErrorDocument 404 /404.html');
+
+  const hostingerSpanishFallback = await readFile(
+    new URL('../dist/es/.htaccess', import.meta.url),
+    'utf-8',
+  );
+  expect(hostingerSpanishFallback).toContain('ErrorDocument 404 /es/404/');
+
+  const hostingerArabicFallback = await readFile(
+    new URL('../dist/ar/.htaccess', import.meta.url),
+    'utf-8',
+  );
+  expect(hostingerArabicFallback).toContain('ErrorDocument 404 /ar/404/');
 
   const llms = await page.request.get('/llms.txt');
   expect(llms.status()).toBe(200);

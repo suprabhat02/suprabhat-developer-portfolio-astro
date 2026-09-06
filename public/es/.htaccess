@@ -1,0 +1,2 @@
+# Localized Spanish custom 404 fallback for Hostinger / LiteSpeed / Apache.
+ErrorDocument 404 /es/404/

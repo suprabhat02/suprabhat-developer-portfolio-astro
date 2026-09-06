@@ -77,6 +77,13 @@ const es: Messages = {
   'home.heroStackBody':
     'Arquitectura frontend, gestión de estado, APIs, accesibilidad, sistemas de diseño y Core Web Vitals listos para producción.',
   'home.heroStackCta': 'Explorar especialización',
+  'home.recruiterSnapshotAria': 'Resumen para recruiters',
+  'home.recruiterRoleLabel': 'Encaje de rol',
+  'home.recruiterRoleValue': 'Ingeniero Frontend Sénior',
+  'home.recruiterProofLabel': 'Prueba',
+  'home.recruiterProofValue': '6 casos de estudio · más de 6 años',
+  'home.recruiterBestForLabel': 'Ideal para',
+  'home.recruiterBestForValue': 'UI SaaS, dashboards y rendimiento web',
   'home.statAria': 'Datos destacados de carrera',
   'home.statYears': 'Años de experiencia',
   'home.statCompanies': 'Empresas donde trabajé',
@@ -90,6 +97,10 @@ const es: Messages = {
   'home.skillsLead':
     'El stack técnico que utilizo para ofrecer sistemas de UI escalables, rápidos y accesibles.',
   'home.skillsCta': 'Hablemos de un reto técnico',
+  'skills.frontendCore': 'Núcleo frontend',
+  'skills.stateData': 'Estado y datos',
+  'skills.uiLibraries': 'Bibliotecas de UI',
+  'skills.backendApis': 'Backend y APIs',
   'home.stackLead':
     'El stack que uso para crear productos rápidos, accesibles y escalables.',
   'home.stackAria': 'Stack tecnológico',
@@ -227,6 +238,32 @@ const es: Messages = {
   'page.notFound.title': 'Esa página no está aquí',
   'page.notFound.body':
     'La dirección puede haber cambiado o la página puede haber dejado de existir.',
+  'page.notFound.eyebrow': 'Error 404',
+  'page.notFound.kicker': 'Ruta no encontrada',
+  'page.notFound.lead':
+    'No encontramos esta URL, pero el sitio sigue disponible. Usa estos accesos rápidos para volver a trabajo, artículos, servicios o contacto.',
+  'page.notFound.primaryCta': 'Volver al inicio',
+  'page.notFound.secondaryCta': 'Ver casos de estudio',
+  'page.notFound.tertiaryCta': 'Contactar',
+  'page.notFound.actionsAria': 'Acciones de recuperación',
+  'page.notFound.panelTitle': 'Rutas útiles',
+  'page.notFound.panelLead':
+    'Todas estas páginas son estáticas, rastreables, localizadas y accesibles sin JavaScript.',
+  'page.notFound.homeLabel': 'Inicio',
+  'page.notFound.homeBody':
+    'Resumen de perfil, stack, experiencia y formas de contacto.',
+  'page.notFound.workLabel': 'Casos de estudio',
+  'page.notFound.workBody':
+    'Decisiones, restricciones y resultados de proyectos frontend.',
+  'page.notFound.blogLabel': 'Artículos',
+  'page.notFound.blogBody':
+    'Guías sobre rendimiento, accesibilidad y arquitectura frontend.',
+  'page.notFound.contactLabel': 'Contacto',
+  'page.notFound.contactBody':
+    'Envía el contexto del proyecto o escribe por correo directo.',
+  'page.notFound.seoTitle': 'Estado de indexación',
+  'page.notFound.seoBody':
+    'Esta página usa noindex, se excluye del sitemap y mantiene enlaces internos para ayudar a personas y crawlers a encontrar contenido útil.',
   'footer.lead':
     'Ingeniero frontend sénior que crea interfaces de producto rápidas y accesibles.',
   'footer.navigate': 'Navegar',
@@ -374,6 +411,13 @@ const ar: Messages = {
   'home.heroStackBody':
     'معمارية واجهات أمامية وإدارة حالة وواجهات API وإمكانية وصول وأنظمة تصميم وCore Web Vitals جاهزة للإنتاج.',
   'home.heroStackCta': 'استكشف الخبرات',
+  'home.recruiterSnapshotAria': 'ملخص لمسؤولي التوظيف',
+  'home.recruiterRoleLabel': 'ملاءمة الدور',
+  'home.recruiterRoleValue': 'مهندس واجهات أمامية أول',
+  'home.recruiterProofLabel': 'الدليل',
+  'home.recruiterProofValue': '6 دراسات حالة · أكثر من 6 سنوات',
+  'home.recruiterBestForLabel': 'الأفضل لـ',
+  'home.recruiterBestForValue': 'واجهات SaaS ولوحات البيانات وأداء الويب',
   'home.statAria': 'أبرز محطات المسيرة المهنية',
   'home.statYears': 'سنوات خبرة',
   'home.statCompanies': 'شركات عملت معها',
@@ -387,6 +431,10 @@ const ar: Messages = {
   'home.skillsLead':
     'المجموعة التقنية التي أستخدمها لتقديم أنظمة واجهات قابلة للتوسع وسريعة ومتاحة.',
   'home.skillsCta': 'ناقش تحديًا تقنيًا',
+  'skills.frontendCore': 'أساس الواجهة الأمامية',
+  'skills.stateData': 'الحالة والبيانات',
+  'skills.uiLibraries': 'مكتبات UI',
+  'skills.backendApis': 'الخلفية وواجهات API',
   'home.stackLead':
     'المجموعة التقنية التي أستخدمها لشحن منتجات سريعة ومتاحة وقابلة للتوسع.',
   'home.stackAria': 'المجموعة التقنية',
@@ -513,6 +561,30 @@ const ar: Messages = {
   'blog.relatedTitle': 'مقالات واجهات أمامية ذات صلة',
   'page.notFound.title': 'هذه الصفحة غير موجودة',
   'page.notFound.body': 'ربما تغيّر العنوان أو لم تعد الصفحة موجودة.',
+  'page.notFound.eyebrow': 'خطأ 404',
+  'page.notFound.kicker': 'المسار غير موجود',
+  'page.notFound.lead':
+    'لم نعثر على هذا الرابط، لكن الموقع ما زال متاحًا. استخدم هذه المسارات السريعة للعودة إلى الأعمال أو المقالات أو الخدمات أو التواصل.',
+  'page.notFound.primaryCta': 'العودة إلى الرئيسية',
+  'page.notFound.secondaryCta': 'عرض دراسات الحالة',
+  'page.notFound.tertiaryCta': 'تواصل معي',
+  'page.notFound.actionsAria': 'إجراءات الاسترجاع',
+  'page.notFound.panelTitle': 'مسارات مفيدة',
+  'page.notFound.panelLead':
+    'كل هذه الصفحات ثابتة، قابلة للزحف، مترجمة، ويمكن الوصول إليها دون JavaScript.',
+  'page.notFound.homeLabel': 'الرئيسية',
+  'page.notFound.homeBody': 'ملخص الملف الشخصي والتقنيات والخبرة وطرق التواصل.',
+  'page.notFound.workLabel': 'دراسات الحالة',
+  'page.notFound.workBody': 'قرارات وقيود ونتائج مشاريع الواجهة الأمامية.',
+  'page.notFound.blogLabel': 'المقالات',
+  'page.notFound.blogBody':
+    'أدلة حول الأداء وإمكانية الوصول ومعمارية الواجهات.',
+  'page.notFound.contactLabel': 'التواصل',
+  'page.notFound.contactBody':
+    'أرسل سياق المشروع أو تواصل عبر البريد الإلكتروني مباشرة.',
+  'page.notFound.seoTitle': 'حالة الفهرسة',
+  'page.notFound.seoBody':
+    'تستخدم هذه الصفحة noindex، وتُستبعد من sitemap، وتحتفظ بروابط داخلية لمساعدة الأشخاص والزواحف على الوصول إلى المحتوى المفيد.',
   'footer.lead': 'مهندس واجهات أمامية أول يبني واجهات منتجات سريعة ومتاحة.',
   'footer.navigate': 'التنقل',
   'footer.siteLinks': 'روابط الموقع',

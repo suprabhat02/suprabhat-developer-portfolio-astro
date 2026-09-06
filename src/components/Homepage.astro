@@ -38,6 +38,58 @@ const heroStack = [
   'FastAPI',
   'PostgreSQL',
 ] as const;
+const skillColumns = [
+  {
+    heading: t(locale, 'skills.frontendCore', 'Front-End Core'),
+    items: [
+      'React.js + Next.js',
+      'TypeScript + JavaScript',
+      'HTML5 + CSS3 + Sass',
+      'Tailwind CSS',
+    ],
+  },
+  {
+    heading: t(locale, 'skills.stateData', 'State & Data'),
+    items: [
+      'Redux Toolkit + RTK Query',
+      'TanStack Query',
+      'React Hooks + Context API',
+      'GraphQL',
+    ],
+  },
+  {
+    heading: t(locale, 'skills.uiLibraries', 'UI Libraries'),
+    items: ['Ant Design', 'Chakra UI', 'Headless UI', 'Bootstrap 5'],
+  },
+  {
+    heading: t(locale, 'skills.backendApis', 'Back-End & APIs'),
+    items: [
+      'FastAPI (Python)',
+      'PostgreSQL',
+      'MongoDB',
+      'Node.js',
+      'REST API design',
+    ],
+  },
+] as const;
+const recruiterHighlights = [
+  {
+    label: t(locale, 'home.recruiterRoleLabel', 'Role fit'),
+    value: t(locale, 'home.recruiterRoleValue', 'Senior Frontend Engineer'),
+  },
+  {
+    label: t(locale, 'home.recruiterProofLabel', 'Proof'),
+    value: t(locale, 'home.recruiterProofValue', '6 case studies · 6+ years'),
+  },
+  {
+    label: t(locale, 'home.recruiterBestForLabel', 'Best for'),
+    value: t(
+      locale,
+      'home.recruiterBestForValue',
+      'SaaS UI, dashboards, web performance',
+    ),
+  },
+] as const;
 const heroProofCards = [
   {
     className: 'hero-proof-card hero-case-card hero-proof-card--work',
@@ -116,13 +168,17 @@ const toISO = (s: string) => {
 
 // Category labels shown above each tool chip in the marquee
 const toolCategories: Record<string, string> = {
+  HTML5: 'LANGUAGE',
   TypeScript: 'LANGUAGE',
   React: 'FRONTEND',
   'Next.js': 'FRONTEND',
   Redux: 'STATE',
+  'TanStack Query': 'STATE',
+  GraphQL: 'BACKEND',
   'Node.js': 'RUNTIME',
   Figma: 'DESIGN',
   'Tailwind CSS': 'STYLING',
+  'Bootstrap 5': 'STYLING',
   Git: 'DEVOPS',
   Sass: 'STYLING',
   jQuery: 'FRONTEND',
@@ -131,6 +187,7 @@ const toolCategories: Record<string, string> = {
   Azure: 'CLOUD',
   FastAPI: 'BACKEND',
   PostgreSQL: 'DATABASE',
+  MongoDB: 'DATABASE',
 };
 const toolCategoryLabel = (toolName: string) => {
   const category = toolCategories[toolName] ?? 'TOOL';
@@ -168,6 +225,24 @@ const toolCategoryLabel = (toolName: string) => {
           <p class="hero-sub">{profile.tagline}</p>
           <p class="hero-lead">{profile.lead}</p>
 
+          <dl
+            class="hero-recruiter-list"
+            aria-label={t(
+              locale,
+              'home.recruiterSnapshotAria',
+              'Recruiter snapshot',
+            )}
+          >
+            {
+              recruiterHighlights.map((item) => (
+                <div>
+                  <dt>{item.label}</dt>
+                  <dd>{item.value}</dd>
+                </div>
+              ))
+            }
+          </dl>
+
           <ul
             class="hero-stack-list"
             aria-label={t(locale, 'home.stackAria', 'Technology stack')}
@@ -200,7 +275,7 @@ const toolCategoryLabel = (toolName: string) => {
         <figure class="hero-portrait-wrap hero-card">
           <Image
             src={portraitImage}
-            widths={[400, 550, 600, 800, 900, 1100]}
+            widths={[360, 440, 560, 720, 880]}
             sizes="(max-width: 1040px) min(440px, calc(100vw - 40px)), 32vw"
             width={800}
             height={1067}
@@ -209,7 +284,7 @@ const toolCategoryLabel = (toolName: string) => {
             fetchpriority="high"
             decoding="async"
             format="webp"
-            quality={76}
+            quality={70}
           />
           <figcaption class="hero-portrait-cap">
             {
@@ -733,38 +808,18 @@ const toolCategoryLabel = (toolName: string) => {
       </div>
       <div class="skills-table">
         <div class="skills-row">
-          <div class="skill-col mo-reveal">
-            <h3>Front-End Core</h3>
-            <ul class="skill-ul">
-              <li>React.js + Next.js</li><li>TypeScript + JavaScript</li><li>
-                HTML5 + CSS3 + Sass
-              </li><li>Tailwind CSS</li>
-            </ul>
-          </div>
-          <div class="skill-col mo-reveal">
-            <h3>State &amp; Data</h3>
-            <ul class="skill-ul">
-              <li>Redux Toolkit + RTK Query</li><li>TanStack Query</li><li>
-                React Hooks + Context API
-              </li><li>GraphQL</li>
-            </ul>
-          </div>
-          <div class="skill-col mo-reveal">
-            <h3>UI Libraries</h3>
-            <ul class="skill-ul">
-              <li>Ant Design</li><li>Chakra UI</li><li>Headless UI</li><li>
-                React Bootstrap
-              </li>
-            </ul>
-          </div>
-          <div class="skill-col mo-reveal">
-            <h3>Back-End &amp; APIs</h3>
-            <ul class="skill-ul">
-              <li>FastAPI (Python)</li><li>PostgreSQL</li><li>Node.js</li><li>
-                REST API design
-              </li>
-            </ul>
-          </div>
+          {
+            skillColumns.map((column) => (
+              <div class="skill-col mo-reveal">
+                <h3>{column.heading}</h3>
+                <ul class="skill-ul">
+                  {column.items.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
         </div>
       </div>
       <p style="margin-top:28px" class="reveal d1">
@@ -941,7 +996,7 @@ const toolCategoryLabel = (toolName: string) => {
                 <span class="tm-cat">{toolCategoryLabel(tool.name)}</span>
                 <img
                   src={tool.icon}
-                  alt={tool.name}
+                  alt=""
                   width="36"
                   height="36"
                   loading="lazy"

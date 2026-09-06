@@ -17,6 +17,7 @@ interface Props {
   path?: string;
   noindex?: boolean;
   hideAlternates?: boolean;
+  hideCanonical?: boolean;
   ogType?: string;
   schema?: Record<string, unknown> | Record<string, unknown>[];
 }
@@ -28,6 +29,7 @@ const {
   path,
   noindex: requestedNoindex = false,
   hideAlternates = false,
+  hideCanonical = false,
   ogType = 'website',
   schema,
 } = Astro.props;
@@ -52,15 +54,20 @@ const personKnowsAbout = [
   'Next.js',
   'TypeScript',
   'JavaScript',
+  'HTML5',
+  'CSS3',
   'Redux Toolkit',
   'RTK Query',
   'TanStack Query',
   'Tailwind CSS',
+  'Bootstrap 5',
+  'React Bootstrap',
   'Ant Design',
   'Chakra UI',
   'Headless UI',
   'FastAPI',
   'PostgreSQL',
+  'MongoDB',
   'GraphQL',
   'Node.js',
   'Figma',
@@ -82,6 +89,15 @@ const pageSchema = {
   isPartOf: { '@id': `${SITE_URL}/#website` },
   about: { '@id': `${SITE_URL}/#person` },
 };
+const pageSchemaWithAlternates =
+  noindex || hideAlternates
+    ? pageSchema
+    : {
+        ...pageSchema,
+        workTranslation: languageAlternates.filter(
+          (alternate) => alternate.inLanguage !== meta.htmlLang,
+        ),
+      };
 const suppliedSchemas = schema
   ? Array.isArray(schema)
     ? schema
@@ -123,12 +139,7 @@ const combinedSchema = {
       ),
       author: { '@id': `${SITE_URL}/#person` },
     },
-    {
-      ...pageSchema,
-      workTranslation: languageAlternates.filter(
-        (alternate) => alternate.inLanguage !== meta.htmlLang,
-      ),
-    },
+    pageSchemaWithAlternates,
     ...suppliedSchemas.map(({ '@context': _context, ...entry }) => entry),
   ],
 };
@@ -200,6 +211,7 @@ const combinedSchema = {
       {canonical}
       locale={meta.htmlLang}
       {noindex}
+      {hideCanonical}
       {ogType}
       imageAlt={`${profile.name}, ${profile.title}`}
       schema={combinedSchema}
