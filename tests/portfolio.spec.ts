@@ -46,9 +46,16 @@ test('homepage renders correct structure and passes accessibility', async ({
     'srcset',
     /880w/,
   );
+  await expect(
+    page.locator('.hero-portrait-wrap source[type="image/avif"]'),
+  ).toHaveAttribute('srcset', /880w/);
   await expect(page.locator('link[rel="preload"][as="image"]')).toHaveAttribute(
     'imagesrcset',
     /880w/,
+  );
+  await expect(page.locator('link[rel="preload"][as="image"]')).toHaveAttribute(
+    'type',
+    'image/avif',
   );
   await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveCount(1);
   await expect(page.locator('.site-nav a[href="#home"]')).toHaveAttribute(
@@ -571,6 +578,10 @@ test('production SEO signals and internal links are crawlable', async ({
     'utf-8',
   );
   expect(hostingerRootFallback).toContain('ErrorDocument 404 /404.html');
+  expect(hostingerRootFallback).toContain(
+    'Cache-Control "public, max-age=31536000, immutable"',
+  );
+  expect(hostingerRootFallback).toContain('BROTLI_COMPRESS');
 
   const hostingerSpanishFallback = await readFile(
     new URL('../dist/es/.htaccess', import.meta.url),

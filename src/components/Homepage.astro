@@ -10,10 +10,15 @@ import {
   featuredRecommendationIds,
 } from '../data/recommendations';
 import { faqs } from '../data/faqs';
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import { getBlogPostHref, getBlogPosts, getBlogTagHref } from '../data/blog';
 import { localePrefix, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
+import {
+  heroPortraitQuality,
+  heroPortraitSizes,
+  heroPortraitWidths,
+} from '../data/images';
 import portraitImage from '../../public/assets/images/portrait-1100.webp';
 import '../styles/homepage.css';
 
@@ -273,18 +278,20 @@ const toolCategoryLabel = (toolName: string) => {
         </div>
 
         <figure class="hero-portrait-wrap hero-card">
-          <Image
+          <Picture
             src={portraitImage}
-            widths={[360, 440, 560, 720, 880]}
-            sizes="(max-width: 1040px) min(440px, calc(100vw - 40px)), 32vw"
+            formats={['avif', 'webp']}
+            fallbackFormat="webp"
+            widths={heroPortraitWidths}
+            sizes={heroPortraitSizes}
             width={800}
             height={1067}
             alt={profile.portrait.alt}
             loading="eager"
             fetchpriority="high"
             decoding="async"
-            format="webp"
-            quality={70}
+            quality={heroPortraitQuality}
+            pictureAttributes={{ class: 'hero-picture' }}
           />
           <figcaption class="hero-portrait-cap">
             {

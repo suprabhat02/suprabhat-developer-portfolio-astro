@@ -265,6 +265,11 @@ select {
   z-index: 1;
   pointer-events: none;
 }
+.hero-portrait-wrap picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
 .hero-portrait-wrap img {
   position: absolute;
   inset: 0;
@@ -1280,12 +1285,12 @@ select {
 .tag {
   font-size: 12px;
   font-weight: 600;
-  padding: 4px 12px;
+  padding: 2px 8px;
   background: var(--accent-subtle);
   color: var(--accent);
   border-radius: var(--radius-pill);
   border: 1px solid var(--accent-border);
-  letter-spacing: 0.01em;
+  letter-spacing: 0.001em;
 }
 
 /* ══════════════════════════════════════════

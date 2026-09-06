@@ -452,22 +452,8 @@ const isActive = (item: (typeof headerNav)[number]) =>
         )
         .filter(Boolean);
       if (!sectionLinks.length || !sections.length) return;
-      let activeFrame = 0;
-      const setActiveLink = () => {
-        activeFrame = 0;
-        const threshold = window.innerHeight * 0.38;
-        let activeId = sections[0]?.id;
-        sections.forEach((section) => {
-          if (section.getBoundingClientRect().top <= threshold) {
-            activeId = section.id;
-          }
-        });
-        if (
-          window.innerHeight + window.scrollY >=
-          document.documentElement.scrollHeight - 4
-        ) {
-          activeId = sections[sections.length - 1]?.id;
-        }
+
+      const setActiveLink = (activeId = sections[0]?.id) => {
         sectionLinks.forEach((link) => {
           const isActiveLink =
             link.getAttribute('data-section-link') === activeId;
@@ -476,13 +462,42 @@ const isActive = (item: (typeof headerNav)[number]) =>
           else link.removeAttribute('aria-current');
         });
       };
-      const queueActiveLink = () => {
-        if (activeFrame) return;
-        activeFrame = requestAnimationFrame(setActiveLink);
-      };
+
       setActiveLink();
-      window.addEventListener('scroll', queueActiveLink, { passive: true });
-      window.addEventListener('resize', queueActiveLink);
+
+      if (!('IntersectionObserver' in window)) return;
+
+      const visibleSections = new Map();
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            visibleSections.set(
+              entry.target.id,
+              entry.isIntersecting ? entry.intersectionRatio : 0,
+            );
+          });
+
+          const activeSection = sections.reduce((current, section) => {
+            const sectionRatio = visibleSections.get(section.id) ?? 0;
+            const currentRatio = current
+              ? (visibleSections.get(current.id) ?? 0)
+              : -1;
+
+            if (sectionRatio <= 0) return current;
+            if (sectionRatio > currentRatio) return section;
+
+            return current;
+          }, null);
+
+          if (activeSection) setActiveLink(activeSection.id);
+        },
+        {
+          rootMargin: '-28% 0px -52% 0px',
+          threshold: [0, 0.15, 0.35, 0.55, 0.75],
+        },
+      );
+
+      sections.forEach((section) => observer.observe(section));
     };
 
     if (document.readyState === 'loading') {
