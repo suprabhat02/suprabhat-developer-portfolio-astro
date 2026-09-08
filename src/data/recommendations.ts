@@ -7,6 +7,7 @@ export interface Recommendation {
   role: string;
   avatar: string;
   quoteLang?: string;
+  verified: boolean;
   /** TODO(docs/TODO.md #4): provenance unconfirmed — no source link is claimed. */
   sourceUrl?: string;
 }
@@ -21,6 +22,7 @@ export const recommendations: readonly Recommendation[] = [
     // TODO(docs/TODO.md #5): confirm the intended attribution string.
     role: 'AI Engineer@Topsoe',
     avatar: '/assets/testimonials/sandeep-sharma.jpg',
+    verified: false,
   },
   {
     id: 'pooja-verma',
@@ -29,6 +31,7 @@ export const recommendations: readonly Recommendation[] = [
     name: 'Pooja Verma',
     role: 'Senior Quality Analyst',
     avatar: '/assets/testimonials/pooja-verma.jpg',
+    verified: false,
   },
   {
     id: 'sonu-gagan',
@@ -37,6 +40,7 @@ export const recommendations: readonly Recommendation[] = [
     name: 'Sonu Gagan',
     role: 'Senior Specialist, Platform',
     avatar: '/assets/testimonials/sonu-gagan.jpg',
+    verified: false,
   },
   {
     id: 'supriya-suman',
@@ -45,6 +49,7 @@ export const recommendations: readonly Recommendation[] = [
     name: 'Supriya Suman',
     role: 'Associate, UX Research',
     avatar: '/assets/testimonials/supriya-suman.jpg',
+    verified: false,
   },
   {
     id: 'suraj',
@@ -53,6 +58,7 @@ export const recommendations: readonly Recommendation[] = [
     name: 'Suraj',
     role: 'SEO Specialist',
     avatar: '/assets/testimonials/suraj.jpg',
+    verified: false,
   },
   {
     id: 'aditi-vimal',
@@ -61,6 +67,7 @@ export const recommendations: readonly Recommendation[] = [
     name: 'Aditi Vimal',
     role: 'Executive - Regulatory Affairs',
     avatar: '/assets/testimonials/aditi-vimal.jpg',
+    verified: false,
   },
 ] as const;
 
@@ -91,8 +98,10 @@ const localizedRoles: Partial<Record<Locale, Record<string, string>>> = {
 };
 
 export const getRecommendations = (locale: Locale): readonly Recommendation[] =>
-  recommendations.map((recommendation) => ({
-    ...recommendation,
-    role: localizedRoles[locale]?.[recommendation.id] ?? recommendation.role,
-    quoteLang: locale === 'en' ? undefined : 'en',
-  }));
+  recommendations
+    .filter((recommendation) => recommendation.verified)
+    .map((recommendation) => ({
+      ...recommendation,
+      role: localizedRoles[locale]?.[recommendation.id] ?? recommendation.role,
+      quoteLang: locale === 'en' ? undefined : 'en',
+    }));

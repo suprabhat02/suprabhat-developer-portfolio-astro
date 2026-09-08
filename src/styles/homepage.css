@@ -332,6 +332,13 @@ select {
   color: var(--accent);
   display: block;
 }
+.hero-trust-line {
+  max-width: 70ch;
+  margin: 1.25rem 0 0;
+  color: var(--text-3);
+  font-size: 0.78rem;
+  line-height: 1.7;
+}
 [dir='rtl'] .homepage-shell .hero-name {
   direction: ltr;
   unicode-bidi: isolate;
@@ -2206,92 +2213,20 @@ summary:focus-visible {
 }
 
 /* ═══════════════════════════════════════════════════
-   TOOLS MARQUEE  (replaces the static tools-grid)
-   Pure CSS infinite scroll — GPU-composited transform,
-   no JS, no layout thrash.
+   TOOLS GRID
 ═══════════════════════════════════════════════════ */
 .tm-wrap {
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  width: min(1180px, calc(100% - 48px));
+  margin-inline: auto;
+}
+.tm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
   gap: 12px;
-  padding-block: 4px;
-  /* Edge fade — chips dissolve at both ends, no hard cut */
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    #000 6%,
-    #000 94%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    #000 6%,
-    #000 94%,
-    transparent 100%
-  );
-}
-
-/* Each row is a flat flex strip; chips appear twice inside so the optional
-   hover loop can move one full set without visible seams. */
-.tm-track {
-  display: flex;
-  gap: 12px;
-  width: max-content;
-  animation-play-state: paused;
-}
-
-/* The loop is calculated from physical translateX distances. Keep its strip
-   direction LTR when the surrounding document is RTL so both duplicates meet. */
-[dir='rtl'] .tm-wrap,
-[dir='rtl'] .tm-track {
-  direction: ltr;
-}
-
-/* Row 1 scrolls left; row 2 starts at midpoint and scrolls right on hover. */
-.tm-ltr {
-  animation: tm-scroll-l 36s linear infinite;
-}
-.tm-rtl {
-  animation: tm-scroll-r 42s linear infinite;
-}
-
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .tm-wrap:hover .tm-track {
-    animation-play-state: running;
-  }
-}
-
-@keyframes tm-scroll-l {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-@keyframes tm-scroll-r {
-  from {
-    transform: translateX(-50%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tm-track {
-    animation: none;
-  }
-  .tm-wrap {
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
 }
 
 .tm-item {
-  flex-shrink: 0;
+  min-width: 0;
 }
 
 .tm-chip {

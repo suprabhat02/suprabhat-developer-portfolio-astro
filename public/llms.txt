@@ -4,7 +4,7 @@ Suprabhat Kumar is a Senior Frontend Engineer specializing in React, Next.js, Ty
 
 ## Primary pages
 
-- [Home](https://suprabhat-dev.com/): Professional overview, selected work, experience, services, recommendations, FAQs, and contact details.
+- [Home](https://suprabhat-dev.com/): Professional overview, selected work, experience, services, FAQs, and contact details.
 - [About](https://suprabhat-dev.com/about/): Background and engineering philosophy.
 - [Skills](https://suprabhat-dev.com/skills/): Frontend engineering skills.
 - [Experience](https://suprabhat-dev.com/experience/): Professional experience.

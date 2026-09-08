@@ -32,7 +32,6 @@ export const primaryNav: readonly NavItem[] = [
 
 export const moreNav: readonly NavItem[] = [
   { key: 'tools', href: '/tools/', legacyHash: '#tools' },
-  { key: 'recommendations', href: '/recommendations/' },
   { key: 'services', href: '/services/' },
   { key: 'faq', href: '/faq/', legacyHash: '#faq' },
 ] as const;

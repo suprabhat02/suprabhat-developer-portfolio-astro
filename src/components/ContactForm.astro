@@ -1,50 +1,423 @@
 ---
-const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY;
+import { SITE_URL } from '../config/site';
+import { getProfile } from '../data/profile';
+import { localePrefix, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
-import type { Locale } from '../i18n/config';
-const { locale = 'en' } = Astro.props as { locale?: Locale };
+
+interface Props {
+  locale?: Locale;
+  variant?: 'page' | 'homepage';
+}
+
+const { locale = 'en', variant = 'page' } = Astro.props;
+const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? '';
+const email = getProfile(locale).email;
+const formId =
+  variant === 'homepage' ? 'homepage-contact-form' : 'contact-form';
+const fieldId = (name: string) => `${formId}-${name}`;
+const redirectPath = variant === 'homepage' ? '/#contact' : '/contact/';
+const redirectUrl = new URL(`${localePrefix(locale)}${redirectPath}`, SITE_URL)
+  .href;
+const formClass =
+  variant === 'homepage'
+    ? 'contact-form contact-form-box reveal d1'
+    : 'contact-form';
 ---
 
 {
-  accessKey ? (
+  accessKey || variant === 'homepage' ? (
     <form
-      class="contact-form"
+      class={formClass}
+      id={formId}
       action="https://api.web3forms.com/submit"
       method="POST"
+      aria-label={t(locale, 'home.contactForm', 'Project enquiry form')}
+      data-contact-form
+      data-error-name={t(locale, 'form.errorName', 'Enter your name.')}
+      data-error-email={t(
+        locale,
+        'form.errorEmail',
+        'Enter a valid email address.',
+      )}
+      data-error-project-type={t(
+        locale,
+        'form.errorProjectType',
+        'Select a project type.',
+      )}
+      data-error-budget={t(
+        locale,
+        'form.errorBudget',
+        'Select a budget range.',
+      )}
+      data-error-timeline={t(
+        locale,
+        'form.errorTimeline',
+        'Select a timeline.',
+      )}
+      data-error-message={t(
+        locale,
+        'form.errorMessage',
+        'Tell me about the project.',
+      )}
+      data-error-summary={t(
+        locale,
+        'form.errorSummary',
+        'Please review the highlighted fields.',
+      )}
+      data-unconfigured={t(
+        locale,
+        'form.unconfigured',
+        'The contact form is not configured yet. Please email directly.',
+      )}
+      data-send={t(locale, 'form.send', 'Send enquiry')}
+      data-sending={t(locale, 'form.sending', 'Sending...')}
+      data-success={t(
+        locale,
+        'form.success',
+        'Message sent. Thank you for sharing the project details.',
+      )}
+      data-failure={t(
+        locale,
+        'form.failure',
+        'Something went wrong. Please email directly.',
+      )}
+      data-network-error={t(
+        locale,
+        'form.networkError',
+        'Network error. Please email directly.',
+      )}
     >
       <input type="hidden" name="access_key" value={accessKey} />
-      <input type="hidden" name="subject" value="Portfolio enquiry" />
+      <input type="hidden" name="subject" value="Portfolio project enquiry" />
       <input type="hidden" name="from_name" value="Suprabhat Kumar Portfolio" />
-      <label>
-        {t(locale, 'form.name', 'Name')}
-        <input name="name" autocomplete="name" required />
-      </label>
-      <label>
-        {t(locale, 'form.email', 'Email')}
-        <input type="email" name="email" autocomplete="email" required />
-      </label>
-      <label>
-        {t(locale, 'form.details', 'Project details')}
-        <textarea name="message" rows="6" required />
-      </label>
-      <button class="button primary" type="submit">
-        {t(locale, 'form.send', 'Send enquiry')}
-      </button>
+      <input type="hidden" name="redirect" value={redirectUrl} />
+      <input
+        name="botcheck"
+        type="checkbox"
+        tabindex="-1"
+        autocomplete="off"
+        class="form-honeypot"
+        aria-hidden="true"
+      />
+
+      <div
+        class="form-error-summary"
+        data-error-summary
+        role="alert"
+        tabindex="-1"
+        hidden
+      >
+        <strong>
+          {t(
+            locale,
+            'form.errorSummary',
+            'Please review the highlighted fields.',
+          )}
+        </strong>
+        <ul data-error-list />
+      </div>
+
+      <div class="form-row">
+        <div class="f-field">
+          <label class="f-label" for={fieldId('name')}>
+            {t(locale, 'form.name', 'Name')} <span aria-hidden="true">*</span>
+          </label>
+          <input
+            class="f-input"
+            id={fieldId('name')}
+            name="name"
+            autocomplete="name"
+            required
+            aria-describedby={fieldId('name-error')}
+          />
+          <span class="f-error" id={fieldId('name-error')} />
+        </div>
+        <div class="f-field">
+          <label class="f-label" for={fieldId('email')}>
+            {t(locale, 'form.email', 'Email')} <span aria-hidden="true">*</span>
+          </label>
+          <input
+            class="f-input"
+            id={fieldId('email')}
+            type="email"
+            name="email"
+            autocomplete="email"
+            inputmode="email"
+            required
+            dir="ltr"
+            aria-describedby={fieldId('email-error')}
+          />
+          <span class="f-error" id={fieldId('email-error')} />
+        </div>
+      </div>
+
+      <div class="f-field">
+        <label class="f-label" for={fieldId('company')}>
+          {t(locale, 'form.company', 'Company or team')}
+          <span class="f-optional">
+            {t(locale, 'form.optional', 'Optional')}
+          </span>
+        </label>
+        <input
+          class="f-input"
+          id={fieldId('company')}
+          name="company"
+          autocomplete="organization"
+        />
+      </div>
+
+      <div class="f-field">
+        <label class="f-label" for={fieldId('project-type')}>
+          {t(locale, 'form.projectType', 'Project type')}{' '}
+          <span aria-hidden="true">*</span>
+        </label>
+        <select
+          class="f-input"
+          id={fieldId('project-type')}
+          name="project_type"
+          required
+          aria-describedby={fieldId('project-type-error')}
+        >
+          <option value="">
+            {t(locale, 'form.selectOption', 'Select an option')}
+          </option>
+          <option value="product-frontend">
+            {t(locale, 'form.projectProduct', 'Product frontend')}
+          </option>
+          <option value="design-system">
+            {t(locale, 'form.projectDesignSystem', 'Design system')}
+          </option>
+          <option value="performance-accessibility">
+            {t(
+              locale,
+              'form.projectPerformance',
+              'Performance or accessibility',
+            )}
+          </option>
+          <option value="technical-consulting">
+            {t(locale, 'form.projectConsulting', 'Technical consulting')}
+          </option>
+          <option value="other">
+            {t(locale, 'form.projectOther', 'Other')}
+          </option>
+        </select>
+        <span class="f-error" id={fieldId('project-type-error')} />
+      </div>
+
+      <div class="form-row">
+        <div class="f-field">
+          <label class="f-label" for={fieldId('budget')}>
+            {t(locale, 'form.budget', 'Budget range')}{' '}
+            <span aria-hidden="true">*</span>
+          </label>
+          <select
+            class="f-input"
+            id={fieldId('budget')}
+            name="budget"
+            required
+            aria-describedby={fieldId('budget-error')}
+          >
+            <option value="">
+              {t(locale, 'form.selectOption', 'Select an option')}
+            </option>
+            <option value="under-5k">
+              {t(locale, 'form.budgetUnder5k', 'Under USD 5,000')}
+            </option>
+            <option value="5k-15k">
+              {t(locale, 'form.budget5k15k', 'USD 5,000–15,000')}
+            </option>
+            <option value="15k-30k">
+              {t(locale, 'form.budget15k30k', 'USD 15,000–30,000')}
+            </option>
+            <option value="30k-plus">
+              {t(locale, 'form.budget30kPlus', 'USD 30,000+')}
+            </option>
+            <option value="not-sure">
+              {t(locale, 'form.notSure', 'Not sure yet')}
+            </option>
+          </select>
+          <span class="f-error" id={fieldId('budget-error')} />
+        </div>
+        <div class="f-field">
+          <label class="f-label" for={fieldId('timeline')}>
+            {t(locale, 'form.timeline', 'Desired timeline')}{' '}
+            <span aria-hidden="true">*</span>
+          </label>
+          <select
+            class="f-input"
+            id={fieldId('timeline')}
+            name="timeline"
+            required
+            aria-describedby={fieldId('timeline-error')}
+          >
+            <option value="">
+              {t(locale, 'form.selectOption', 'Select an option')}
+            </option>
+            <option value="within-month">
+              {t(locale, 'form.timelineMonth', 'Within one month')}
+            </option>
+            <option value="one-three-months">
+              {t(locale, 'form.timelineQuarter', 'One to three months')}
+            </option>
+            <option value="three-plus-months">
+              {t(locale, 'form.timelineLater', 'More than three months')}
+            </option>
+            <option value="exploring">
+              {t(locale, 'form.timelineExploring', 'Exploring options')}
+            </option>
+          </select>
+          <span class="f-error" id={fieldId('timeline-error')} />
+        </div>
+      </div>
+
+      <div class="f-field">
+        <label class="f-label" for={fieldId('message')}>
+          {t(locale, 'form.details', 'Project details')}{' '}
+          <span aria-hidden="true">*</span>
+        </label>
+        <textarea
+          class="f-input"
+          id={fieldId('message')}
+          name="message"
+          rows="6"
+          required
+          aria-describedby={fieldId('message-error')}
+          placeholder={t(
+            locale,
+            'form.messagePlaceholder',
+            'Goals, current constraints, and what a successful outcome looks like.',
+          )}
+        />
+        <span class="f-error" id={fieldId('message-error')} />
+      </div>
+
+      <div class="form-actions">
+        <button
+          class={variant === 'homepage' ? 'btn btn-primary' : 'button primary'}
+          type="submit"
+        >
+          {t(locale, 'form.send', 'Send enquiry')}
+        </button>
+        <output data-form-status aria-live="polite" class="f-status" />
+      </div>
+      <p class="form-email-fallback">
+        {t(locale, 'home.preferEmail', 'Prefer email?')}{' '}
+        <a href={`mailto:${email}`}>{email}</a>
+      </p>
     </form>
   ) : (
     <div class="notice">
-      <>
-        <p>
-          {t(
-            locale,
-            'form.unavailable',
-            'The contact form is unavailable in this environment.',
-          )}
-        </p>
-        <a class="button primary" href="mailto:suprabhatkumar02@gmail.com">
-          {t(locale, 'form.emailSuprabhat', 'Email Suprabhat')}
-        </a>
-      </>
+      <p>
+        {t(
+          locale,
+          'form.unavailable',
+          'The contact form is unavailable in this environment.',
+        )}
+      </p>
+      <a class="button primary" href={`mailto:${email}`}>
+        {t(locale, 'form.emailSuprabhat', 'Email Suprabhat')}
+      </a>
     </div>
   )
 }
+
+<script>
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  document
+    .querySelectorAll<HTMLFormElement>('[data-contact-form]')
+    .forEach((form) => {
+      form.noValidate = true;
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const fields = [
+          { name: 'name', error: form.dataset.errorName },
+          { name: 'email', error: form.dataset.errorEmail },
+          { name: 'project_type', error: form.dataset.errorProjectType },
+          { name: 'budget', error: form.dataset.errorBudget },
+          { name: 'timeline', error: form.dataset.errorTimeline },
+          { name: 'message', error: form.dataset.errorMessage },
+        ];
+        const errors: Array<{
+          field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+          message: string;
+        }> = [];
+
+        fields.forEach(({ name, error }) => {
+          const field = form.elements.namedItem(name);
+          if (!(
+            field instanceof HTMLInputElement ||
+            field instanceof HTMLSelectElement ||
+            field instanceof HTMLTextAreaElement
+          ))
+            return;
+
+          const invalid =
+            !field.value.trim() ||
+            (name === 'email' && !emailPattern.test(field.value));
+          const errorElement = document.getElementById(`${field.id}-error`);
+          field.toggleAttribute('aria-invalid', invalid);
+          if (errorElement)
+            errorElement.textContent = invalid ? (error ?? '') : '';
+          if (invalid) errors.push({ field, message: error ?? '' });
+        });
+
+        const summary = form.querySelector<HTMLElement>('[data-error-summary]');
+        const errorList =
+          form.querySelector<HTMLUListElement>('[data-error-list]');
+        if (summary && errorList) {
+          errorList.replaceChildren(
+            ...errors.map(({ field, message }) => {
+              const item = document.createElement('li');
+              const link = document.createElement('a');
+              link.href = `#${field.id}`;
+              link.textContent = message;
+              item.append(link);
+              return item;
+            }),
+          );
+          summary.hidden = errors.length === 0;
+        }
+
+        if (errors.length > 0) {
+          summary?.focus();
+          return;
+        }
+
+        const status =
+          form.querySelector<HTMLOutputElement>('[data-form-status]');
+        const submit = form.querySelector<HTMLButtonElement>('[type="submit"]');
+        const accessKey = new FormData(form).get('access_key');
+        if (!status || !submit) return;
+        if (typeof accessKey !== 'string' || !accessKey.trim()) {
+          status.textContent = form.dataset.unconfigured ?? '';
+          return;
+        }
+
+        const submitLabel = submit.textContent ?? form.dataset.send ?? '';
+        status.textContent = form.dataset.sending ?? '';
+        submit.disabled = true;
+        submit.textContent = form.dataset.sending ?? '';
+
+        try {
+          const response = await fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { Accept: 'application/json' },
+          });
+          if (!response.ok) throw new Error('Web3Forms request failed');
+          const result = (await response.json()) as { success?: boolean };
+          status.textContent = result.success
+            ? (form.dataset.success ?? '')
+            : (form.dataset.failure ?? '');
+          if (result.success) form.reset();
+        } catch {
+          status.textContent = form.dataset.networkError ?? '';
+        } finally {
+          submit.disabled = false;
+          submit.textContent = form.dataset.send ?? submitLabel;
+        }
+      });
+    });
+</script>

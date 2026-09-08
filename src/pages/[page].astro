@@ -139,6 +139,11 @@ const schema = [
 ];
 ---
 
-<BaseLayout {title} {description} page={page} schema={schema}
+<BaseLayout
+  {title}
+  {description}
+  page={page}
+  schema={schema}
+  noindex={page === 'recommendations'}
   ><PageContent {page} locale="en" /></BaseLayout
 >

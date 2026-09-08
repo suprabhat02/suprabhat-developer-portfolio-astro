@@ -8,10 +8,10 @@ Nothing below has been guessed or filled in.
 
 ## Content gaps
 
-4. **Recommendations provenance.** Are these LinkedIn recommendations? If so, linking each to its LinkedIn source adds real credibility. If they were collected privately, say so and the wording stays as-is with no source link.
+4. **Recommendations provenance.** All recommendations are now withheld from public rendering until each quote, attribution, consent, and optional source URL is confirmed. Update `verified` in `src/data/recommendations.ts` only after confirmation.
 5. **`Sandeep Sharma — AI Engineer@Topsoe`** and **`Suraj — SEO Specialist`**: the first uses an `@` company form no other entry uses; the second has no surname. Confirm the intended attribution strings.
 6. **Twelve unsurfaced articles.** `accessible-forms-react-hook-form`, `aria-patterns-react-guide`, `building-accessible-react-components`, `css-flexbox-tutorial-for-beginners`, `how-to-center-a-div-in-css`, `javascript-array-methods-explained`, `keyboard-navigation-spa`, `lazy-loading-images-core-web-vitals`, `nextjs-performance-optimization`, `react-query-vs-redux-toolkit`, `screen-reader-testing-react`. Which are finished and indexable, and which are drafts?
-7. **Response-time expectation.** The landing page says "within one business day." Confirm that this is accurate or remove the claim.
+7. **Response-time expectation.** The unverified one-business-day promise has been removed. Confirm a realistic expectation before adding one.
 8. **Availability.** The landing page says you are open to remote freelance and contract work worldwide. Confirm that this remains current.
 
 ## Translation

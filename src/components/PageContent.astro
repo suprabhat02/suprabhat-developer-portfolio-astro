@@ -487,30 +487,36 @@ const notFoundLinks = [
             {tx('page.recommendations.eyebrow', 'Recommendations')}
           </p>
           <h1>{tx('page.recommendations.title', 'What collaborators say')}</h1>
-          <div class="grid two">
-            {recommendations.map((item) => (
-              <figure class="quote">
-                <blockquote
-                  lang={item.quoteLang}
-                  dir={item.quoteLang === 'en' ? 'ltr' : undefined}
-                >
-                  “{item.quote}”
-                </blockquote>
-                <figcaption>
-                  <img
-                    src={item.avatar}
-                    alt={item.name}
-                    width="48"
-                    height="48"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  {item.name}
-                  <span>{item.role}</span>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
+          {recommendations.length > 0 ? (
+            <div class="grid two">
+              {recommendations.map((item) => (
+                <figure class="quote">
+                  <blockquote
+                    lang={item.quoteLang}
+                    dir={item.quoteLang === 'en' ? 'ltr' : undefined}
+                  >
+                    “{item.quote}”
+                  </blockquote>
+                  <figcaption>
+                    <img
+                      src={item.avatar}
+                      alt={item.name}
+                      width="48"
+                      height="48"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    {item.name}
+                    <span>{item.role}</span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          ) : (
+            <p class="lead">
+              Recommendation attribution is being verified before publication.
+            </p>
+          )}
         </>
       </div>
     </section>

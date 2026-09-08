@@ -1,5 +1,5 @@
-# Proposed Netlify configuration for the Astro rebuild.
-# Replaces the root netlify.toml in the current repo.
+# Target production configuration. GitHub Pages remains live until the DNS
+# cutover checklist in docs/DEPLOYMENT.md is complete.
 
 [build]
   command = "npm run build"
@@ -61,10 +61,11 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.web3forms.com; base-uri 'self'; form-action 'self' https://api.web3forms.com; frame-ancestors 'none'"
-    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    Content-Security-Policy-Report-Only = "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://api.web3forms.com; base-uri 'self'; form-action 'self' https://api.web3forms.com; frame-ancestors 'none'; object-src 'none'"
+    Strict-Transport-Security = "max-age=31536000"
     Referrer-Policy = "strict-origin-when-cross-origin"
     X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
     Cross-Origin-Opener-Policy = "same-origin"
 
@@ -92,7 +93,9 @@
     Cache-Control = "public, max-age=0, must-revalidate"
 
 # Notes:
-# - X-Frame-Options dropped in favour of CSP frame-ancestors 'none'.
+# - CSP starts in report-only mode. Enforce it only after route and form QA.
+# - X-Frame-Options remains while frame-ancestors is report-only.
 # - X-XSS-Protection dropped; it is a no-op alongside a real CSP.
 # - Web3Forms is allowed for the legacy homepage's client-side form request.
-# - Google Fonts remains allowed while the legacy homepage is preserved verbatim.
+# - HSTS intentionally omits includeSubDomains and preload until all subdomains
+#   have been inventoried and verified on HTTPS.

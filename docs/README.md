@@ -41,7 +41,10 @@ src/data/recommendations.ts  quotes and attribution
 src/data/faqs.ts             questions and answers
 src/data/services.ts         service categories
 src/data/navigation.ts       routes and nav labels
+src/data/contentVerification.ts  facts blocked pending owner confirmation
 src/i18n/messages.ts         UI labels and short localized strings
+src/content/case-studies.json    strict case-study collection (migration target)
+src/content/services.json        strict service collection (migration target)
 src/content/blog/            English articles
 src/content/blog-es/         Spanish articles
 src/content/blog-ar/         Arabic articles
@@ -55,7 +58,9 @@ Supported locales are English (`en`), Spanish (`es`), and Arabic (`ar`). UI labe
 
 ## Deployment
 
-Production deployment is configured through GitHub Pages in `.github/workflows/deploy-pages.yml`.
+Production is currently deployed through GitHub Pages in `.github/workflows/deploy-pages.yml`.
+Netlify is the selected target because it can apply the security headers and
+cache policy in `netlify.toml`. See `docs/DEPLOYMENT.md` for the staged cutover.
 
 - Build command: `npm run build`
 - Output directory: `dist`
@@ -66,7 +71,7 @@ Production deployment is configured through GitHub Pages in `.github/workflows/d
 
 The blog index in each locale exposes crawlable topic archive links under `/blog/tags/`, `/es/blog/tags/`, and `/ar/blog/tags/`. Article pages link back to their localized topic archives and related articles.
 
-`netlify.toml` is kept as an alternate static-hosting configuration because it can express redirects and response headers that GitHub Pages cannot.
+Do not disable GitHub Pages until the Netlify preview and DNS cutover checks pass.
 
 ## Environment variables
 

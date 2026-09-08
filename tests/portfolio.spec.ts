@@ -22,6 +22,12 @@ test('homepage renders correct structure and passes accessibility', async ({
   );
   // Single H1 — critical SEO requirement
   await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(
+    'Suprabhat Kumar',
+  );
+  await expect(page.locator('.hero-sub')).toContainText(
+    'fast, accessible React products',
+  );
 
   // Bento hero sections
   await expect(page.locator('.hero-grid')).toBeVisible();
@@ -101,7 +107,7 @@ test('homepage renders correct structure and passes accessibility', async ({
     'MongoDB',
   ]) {
     await expect(
-      page.locator('.tm-ltr > .tm-item:not([aria-hidden]) .tm-chip', {
+      page.locator('#tools .tm-grid > .tm-item .tm-chip', {
         hasText: technology,
       }),
     ).toHaveCount(1);
@@ -117,31 +123,58 @@ test('homepage renders correct structure and passes accessibility', async ({
     await expect(page.locator('#skills li', { hasText: skill })).toBeVisible();
   }
 
-  await expect(page.locator('.work-card')).toHaveCount(6);
+  await expect(page.locator('#work .conversion-card')).toHaveCount(3);
   await expect(
-    page.locator('.work-card-link[href="/work/frontend-quality-system/"]'),
+    page.locator('#work a[href="/work/performance-modernization/"]'),
   ).toBeVisible();
+  const conversionOrder = await page
+    .locator('#work, #problems, #engagements, #approach, #blog')
+    .evaluateAll((sections) => sections.map((section) => section.id));
+  expect(conversionOrder).toEqual([
+    'work',
+    'problems',
+    'engagements',
+    'approach',
+    'blog',
+  ]);
+  await expect(page.locator('.rec-card')).toHaveCount(0);
+  await expect(page.locator('a[href="/recommendations/"]')).toHaveCount(0);
   const technologyIconUrls = await page
     .locator('#tools img')
     .evaluateAll((images) =>
       images.map((image) => (image as HTMLImageElement).src),
     );
+  await expect(page.locator('#tools .tm-item')).toHaveCount(20);
+  await expect(page.locator('#tools .tm-track')).toHaveCount(0);
   for (const iconUrl of technologyIconUrls) {
     expect((await page.request.get(iconUrl)).status()).toBe(200);
   }
 
   // Contact form present with required fields
-  await expect(page.locator('#cform')).toBeVisible();
-  await expect(page.locator('#cform')).toHaveAttribute(
+  const projectForm = page.locator('#homepage-contact-form');
+  await expect(projectForm).toBeVisible();
+  await expect(projectForm).toHaveAttribute(
     'action',
     'https://api.web3forms.com/submit',
   );
-  await expect(page.locator('#fn')).toHaveAttribute('name', 'name');
-  await expect(page.locator('#fe')).toHaveAttribute('name', 'email');
-  await expect(page.locator('#fm')).toHaveAttribute('name', 'message');
-  await expect(page.locator('#fn')).toBeVisible();
-  await expect(page.locator('#fe')).toBeVisible();
-  await expect(page.locator('#fm')).toBeVisible();
+  for (const fieldName of [
+    'name',
+    'email',
+    'project_type',
+    'budget',
+    'timeline',
+    'message',
+  ]) {
+    await expect(projectForm.locator(`[name="${fieldName}"]`)).toHaveAttribute(
+      'required',
+      '',
+    );
+  }
+  await projectForm.getByRole('button', { name: 'Send enquiry' }).click();
+  const errorSummary = projectForm.locator('[data-error-summary]');
+  await expect(errorSummary).toBeVisible();
+  await expect(errorSummary).toBeFocused();
+  await expect(errorSummary.locator('a')).toHaveCount(6);
 
   // No global SPA router: static pages keep navigation crawlable and avoid stale persisted shell state.
   await expect(
@@ -174,6 +207,13 @@ test('homepage renders correct structure and passes accessibility', async ({
 test('locale fallback and contact state are explicit', async ({ page }) => {
   await page.goto('/ar/');
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(
+    'Suprabhat Kumar',
+  );
+  await expect(page.locator('.hero-sub')).toContainText(
+    'منتجات React سريعة ومتاحة',
+  );
+  await expect(page.getByLabel('نوع المشروع *', { exact: true })).toBeVisible();
   await expect(page.locator('.brand')).toHaveAttribute('href', '/ar/');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
     'content',
@@ -182,6 +222,15 @@ test('locale fallback and contact state are explicit', async ({ page }) => {
 
   await page.goto('/es/');
   await expect(page.locator('.brand')).toHaveAttribute('href', '/es/');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(
+    'Suprabhat Kumar',
+  );
+  await expect(page.locator('.hero-sub')).toContainText(
+    'productos React rápidos y accesibles',
+  );
+  await expect(
+    page.getByLabel('Tipo de proyecto *', { exact: true }),
+  ).toBeVisible();
 
   await page.goto('/contact/');
   await expect(
@@ -189,6 +238,16 @@ test('locale fallback and contact state are explicit', async ({ page }) => {
       'form.contact-form, .notice a[href="mailto:suprabhatkumar02@gmail.com"]',
     ),
   ).toHaveCount(1);
+
+  await page.goto('/recommendations/');
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    'content',
+    'noindex,follow',
+  );
+  await expect(page.locator('blockquote')).toHaveCount(0);
+  await expect(page.locator('main')).toContainText(
+    'Recommendation attribution is being verified before publication.',
+  );
 
   await page.goto('/404.html');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
@@ -572,6 +631,7 @@ test('production SEO signals and internal links are crawlable', async ({
     'utf-8',
   );
   expect(sitemap).not.toContain('404');
+  expect(sitemap).not.toContain('/recommendations/');
 
   const hostingerRootFallback = await readFile(
     new URL('../dist/.htaccess', import.meta.url),
@@ -594,6 +654,19 @@ test('production SEO signals and internal links are crawlable', async ({
     'utf-8',
   );
   expect(hostingerArabicFallback).toContain('ErrorDocument 404 /ar/404/');
+
+  const netlifyConfig = await readFile(
+    new URL('../netlify.toml', import.meta.url),
+    'utf-8',
+  );
+  expect(netlifyConfig).toContain('Content-Security-Policy-Report-Only');
+  expect(netlifyConfig).toContain(
+    'Cache-Control = "public, max-age=31536000, immutable"',
+  );
+  expect(netlifyConfig).toContain('X-Frame-Options = "DENY"');
+  expect(netlifyConfig).not.toContain(
+    'Strict-Transport-Security = "max-age=31536000; includeSubDomains"',
+  );
 
   const llms = await page.request.get('/llms.txt');
   expect(llms.status()).toBe(200);

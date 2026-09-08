@@ -1,0 +1,303 @@
+---
+import type { Locale } from '../i18n/config';
+import type { WorkItem } from '../data/work';
+import { getHomepageConversionContent } from '../data/homepageConversion';
+import { t } from '../i18n/messages';
+
+interface Props {
+  locale: Locale;
+  work: readonly WorkItem[];
+  pageHref: (path: string) => string;
+  caseStudySlugs: Set<string>;
+}
+
+const { locale, work, pageHref, caseStudySlugs } = Astro.props;
+const content = getHomepageConversionContent(locale);
+const featuredWork = work.slice(0, 3);
+---
+
+<section
+  id="work"
+  class="section conversion-section"
+  aria-labelledby="featured-work-title"
+>
+  <div class="wrap">
+    <header class="section-head">
+      <span class="s-eyebrow">01 — {content.work.eyebrow}</span>
+      <h2 id="featured-work-title" class="s-title">{content.work.title}</h2>
+      <p class="s-lead">{content.work.lead}</p>
+      <p class="conversion-note">{content.work.note}</p>
+    </header>
+    <div class="conversion-grid conversion-grid--three">
+      {
+        featuredWork.map((item) => (
+          <article class="conversion-card">
+            <h3>{item.title}</h3>
+            <p>{item.summary}</p>
+            <ul
+              class="conversion-tags"
+              aria-label={t(locale, 'work.focusAreas', 'Focus areas')}
+            >
+              {item.tags.map((tag) => (
+                <li>{tag}</li>
+              ))}
+            </ul>
+            {caseStudySlugs.has(item.id) && (
+              <a href={pageHref(`/work/${item.id}/`)}>
+                {t(locale, 'caseStudy.read', 'Read case study')} →
+              </a>
+            )}
+          </article>
+        ))
+      }
+    </div>
+    <p class="conversion-action">
+      <a class="btn btn-outline" href={pageHref('/work/')}>
+        {t(locale, 'home.workCta', 'View all work')}
+      </a>
+    </p>
+  </div>
+</section>
+
+<section
+  id="problems"
+  class="section section-alt conversion-section"
+  aria-labelledby="problems-title"
+>
+  <div class="wrap">
+    <header class="section-head">
+      <span class="s-eyebrow">02 — {content.problems.eyebrow}</span>
+      <h2 id="problems-title" class="s-title">{content.problems.title}</h2>
+      <p class="s-lead">{content.problems.lead}</p>
+    </header>
+    <div class="conversion-grid conversion-grid--three">
+      {
+        content.problems.items.map((item) => (
+          <article class="conversion-card conversion-card--compact">
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<section
+  id="engagements"
+  class="section conversion-section"
+  aria-labelledby="engagements-title"
+>
+  <div class="wrap">
+    <header class="section-head">
+      <span class="s-eyebrow">03 — {content.engagements.eyebrow}</span>
+      <h2 id="engagements-title" class="s-title">
+        {content.engagements.title}
+      </h2>
+      <p class="s-lead">{content.engagements.lead}</p>
+    </header>
+    <div class="conversion-grid conversion-grid--two">
+      {
+        content.engagements.items.map((item) => (
+          <article class="conversion-card engagement-card">
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+            <dl>
+              <div>
+                <dt>{content.engagements.fitLabel}</dt>
+                <dd>{item.fit}</dd>
+              </div>
+              <div>
+                <dt>{content.engagements.deliverablesLabel}</dt>
+                <dd>{item.deliverables}</dd>
+              </div>
+              <div>
+                <dt>{content.engagements.durationLabel}</dt>
+                <dd>{item.duration}</dd>
+              </div>
+            </dl>
+            <a href="#contact">{content.hero.secondaryCta} →</a>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<section
+  id="approach"
+  class="section section-alt conversion-section"
+  aria-labelledby="approach-title"
+>
+  <div class="wrap">
+    <header class="section-head">
+      <span class="s-eyebrow">04 — {content.approach.eyebrow}</span>
+      <h2 id="approach-title" class="s-title">{content.approach.title}</h2>
+    </header>
+    <ol class="conversion-grid conversion-grid--three conversion-steps">
+      {
+        content.approach.items.map((item, index) => (
+          <li class="conversion-card conversion-card--compact">
+            <span aria-hidden="true">0{index + 1}</span>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<section
+  id="collaboration"
+  class="section conversion-section"
+  aria-labelledby="collaboration-title"
+>
+  <div class="wrap">
+    <header class="section-head">
+      <span class="s-eyebrow">05 — {content.collaboration.eyebrow}</span>
+      <h2 id="collaboration-title" class="s-title">
+        {content.collaboration.title}
+      </h2>
+      <p class="s-lead">{content.collaboration.lead}</p>
+    </header>
+    <div class="conversion-grid conversion-grid--three">
+      {
+        content.collaboration.items.map((item) => (
+          <article class="conversion-card conversion-card--compact">
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .conversion-section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 760px;
+  }
+
+  .conversion-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .conversion-grid--three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .conversion-grid--two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .conversion-card {
+    min-width: 0;
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    background: var(--bg-card);
+  }
+
+  .conversion-card--compact {
+    min-height: 12rem;
+  }
+
+  .conversion-card h3 {
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+  }
+
+  .conversion-card p {
+    margin: 0;
+    color: var(--text-2);
+    line-height: 1.7;
+  }
+
+  .conversion-card > a {
+    display: inline-block;
+    margin-top: 1.25rem;
+    color: var(--accent);
+    font-weight: 700;
+    text-underline-offset: 0.25em;
+  }
+
+  .conversion-note {
+    max-width: 72ch;
+    margin: 0.75rem 0 0;
+    color: var(--text-3);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  .conversion-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    padding: 0;
+    margin: 1.25rem 0 0;
+    list-style: none;
+  }
+
+  .conversion-tags li {
+    padding: 0.35rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-control);
+    color: var(--text-2);
+    font-size: 0.75rem;
+  }
+
+  .conversion-action {
+    margin: 1.5rem 0 0;
+  }
+
+  .engagement-card dl {
+    display: grid;
+    gap: 0.85rem;
+    margin: 1.25rem 0 0;
+  }
+
+  .engagement-card dl div {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .engagement-card dt {
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 750;
+    text-transform: uppercase;
+  }
+
+  .engagement-card dd {
+    margin: 0;
+    color: var(--text-2);
+    line-height: 1.55;
+  }
+
+  .conversion-steps {
+    padding: 0;
+    list-style: none;
+  }
+
+  .conversion-steps > li > span {
+    display: block;
+    margin-bottom: 1rem;
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 750;
+  }
+
+  @media (max-width: 860px) {
+    .conversion-grid--three,
+    .conversion-grid--two {
+      grid-template-columns: 1fr;
+    }
+
+    .conversion-card--compact {
+      min-height: 0;
+    }
+  }
+</style>

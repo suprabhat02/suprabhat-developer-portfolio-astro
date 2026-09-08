@@ -1066,13 +1066,75 @@ main {
   font-weight: 650;
 }
 .contact-form input,
-.contact-form textarea {
+.contact-form textarea,
+.contact-form select {
   width: 100%;
   padding: 0.8rem;
   border: 1px solid var(--line);
   border-radius: var(--radius-control);
   background: var(--bg);
   color: var(--text);
+}
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.form-honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.form-error-summary {
+  padding: 1rem;
+  border: 1px solid #e55353;
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, #e55353 8%, var(--surface));
+  color: var(--text);
+}
+.form-error-summary:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.form-error-summary ul {
+  margin: 0.5rem 0 0;
+  padding-inline-start: 1.25rem;
+}
+.form-error-summary a,
+.form-email-fallback a {
+  color: var(--accent);
+}
+.f-label > span[aria-hidden='true'] {
+  color: var(--accent);
+}
+.f-optional {
+  color: var(--muted);
+  font-size: 0.8em;
+  font-weight: 500;
+  margin-inline-start: 0.4rem;
+}
+.f-error {
+  min-height: 1em;
+  color: #e55353;
+  font-size: 0.8rem;
+}
+.f-status,
+.form-email-fallback {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+@media (max-width: 560px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
 }
 .notice {
   padding: 1.5rem;

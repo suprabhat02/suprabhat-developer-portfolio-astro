@@ -203,7 +203,14 @@ const schema = [
 
 {
   (
-    <BaseLayout {title} {description} {locale} {page} {schema}>
+    <BaseLayout
+      {title}
+      {description}
+      {locale}
+      {page}
+      {schema}
+      noindex={page === 'recommendations'}
+    >
       <PageContent {page} {locale} />
     </BaseLayout>
   )

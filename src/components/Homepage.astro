@@ -1,5 +1,4 @@
 ---
-import { SITE_URL } from '../config/site';
 import { getProfile } from '../data/profile';
 import { getExperience } from '../data/experience';
 import { tools } from '../data/tools';
@@ -14,6 +13,9 @@ import { Picture } from 'astro:assets';
 import { getBlogPostHref, getBlogPosts, getBlogTagHref } from '../data/blog';
 import { localePrefix, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
+import HomepageConversion from './HomepageConversion.astro';
+import ContactForm from './ContactForm.astro';
+import { getHomepageConversionContent } from '../data/homepageConversion';
 import {
   heroPortraitQuality,
   heroPortraitSizes,
@@ -24,6 +26,7 @@ import '../styles/homepage.css';
 
 const { locale = 'en' } = Astro.props as { locale?: Locale };
 const profile = getProfile(locale);
+const conversion = getHomepageConversionContent(locale);
 const experience = getExperience(locale);
 const work = getWork(locale);
 const caseStudies = getCaseStudies(locale);
@@ -124,11 +127,7 @@ const heroProofCards = [
   {
     className: 'hero-proof-card hero-proof-card--availability avail-card',
     eyebrow: t(locale, 'home.availability', 'Availability'),
-    title: t(
-      locale,
-      'home.availabilityLead',
-      'Open to remote freelance & contract worldwide',
-    ),
+    title: t(locale, 'home.availabilityLead', 'Remote product collaboration'),
     body: t(
       locale,
       'home.availabilityMeta',
@@ -207,11 +206,7 @@ const toolCategoryLabel = (toolName: string) => {
       <div class="hero-grid">
         <div class="hero-content hero-card">
           <p class="hero-eyebrow">
-            <span>{profile.eyebrow.role}</span>
-            <span aria-hidden="true">·</span>
-            <span>{profile.eyebrow.availability}</span>
-            <span aria-hidden="true">·</span>
-            <span>{profile.eyebrow.from}</span>
+            <span>{conversion.hero.eyebrow}</span>
             <img
               src="/assets/icons/india-flag-icon.svg"
               alt=""
@@ -226,9 +221,8 @@ const toolCategoryLabel = (toolName: string) => {
           <h1 id="hero-name" class="hero-name">
             Suprabhat <span>Kumar</span>
           </h1>
-
-          <p class="hero-sub">{profile.tagline}</p>
-          <p class="hero-lead">{profile.lead}</p>
+          <p class="hero-sub">{conversion.hero.title}</p>
+          <p class="hero-lead">{conversion.hero.lead}</p>
 
           <dl
             class="hero-recruiter-list"
@@ -257,10 +251,10 @@ const toolCategoryLabel = (toolName: string) => {
 
           <div class="hero-ctas">
             <a href="#work" class="btn btn-primary"
-              >{t(locale, 'action.work', 'View selected work')}</a
+              >{conversion.hero.primaryCta}</a
             >
             <a href="#contact" class="btn btn-outline"
-              >{t(locale, 'action.contact', 'Get in touch')}</a
+              >{conversion.hero.secondaryCta}</a
             >
             {
               linkedin && (
@@ -275,6 +269,7 @@ const toolCategoryLabel = (toolName: string) => {
               )
             }
           </div>
+          <p class="hero-trust-line">{conversion.hero.trustLine}</p>
         </div>
 
         <figure class="hero-portrait-wrap hero-card">
@@ -364,14 +359,16 @@ const toolCategoryLabel = (toolName: string) => {
           </span>
         </div>
         <div class="stat-item reveal d3">
-          <span class="stat-num">100%</span>
+          <span class="stat-num">India</span>
           <span class="stat-lbl">
-            {t(locale, 'home.statRemote', 'Remote-ready worldwide')}
+            {t(locale, 'home.statRemote', 'Remote collaboration')}
           </span>
         </div>
       </div>
     </div>
   </aside>
+
+  <HomepageConversion {locale} {work} {pageHref} {caseStudySlugs} />
 
   <!-- ── FEATURED ARTICLES ─────────────────────────── -->
   <!--
@@ -391,7 +388,7 @@ const toolCategoryLabel = (toolName: string) => {
         style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap"
       >
         <div class="reveal">
-          <span class="s-eyebrow">01 — {t(locale, 'nav.blog', 'Writing')}</span>
+          <span class="s-eyebrow">06 — {t(locale, 'nav.blog', 'Writing')}</span>
           <h2 id="blog-title" class="s-title">
             {t(locale, 'page.blog.title', 'Featured articles')}
           </h2>
@@ -477,7 +474,7 @@ const toolCategoryLabel = (toolName: string) => {
     <div class="wrap">
       <div class="section-head">
         <span class="s-eyebrow reveal"
-          >02 — {t(locale, 'nav.about', 'About')}</span
+          >07 — {t(locale, 'nav.about', 'About')}</span
         >
         <h2 id="about-title" class="s-title reveal">
           {t(locale, 'home.about', 'About me')}
@@ -515,7 +512,7 @@ const toolCategoryLabel = (toolName: string) => {
               t(
                 locale,
                 'trait.performance.body',
-                'I ship with performance budgets, Core Web Vitals targets, and Lighthouse 100 as a baseline — not an afterthought.',
+                'I use performance budgets, Core Web Vitals, and measured browser evidence throughout delivery.',
               )
             }
           </p>
@@ -540,7 +537,7 @@ const toolCategoryLabel = (toolName: string) => {
               t(
                 locale,
                 'trait.accessibility.body',
-                'WCAG 2.2 AA compliance, keyboard navigation, ARIA, and screen reader testing on every deliverable.',
+                'Semantic HTML, keyboard navigation, visible focus, and manual assistive-technology review guide implementation.',
               )
             }
           </p>
@@ -614,7 +611,7 @@ const toolCategoryLabel = (toolName: string) => {
     <div class="wrap">
       <div class="section-head reveal">
         <span class="s-eyebrow">
-          03 — {t(locale, 'home.expertise', 'Expertise')}
+          08 — {t(locale, 'home.expertise', 'Expertise')}
         </span>
         <h2 id="expertise-title" class="s-title">
           {t(locale, 'home.expertise', 'Core expertise')}
@@ -773,7 +770,7 @@ const toolCategoryLabel = (toolName: string) => {
               t(
                 locale,
                 'expertise.design.body',
-                'Creating scalable component architectures and design tokens that teams ship from confidently. Core Web Vitals optimization, accessibility audits, and Lighthouse 100 delivery.',
+                'Creating scalable component architectures and design tokens, supported by performance measurement and accessibility review.',
               )
             }
           </p>
@@ -799,7 +796,7 @@ const toolCategoryLabel = (toolName: string) => {
   >
     <div class="wrap">
       <div class="section-head reveal">
-        <span class="s-eyebrow">04 — Skills</span>
+        <span class="s-eyebrow">09 — Skills</span>
         <h2 id="skills-title" class="s-title">
           {t(locale, 'page.skills.eyebrow', 'Skills')}
         </h2>
@@ -847,7 +844,7 @@ const toolCategoryLabel = (toolName: string) => {
     <div class="wrap">
       <div class="section-head reveal">
         <span class="s-eyebrow">
-          05 — {t(locale, 'home.experience', 'Experience')}
+          10 — {t(locale, 'home.experience', 'Experience')}
         </span>
         <h2 id="exp-title" class="s-title">
           {t(locale, 'home.experience', 'Experience')}
@@ -956,7 +953,6 @@ const toolCategoryLabel = (toolName: string) => {
   </section>
 
   <!-- ── TOOLS GRID ───────────────────────────────────── -->
-  <!-- ── TOOLS MARQUEE ─────────────────────────────── -->
   <section
     id="tools"
     class="section section-alt cv-auto"
@@ -965,7 +961,7 @@ const toolCategoryLabel = (toolName: string) => {
     <div class="wrap">
       <div class="section-head reveal">
         <span class="s-eyebrow">
-          06 — {t(locale, 'home.toolbox', 'Stack')}
+          11 — {t(locale, 'home.toolbox', 'Stack')}
         </span>
         <h2 id="tools-title" class="s-title">
           {t(locale, 'page.tools.title', 'Tools & technologies')}
@@ -982,84 +978,13 @@ const toolCategoryLabel = (toolName: string) => {
       </div>
     </div>
 
-    <!--
-          Two marquee rows:
-            Row 1 (LTR direction) — chips duplicated inside the SAME track so
-            translateX(-50%) = exactly one full set width → seamless loop.
-            Row 2 (RTL direction, reversed order) — entirely aria-hidden.
-          Pure CSS optional hover motion — no JS and no continuous default work.
-        -->
     <div
       class="tm-wrap mo-reveal"
       aria-label={t(locale, 'home.stackAria', 'Technology stack')}
     >
-      <!-- Row 1: scrolls left (←) -->
-      <ul class="tm-track tm-ltr" role="list">
-        {/* Semantic set — crawlers see these */}
+      <ul class="tm-grid" role="list">
         {
           tools.map((tool) => (
-            <li class="tm-item">
-              <div class="tm-chip">
-                <span class="tm-cat">{toolCategoryLabel(tool.name)}</span>
-                <img
-                  src={tool.icon}
-                  alt=""
-                  width="36"
-                  height="36"
-                  loading="lazy"
-                  decoding="async"
-                  class:list={[{ 'tm-invert': tool.invertOnDark }]}
-                />
-                <span class="tm-name">{tool.name}</span>
-              </div>
-            </li>
-          ))
-        }
-        {/* Visual duplicate — makes the loop seamless */}
-        {
-          tools.map((tool) => (
-            <li class="tm-item" aria-hidden="true">
-              <div class="tm-chip">
-                <span class="tm-cat">{toolCategoryLabel(tool.name)}</span>
-                <img
-                  src={tool.icon}
-                  alt=""
-                  width="36"
-                  height="36"
-                  loading="lazy"
-                  decoding="async"
-                  class:list={[{ 'tm-invert': tool.invertOnDark }]}
-                />
-                <span class="tm-name">{tool.name}</span>
-              </div>
-            </li>
-          ))
-        }
-      </ul>
-
-      <!-- Row 2: scrolls right (→), reversed order, wholly decorative -->
-      <ul class="tm-track tm-rtl" role="list" aria-hidden="true">
-        {
-          [...tools].reverse().map((tool) => (
-            <li class="tm-item">
-              <div class="tm-chip">
-                <span class="tm-cat">{toolCategoryLabel(tool.name)}</span>
-                <img
-                  src={tool.icon}
-                  alt=""
-                  width="36"
-                  height="36"
-                  loading="lazy"
-                  decoding="async"
-                  class:list={[{ 'tm-invert': tool.invertOnDark }]}
-                />
-                <span class="tm-name">{tool.name}</span>
-              </div>
-            </li>
-          ))
-        }
-        {
-          [...tools].reverse().map((tool) => (
             <li class="tm-item">
               <div class="tm-chip">
                 <span class="tm-cat">{toolCategoryLabel(tool.name)}</span>
@@ -1081,137 +1006,72 @@ const toolCategoryLabel = (toolName: string) => {
     </div>
   </section>
 
-  <!-- ── SELECTED WORK ──────────────────────────────── -->
-  <section
-    id="work"
-    class="section cv-auto section-glow section-glow-tr"
-    aria-labelledby="work-title"
-  >
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="s-eyebrow">
-          07 — {t(locale, 'home.work', 'Work')}
-        </span>
-        <h2 id="work-title" class="s-title">
-          {t(locale, 'home.workTitle', 'Selected internal work')}
-        </h2>
-        <p class="s-lead">
-          {
-            t(
-              locale,
-              'home.workLead',
-              'A snapshot of internal product work focused on performance, accessibility, and scalable UI systems.',
-            )
-          }
-        </p>
-        <p
-          style="font-family:var(--mono);font-size:11.5px;color:var(--text-3);margin-top:8px;letter-spacing:.04em"
-        >
-          {
-            t(
-              locale,
-              'home.workNote',
-              'Internal work — described without client names, screenshots, or confidential detail.',
-            )
-          }
-        </p>
-      </div>
-      <div class="work-grid">
-        {
-          work.map((item) => (
-            <article class={`work-card mo-reveal`}>
-              <h3>{item.title}</h3>
-              <p>{item.summary}</p>
-              <ul
-                class="tags"
-                aria-label={t(locale, 'work.focusAreas', 'Focus areas')}
-              >
-                {item.tags.map((tag) => (
-                  <li class="tag">{tag}</li>
-                ))}
-              </ul>
-              {caseStudySlugs.has(item.id) && (
-                <a class="work-card-link" href={pageHref(`/work/${item.id}/`)}>
-                  {t(locale, 'caseStudy.read', 'Read case study')}
-                </a>
+  {
+    featured.length > 0 && (
+      <section
+        id="recommendations"
+        class="section section-alt cv-auto"
+        aria-labelledby="recs-title"
+      >
+        <div class="wrap">
+          <div class="section-head reveal">
+            <span class="s-eyebrow">
+              12 — {t(locale, 'home.recommendations', 'Recommendations')}
+            </span>
+            <h2 id="recs-title" class="s-title">
+              {t(locale, 'home.recommendations', 'Recommendations')}
+            </h2>
+            <p class="s-lead">
+              {t(
+                locale,
+                'home.recommendationsLead',
+                'What cross-functional partners say about working together.',
               )}
-            </article>
-          ))
-        }
-      </div>
-      <p style="margin-top:28px" class="reveal">
-        <a href={pageHref('/work/')} class="btn btn-outline"
-          >{t(locale, 'home.workCta', 'See all internal work')}</a
-        >
-      </p>
-    </div>
-  </section>
-
-  <!-- ── RECOMMENDATIONS ───────────────────────────── -->
-  <!-- featured[] filtered from typed recommendations.ts — 3 curated entries -->
-  <section
-    id="recommendations"
-    class="section section-alt cv-auto"
-    aria-labelledby="recs-title"
-  >
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="s-eyebrow">
-          08 — {t(locale, 'home.recommendations', 'Recommendations')}
-        </span>
-        <h2 id="recs-title" class="s-title">
-          {t(locale, 'home.recommendations', 'Recommendations')}
-        </h2>
-        <p class="s-lead">
-          {
-            t(
-              locale,
-              'home.recommendationsLead',
-              'What cross-functional partners say about working together.',
-            )
-          }
-        </p>
-      </div>
-      <div class="recs-grid">
-        {
-          featured.map((item) => (
-            <figure class="rec-card mo-reveal">
-              <div class="rec-quote-mark" aria-hidden="true">
-                "
-              </div>
-              <blockquote
-                lang={item.quoteLang}
-                dir={item.quoteLang === 'en' ? 'ltr' : undefined}
-              >
-                "{item.quote}"
-              </blockquote>
-              <figcaption class="rec-author">
-                <img
-                  src={item.avatar}
-                  alt=""
-                  width="44"
-                  height="44"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div>
-                  <span class="rec-name">{item.name}</span>
-                  <span class="rec-role">{item.role}</span>
+            </p>
+          </div>
+          <div class="recs-grid">
+            {featured.map((item) => (
+              <figure class="rec-card mo-reveal">
+                <div class="rec-quote-mark" aria-hidden="true">
+                  "
                 </div>
-              </figcaption>
-            </figure>
-          ))
-        }
-      </div>
-      <p style="margin-top:28px" class="reveal">
-        <a href={pageHref('/recommendations/')} class="btn btn-ghost"
-          >{
-            t(locale, 'home.recommendationsCta', 'View all six recommendations')
-          } →</a
-        >
-      </p>
-    </div>
-  </section>
+                <blockquote
+                  lang={item.quoteLang}
+                  dir={item.quoteLang === 'en' ? 'ltr' : undefined}
+                >
+                  "{item.quote}"
+                </blockquote>
+                <figcaption class="rec-author">
+                  <img
+                    src={item.avatar}
+                    alt=""
+                    width="44"
+                    height="44"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div>
+                    <span class="rec-name">{item.name}</span>
+                    <span class="rec-role">{item.role}</span>
+                  </div>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+          <p style="margin-top:28px" class="reveal">
+            <a href={pageHref('/recommendations/')} class="btn btn-ghost">
+              {t(
+                locale,
+                'home.recommendationsCta',
+                'View verified recommendations',
+              )}{' '}
+              →
+            </a>
+          </p>
+        </div>
+      </section>
+    )
+  }
 
   <!-- ── FAQ ───────────────────────────────────────── -->
   <!--
@@ -1227,7 +1087,9 @@ const toolCategoryLabel = (toolName: string) => {
     <div class="wrap">
       <div class="faq-2col">
         <div class="reveal">
-          <span class="s-eyebrow">09 — FAQ</span>
+          <span class="s-eyebrow"
+            >{featured.length > 0 ? '13' : '12'} — FAQ</span
+          >
           <h2 id="faq-title" class="s-title">
             {t(locale, 'page.faq.title', 'Frequently asked questions')}
           </h2>
@@ -1317,7 +1179,9 @@ const toolCategoryLabel = (toolName: string) => {
     <div class="wrap">
       <div class="section-head reveal">
         <span class="s-eyebrow">
-          10 — {t(locale, 'page.contact.eyebrow', 'Contact')}
+          {featured.length > 0 ? '14' : '13'} — {
+            t(locale, 'page.contact.eyebrow', 'Contact')
+          }
         </span>
         <h2 id="contact-title" class="s-title">
           {t(locale, 'page.contact.eyebrow', 'Contact')}
@@ -1426,145 +1290,7 @@ const toolCategoryLabel = (toolName: string) => {
         </div>
 
         <!-- Web3Forms \u2014 access key injected at build time from PUBLIC_WEB3FORMS_KEY env var -->
-        <form
-          class="contact-form-box reveal d1"
-          id="cform"
-          action="https://api.web3forms.com/submit"
-          method="POST"
-          aria-label={t(locale, 'home.contactForm', 'Contact form')}
-          data-error-name={t(locale, 'form.errorName', 'Enter your name.')}
-          data-error-email={t(
-            locale,
-            'form.errorEmail',
-            'Enter a valid email address.',
-          )}
-          data-error-message={t(
-            locale,
-            'form.errorMessage',
-            'Tell me about the project.',
-          )}
-          data-unconfigured={t(
-            locale,
-            'form.unconfigured',
-            'The contact form is not configured yet. Please email directly.',
-          )}
-          data-send={t(locale, 'form.send', 'Send message')}
-          data-sending={t(locale, 'form.sending', 'Sending...')}
-          data-success={t(
-            locale,
-            'form.success',
-            'Message sent! I will reply within one business day.',
-          )}
-          data-failure={t(
-            locale,
-            'form.failure',
-            'Something went wrong. Please email directly.',
-          )}
-          data-network-error={t(
-            locale,
-            'form.networkError',
-            'Network error. Please email directly.',
-          )}
-        >
-          <input
-            type="hidden"
-            name="access_key"
-            value={import.meta.env.PUBLIC_WEB3FORMS_KEY ?? ''}
-          />
-          <input
-            type="hidden"
-            name="subject"
-            value={`New portfolio enquiry — ${SITE_URL}`}
-          />
-          <input
-            type="hidden"
-            name="from_name"
-            value="Suprabhat Kumar Portfolio"
-          />
-          <input type="hidden" name="redirect" value={`${SITE_URL}/#contact`} />
-          <!-- honeypot field \u2014 visually hidden, bots fill it, humans don't -->
-          <div
-            style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)"
-            aria-hidden="true"
-          >
-            <input
-              id="hp"
-              name="botcheck"
-              type="checkbox"
-              tabindex="-1"
-              autocomplete="off"
-            />
-          </div>
-          <div class="f-field">
-            <label class="f-label" for="fn"
-              >{t(locale, 'form.name', 'Name')}
-              <span style="color:var(--accent)" aria-hidden="true">*</span
-              ></label
-            >
-            <input
-              class="f-input"
-              id="fn"
-              name="name"
-              type="text"
-              autocomplete="name"
-              required
-              aria-required="true"
-              placeholder={t(locale, 'form.namePlaceholder', 'Your full name')}
-            />
-            <span class="f-error" id="fn-e" role="alert"></span>
-          </div>
-          <div class="f-field">
-            <label class="f-label" for="fe"
-              >{t(locale, 'form.email', 'Email')}
-              <span style="color:var(--accent)" aria-hidden="true">*</span
-              ></label
-            >
-            <input
-              class="f-input"
-              id="fe"
-              name="email"
-              type="email"
-              autocomplete="email"
-              required
-              aria-required="true"
-              placeholder="you@company.com"
-              dir="ltr"
-            />
-            <span class="f-error" id="fe-e" role="alert"></span>
-          </div>
-          <div class="f-field">
-            <label class="f-label" for="fm"
-              >{t(locale, 'home.message', 'Message')}
-              <span style="color:var(--accent)" aria-hidden="true">*</span
-              ></label
-            >
-            <textarea
-              class="f-input"
-              id="fm"
-              name="message"
-              rows="5"
-              required
-              aria-required="true"
-              placeholder={t(
-                locale,
-                'form.messagePlaceholder',
-                'Describe your project or question…',
-              )}></textarea>
-            <span class="f-error" id="fm-e" role="alert"></span>
-          </div>
-          <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
-            <button type="submit" class="btn btn-primary"
-              >{t(locale, 'form.send', 'Send message')}</button
-            >
-            <output id="fstatus" aria-live="polite" class="f-status"></output>
-          </div>
-          <p style="font-size:13px;color:var(--text-3)">
-            {t(locale, 'home.preferEmail', 'Prefer email?')}&nbsp;<a
-              href={`mailto:${profile.email}`}
-              style="color:var(--accent)">{profile.email}</a
-            >
-          </p>
-        </form>
+        <ContactForm {locale} variant="homepage" />
       </div>
     </div>
   </section>
@@ -1596,7 +1322,7 @@ const toolCategoryLabel = (toolName: string) => {
 <!--
       Homepage client behaviours - functional only, no decorative runtime motion.
       Astro defers all <script> modules automatically.
-      Covers: back-to-top and contact form validation/submission.
+      Covers: back-to-top.
     -->
 <script>
   (function () {
@@ -1618,99 +1344,6 @@ const toolCategoryLabel = (toolName: string) => {
           ? 'auto'
           : 'smooth';
         window.scrollTo({ top: 0, behavior });
-      });
-    }
-
-    // Contact form validation and Web3Forms submission.
-    const cform = document.getElementById('cform') as HTMLFormElement | null;
-    if (cform) {
-      cform.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const fn = document.getElementById('fn') as HTMLInputElement | null;
-        const fe = document.getElementById('fe') as HTMLInputElement | null;
-        const fm = document.getElementById('fm') as HTMLTextAreaElement | null;
-        const fne = document.getElementById('fn-e') as HTMLElement | null;
-        const fee = document.getElementById('fe-e') as HTMLElement | null;
-        const fme = document.getElementById('fm-e') as HTMLElement | null;
-        const fs = document.getElementById(
-          'fstatus',
-        ) as HTMLOutputElement | null;
-        const submit =
-          cform.querySelector<HTMLButtonElement>('[type="submit"]');
-
-        if (!fn || !fe || !fm || !fne || !fee || !fme || !fs) return;
-
-        const labels = cform.dataset;
-        const submitLabel =
-          submit?.textContent ?? labels.send ?? 'Send message';
-        fne.textContent = '';
-        fee.textContent = '';
-        fme.textContent = '';
-        [fn, fe, fm].forEach(function (field) {
-          field.removeAttribute('aria-invalid');
-        });
-
-        let ok = true;
-        if (!fn.value.trim()) {
-          fne.textContent = labels.errorName ?? 'Please enter your name.';
-          fn.setAttribute('aria-invalid', 'true');
-          ok = false;
-        }
-        if (!fe.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fe.value)) {
-          fee.textContent = labels.errorEmail ?? 'Please enter a valid email.';
-          fe.setAttribute('aria-invalid', 'true');
-          ok = false;
-        }
-        if (!fm.value.trim()) {
-          fme.textContent = labels.errorMessage ?? 'Please enter a message.';
-          fm.setAttribute('aria-invalid', 'true');
-          ok = false;
-        }
-        if (!ok) {
-          (fn.getAttribute('aria-invalid')
-            ? fn
-            : fe.getAttribute('aria-invalid')
-              ? fe
-              : fm
-          ).focus();
-          return;
-        }
-        const accessKey = new FormData(cform).get('access_key');
-        if (typeof accessKey !== 'string' || !accessKey.trim()) {
-          fs.textContent =
-            labels.unconfigured ?? 'Contact form is not configured yet.';
-          return;
-        }
-        fs.textContent = labels.sending ?? 'Sending...';
-        if (submit) {
-          submit.disabled = true;
-          submit.textContent = labels.sending ?? 'Sending...';
-        }
-        fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          body: new FormData(cform),
-          headers: { Accept: 'application/json' },
-        })
-          .then(function (r) {
-            if (!r.ok) throw new Error('Web3Forms request failed');
-            return r.json();
-          })
-          .then(function (res) {
-            fs.textContent = res.success
-              ? (labels.success ?? 'Message sent.')
-              : (labels.failure ?? 'Message failed to send.');
-            if (res.success) cform.reset();
-          })
-          .catch(function () {
-            fs.textContent =
-              labels.networkError ?? 'Network error. Please try again.';
-          })
-          .finally(function () {
-            if (submit) {
-              submit.disabled = false;
-              submit.textContent = labels.send ?? submitLabel;
-            }
-          });
       });
     }
   })();
