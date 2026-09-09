@@ -8,39 +8,38 @@ export interface Recommendation {
   avatar: string;
   quoteLang?: string;
   verified: boolean;
-  /** TODO(docs/TODO.md #4): provenance unconfirmed — no source link is claimed. */
+  /** Optional public source URL; direct publication consent may be recorded offline. */
   sourceUrl?: string;
 }
 
-/** Wording preserved exactly. Never translate a quote without consent. */
+/** Wording preserved exactly. Translation consent is confirmed; native review is pending. */
 export const recommendations: readonly Recommendation[] = [
   {
     id: 'sandeep-sharma',
     quote:
       'The performance optimization work reduced load times and made our product feel dramatically more responsive.',
-    name: 'Sandeep Sharma',
-    // TODO(docs/TODO.md #5): confirm the intended attribution string.
-    role: 'AI Engineer@Topsoe',
+    name: 'Sandeep',
+    role: 'AI Engineer',
     avatar: '/assets/testimonials/sandeep-sharma.jpg',
-    verified: false,
+    verified: true,
   },
   {
     id: 'pooja-verma',
     quote:
       'Suprabhat turned a complex analytics workflow into a fast, accessible dashboard. The UI felt polished and the performance wins were immediate.',
-    name: 'Pooja Verma',
+    name: 'Pooja',
     role: 'Senior Quality Analyst',
     avatar: '/assets/testimonials/pooja-verma.jpg',
-    verified: false,
+    verified: true,
   },
   {
     id: 'sonu-gagan',
     quote:
       'He brought structure to our front-end architecture and delivered a design-system-ready UI that scaled across teams.',
-    name: 'Sonu Gagan',
+    name: 'Sonu Gagan Karn',
     role: 'Senior Specialist, Platform',
     avatar: '/assets/testimonials/sonu-gagan.jpg',
-    verified: false,
+    verified: true,
   },
   {
     id: 'supriya-suman',
@@ -49,7 +48,7 @@ export const recommendations: readonly Recommendation[] = [
     name: 'Supriya Suman',
     role: 'Associate, UX Research',
     avatar: '/assets/testimonials/supriya-suman.jpg',
-    verified: false,
+    verified: true,
   },
   {
     id: 'suraj',
@@ -58,7 +57,7 @@ export const recommendations: readonly Recommendation[] = [
     name: 'Suraj',
     role: 'SEO Specialist',
     avatar: '/assets/testimonials/suraj.jpg',
-    verified: false,
+    verified: true,
   },
   {
     id: 'aditi-vimal',
@@ -67,7 +66,7 @@ export const recommendations: readonly Recommendation[] = [
     name: 'Aditi Vimal',
     role: 'Executive - Regulatory Affairs',
     avatar: '/assets/testimonials/aditi-vimal.jpg',
-    verified: false,
+    verified: true,
   },
 ] as const;
 
@@ -80,7 +79,7 @@ export const featuredRecommendationIds = [
 
 const localizedRoles: Partial<Record<Locale, Record<string, string>>> = {
   es: {
-    'sandeep-sharma': 'Ingeniero de IA en Topsoe',
+    'sandeep-sharma': 'Ingeniero de IA',
     'pooja-verma': 'Analista sénior de calidad',
     'sonu-gagan': 'Especialista sénior, Plataforma',
     'supriya-suman': 'Asociada, Investigación UX',
@@ -88,7 +87,7 @@ const localizedRoles: Partial<Record<Locale, Record<string, string>>> = {
     'aditi-vimal': 'Ejecutiva de asuntos regulatorios',
   },
   ar: {
-    'sandeep-sharma': 'مهندس ذكاء اصطناعي في Topsoe',
+    'sandeep-sharma': 'مهندس ذكاء اصطناعي',
     'pooja-verma': 'محللة جودة أولى',
     'sonu-gagan': 'أخصائي أول، المنصة',
     'supriya-suman': 'زميلة، أبحاث UX',

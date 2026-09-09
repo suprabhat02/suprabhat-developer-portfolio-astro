@@ -12,6 +12,7 @@ import { getSkills } from '../data/skills';
 import { tools } from '../data/tools';
 import { getCaseStudies } from '../data/caseStudies';
 import { getInternalWorkNotice, getWork } from '../data/work';
+import { engagement } from '../data/engagement';
 import {
   getBlogPosts,
   getBlogTagGroupsFromPosts,
@@ -28,6 +29,7 @@ const { page, locale } = Astro.props;
 const prefix = localePrefix(locale);
 const href = (path: string) => `${prefix}${path}` || '/';
 const profile = getProfile(locale);
+const linkedin = profile.social.find((item) => item.label === 'LinkedIn');
 const experience = getExperience(locale);
 const recommendations = getRecommendations(locale);
 const services = getServices(locale);
@@ -158,7 +160,7 @@ const notFoundLinks = [
         <div class="wrap">
           <>
             <p class="eyebrow">{tx('home.expertise', 'Expertise')}</p>
-            <h2>{tx('home.skillsTitle', 'Front-end systems that hold up')}</h2>
+            <h2>{tx('home.skillsTitle', 'Frontend systems that hold up')}</h2>
             <p class="lead">{skillsLead}</p>
             <div class="grid three">
               {skillGroups.map((group) => (
@@ -352,7 +354,7 @@ const notFoundLinks = [
       <div class="wrap">
         <>
           <p class="eyebrow">{tx('page.skills.eyebrow', 'Skills')}</p>
-          <h1>{tx('page.skills.title', 'Front-end engineering expertise')}</h1>
+          <h1>{tx('page.skills.title', 'Frontend engineering expertise')}</h1>
           <p class="lead">{skillsLead}</p>
           <div class="grid three">
             {skillGroups.map((group) => (
@@ -513,9 +515,7 @@ const notFoundLinks = [
               ))}
             </div>
           ) : (
-            <p class="lead">
-              Recommendation attribution is being verified before publication.
-            </p>
+            <p class="lead">No recommendations are available for this view.</p>
           )}
         </>
       </div>
@@ -529,11 +529,35 @@ const notFoundLinks = [
         <>
           <p class="eyebrow">{tx('page.services.eyebrow', 'Services')}</p>
           <h1>{tx('page.services.title', 'Frontend engineering services')}</h1>
+          <p class="lead">
+            Six focused ways to improve a React product, data-heavy interface,
+            design system, or public website.
+          </p>
           <div class="grid three">
             {services.map((service) => (
               <article>
                 <h2>{service.name}</h2>
                 <p>{service.description}</p>
+                {service.fit && (
+                  <p>
+                    <strong>Best for:</strong> {service.fit}
+                  </p>
+                )}
+                {service.deliverables && (
+                  <p>
+                    <strong>Deliverables:</strong> {service.deliverables}
+                  </p>
+                )}
+                {service.exclusions && (
+                  <p>
+                    <strong>Not included:</strong> {service.exclusions}
+                  </p>
+                )}
+                {service.duration && (
+                  <p>
+                    <strong>Duration:</strong> {service.duration}
+                  </p>
+                )}
               </article>
             ))}
           </div>
@@ -563,13 +587,78 @@ const notFoundLinks = [
           <div>
             <>
               <p class="eyebrow">{tx('page.contact.eyebrow', 'Contact')}</p>
-              <h1>{tx('page.contact.title', 'Let’s discuss the work')}</h1>
-              <p>{profile.lead}</p>
+              <h1>
+                {tx('page.contact.title', 'Discuss a defined frontend project')}
+              </h1>
+              <p>
+                {tx(
+                  'page.contact.projectLead',
+                  'Looking to hire me for frontend architecture, a defined React build, or a technical audit? Review the engagement parameters below and send the project context by email or through the form.',
+                )}
+              </p>
+              <ul class="bullets">
+                <li>
+                  {tx(
+                    'page.contact.capacity',
+                    `${engagement.weeklyCapacity} · ${engagement.availability}`,
+                  )}
+                </li>
+                <li>
+                  {tx('page.contact.responseTime', engagement.responseTime)}
+                </li>
+                <li>
+                  {tx('page.contact.discoveryCall', engagement.discoveryCall)}
+                </li>
+                <li>
+                  {tx(
+                    'page.contact.proposal',
+                    `Proposals: ${engagement.proposalTurnaround}`,
+                  )}
+                </li>
+                <li>
+                  {tx(
+                    'page.contact.budget',
+                    `Scoped project budget: ${engagement.minimumProjectBudget} or more`,
+                  )}
+                </li>
+                <li>
+                  {tx(
+                    'page.contact.overlap',
+                    `${engagement.realtimeOverlap} from ${engagement.meetingWindow}`,
+                  )}
+                </li>
+              </ul>
               <p>
                 <a class="text-link" href={`mailto:${profile.email}`}>
                   {profile.email}
                 </a>
               </p>
+              <p>
+                <a
+                  class="text-link"
+                  href={`tel:${profile.phone.replace(/\s/g, '')}`}
+                >
+                  {profile.phone}
+                </a>
+              </p>
+              <aside class="notice">
+                <strong>
+                  {tx('page.contact.recruiters', 'Corporate recruiters')}
+                </strong>
+                <p>
+                  {tx('page.contact.recruiterBody', engagement.recruiterRoute)}
+                </p>
+                {linkedin && (
+                  <a
+                    class="text-link"
+                    href={linkedin.href}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {tx('page.contact.linkedin', 'Contact on LinkedIn')}
+                  </a>
+                )}
+              </aside>
               <div class="socials">
                 {profile.social.map((item) => (
                   <a
@@ -626,7 +715,7 @@ const notFoundLinks = [
           <p>
             {tx(
               'page.privacy.body',
-              'This site does not install analytics. When you submit the contact form, your name, email address, and message are sent through Web3Forms so Suprabhat can respond to your enquiry.',
+              'This site does not install analytics. When you submit the project form, your name, email address, optional company, project type, budget range, timeline, and message are sent through Web3Forms so Suprabhat can respond to your enquiry.',
             )}
           </p>
           <p>

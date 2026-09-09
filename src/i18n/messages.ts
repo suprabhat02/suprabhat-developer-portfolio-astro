@@ -120,6 +120,21 @@ const es: Messages = {
   'home.contactLead':
     '¿Te interesa colaborar? Construyamos algo pulido juntos.',
   'home.contactOptions': 'Opciones de contacto',
+  'page.contact.projectLead':
+    '¿Buscas contratarme para arquitectura frontend, un proyecto React definido o una auditoría técnica? Revisa los parámetros y envía el contexto por correo o mediante el formulario.',
+  'page.contact.capacity': '24–28 horas por semana · Disponible ahora',
+  'page.contact.responseTime':
+    'Respuesta en 12–24 horas, de lunes a viernes por la tarde',
+  'page.contact.discoveryCall': 'Llamada inicial gratuita de 15–20 minutos',
+  'page.contact.proposal':
+    'Propuesta: 2–3 días laborables después de la llamada',
+  'page.contact.budget': 'Presupuesto por proyecto: 5.000 USD o más',
+  'page.contact.overlap':
+    '2–4 horas de solapamiento acordado desde las 19:00 IST',
+  'page.contact.recruiters': 'Recruiters corporativos',
+  'page.contact.recruiterBody':
+    'Los recruiters corporativos que quieran hablar de puestos a tiempo completo deben contactar directamente por correo o LinkedIn, sin usar el formulario de proyectos.',
+  'page.contact.linkedin': 'Contactar por LinkedIn',
   'home.contactForm': 'Formulario de contacto',
   'home.email': 'Correo electrónico',
   'home.message': 'Mensaje',
@@ -279,10 +294,10 @@ const es: Messages = {
   'form.optional': 'Opcional',
   'form.projectType': 'Tipo de proyecto',
   'form.selectOption': 'Selecciona una opción',
-  'form.projectProduct': 'Frontend de producto',
+  'form.projectProduct': 'Proyecto frontend React definido',
   'form.projectDesignSystem': 'Sistema de diseño',
   'form.projectPerformance': 'Rendimiento o accesibilidad',
-  'form.projectConsulting': 'Consultoría técnica',
+  'form.projectConsulting': 'Asesoría de arquitectura asíncrona',
   'form.projectOther': 'Otro',
   'form.budget': 'Rango de presupuesto',
   'form.budgetUnder5k': 'Menos de 5.000 USD',
@@ -305,6 +320,11 @@ const es: Messages = {
   'form.errorEmail': 'Introduce una dirección de correo electrónico válida.',
   'form.errorProjectType': 'Selecciona un tipo de proyecto.',
   'form.errorBudget': 'Selecciona un rango de presupuesto.',
+  'form.projectWebsite': 'Diseño y desarrollo de sitios web',
+  'form.qualificationNote':
+    'Las consultas de proyectos comienzan en 5.000 USD. Incluye objetivos, requisitos técnicos, calendario y presupuesto documentado.',
+  'form.recruiterRoute':
+    '¿Eres recruiter corporativo? Omite este formulario y contáctame por',
   'form.errorTimeline': 'Selecciona un plazo.',
   'form.errorMessage': 'Cuéntame sobre el proyecto.',
   'form.errorSummary': 'Revisa los campos resaltados.',
@@ -475,6 +495,20 @@ const ar: Messages = {
   'home.ctaLead': 'أرسل موجزًا وسأرد بخطة واضحة وجدول زمني وخطوات تالية.',
   'home.contactLead': 'هل ترغب في التعاون؟ لنبنِ معًا شيئًا متقنًا.',
   'home.contactOptions': 'خيارات التواصل',
+  'page.contact.projectLead':
+    'هل ترغب في التعاقد معي لمعمارية الواجهات أو مشروع React محدد أو تدقيق تقني؟ راجع معايير التعاون وأرسل سياق المشروع بالبريد أو عبر النموذج.',
+  'page.contact.capacity': '24–28 ساعة أسبوعيًا · متاح الآن',
+  'page.contact.responseTime':
+    'الرد خلال 12–24 ساعة في أمسيات الاثنين إلى الجمعة',
+  'page.contact.discoveryCall': 'مكالمة استكشاف مجانية لمدة 15–20 دقيقة',
+  'page.contact.proposal': 'المقترح خلال 2–3 أيام عمل بعد المكالمة',
+  'page.contact.budget': 'ميزانية المشروع المحدد: 5,000 دولار أو أكثر',
+  'page.contact.overlap':
+    'تداخل مباشر متفق عليه لمدة 2–4 ساعات بدءًا من 7 مساءً بتوقيت الهند',
+  'page.contact.recruiters': 'مسؤولو التوظيف في الشركات',
+  'page.contact.recruiterBody':
+    'على مسؤولي التوظيف الراغبين في مناقشة وظائف بدوام كامل التواصل مباشرة عبر البريد أو LinkedIn بدل نموذج المشاريع.',
+  'page.contact.linkedin': 'التواصل عبر LinkedIn',
   'home.contactForm': 'نموذج التواصل',
   'home.email': 'البريد الإلكتروني',
   'home.message': 'الرسالة',
@@ -623,10 +657,10 @@ const ar: Messages = {
   'form.optional': 'اختياري',
   'form.projectType': 'نوع المشروع',
   'form.selectOption': 'اختر خيارًا',
-  'form.projectProduct': 'واجهة منتج',
+  'form.projectProduct': 'مشروع واجهة React محدد',
   'form.projectDesignSystem': 'نظام تصميم',
   'form.projectPerformance': 'الأداء أو إمكانية الوصول',
-  'form.projectConsulting': 'استشارة تقنية',
+  'form.projectConsulting': 'استشارة معمارية غير متزامنة',
   'form.projectOther': 'أخرى',
   'form.budget': 'نطاق الميزانية',
   'form.budgetUnder5k': 'أقل من 5,000 دولار أمريكي',
@@ -648,6 +682,11 @@ const ar: Messages = {
   'form.errorEmail': 'أدخل عنوان بريد إلكتروني صحيحًا.',
   'form.errorProjectType': 'اختر نوع المشروع.',
   'form.errorBudget': 'اختر نطاق الميزانية.',
+  'form.projectWebsite': 'تصميم وتطوير المواقع',
+  'form.qualificationNote':
+    'تبدأ استفسارات المشاريع من 5,000 دولار أمريكي. أرفق الأهداف والمتطلبات التقنية والجدول الزمني والميزانية المحددة.',
+  'form.recruiterRoute':
+    'هل أنت مسؤول توظيف في شركة؟ تجاوز نموذج المشروع وتواصل معي عبر',
   'form.errorTimeline': 'اختر جدولًا زمنيًا.',
   'form.errorMessage': 'أخبرني عن المشروع.',
   'form.errorSummary': 'راجع الحقول المحددة.',

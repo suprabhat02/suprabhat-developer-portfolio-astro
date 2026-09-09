@@ -4,7 +4,6 @@ import Footer from '../components/Footer.astro';
 import SEOHead from '../components/SEOHead.astro';
 import { getProfile } from '../data/profile';
 import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
-import { t } from '../i18n/messages';
 import { SITE_NAME, SITE_URL } from '../config/site';
 import { getBlogFeedHref, getBlogFeedMeta } from '../data/blog';
 import '../styles/global.css';
@@ -50,7 +49,7 @@ const rssAlternates = locales.map((supportedLocale) => ({
   title: getBlogFeedMeta(supportedLocale).title,
 }));
 const personKnowsAbout = [
-  'React.js',
+  'React',
   'Next.js',
   'TypeScript',
   'JavaScript',
@@ -110,23 +109,38 @@ const combinedSchema = {
       '@type': 'Person',
       '@id': `${SITE_URL}/#person`,
       name: SITE_NAME,
+      alternateName: profile.nickname,
       jobTitle: profile.title,
       description: profile.lead,
       url: `${SITE_URL}/`,
       image: `${SITE_URL}${profile.portrait.src}`,
       email: profile.email,
+      telephone: profile.phone,
       inLanguage: meta.htmlLang,
       sameAs: profile.social.map((item) => item.href),
-      address: {
-        '@type': 'Country',
-        name: t(locale, 'schema.countryIndia', 'India'),
+      homeLocation: {
+        '@type': 'Place',
+        name: 'Noida Extension, Uttar Pradesh, India',
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Noida Extension',
+          addressRegion: 'Uttar Pradesh',
+          addressCountry: 'IN',
+        },
+      },
+      worksFor: {
+        '@type': 'Organization',
+        name: 'Topsoe',
+        url: 'https://www.topsoe.com/',
+      },
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'Freelance project enquiries',
+        email: profile.email,
+        telephone: profile.phone,
+        availableLanguage: ['English'],
       },
       knowsAbout: personKnowsAbout,
-      knowsLanguage: locales.map((supportedLocale) => ({
-        '@type': 'Language',
-        name: localeMeta[supportedLocale].label,
-        alternateName: localeMeta[supportedLocale].htmlLang,
-      })),
     },
     {
       '@type': 'WebSite',

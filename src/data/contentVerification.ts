@@ -10,38 +10,35 @@ export interface ContentVerificationTodo {
 /** Editorial facts that must be confirmed before they are published as proof. */
 export const contentVerificationTodos: readonly ContentVerificationTodo[] = [
   {
-    id: 'recommendation-provenance',
+    id: 'resume-correction',
     status: 'blocked',
     question:
-      'Confirm each recommendation verbatim, its attribution, consent to publish, and an optional public source URL.',
-    affectedContent: ['recommendations', 'homepage trust section'],
+      'Provide a corrected resume: the PDF places BMW work under Swaragh, while the owner states it was through Cognizant and BMW must not be published yet.',
+    affectedContent: ['resume download', 'resume indexing'],
   },
   {
-    id: 'case-study-outcomes',
+    id: 'lighthouse-provenance',
     status: 'needs-confirmation',
     question:
-      'Confirm which anonymized case-study outcomes and role descriptions can be published.',
-    affectedContent: ['work index', 'case-study pages'],
+      'Provide the Lighthouse HTML or JSON report, screenshot, Lighthouse version, and Chrome version for the published desktop lab metrics.',
+    affectedContent: ['portfolio SEO and i18n case study'],
   },
   {
-    id: 'availability',
-    status: 'needs-confirmation',
-    question:
-      'Confirm current freelance and part-time availability, timezone overlap, and typical weekly capacity.',
-    affectedContent: ['homepage hero', 'hire page', 'contact page'],
-  },
-  {
-    id: 'resume-download',
+    id: 'article-sources',
     status: 'blocked',
     question:
-      'Provide the public resume file and confirm which employment details may be indexed.',
-    affectedContent: ['homepage CTA', 'resume page'],
+      'Provide the draft/source files for the eleven approved article slugs; only three published article files exist in the repository.',
+    affectedContent: ['blog index', 'article routes'],
   },
   {
-    id: 'contact-expectations',
+    id: 'localized-editorial-review',
     status: 'needs-confirmation',
     question:
-      'Confirm a realistic response-time expectation and preferred project budget or weekly-hours ranges.',
-    affectedContent: ['contact form', 'hire page'],
+      'Complete native Spanish and Modern Standard Arabic editorial review before market-specific promotion or translated testimonial publication.',
+    affectedContent: [
+      'Spanish routes',
+      'Arabic routes',
+      'translated testimonials',
+    ],
   },
 ] as const;

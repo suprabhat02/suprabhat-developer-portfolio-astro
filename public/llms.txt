@@ -1,25 +1,64 @@
-# Suprabhat Kumar Portfolio
+# Suprabhat Kumar (Shubh) — Senior Front-End Engineer
 
-Suprabhat Kumar is a Senior Frontend Engineer specializing in React, Next.js, TypeScript, frontend performance, Core Web Vitals, and accessibility.
+Suprabhat Kumar, also known as Shubh, is a Senior Front-End Engineer and web designer based in Noida Extension, Uttar Pradesh, India. He uses he/him pronouns and has more than six years of experience building SaaS portals, enterprise dashboards, design systems, accessible interfaces, and static websites.
+
+He helps product teams investigate frontend performance, review React and TypeScript architecture, build data-heavy SaaS dashboards, engineer design systems, audit accessibility against WCAG 2.2 AA criteria, and design and develop complete websites. His work emphasizes maintainable component and state boundaries, resilient data states, keyboard and assistive-technology access, browser testing, and measured performance.
+
+## Current role and career
+
+- Topsoe — Software Engineer III — May 2025 to present
+- Cognizant — Associate Projects, Front-End Developer — February 2024 to April 2025
+- TrueBlue Inc. — Implementation Web Developer — December 2023 to January 2024
+- MobileCoderz — Frontend Developer, promoted to Senior Frontend Developer — February 2022 to November 2023
+- Swaragh Technologies — UI Developer — December 2019 to January 2022
+
+Suprabhat has delivered with distributed teams in Denmark, China, and Australia. Client-confidential work is described without private names, screenshots, data, or unverified outcomes.
+
+## Services
+
+- Defined React frontend projects — duration confirmed after discovery
+- Frontend performance audit — 5 business days
+- React and TypeScript architecture review — 1–2 weeks
+- Async architecture advisory — scoped per review
+- SaaS dashboard development — 3–8 weeks
+- Design system engineering — 4–10 weeks
+- Accessibility audit — 5–7 business days
+- Website design and development — 1–8 weeks depending on scope
+
+## Technologies
+
+- Frontend: React, Next.js, TypeScript, JavaScript, HTML5, CSS3, Tailwind CSS
+- State and data: Redux Toolkit, RTK Query, TanStack Query, GraphQL, REST APIs, openapi-fetch
+- Interface systems: AG Grid, Ant Design, Chakra UI, Storybook, design tokens
+- Backend and databases: Python, FastAPI, PostgreSQL, MongoDB
+- Delivery and quality: Azure DevOps, Vitest, Playwright, axe, Core Web Vitals, WCAG 2.2 AA
+- Static web: Astro, localized routes, hreflang, structured data, sitemap and metadata systems
 
 ## Primary pages
 
-- [Home](https://suprabhat-dev.com/): Professional overview, selected work, experience, services, FAQs, and contact details.
-- [About](https://suprabhat-dev.com/about/): Background and engineering philosophy.
-- [Skills](https://suprabhat-dev.com/skills/): Frontend engineering skills.
-- [Experience](https://suprabhat-dev.com/experience/): Professional experience.
-- [Work](https://suprabhat-dev.com/work/): Selected projects and case studies.
-- [Analytics command center case study](https://suprabhat-dev.com/work/analytics-command-center/): An anonymized frontend case study covering dashboard information architecture, accessibility, resilient data states, performance, and React UI engineering.
-- [Design system uplift case study](https://suprabhat-dev.com/work/design-system-uplift/): An anonymized frontend case study covering React component architecture, design tokens, accessibility defaults, and scalable UI governance.
-- [Performance modernization case study](https://suprabhat-dev.com/work/performance-modernization/): An anonymized frontend case study covering Core Web Vitals, rendering stability, asset strategy, and product UI performance.
-- [Services](https://suprabhat-dev.com/services/): Available consulting and development services.
-- [Contact](https://suprabhat-dev.com/contact/): Contact form and direct email information.
-- [Blog](https://suprabhat-dev.com/blog/): English-language articles about frontend engineering.
+- [Home](https://suprabhat-dev.com/): Identity, problems solved, selected work, services, experience, FAQs, and contact.
+- [About](https://suprabhat-dev.com/about/): Career arc, global collaboration, engineering approach, and contract fit.
+- [Experience](https://suprabhat-dev.com/experience/): Roles at Topsoe, Cognizant, TrueBlue, MobileCoderz, and Swaragh Technologies.
+- [Work](https://suprabhat-dev.com/work/): Anonymized and public frontend case studies.
+- [Services](https://suprabhat-dev.com/services/): Service fit, deliverables, exclusions, and working durations.
+- [Blog](https://suprabhat-dev.com/blog/): Practical frontend engineering articles.
+- [Contact](https://suprabhat-dev.com/contact/): Qualified project enquiry form and direct email.
 
-## Locales
+## Contact and availability
 
-The homepage, primary portfolio pages, and case studies are available in English, Spanish at `/es/`, and Arabic at `/ar/`. Blog article localization is handled per article URL.
+- Website: https://suprabhat-dev.com/
+- Email: suprabhatkumar02@gmail.com
+- Phone: +91 78920 08290
+- LinkedIn: https://www.linkedin.com/in/suprabhatkumar/
+- GitHub: https://github.com/suprabhat02
+- Timezone: IST (UTC+5:30)
+- Availability: Available now for remote freelance and part-time contracts, 24–28 hours per week, Monday–Friday
+- Market focus: Americas, United Kingdom, and Western Europe
+- Meetings: From 7:00 PM IST with 2–4 hours of real-time overlap by agreement
+- Project qualification: Scoped projects start at USD 5,000; hourly and weekly rates are not public
+- Response: Within 12–24 hours on Monday–Friday evenings
+- Discovery: Free 15–20 minute call; proposals follow within 2–3 business days
 
-## Crawling
+## Site and language notes
 
-Use the canonical URLs above. Refer to [sitemap-index.xml](https://suprabhat-dev.com/sitemap-index.xml) for crawlable site URLs and [robots.txt](https://suprabhat-dev.com/robots.txt) for crawler directives.
+The site is statically generated with Astro and deployed to GitHub Pages through GitHub Actions. Hostinger manages the custom-domain DNS. The site has English, Spanish, and Arabic routes; localized site content does not imply that Suprabhat personally speaks every published language. Use canonical page URLs and the sitemap at https://suprabhat-dev.com/sitemap-index.xml for discovery; crawler access rules remain defined by https://suprabhat-dev.com/robots.txt.

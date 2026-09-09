@@ -1,20 +1,22 @@
-# Factual and content TODOs — these need your input
+# Remaining owner inputs
 
 Nothing below has been guessed or filled in.
 
 ## Blocking
 
-1. **Web3Forms deployment key.** Set `PUBLIC_WEB3FORMS_KEY` in Netlify. The landing-page form submits through Web3Forms; inner contact pages fall back to a direct email link when the variable is absent.
+1. **Corrected resume PDF.** The supplied PDF places BMW Group work under Swaragh Technologies. The owner states that the work was through Cognizant and separately requested that BMW not be published now. Provide a corrected PDF without the BMW attribution, or confirm the exact relationship and publication permission. Until then, the file remains untracked and is not linked from the site.
+2. **Article source files.** Eleven slugs were approved for publication, but their Markdown drafts are not present in the repository. Provide the complete article text, title, description, date, and tags for each; empty or invented articles will not be generated.
 
-## Content gaps
+## Account configuration
 
-4. **Recommendations provenance.** All recommendations are now withheld from public rendering until each quote, attribution, consent, and optional source URL is confirmed. Update `verified` in `src/data/recommendations.ts` only after confirmation.
-5. **`Sandeep Sharma — AI Engineer@Topsoe`** and **`Suraj — SEO Specialist`**: the first uses an `@` company form no other entry uses; the second has no surname. Confirm the intended attribution strings.
-6. **Twelve unsurfaced articles.** `accessible-forms-react-hook-form`, `aria-patterns-react-guide`, `building-accessible-react-components`, `css-flexbox-tutorial-for-beginners`, `how-to-center-a-div-in-css`, `javascript-array-methods-explained`, `keyboard-navigation-spa`, `lazy-loading-images-core-web-vitals`, `nextjs-performance-optimization`, `react-query-vs-redux-toolkit`, `screen-reader-testing-react`. Which are finished and indexable, and which are drafts?
-7. **Response-time expectation.** The unverified one-business-day promise has been removed. Confirm a realistic expectation before adding one.
-8. **Availability.** The landing page says you are open to remote freelance and contract work worldwide. Confirm that this remains current.
+3. **Web3Forms deployment key.** In GitHub, open repository **Settings > Secrets and variables > Actions**, create `PUBLIC_WEB3FORMS_KEY`, then rerun **Actions > Deploy to GitHub Pages**. Configure the destination email, domain restriction, spam protection, notifications, and retention in Web3Forms.
+
+## Evidence
+
+4. **Lighthouse provenance.** The supplied desktop lab values are published with a lab-only disclaimer. Add the actual HTML/JSON report, screenshot, Lighthouse version, and Chrome version for durable evidence.
 
 ## Translation
 
-9. **Human translation review.** Spanish and Arabic editorial copy is present and indexable. Before major outreach, have a native speaker review tone, terminology, and cultural fit.
-10. **Recommendation quotes must not be translated at all** without the recommender's consent — a translated quote is no longer their words.
+5. **Human translation review.** Spanish and Arabic editorial copy is present and indexable. Before major outreach, have native reviewers check tone, terminology, and cultural fit. Use Modern Standard Arabic unless a specific market is selected.
+6. **Arabic name.** `صباح الخير` means “good morning”; it is not an Arabic spelling of Suprabhat Kumar. Keep the Latin name until a correct transliteration is approved.
+7. **Translated recommendations.** Translation permission is confirmed, but quotes remain in English until native editorial review prevents attribution errors.

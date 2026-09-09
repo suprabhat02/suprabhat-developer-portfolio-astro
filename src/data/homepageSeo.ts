@@ -9,14 +9,14 @@ export const getHomepageTitle = (locale: Locale) =>
     ? 'Suprabhat Kumar — Ingeniero Frontend Sénior'
     : locale === 'ar'
       ? 'سوبرابهات كومار — مهندس واجهات أمامية أول'
-      : 'Suprabhat Kumar — Senior Frontend Engineer';
+      : 'Suprabhat Kumar | Senior React Frontend Engineer India';
 
 export const getHomepageDescription = (locale: Locale) =>
   locale === 'es'
     ? 'Ingeniero frontend sénior con más de seis años creando productos SaaS rápidos y accesibles con React y TypeScript.'
     : locale === 'ar'
       ? 'مهندس واجهات أمامية أول بخبرة تزيد على ست سنوات في بناء منتجات SaaS سريعة ومتاحة باستخدام React وTypeScript.'
-      : 'Senior frontend engineer with 6+ years building fast, accessible React & TypeScript SaaS products. Dashboards, design systems, and FastAPI backends.';
+      : 'Senior React frontend engineer in India with 6+ years building SaaS dashboards, design systems, accessible interfaces, and fast web products.';
 
 export const getHomepageSchema = (locale: Locale) => {
   const services = getServices(locale);
@@ -35,7 +35,7 @@ export const getHomepageSchema = (locale: Locale) => {
       description: t(
         locale,
         'schema.serviceDescription',
-        'SaaS frontend development, dashboard UI engineering, performance optimization, design systems, React/Next.js implementation, FastAPI backend integration, accessibility-focused UI.',
+        'Frontend performance audits, React and TypeScript architecture reviews, SaaS dashboard development, design systems, accessibility audits, and website delivery.',
       ),
       url: pageUrl,
       inLanguage: language,
@@ -50,7 +50,16 @@ export const getHomepageSchema = (locale: Locale) => {
           itemOffered: {
             '@type': 'Service',
             name: service.name,
-            description: service.description,
+            description: [
+              service.description,
+              service.fit ? `Best for: ${service.fit}.` : '',
+              service.deliverables
+                ? `Deliverables: ${service.deliverables}.`
+                : '',
+              service.duration ? `Duration: ${service.duration}.` : '',
+            ]
+              .filter(Boolean)
+              .join(' '),
             inLanguage: language,
           },
         })),

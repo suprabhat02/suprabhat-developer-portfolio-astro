@@ -14,7 +14,7 @@ export const skillGroups: readonly SkillGroup[] = [
     id: 'front-end',
     heading: 'Front-End',
     items: [
-      'React.js + Next.js',
+      'React + Next.js',
       'JavaScript + TypeScript',
       'HTML5 + CSS3 + Sass',
       'Tailwind CSS',
@@ -55,7 +55,7 @@ const localizedSkills: Partial<
         id: 'front-end',
         heading: 'Frontend',
         items: [
-          'React.js + Next.js',
+          'React + Next.js',
           'JavaScript + TypeScript',
           'HTML5 + CSS3 + Sass',
           'Tailwind CSS',
@@ -93,7 +93,7 @@ const localizedSkills: Partial<
         id: 'front-end',
         heading: 'الواجهة الأمامية',
         items: [
-          'React.js + Next.js',
+          'React + Next.js',
           'JavaScript + TypeScript',
           'HTML5 + CSS3 + Sass',
           'Tailwind CSS',

@@ -26,7 +26,7 @@ test('homepage renders correct structure and passes accessibility', async ({
     'Suprabhat Kumar',
   );
   await expect(page.locator('.hero-sub')).toContainText(
-    'fast, accessible React products',
+    'React architecture, SaaS dashboards, and frontend performance',
   );
 
   // Bento hero sections
@@ -137,8 +137,8 @@ test('homepage renders correct structure and passes accessibility', async ({
     'approach',
     'blog',
   ]);
-  await expect(page.locator('.rec-card')).toHaveCount(0);
-  await expect(page.locator('a[href="/recommendations/"]')).toHaveCount(0);
+  await expect(page.locator('.rec-card')).toHaveCount(3);
+  await expect(page.locator('a[href="/recommendations/"]')).toBeVisible();
   const technologyIconUrls = await page
     .locator('#tools img')
     .evaluateAll((images) =>
@@ -239,15 +239,23 @@ test('locale fallback and contact state are explicit', async ({ page }) => {
     ),
   ).toHaveCount(1);
 
+  for (const path of ['/contact/', '/es/contact/', '/ar/contact/']) {
+    await page.goto(path);
+    const hasHorizontalOverflow = await page.evaluate(
+      () =>
+        document.documentElement.scrollWidth >
+        document.documentElement.clientWidth,
+    );
+    expect(hasHorizontalOverflow).toBe(false);
+  }
+
   await page.goto('/recommendations/');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
     'content',
-    'noindex,follow',
+    'index,follow',
   );
-  await expect(page.locator('blockquote')).toHaveCount(0);
-  await expect(page.locator('main')).toContainText(
-    'Recommendation attribution is being verified before publication.',
-  );
+  await expect(page.locator('blockquote')).toHaveCount(6);
+  await expect(page.locator('main')).toContainText('Sonu Gagan Karn');
 
   await page.goto('/404.html');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
@@ -560,7 +568,9 @@ test('localized structured data uses page language and alternates', async ({
     inLanguage: 'es',
     areaServed: 'Todo el mundo',
   });
-  expect(JSON.stringify(spanishServices)).toContain('Desarrollo frontend SaaS');
+  expect(JSON.stringify(spanishServices)).toContain(
+    'Proyecto frontend React definido',
+  );
 
   const arabicFaq = await readGraph('/ar/faq/');
   expect(findSchema(arabicFaq, 'WebPage')).toMatchObject({
@@ -631,7 +641,7 @@ test('production SEO signals and internal links are crawlable', async ({
     'utf-8',
   );
   expect(sitemap).not.toContain('404');
-  expect(sitemap).not.toContain('/recommendations/');
+  expect(sitemap).toContain('/recommendations/');
 
   const hostingerRootFallback = await readFile(
     new URL('../dist/.htaccess', import.meta.url),
@@ -670,7 +680,9 @@ test('production SEO signals and internal links are crawlable', async ({
 
   const llms = await page.request.get('/llms.txt');
   expect(llms.status()).toBe(200);
-  expect(await llms.text()).toContain('# Suprabhat Kumar Portfolio');
+  expect(await llms.text()).toContain(
+    '# Suprabhat Kumar (Shubh) — Senior Front-End Engineer',
+  );
   expect(await llms.text()).toContain(
     'https://suprabhat-dev.com/sitemap-index.xml',
   );

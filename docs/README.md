@@ -59,8 +59,9 @@ Supported locales are English (`en`), Spanish (`es`), and Arabic (`ar`). UI labe
 ## Deployment
 
 Production is currently deployed through GitHub Pages in `.github/workflows/deploy-pages.yml`.
-Netlify is the selected target because it can apply the security headers and
-cache policy in `netlify.toml`. See `docs/DEPLOYMENT.md` for the staged cutover.
+Hostinger manages the custom-domain DNS records that point to GitHub Pages.
+Netlify is not part of the current deployment. See `docs/DEPLOYMENT.md` for the
+release workflow and dashboard locations.
 
 - Build command: `npm run build`
 - Output directory: `dist`
@@ -71,7 +72,7 @@ cache policy in `netlify.toml`. See `docs/DEPLOYMENT.md` for the staged cutover.
 
 The blog index in each locale exposes crawlable topic archive links under `/blog/tags/`, `/es/blog/tags/`, and `/ar/blog/tags/`. Article pages link back to their localized topic archives and related articles.
 
-Do not disable GitHub Pages until the Netlify preview and DNS cutover checks pass.
+Do not change the working Hostinger DNS records during a content-only release.
 
 ## Environment variables
 

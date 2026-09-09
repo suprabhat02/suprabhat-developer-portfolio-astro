@@ -48,9 +48,9 @@ const heroStack = [
 ] as const;
 const skillColumns = [
   {
-    heading: t(locale, 'skills.frontendCore', 'Front-End Core'),
+    heading: t(locale, 'skills.frontendCore', 'Frontend Core'),
     items: [
-      'React.js + Next.js',
+      'React + Next.js',
       'TypeScript + JavaScript',
       'HTML5 + CSS3 + Sass',
       'Tailwind CSS',
@@ -83,7 +83,7 @@ const skillColumns = [
 const recruiterHighlights = [
   {
     label: t(locale, 'home.recruiterRoleLabel', 'Role fit'),
-    value: t(locale, 'home.recruiterRoleValue', 'Senior Frontend Engineer'),
+    value: t(locale, 'home.recruiterRoleValue', 'Senior Front-End Engineer'),
   },
   {
     label: t(locale, 'home.recruiterProofLabel', 'Proof'),
@@ -94,7 +94,7 @@ const recruiterHighlights = [
     value: t(
       locale,
       'home.recruiterBestForValue',
-      'SaaS UI, dashboards, web performance',
+      'SaaS dashboards, React architecture, performance',
     ),
   },
 ] as const;
@@ -127,11 +127,15 @@ const heroProofCards = [
   {
     className: 'hero-proof-card hero-proof-card--availability avail-card',
     eyebrow: t(locale, 'home.availability', 'Availability'),
-    title: t(locale, 'home.availabilityLead', 'Remote product collaboration'),
+    title: t(
+      locale,
+      'home.availabilityLead',
+      'Remote freelance and part-time contracts',
+    ),
     body: t(
       locale,
       'home.availabilityMeta',
-      'Async-first · Transparent progress · Shared milestones',
+      '24–28 hours weekly · Available now · 2–4 hours overlap',
     ),
     href: '#contact',
     cta: t(locale, 'action.contact', 'Get in touch'),
@@ -486,7 +490,7 @@ const toolCategoryLabel = (toolName: string) => {
           t(
             locale,
             'home.aboutStatement',
-            'Frontend Software Engineer with 6+ years building high-performance SaaS platforms, enterprise dashboards, and data-intensive UI systems. Specialized in React, TypeScript, Redux Toolkit — and full-stack capable with FastAPI + PostgreSQL.',
+            'Suprabhat Kumar, also known as Shubh, is a Senior Front-End Engineer with 6+ years building SaaS portals, enterprise dashboards, design systems, and accessible websites. Based in Noida Extension, with delivery experience across teams in Denmark, China, and Australia.',
           )
         }
       </p>
@@ -587,7 +591,7 @@ const toolCategoryLabel = (toolName: string) => {
               t(
                 locale,
                 'trait.fullstack.body',
-                'FastAPI + PostgreSQL backends for data-heavy platforms and real-time dashboards — end-to-end ownership.',
+                'FastAPI and PostgreSQL support full-stack delivery when a frontend feature needs a focused API or data layer.',
               )
             }
           </p>
@@ -621,7 +625,7 @@ const toolCategoryLabel = (toolName: string) => {
             t(
               locale,
               'home.expertiseLead',
-              'Full-stack capable, specializing in high-performance frontends backed by fast, type-safe APIs.',
+              'Senior frontend support where architecture, data, accessibility, and performance meet.',
             )
           }
         </p>
@@ -655,19 +659,19 @@ const toolCategoryLabel = (toolName: string) => {
             >
           </div>
           <h3>
-            {t(locale, 'expertise.frontend.title', 'Front-End Engineering')}
+            {t(locale, 'expertise.frontend.title', 'Frontend Engineering')}
           </h3>
           <p>
             {
               t(
                 locale,
                 'expertise.frontend.body',
-                'Building scalable SaaS frontends, enterprise dashboards, and high-performance interfaces. React architecture, component systems, rendering optimization, and accessibility from day one.',
+                'Build SaaS portals and data-heavy dashboards with clear state ownership, resilient data states, accessible interactions, and measured rendering performance.',
               )
             }
           </p>
           <div class="skill-tags">
-            <span class="skill-tag">React.js</span><span class="skill-tag"
+            <span class="skill-tag">React</span><span class="skill-tag"
               >Next.js</span
             ><span class="skill-tag">TypeScript</span><span class="skill-tag"
               >Redux Toolkit</span
@@ -715,7 +719,7 @@ const toolCategoryLabel = (toolName: string) => {
               t(
                 locale,
                 'expertise.backend.body',
-                'Building lightweight, high-performance REST APIs with FastAPI and PostgreSQL. Enables end-to-end ownership of data-heavy platforms, real-time dashboards, and secure API architectures.',
+                'Integrate REST and GraphQL data flows, or build focused FastAPI and PostgreSQL features when the product needs end-to-end delivery.',
               )
             }
           </p>
@@ -770,7 +774,7 @@ const toolCategoryLabel = (toolName: string) => {
               t(
                 locale,
                 'expertise.design.body',
-                'Creating scalable component architectures and design tokens, supported by performance measurement and accessibility review.',
+                'Create component libraries, design tokens, Storybook documentation, accessibility defaults, and adoption patterns teams can extend.',
               )
             }
           </p>
@@ -1145,7 +1149,7 @@ const toolCategoryLabel = (toolName: string) => {
             t(
               locale,
               'home.ctaTitle',
-              "Let's build something fast and accessible",
+              'Bring the frontend problem. Get a defined path forward.',
             )
           }
         </h2>
@@ -1154,7 +1158,7 @@ const toolCategoryLabel = (toolName: string) => {
             t(
               locale,
               'home.ctaLead',
-              "Share a brief and I'll respond with a clear plan, timeline, and next steps.",
+              'Share the product context, timeline, and constraints. I will review the fit and propose the next step.',
             )
           }
         </p>
@@ -1191,7 +1195,7 @@ const toolCategoryLabel = (toolName: string) => {
             t(
               locale,
               'home.contactLead',
-              "Interested in collaborating? Let's build something polished together.",
+              'Need senior frontend support for a dashboard, architecture review, design system, audit, or website? Send the context below.',
             )
           }
         </p>

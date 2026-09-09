@@ -52,14 +52,13 @@ interface HomepageConversionContent {
 const content: Record<Locale, HomepageConversionContent> = {
   en: {
     hero: {
-      eyebrow: 'Senior Frontend Engineer · Remote · India',
-      title:
-        'I build fast, accessible React products for SaaS and enterprise teams.',
-      lead: 'I help product teams deliver scalable dashboards, frontend architecture, design systems, and performance improvements using React, Next.js, TypeScript, and Astro.',
+      eyebrow: 'Senior Front-End Engineer · Remote contracts · India',
+      title: 'React architecture, SaaS dashboards, and frontend performance',
+      lead: 'I help SaaS teams build accessible React products, data-heavy dashboards, and frontend systems they can maintain.',
       primaryCta: 'View case studies',
-      secondaryCta: 'Discuss a project',
+      secondaryCta: 'Discuss your frontend work',
       trustLine:
-        'Async-first · Written progress updates · Shared milestones · NDA-friendly',
+        '24–28 hours weekly · Americas and Europe overlap · Available now',
     },
     work: {
       eyebrow: 'Featured case studies',
@@ -99,43 +98,76 @@ const content: Record<Locale, HomepageConversionContent> = {
       ],
     },
     engagements: {
-      eyebrow: 'Ways we can work together',
-      title: 'Choose the level of support the problem needs',
-      lead: 'Engagement scope and timing are confirmed after reviewing the product context and constraints.',
+      eyebrow: 'Frontend engineering services',
+      title: 'Defined support for a specific frontend problem',
+      lead: 'Each engagement has a clear fit, concrete deliverables, and a working duration. Final scope is confirmed after discovery.',
       fitLabel: 'Best for',
       deliverablesLabel: 'Deliverables',
       durationLabel: 'Duration',
       items: [
         {
-          title: 'Defined freelance project',
-          body: 'A bounded feature, dashboard, design-system slice, or modernization initiative.',
-          fit: 'Teams with a clear outcome and owner',
+          title: 'Defined React frontend project',
+          body: 'Deliver a bounded React, Next.js, or TypeScript build without adding embedded team overhead.',
+          fit: 'SaaS teams, startups, and agencies with an approved scope and product owner',
           deliverables:
-            'Scoped implementation, tests, documentation, and handover',
+            'Implementation, responsive UI, accessibility, tests, documentation, and handover',
           duration: 'Confirmed after discovery',
         },
         {
-          title: 'Part-time product engineering',
-          body: 'Ongoing frontend delivery embedded alongside an existing product team.',
-          fit: 'Teams needing senior frontend capacity',
+          title: 'Frontend performance audit',
+          body: 'Locate rendering, asset, routing, and interaction bottlenecks in a React application.',
+          fit: 'SaaS teams with weak Lighthouse lab scores or slow product flows',
           deliverables:
-            'Incremental delivery, reviews, written updates, and knowledge transfer',
-          duration: 'Capacity and term require confirmation',
+            'Audit report, annotated fix list, priority order, and review call',
+          duration: '5 business days',
         },
         {
-          title: 'Technical audit',
-          body: 'A focused review of performance, accessibility, architecture, or frontend quality.',
-          fit: 'Teams needing prioritized evidence before implementation',
+          title: 'React and TypeScript architecture review',
+          body: 'Assess component boundaries, state ownership, data flow, rendering, tests, and delivery risks.',
+          fit: 'Engineering managers inheriting or scaling a React codebase',
           deliverables:
-            'Findings, risk ranking, recommendations, and verification plan',
-          duration: 'Scoped to product size and access',
+            'Architecture decision record, refactor roadmap, and team presentation',
+          duration: '1–2 weeks',
         },
         {
-          title: 'Advisory sessions',
-          body: 'Structured decision support for architecture, delivery, or design-system direction.',
-          fit: 'Leads validating an approach or trade-off',
-          deliverables: 'Pre-read, working session, and concise decision notes',
-          duration: 'Scheduled as focused sessions',
+          title: 'Async architecture advisory',
+          body: 'Get focused code review or architecture guidance without an embedded engagement.',
+          fit: 'Engineering leads who need a senior second opinion across time zones',
+          deliverables:
+            'Written review, annotated findings, recorded walkthrough, and decision notes',
+          duration: 'Scoped per review',
+        },
+        {
+          title: 'SaaS dashboard development',
+          body: 'Build data-heavy admin panels and analytics interfaces in React and TypeScript.',
+          fit: 'Product teams building dashboards, internal tools, or analytics products',
+          deliverables:
+            'Responsive UI, resilient data states, accessibility, tests, and handover',
+          duration: '3–8 weeks',
+        },
+        {
+          title: 'Design system engineering',
+          body: 'Standardize components and visual decisions across products and teams.',
+          fit: 'Teams with inconsistent UI across multiple products or engineers',
+          deliverables:
+            'Component library, tokens, Storybook, theming, accessibility baseline, and contribution guide',
+          duration: '4–10 weeks',
+        },
+        {
+          title: 'Accessibility audit',
+          body: 'Review key workflows against WCAG 2.2 AA criteria with manual and axe-based testing.',
+          fit: 'Teams serving enterprise clients or regulated industries',
+          deliverables:
+            'Severity-ranked findings, fix guidance, and one retest round',
+          duration: '5–7 business days',
+        },
+        {
+          title: 'Website design and development',
+          body: 'Design and build a responsive, accessible website using technology suited to its content and delivery model.',
+          fit: 'Startups, businesses, and agencies needing a complete web presence',
+          deliverables:
+            'Custom design, responsive build, performance testing, SEO metadata, contact form, and deployment',
+          duration: '1–8 weeks, depending on scope',
         },
       ],
     },
@@ -159,8 +191,8 @@ const content: Record<Locale, HomepageConversionContent> = {
     },
     collaboration: {
       eyebrow: 'Remote collaboration',
-      title: 'Work stays visible across time zones',
-      lead: 'Based in India and set up for remote product collaboration. Exact overlap and weekly capacity are confirmed before an engagement.',
+      title: 'Delivery stays visible across time zones',
+      lead: 'Based in Noida Extension on IST (UTC+5:30), with 24–28 hours of weekly capacity and 2–4 hours of agreed real-time overlap for teams in the Americas, United Kingdom, and Western Europe.',
       items: [
         {
           title: 'Async by default',
@@ -172,7 +204,7 @@ const content: Record<Locale, HomepageConversionContent> = {
         },
         {
           title: 'Review and handover',
-          body: 'Changes include review context, documentation, and knowledge transfer for the owning team.',
+          body: 'Changes include review context, documentation, knowledge transfer, and full source ownership after final payment.',
         },
       ],
     },

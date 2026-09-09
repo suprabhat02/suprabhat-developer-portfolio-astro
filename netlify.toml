@@ -1,5 +1,5 @@
-# Target production configuration. GitHub Pages remains live until the DNS
-# cutover checklist in docs/DEPLOYMENT.md is complete.
+# Inactive reference configuration. Production currently deploys to GitHub
+# Pages; see docs/DEPLOYMENT.md.
 
 [build]
   command = "npm run build"

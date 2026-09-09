@@ -7,8 +7,8 @@ import { SITE_URL } from '../config/site';
 
 const pages = {
   about: [
-    'About Suprabhat Kumar',
-    'Senior frontend engineer focused on fast, accessible and maintainable interfaces.',
+    'About Suprabhat Kumar | Senior React Frontend Engineer',
+    'Follow Suprabhat Kumar’s six-year frontend career across SaaS portals, enterprise dashboards, React architecture, accessibility, and global teams.',
   ],
   skills: [
     'Frontend Engineering Skills',
@@ -23,24 +23,24 @@ const pages = {
     'The tools used to design, build and maintain production frontend systems, including HTML5, TanStack Query, GraphQL, Bootstrap 5 and MongoDB.',
   ],
   work: [
-    'Selected Frontend Work',
-    'Selected internal dashboard, design system and performance modernization work.',
+    'React Frontend Engineering Case Studies | Suprabhat Kumar',
+    'Read frontend case studies on SaaS dashboards, design systems, React performance, accessibility, Astro SEO, localization, and browser testing.',
   ],
   recommendations: [
     'Recommendations',
     'Recommendations from collaborators who worked with Suprabhat Kumar.',
   ],
   services: [
-    'Frontend Engineering Services',
-    'SaaS frontend, dashboards, React implementation, design systems, performance and accessibility.',
+    'React Frontend Engineering Services | Suprabhat Kumar',
+    'Hire Suprabhat Kumar for React performance audits, architecture reviews, SaaS dashboards, design systems, accessibility, and website delivery.',
   ],
   faq: [
     'Frequently Asked Questions',
     'Answers about services, pricing, remote collaboration, timelines and getting started.',
   ],
   contact: [
-    'Contact Suprabhat Kumar',
-    'Contact Suprabhat Kumar about frontend engineering and product interface work.',
+    'Hire Suprabhat Kumar | Senior React Frontend Engineer',
+    'Discuss a React dashboard, architecture review, design system, performance audit, accessibility audit, or website project with Suprabhat Kumar.',
   ],
   accessibility: [
     'Accessibility',
@@ -51,8 +51,8 @@ const pages = {
     'How contact form information is handled on suprabhat-dev.com.',
   ],
   blog: [
-    'Frontend Engineering Articles',
-    'Practical writing about frontend performance, accessibility and modern UI delivery.',
+    'React and Frontend Engineering Articles | Suprabhat Kumar',
+    'Practical React and frontend engineering guides on architecture, accessibility, performance, code review, design systems, and maintainable UI.',
   ],
 } as const;
 
@@ -128,7 +128,16 @@ const schema = [
               itemOffered: {
                 '@type': 'Service',
                 name: service.name,
-                description: service.description,
+                description: [
+                  service.description,
+                  service.fit ? `Best for: ${service.fit}.` : '',
+                  service.deliverables
+                    ? `Deliverables: ${service.deliverables}.`
+                    : '',
+                  service.duration ? `Duration: ${service.duration}.` : '',
+                ]
+                  .filter(Boolean)
+                  .join(' '),
                 inLanguage: language,
               },
             })),
@@ -139,11 +148,6 @@ const schema = [
 ];
 ---
 
-<BaseLayout
-  {title}
-  {description}
-  page={page}
-  schema={schema}
-  noindex={page === 'recommendations'}
+<BaseLayout {title} {description} page={page} schema={schema}
   ><PageContent {page} locale="en" /></BaseLayout
 >

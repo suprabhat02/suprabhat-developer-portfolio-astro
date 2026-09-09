@@ -1,6 +1,4 @@
 ---
-import { TWITTER_HANDLE } from '../config/site';
-
 interface Props {
   title: string;
   description: string;
@@ -22,7 +20,7 @@ const {
   hideCanonical = false,
   schema,
   ogType = 'website',
-  imageAlt = 'Suprabhat Kumar, Senior Frontend Engineer',
+  imageAlt = 'Suprabhat Kumar, Senior Front-End Engineer',
 } = Astro.props;
 const image = new URL('/assets/images/og-image.jpg', canonical);
 ---
@@ -46,8 +44,6 @@ const image = new URL('/assets/images/og-image.jpg', canonical);
 <meta property="og:image:height" content="630" />
 <meta property="og:image:alt" content={imageAlt} />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:site" content={TWITTER_HANDLE} />
-<meta name="twitter:creator" content={TWITTER_HANDLE} />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={image} />

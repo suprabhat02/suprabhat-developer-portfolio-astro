@@ -481,7 +481,7 @@ const designSystemUplift: Record<Locale, CaseStudyBase> = {
         id: 'accessibility',
         heading: 'Accessibility decisions',
         body: [
-          'Shared components are a high-leverage place to improve accessibility because one strong pattern can prevent many repeated defects. The uplift prioritized semantic HTML, visible focus, keyboard behavior, and clear labeling.',
+          'Shared components are an effective place to improve accessibility because one strong pattern can prevent many repeated defects. The uplift prioritized semantic HTML, visible focus, keyboard behavior, and clear labeling.',
           'The system avoided hiding accessibility decisions inside visual styling alone. Components exposed the props and structure needed for product teams to provide meaningful labels, descriptions, and status messages.',
         ],
         bullets: [

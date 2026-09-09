@@ -1,6 +1,7 @@
 ---
 import { SITE_URL } from '../config/site';
 import { getProfile } from '../data/profile';
+import { engagement } from '../data/engagement';
 import { localePrefix, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
 
@@ -11,7 +12,9 @@ interface Props {
 
 const { locale = 'en', variant = 'page' } = Astro.props;
 const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? '';
-const email = getProfile(locale).email;
+const profile = getProfile(locale);
+const email = profile.email;
+const linkedin = profile.social.find((item) => item.label === 'LinkedIn');
 const formId =
   variant === 'homepage' ? 'homepage-contact-form' : 'contact-form';
 const fieldId = (name: string) => `${formId}-${name}`;
@@ -117,6 +120,14 @@ const formClass =
         <ul data-error-list />
       </div>
 
+      <p>
+        {t(
+          locale,
+          'form.qualificationNote',
+          `Project enquiries start at ${engagement.minimumProjectBudget}. Include your goals, technical requirements, timeline, and documented budget.`,
+        )}
+      </p>
+
       <div class="form-row">
         <div class="f-field">
           <label class="f-label" for={fieldId('name')}>
@@ -182,7 +193,7 @@ const formClass =
             {t(locale, 'form.selectOption', 'Select an option')}
           </option>
           <option value="product-frontend">
-            {t(locale, 'form.projectProduct', 'Product frontend')}
+            {t(locale, 'form.projectProduct', 'Defined React frontend project')}
           </option>
           <option value="design-system">
             {t(locale, 'form.projectDesignSystem', 'Design system')}
@@ -195,7 +206,10 @@ const formClass =
             )}
           </option>
           <option value="technical-consulting">
-            {t(locale, 'form.projectConsulting', 'Technical consulting')}
+            {t(locale, 'form.projectConsulting', 'Async architecture advisory')}
+          </option>
+          <option value="website-development">
+            {t(locale, 'form.projectWebsite', 'Website design and development')}
           </option>
           <option value="other">
             {t(locale, 'form.projectOther', 'Other')}
@@ -219,9 +233,6 @@ const formClass =
           >
             <option value="">
               {t(locale, 'form.selectOption', 'Select an option')}
-            </option>
-            <option value="under-5k">
-              {t(locale, 'form.budgetUnder5k', 'Under USD 5,000')}
             </option>
             <option value="5k-15k">
               {t(locale, 'form.budget5k15k', 'USD 5,000–15,000')}
@@ -304,6 +315,19 @@ const formClass =
         {t(locale, 'home.preferEmail', 'Prefer email?')}{' '}
         <a href={`mailto:${email}`}>{email}</a>
       </p>
+      {linkedin && (
+        <p class="form-email-fallback">
+          {t(
+            locale,
+            'form.recruiterRoute',
+            'Corporate recruiter? Skip this project form and contact me through',
+          )}{' '}
+          <a href={linkedin.href} target="_blank" rel="noreferrer">
+            LinkedIn
+          </a>
+          .
+        </p>
+      )}
     </form>
   ) : (
     <div class="notice">

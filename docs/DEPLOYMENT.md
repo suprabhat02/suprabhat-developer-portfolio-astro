@@ -1,44 +1,61 @@
 # Production deployment
 
-## Decision
+## Current architecture
 
-Use Netlify as the target production host. The site remains a static Astro
-build, while Netlify provides the response-header and immutable-cache controls
-that the current GitHub Pages deployment cannot express.
+The production site is a static Astro build hosted by GitHub Pages. Hostinger
+manages the DNS zone for `suprabhat-dev.com`; it does not receive the `dist`
+folder. A push to `main` starts `.github/workflows/deploy-pages.yml`, which
+installs dependencies, builds the site, uploads `dist`, and deploys it through
+GitHub Pages.
 
-GitHub Pages remains the live host until the cutover is verified. Do not disable
-the Pages workflow or change DNS before the Netlify preview passes every check
-below.
+The checked-in `netlify.toml` is an inactive reference configuration. Netlify is
+not part of the current deployment.
 
-## Preview verification
+## Where to verify each setting
 
-1. Create the Netlify site from this repository using `netlify.toml`.
-2. Set `PUBLIC_WEB3FORMS_KEY` as a protected environment variable.
-3. Verify the deploy preview returns `noindex,follow` on every HTML route.
-4. Exercise every locale, navigation menu, form state, RSS feed, sitemap, and
-   custom 404 page.
-5. Inspect CSP report-only violations and remove unnecessary origins.
-6. Confirm `/_astro/*` responses use one-year immutable caching while HTML
-   revalidates.
-7. Run the build, lint, Playwright, Axe, broken-link, and Lighthouse checks.
+1. GitHub repository > **Settings > Pages**: confirm the source is **GitHub
+   Actions**, the custom domain is `suprabhat-dev.com`, and **Enforce HTTPS** is
+   enabled.
+2. GitHub repository > **Actions**: open **Deploy to GitHub Pages** to inspect
+   each production deployment and its public URL.
+3. Hostinger hPanel > **Domains > DNS / Nameservers**: confirm the apex `A`
+   records point to GitHub Pages and the `www` record is a CNAME for the GitHub
+   Pages hostname. Do not change working DNS records during a content release.
+4. GitHub repository > **Settings > Secrets and variables > Actions**: add a
+   repository secret named `PUBLIC_WEB3FORMS_KEY`. Never commit or paste its
+   value into chat.
 
 ## Contact delivery
 
-The site remains statically generated. Contact submissions receive native and
-browser-side validation, then Web3Forms handles delivery, spam protection, and
-rate limiting. Configure those protections in the Web3Forms dashboard; this
-repository does not claim to provide server-side form validation.
+Create or open the form at `web3forms.com` using
+`suprabhatkumar02@gmail.com`. In Web3Forms:
 
-## DNS cutover
+1. Verify the destination email address.
+2. Restrict submissions to `suprabhat-dev.com` and
+   `www.suprabhat-dev.com` if domain restriction is available for the account.
+3. Enable the provider's spam protection.
+4. Enable submission notifications to the verified email.
+5. Leave an autoresponder disabled until its wording, consent basis, and reply
+   address have been reviewed.
+6. Review Web3Forms' current dashboard and privacy documentation for retention
+   controls; the repository must not invent a retention period.
 
-1. Record the current GitHub Pages DNS values and lower DNS TTL in advance.
-2. Add and verify `suprabhat-dev.com` and `www.suprabhat-dev.com` in Netlify.
-3. Switch DNS only after the production certificate is ready.
-4. Verify the canonical host redirect, HTTP protocol, headers, cache behavior,
-   all locale routes, and legacy redirects from an uncached browser.
-5. Monitor CSP reports before replacing `Content-Security-Policy-Report-Only`
-   with an enforced `Content-Security-Policy` header.
-6. Disable the GitHub Pages workflow only after the new host is stable.
+Web3Forms owns server-side delivery, provider rate limits, spam filtering, and
+submission storage. The static site provides native and browser-side validation
+plus a direct email fallback.
 
-Do not add HSTS `includeSubDomains` or `preload` until every subdomain has been
-inventoried and confirmed to support HTTPS.
+## Release procedure
+
+1. Run `npm run format:check`, `npm run lint`, `npm run check`,
+   `npm run test:e2e`, and `npm run build`.
+2. Commit and push to `main`.
+3. Open GitHub **Actions > Deploy to GitHub Pages** and confirm the workflow is
+   green.
+4. Verify the homepage, contact form, recommendations, localized routes,
+   sitemap, RSS feeds, and custom 404 page on `https://suprabhat-dev.com`.
+5. If the form reports that it is unconfigured, confirm the GitHub Actions secret
+   name and rerun the workflow.
+
+GitHub Pages does not apply the response headers in `netlify.toml`. If custom
+security headers, redirects, or edge caching become necessary later, evaluate a
+Cloudflare proxy or a deliberate hosting migration as a separate project.

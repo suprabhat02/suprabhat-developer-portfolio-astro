@@ -1,6 +1,6 @@
 ---
-title: 'Front-End Code Review Checklist Before You Ship'
-description: 'A practical review flow for catching functional, accessibility, responsive, performance, and maintainability issues before a frontend release.'
+title: 'Frontend Code Review Checklist for Safer Releases'
+description: 'Review frontend behavior, accessibility, responsive layouts, performance, and maintainability in a risk-first order before a production release.'
 pubDate: 2026-08-27
 tags: ['Code Review', 'Accessibility', 'Performance', 'Frontend']
 draft: false

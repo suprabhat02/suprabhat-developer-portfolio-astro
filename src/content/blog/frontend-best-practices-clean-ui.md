@@ -1,6 +1,6 @@
 ---
-title: 'Frontend Best Practices for Clean, Scalable UI'
-description: 'Practical frontend architecture, accessibility, performance, and design-system practices for interfaces that remain maintainable as products grow.'
+title: 'How to Build Scalable React UI Without Overengineering'
+description: 'Learn how semantic HTML, behavior-led components, accessible states, performance budgets, and design systems keep React interfaces maintainable.'
 pubDate: 2026-08-27
 tags:
   ['Frontend Architecture', 'Design Systems', 'TypeScript', 'UI Engineering']

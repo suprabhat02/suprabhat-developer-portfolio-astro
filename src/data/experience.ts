@@ -52,7 +52,6 @@ type PositionTranslation = Partial<
   roles?: readonly RoleTranslation[];
 };
 
-/** Dates, locations, modes, titles and bullets are verbatim. */
 export const experience: readonly Position[] = [
   {
     id: 'topsoe',
@@ -60,11 +59,13 @@ export const experience: readonly Position[] = [
     title: 'Software Engineer III',
     start: 'May 2025',
     end: 'Present',
+    location: 'Noida, Uttar Pradesh, India',
     mode: 'Hybrid',
     bullets: [
-      'Build sleek, modern interfaces with React and TypeScript.',
-      'Ship predictable UI state with Redux Toolkit.',
-      'Collaborate with cross-functional teams in a hybrid setup.',
+      'Build data-intensive React and TypeScript interfaces with Redux Toolkit and reusable component libraries.',
+      'Deliver full-stack product features with Python, FastAPI, PostgreSQL, and Azure services.',
+      'Develop a Next.js 16 and React 19 self-service portal with TanStack Query, openapi-fetch, and Azure DevOps CI/CD.',
+      'Collaborate in distributed Agile teams across India, Denmark, and China.',
     ],
   },
   {
@@ -76,9 +77,9 @@ export const experience: readonly Position[] = [
     location: 'Noida, Uttar Pradesh, India',
     mode: 'On-site',
     bullets: [
-      'Developed UI features using TypeScript.',
-      'Worked with GraphQL-backed data flows.',
-      'Implemented responsive, modern user interfaces.',
+      'Built scalable SaaS portal features with React and TypeScript.',
+      'Coordinated delivery with an Australian research and development team across time zones.',
+      'Delivered responsive product interfaces within defined service-level requirements.',
     ],
   },
   {
@@ -90,8 +91,9 @@ export const experience: readonly Position[] = [
     location: 'Gurugram, Haryana, India',
     mode: 'On-site',
     bullets: [
-      'Implemented responsive UI updates for web experiences.',
-      'Integrated components and ensured consistent UI behavior.',
+      'Improved application delivery with code splitting, lazy loading, and clearer state management.',
+      'Integrated REST APIs and implemented responsive, cross-browser interfaces.',
+      'Applied WCAG accessibility practices to production web workflows.',
     ],
   },
   {
@@ -104,12 +106,12 @@ export const experience: readonly Position[] = [
     roles: [
       {
         title: 'Senior Frontend Developer',
-        start: 'Oct 2023',
+        start: 'Sep 2023',
         end: 'Nov 2023',
         promotion: true,
         bullets: [
-          'Built modern front-end experiences with React and Next.js.',
-          'Collaborated on UI delivery and component integration.',
+          'Led frontend architecture reviews and introduced modern delivery tooling.',
+          'Mentored junior developers while delivering React and Next.js interfaces.',
         ],
       },
       {
@@ -117,8 +119,8 @@ export const experience: readonly Position[] = [
         start: 'Feb 2022',
         end: 'Sep 2023',
         bullets: [
-          'Developed responsive interfaces and reusable UI components.',
-          'Worked across React, TypeScript, and modern CSS.',
+          'Converted wireframes into responsive React and TypeScript interfaces.',
+          'Built reusable UI components and integrated product APIs.',
         ],
       },
     ],
@@ -131,8 +133,8 @@ export const experience: readonly Position[] = [
     end: 'Jan 2022',
     location: 'Bengaluru, Karnataka, India',
     bullets: [
-      'Created responsive UI using HTML, CSS, and JavaScript.',
-      'Built interactive behaviors with jQuery where needed.',
+      'Built responsive product interfaces and reusable UI components with HTML, CSS, JavaScript, and React.',
+      'Integrated backend APIs and maintained stable behavior across supported browsers and platforms.',
     ],
   },
 ] as const;
@@ -183,7 +185,7 @@ const localizedExperience: Partial<
       roles: [
         {
           title: 'Desarrollador frontend sénior',
-          startLabel: 'octubre de 2023',
+          startLabel: 'septiembre de 2023',
           endLabel: 'noviembre de 2023',
           bullets: [
             'Creé experiencias frontend modernas con React y Next.js.',
@@ -255,7 +257,7 @@ const localizedExperience: Partial<
       roles: [
         {
           title: 'مطور واجهات أمامية أول',
-          startLabel: 'أكتوبر 2023',
+          startLabel: 'سبتمبر 2023',
           endLabel: 'نوفمبر 2023',
           bullets: [
             'أنشأت تجارب واجهات أمامية حديثة باستخدام React وNext.js.',

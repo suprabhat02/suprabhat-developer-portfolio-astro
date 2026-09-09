@@ -40,7 +40,7 @@ Use Cloudflare in front of GitHub Pages only if custom cache rules, modern HTTP,
 
 1. Add and verify `suprabhat-dev.com`, either through DNS or by importing the Google Search Console property.
 2. Submit the sitemap index.
-3. Enable IndexNow in Netlify or a trusted deployment integration if frequent publishing makes it useful.
+3. Use Bing Webmaster Tools or another trusted integration for IndexNow if publishing frequency makes it useful.
 4. Review crawl errors and keyword reports monthly.
 
 Never invent verification tokens or commit private service credentials. DNS and HTML verification values must come from the account owner.

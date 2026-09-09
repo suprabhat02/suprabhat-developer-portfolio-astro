@@ -1086,7 +1086,7 @@ main {
   gap: 1rem;
   flex-wrap: wrap;
 }
-.form-honeypot {
+.contact-form .form-honeypot {
   position: absolute;
   width: 1px;
   height: 1px;

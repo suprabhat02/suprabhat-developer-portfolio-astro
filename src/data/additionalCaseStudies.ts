@@ -99,6 +99,22 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
             'Maintained Lighthouse-friendly layout stability by using stable spacing, responsive grids, and reduced motion rules.',
           ],
         },
+        {
+          id: 'lab-results',
+          heading: 'Desktop lab results',
+          body: [
+            'A desktop Lighthouse lab run measured the public portfolio at 99 for Performance and 100 for Accessibility, Best Practices, and SEO. The same run reported First Contentful Paint at 0.6 seconds, Largest Contentful Paint at 0.8 seconds, Total Blocking Time at 0 milliseconds, and Cumulative Layout Shift at 0.001.',
+            'The measured transfer payload was approximately 168 KiB with approximately 0 milliseconds of JavaScript execution. These figures describe one desktop laboratory run only. They are not field data and do not guarantee mobile, network, device, or global performance.',
+          ],
+          bullets: [
+            'Performance: 99',
+            'Accessibility: 100',
+            'Best Practices: 100',
+            'SEO: 100',
+            'FCP: 0.6 s · LCP: 0.8 s · TBT: 0 ms · CLS: 0.001',
+            'Approximate payload: 168 KiB · Approximate JavaScript execution: 0 ms',
+          ],
+        },
       ],
       outcomes: [
         'A stronger recruiter journey from hero summary to proof, case studies, experience, and contact.',
