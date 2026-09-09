@@ -223,7 +223,15 @@ const toolCategoryLabel = (toolName: string) => {
           </p>
 
           <h1 id="hero-name" class="hero-name">
-            Suprabhat <span>Kumar</span>
+            {
+              locale === 'ar' ? (
+                profile.name
+              ) : (
+                <>
+                  Suprabhat <span>Kumar</span>
+                </>
+              )
+            }
           </h1>
           <p class="hero-sub">{conversion.hero.title}</p>
           <p class="hero-lead">{conversion.hero.lead}</p>
@@ -598,10 +606,17 @@ const toolCategoryLabel = (toolName: string) => {
         </div>
       </div>
 
-      <p class="reveal">
+      <p class="hero-ctas reveal">
         <a href="#experience" class="btn btn-outline"
           >{t(locale, 'home.experienceCta', 'Explore experience')} →</a
         >
+        <a
+          href="/assets/suprabhat-kumar-senior-frontend-engineer-resume.pdf"
+          class="btn btn-ghost"
+          download
+        >
+          {t(locale, 'action.resume', 'Download résumé')}
+        </a>
       </p>
     </div>
   </section>

@@ -208,7 +208,7 @@ test('locale fallback and contact state are explicit', async ({ page }) => {
   await page.goto('/ar/');
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
-    'Suprabhat Kumar',
+    'صباح الخير',
   );
   await expect(page.locator('.hero-sub')).toContainText(
     'منتجات React سريعة ومتاحة',
@@ -306,6 +306,32 @@ test('locale fallback and contact state are explicit', async ({ page }) => {
   await expect(
     page.locator('script[type="application/ld+json"]'),
   ).not.toContainText('workTranslation');
+});
+
+test('resume download and contact draft persistence work', async ({ page }) => {
+  await page.goto('/');
+
+  const resumeLink = page.getByRole('link', { name: 'Download résumé' });
+  await expect(resumeLink).toHaveAttribute('download', '');
+  const resumeResponse = await page.request.get(
+    '/assets/suprabhat-kumar-senior-frontend-engineer-resume.pdf',
+  );
+  expect(resumeResponse.status()).toBe(200);
+  expect(resumeResponse.headers()['content-type']).toContain('application/pdf');
+
+  const projectForm = page.locator('#homepage-contact-form');
+  await projectForm.locator('[name="name"]').fill('Saved draft name');
+  await expect(projectForm.locator('[data-draft-status]')).toContainText(
+    'Draft saved on this device',
+  );
+
+  await page.reload();
+  await expect(projectForm.locator('[name="name"]')).toHaveValue(
+    'Saved draft name',
+  );
+  await expect(projectForm.locator('[data-draft-status]')).toContainText(
+    'Draft restored from this device',
+  );
 });
 
 test('shared shell styling and controls stay consistent across locales', async ({

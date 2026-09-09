@@ -21,6 +21,7 @@ type ProfileTranslation = Pick<
   Profile,
   'title' | 'tagline' | 'lead' | 'about' | 'philosophy'
 > & {
+  name?: string;
   eyebrow: Profile['eyebrow'];
   portraitAlt: string;
 };
@@ -87,6 +88,7 @@ const profileTranslations: Partial<Record<Locale, ProfileTranslation>> = {
     portraitAlt: 'Retrato de Suprabhat Kumar, ingeniero de software frontend',
   },
   ar: {
+    name: 'صباح الخير',
     title: 'مهندس واجهات أمامية أول',
     tagline: 'أداء SaaS | React/Next.js | Core Web Vitals | إمكانية الوصول',
     lead: 'أبني واجهات SaaS سريعة ومتاحة، ولوحات بيانات، ومواقع حديثة باستخدام React وNext.js وTypeScript.',
@@ -113,6 +115,7 @@ export const getProfile = (locale: Locale): Profile => {
 
   return {
     ...profile,
+    name: translation.name ?? profile.name,
     title: translation.title,
     tagline: translation.tagline,
     lead: translation.lead,

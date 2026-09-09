@@ -206,6 +206,7 @@ const es: Messages = {
   'action.tools': 'Ver todas las herramientas',
   'action.start': 'Contactar con Suprabhat',
   'action.top': 'Volver arriba',
+  'action.resume': 'Descargar currículum',
   'page.about.eyebrow': 'Sobre mí',
   'page.about.title': 'Diseñar con claridad, velocidad y acceso',
   'page.about.philosophy': 'Filosofía de diseño',
@@ -234,7 +235,7 @@ const es: Messages = {
   'page.privacy.eyebrow': 'Privacidad',
   'page.privacy.title': 'Privacidad del formulario de contacto',
   'page.privacy.body':
-    'Este sitio no instala analítica. Al enviar el formulario, tu nombre, correo electrónico y mensaje se envían mediante Web3Forms para que Suprabhat pueda responder a tu consulta.',
+    'Este sitio no instala analítica. Mientras escribes, los campos visibles se guardan solo en este navegador para que una actualización no borre el borrador. Al enviar, los campos se mandan por correo mediante Web3Forms y se elimina el borrador local.',
   'page.privacy.contact':
     'No incluyas información personal sensible. También puedes escribir a ',
   'page.blog.eyebrow': 'Artículos',
@@ -320,6 +321,11 @@ const es: Messages = {
   'form.errorEmail': 'Introduce una dirección de correo electrónico válida.',
   'form.errorProjectType': 'Selecciona un tipo de proyecto.',
   'form.errorBudget': 'Selecciona un rango de presupuesto.',
+  'form.aboutYou': 'Sobre ti',
+  'form.projectFit': 'Encaje del proyecto',
+  'form.projectBrief': 'Resumen del proyecto',
+  'form.draftSaved': 'Borrador guardado en este dispositivo',
+  'form.draftRestored': 'Borrador restaurado desde este dispositivo',
   'form.projectWebsite': 'Diseño y desarrollo de sitios web',
   'form.qualificationNote':
     'Las consultas de proyectos comienzan en 5.000 USD. Incluye objetivos, requisitos técnicos, calendario y presupuesto documentado.',
@@ -574,6 +580,7 @@ const ar: Messages = {
   'action.tools': 'عرض كل الأدوات',
   'action.start': 'تواصل مع سوبراهات',
   'action.top': 'العودة للأعلى',
+  'action.resume': 'تنزيل السيرة الذاتية',
   'page.about.eyebrow': 'نبذة عني',
   'page.about.title': 'التصميم من أجل الوضوح والسرعة والإتاحة',
   'page.about.philosophy': 'فلسفة التصميم',
@@ -602,7 +609,7 @@ const ar: Messages = {
   'page.privacy.eyebrow': 'الخصوصية',
   'page.privacy.title': 'خصوصية نموذج الاتصال',
   'page.privacy.body':
-    'لا يثبت هذا الموقع أدوات تحليلات. عند إرسال النموذج، يُرسل اسمك وبريدك الإلكتروني ورسالتك عبر Web3Forms ليتمكن سوبراهات من الرد على استفسارك.',
+    'لا يثبت هذا الموقع أدوات تحليلات. أثناء الكتابة تُحفظ الحقول الظاهرة في هذا المتصفح فقط حتى لا تضيع المسودة عند التحديث. عند الإرسال تُرسل الحقول بالبريد عبر Web3Forms ثم تُحذف المسودة المحلية.',
   'page.privacy.contact': 'لا تُدرج معلومات شخصية حساسة. يمكنك أيضًا مراسلة ',
   'page.blog.eyebrow': 'المقالات',
   'page.blog.title': 'مقالات هندسة الواجهات الأمامية',
@@ -682,6 +689,11 @@ const ar: Messages = {
   'form.errorEmail': 'أدخل عنوان بريد إلكتروني صحيحًا.',
   'form.errorProjectType': 'اختر نوع المشروع.',
   'form.errorBudget': 'اختر نطاق الميزانية.',
+  'form.aboutYou': 'معلوماتك',
+  'form.projectFit': 'ملاءمة المشروع',
+  'form.projectBrief': 'موجز المشروع',
+  'form.draftSaved': 'تم حفظ المسودة على هذا الجهاز',
+  'form.draftRestored': 'تمت استعادة المسودة من هذا الجهاز',
   'form.projectWebsite': 'تصميم وتطوير المواقع',
   'form.qualificationNote':
     'تبدأ استفسارات المشاريع من 5,000 دولار أمريكي. أرفق الأهداف والمتطلبات التقنية والجدول الزمني والميزانية المحددة.',

@@ -10,13 +10,6 @@ export interface ContentVerificationTodo {
 /** Editorial facts that must be confirmed before they are published as proof. */
 export const contentVerificationTodos: readonly ContentVerificationTodo[] = [
   {
-    id: 'resume-correction',
-    status: 'blocked',
-    question:
-      'Provide a corrected resume: the PDF places BMW work under Swaragh, while the owner states it was through Cognizant and BMW must not be published yet.',
-    affectedContent: ['resume download', 'resume indexing'],
-  },
-  {
     id: 'lighthouse-provenance',
     status: 'needs-confirmation',
     question:

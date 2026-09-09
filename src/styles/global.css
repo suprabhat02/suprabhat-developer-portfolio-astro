@@ -1060,6 +1060,23 @@ main {
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
 }
+.contact-form > p:first-of-type {
+  max-width: 65ch;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.925rem;
+}
+.form-draft-status {
+  min-height: 1.25rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.form-draft-status:not(:empty)::before {
+  content: '✓';
+  margin-inline-end: 0.35rem;
+  color: #318554;
+  font-weight: 800;
+}
 .contact-form label {
   display: grid;
   gap: 0.4rem;
@@ -1079,6 +1096,22 @@ main {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
+}
+.form-section {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  margin: 0;
+  padding: 1.15rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+.form-section legend {
+  padding-inline-end: 0.75rem;
+  color: var(--text);
+  font-size: 0.825rem;
+  font-weight: 750;
+  letter-spacing: 0;
 }
 .form-actions {
   display: flex;

@@ -1,6 +1,7 @@
 ---
 import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
+import { getProfile } from '../data/profile';
 
 interface Props {
   locale: Locale;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 const { locale, page, path } = Astro.props;
+const displayName = getProfile(locale).name;
 const prefix = localePrefix(locale);
 const localHref = (href: string) => `${prefix}${href}` || '/';
 const pagePath =
@@ -108,9 +110,11 @@ const isActive = (item: (typeof headerNav)[number]) =>
     <a
       class="brand logo"
       href={localHref('/')}
-      aria-label={`Suprabhat Kumar, ${t(locale, 'nav.home', 'home')}`}
+      aria-label={`${displayName}, ${t(locale, 'nav.home', 'home')}`}
     >
-      <span class="logo-mark" aria-hidden="true"></span>Suprabhat
+      <span class="logo-mark" aria-hidden="true"></span>{
+        locale === 'ar' ? displayName : 'Suprabhat'
+      }
     </a>
 
     <nav

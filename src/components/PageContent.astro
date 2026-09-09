@@ -342,6 +342,15 @@ const notFoundLinks = [
             ))}
             <h2>{tx('page.about.philosophy', 'Design philosophy')}</h2>
             <p>{profile.philosophy}</p>
+            <p>
+              <a
+                class="button primary"
+                href="/assets/suprabhat-kumar-senior-frontend-engineer-resume.pdf"
+                download
+              >
+                {tx('action.resume', 'Download résumé')}
+              </a>
+            </p>
           </div>
         </>
       </div>
@@ -715,7 +724,7 @@ const notFoundLinks = [
           <p>
             {tx(
               'page.privacy.body',
-              'This site does not install analytics. When you submit the project form, your name, email address, optional company, project type, budget range, timeline, and message are sent through Web3Forms so Suprabhat can respond to your enquiry.',
+              'This site does not install analytics. While you type, visible form fields are saved only in this browser so a refresh does not erase your draft. After you submit, the fields are sent through Web3Forms by email and the browser draft is deleted.',
             )}
           </p>
           <p>

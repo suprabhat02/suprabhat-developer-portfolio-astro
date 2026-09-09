@@ -89,6 +89,17 @@ const formClass =
         'form.networkError',
         'Network error. Please email directly.',
       )}
+      data-draft-key={`portfolio-contact-draft:${locale}:${variant}`}
+      data-draft-saved={t(
+        locale,
+        'form.draftSaved',
+        'Draft saved on this device',
+      )}
+      data-draft-restored={t(
+        locale,
+        'form.draftRestored',
+        'Draft restored from this device',
+      )}
     >
       <input type="hidden" name="access_key" value={accessKey} />
       <input type="hidden" name="subject" value="Portfolio project enquiry" />
@@ -127,180 +138,203 @@ const formClass =
           `Project enquiries start at ${engagement.minimumProjectBudget}. Include your goals, technical requirements, timeline, and documented budget.`,
         )}
       </p>
+      <output class="form-draft-status" data-draft-status aria-live="polite" />
 
-      <div class="form-row">
+      <fieldset class="form-section">
+        <legend>{t(locale, 'form.aboutYou', 'About you')}</legend>
+        <div class="form-row">
+          <div class="f-field">
+            <label class="f-label" for={fieldId('name')}>
+              {t(locale, 'form.name', 'Name')} <span aria-hidden="true">*</span>
+            </label>
+            <input
+              class="f-input"
+              id={fieldId('name')}
+              name="name"
+              autocomplete="name"
+              required
+              aria-describedby={fieldId('name-error')}
+            />
+            <span class="f-error" id={fieldId('name-error')} />
+          </div>
+          <div class="f-field">
+            <label class="f-label" for={fieldId('email')}>
+              {t(locale, 'form.email', 'Email')}{' '}
+              <span aria-hidden="true">*</span>
+            </label>
+            <input
+              class="f-input"
+              id={fieldId('email')}
+              type="email"
+              name="email"
+              autocomplete="email"
+              inputmode="email"
+              required
+              dir="ltr"
+              aria-describedby={fieldId('email-error')}
+            />
+            <span class="f-error" id={fieldId('email-error')} />
+          </div>
+        </div>
+
         <div class="f-field">
-          <label class="f-label" for={fieldId('name')}>
-            {t(locale, 'form.name', 'Name')} <span aria-hidden="true">*</span>
+          <label class="f-label" for={fieldId('company')}>
+            {t(locale, 'form.company', 'Company or team')}
+            <span class="f-optional">
+              {t(locale, 'form.optional', 'Optional')}
+            </span>
           </label>
           <input
             class="f-input"
-            id={fieldId('name')}
-            name="name"
-            autocomplete="name"
-            required
-            aria-describedby={fieldId('name-error')}
+            id={fieldId('company')}
+            name="company"
+            autocomplete="organization"
           />
-          <span class="f-error" id={fieldId('name-error')} />
         </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend>{t(locale, 'form.projectFit', 'Project fit')}</legend>
         <div class="f-field">
-          <label class="f-label" for={fieldId('email')}>
-            {t(locale, 'form.email', 'Email')} <span aria-hidden="true">*</span>
+          <label class="f-label" for={fieldId('project-type')}>
+            {t(locale, 'form.projectType', 'Project type')}{' '}
+            <span aria-hidden="true">*</span>
           </label>
-          <input
+          <select
             class="f-input"
-            id={fieldId('email')}
-            type="email"
-            name="email"
-            autocomplete="email"
-            inputmode="email"
+            id={fieldId('project-type')}
+            name="project_type"
             required
-            dir="ltr"
-            aria-describedby={fieldId('email-error')}
-          />
-          <span class="f-error" id={fieldId('email-error')} />
+            aria-describedby={fieldId('project-type-error')}
+          >
+            <option value="">
+              {t(locale, 'form.selectOption', 'Select an option')}
+            </option>
+            <option value="product-frontend">
+              {t(
+                locale,
+                'form.projectProduct',
+                'Defined React frontend project',
+              )}
+            </option>
+            <option value="design-system">
+              {t(locale, 'form.projectDesignSystem', 'Design system')}
+            </option>
+            <option value="performance-accessibility">
+              {t(
+                locale,
+                'form.projectPerformance',
+                'Performance or accessibility',
+              )}
+            </option>
+            <option value="technical-consulting">
+              {t(
+                locale,
+                'form.projectConsulting',
+                'Async architecture advisory',
+              )}
+            </option>
+            <option value="website-development">
+              {t(
+                locale,
+                'form.projectWebsite',
+                'Website design and development',
+              )}
+            </option>
+            <option value="other">
+              {t(locale, 'form.projectOther', 'Other')}
+            </option>
+          </select>
+          <span class="f-error" id={fieldId('project-type-error')} />
         </div>
-      </div>
 
-      <div class="f-field">
-        <label class="f-label" for={fieldId('company')}>
-          {t(locale, 'form.company', 'Company or team')}
-          <span class="f-optional">
-            {t(locale, 'form.optional', 'Optional')}
-          </span>
-        </label>
-        <input
-          class="f-input"
-          id={fieldId('company')}
-          name="company"
-          autocomplete="organization"
-        />
-      </div>
+        <div class="form-row">
+          <div class="f-field">
+            <label class="f-label" for={fieldId('budget')}>
+              {t(locale, 'form.budget', 'Budget range')}{' '}
+              <span aria-hidden="true">*</span>
+            </label>
+            <select
+              class="f-input"
+              id={fieldId('budget')}
+              name="budget"
+              required
+              aria-describedby={fieldId('budget-error')}
+            >
+              <option value="">
+                {t(locale, 'form.selectOption', 'Select an option')}
+              </option>
+              <option value="5k-15k">
+                {t(locale, 'form.budget5k15k', 'USD 5,000–15,000')}
+              </option>
+              <option value="15k-30k">
+                {t(locale, 'form.budget15k30k', 'USD 15,000–30,000')}
+              </option>
+              <option value="30k-plus">
+                {t(locale, 'form.budget30kPlus', 'USD 30,000+')}
+              </option>
+              <option value="not-sure">
+                {t(locale, 'form.notSure', 'Not sure yet')}
+              </option>
+            </select>
+            <span class="f-error" id={fieldId('budget-error')} />
+          </div>
+          <div class="f-field">
+            <label class="f-label" for={fieldId('timeline')}>
+              {t(locale, 'form.timeline', 'Desired timeline')}{' '}
+              <span aria-hidden="true">*</span>
+            </label>
+            <select
+              class="f-input"
+              id={fieldId('timeline')}
+              name="timeline"
+              required
+              aria-describedby={fieldId('timeline-error')}
+            >
+              <option value="">
+                {t(locale, 'form.selectOption', 'Select an option')}
+              </option>
+              <option value="within-month">
+                {t(locale, 'form.timelineMonth', 'Within one month')}
+              </option>
+              <option value="one-three-months">
+                {t(locale, 'form.timelineQuarter', 'One to three months')}
+              </option>
+              <option value="three-plus-months">
+                {t(locale, 'form.timelineLater', 'More than three months')}
+              </option>
+              <option value="exploring">
+                {t(locale, 'form.timelineExploring', 'Exploring options')}
+              </option>
+            </select>
+            <span class="f-error" id={fieldId('timeline-error')} />
+          </div>
+        </div>
+      </fieldset>
 
-      <div class="f-field">
-        <label class="f-label" for={fieldId('project-type')}>
-          {t(locale, 'form.projectType', 'Project type')}{' '}
-          <span aria-hidden="true">*</span>
-        </label>
-        <select
-          class="f-input"
-          id={fieldId('project-type')}
-          name="project_type"
-          required
-          aria-describedby={fieldId('project-type-error')}
-        >
-          <option value="">
-            {t(locale, 'form.selectOption', 'Select an option')}
-          </option>
-          <option value="product-frontend">
-            {t(locale, 'form.projectProduct', 'Defined React frontend project')}
-          </option>
-          <option value="design-system">
-            {t(locale, 'form.projectDesignSystem', 'Design system')}
-          </option>
-          <option value="performance-accessibility">
-            {t(
+      <fieldset class="form-section">
+        <legend>{t(locale, 'form.projectBrief', 'Project brief')}</legend>
+        <div class="f-field">
+          <label class="f-label" for={fieldId('message')}>
+            {t(locale, 'form.details', 'Project details')}{' '}
+            <span aria-hidden="true">*</span>
+          </label>
+          <textarea
+            class="f-input"
+            id={fieldId('message')}
+            name="message"
+            rows="6"
+            required
+            aria-describedby={fieldId('message-error')}
+            placeholder={t(
               locale,
-              'form.projectPerformance',
-              'Performance or accessibility',
+              'form.messagePlaceholder',
+              'Goals, current constraints, and what a successful outcome looks like.',
             )}
-          </option>
-          <option value="technical-consulting">
-            {t(locale, 'form.projectConsulting', 'Async architecture advisory')}
-          </option>
-          <option value="website-development">
-            {t(locale, 'form.projectWebsite', 'Website design and development')}
-          </option>
-          <option value="other">
-            {t(locale, 'form.projectOther', 'Other')}
-          </option>
-        </select>
-        <span class="f-error" id={fieldId('project-type-error')} />
-      </div>
-
-      <div class="form-row">
-        <div class="f-field">
-          <label class="f-label" for={fieldId('budget')}>
-            {t(locale, 'form.budget', 'Budget range')}{' '}
-            <span aria-hidden="true">*</span>
-          </label>
-          <select
-            class="f-input"
-            id={fieldId('budget')}
-            name="budget"
-            required
-            aria-describedby={fieldId('budget-error')}
-          >
-            <option value="">
-              {t(locale, 'form.selectOption', 'Select an option')}
-            </option>
-            <option value="5k-15k">
-              {t(locale, 'form.budget5k15k', 'USD 5,000–15,000')}
-            </option>
-            <option value="15k-30k">
-              {t(locale, 'form.budget15k30k', 'USD 15,000–30,000')}
-            </option>
-            <option value="30k-plus">
-              {t(locale, 'form.budget30kPlus', 'USD 30,000+')}
-            </option>
-            <option value="not-sure">
-              {t(locale, 'form.notSure', 'Not sure yet')}
-            </option>
-          </select>
-          <span class="f-error" id={fieldId('budget-error')} />
+          />
+          <span class="f-error" id={fieldId('message-error')} />
         </div>
-        <div class="f-field">
-          <label class="f-label" for={fieldId('timeline')}>
-            {t(locale, 'form.timeline', 'Desired timeline')}{' '}
-            <span aria-hidden="true">*</span>
-          </label>
-          <select
-            class="f-input"
-            id={fieldId('timeline')}
-            name="timeline"
-            required
-            aria-describedby={fieldId('timeline-error')}
-          >
-            <option value="">
-              {t(locale, 'form.selectOption', 'Select an option')}
-            </option>
-            <option value="within-month">
-              {t(locale, 'form.timelineMonth', 'Within one month')}
-            </option>
-            <option value="one-three-months">
-              {t(locale, 'form.timelineQuarter', 'One to three months')}
-            </option>
-            <option value="three-plus-months">
-              {t(locale, 'form.timelineLater', 'More than three months')}
-            </option>
-            <option value="exploring">
-              {t(locale, 'form.timelineExploring', 'Exploring options')}
-            </option>
-          </select>
-          <span class="f-error" id={fieldId('timeline-error')} />
-        </div>
-      </div>
-
-      <div class="f-field">
-        <label class="f-label" for={fieldId('message')}>
-          {t(locale, 'form.details', 'Project details')}{' '}
-          <span aria-hidden="true">*</span>
-        </label>
-        <textarea
-          class="f-input"
-          id={fieldId('message')}
-          name="message"
-          rows="6"
-          required
-          aria-describedby={fieldId('message-error')}
-          placeholder={t(
-            locale,
-            'form.messagePlaceholder',
-            'Goals, current constraints, and what a successful outcome looks like.',
-          )}
-        />
-        <span class="f-error" id={fieldId('message-error')} />
-      </div>
+      </fieldset>
 
       <div class="form-actions">
         <button
@@ -352,6 +386,54 @@ const formClass =
     .querySelectorAll<HTMLFormElement>('[data-contact-form]')
     .forEach((form) => {
       form.noValidate = true;
+      const draftKey = form.dataset.draftKey;
+      const draftStatus = form.querySelector<HTMLOutputElement>(
+        '[data-draft-status]',
+      );
+      const draftFields = Array.from(
+        form.querySelectorAll<
+          HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+        >(
+          'input:not([type="hidden"]):not([name="botcheck"]), select, textarea',
+        ),
+      );
+
+      if (draftKey) {
+        try {
+          const savedDraft = localStorage.getItem(draftKey);
+          if (savedDraft) {
+            const values = JSON.parse(savedDraft) as Record<string, string>;
+            draftFields.forEach((field) => {
+              if (typeof values[field.name] === 'string') {
+                field.value = values[field.name];
+              }
+            });
+            if (draftStatus) {
+              draftStatus.textContent = form.dataset.draftRestored ?? '';
+            }
+          }
+        } catch {
+          if (draftStatus) draftStatus.textContent = '';
+        }
+
+        const saveDraft = () => {
+          try {
+            const values = Object.fromEntries(
+              draftFields.map((field) => [field.name, field.value]),
+            );
+            localStorage.setItem(draftKey, JSON.stringify(values));
+            if (draftStatus) {
+              draftStatus.textContent = form.dataset.draftSaved ?? '';
+            }
+          } catch {
+            if (draftStatus) draftStatus.textContent = '';
+          }
+        };
+
+        form.addEventListener('input', saveDraft);
+        form.addEventListener('change', saveDraft);
+      }
+
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
 
@@ -435,7 +517,17 @@ const formClass =
           status.textContent = result.success
             ? (form.dataset.success ?? '')
             : (form.dataset.failure ?? '');
-          if (result.success) form.reset();
+          if (result.success) {
+            form.reset();
+            if (draftKey) {
+              try {
+                localStorage.removeItem(draftKey);
+              } catch {
+                // Email delivery succeeded even when browser storage is unavailable.
+              }
+            }
+            if (draftStatus) draftStatus.textContent = '';
+          }
         } catch {
           status.textContent = form.dataset.networkError ?? '';
         } finally {
