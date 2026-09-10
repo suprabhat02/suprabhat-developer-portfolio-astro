@@ -346,7 +346,7 @@ Pending verification:
 
 - BMW Group cannot be named publicly until client naming and intermediary relationship permission are explicit.
 - Six testimonials are published after exact quote, attribution, image, and translation consent were confirmed by the site owner.
-- Portfolio Lighthouse numbers need a saved report, test date, tested URL, browser version, and Lighthouse version for durable provenance.
+- Portfolio Lighthouse numbers are verified by the September 10, 2026 desktop report documented in `docs/LIGHTHOUSE-EVIDENCE.md`.
 - Weekly capacity, overlap windows, response time, discovery process, and the minimum project budget are published from owner confirmation.
 - Spanish and Arabic copy needs native editorial review before market-specific promotion.
 

@@ -10,13 +10,6 @@ export interface ContentVerificationTodo {
 /** Editorial facts that must be confirmed before they are published as proof. */
 export const contentVerificationTodos: readonly ContentVerificationTodo[] = [
   {
-    id: 'lighthouse-provenance',
-    status: 'needs-confirmation',
-    question:
-      'Provide the Lighthouse HTML or JSON report, screenshot, Lighthouse version, and Chrome version for the published desktop lab metrics.',
-    affectedContent: ['portfolio SEO and i18n case study'],
-  },
-  {
     id: 'article-sources',
     status: 'blocked',
     question:

@@ -208,7 +208,7 @@ test('locale fallback and contact state are explicit', async ({ page }) => {
   await page.goto('/ar/');
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
-    'صباح الخير',
+    'سوبرابهات',
   );
   await expect(page.locator('.hero-sub')).toContainText(
     'منتجات React سريعة ومتاحة',
@@ -546,7 +546,10 @@ test('case studies expose localized proof and outcomes', async ({ page }) => {
         page.getByRole('heading', { name: localeCheck.decisions }),
       ).toBeVisible();
       await expect(
-        page.getByRole('heading', { name: localeCheck.outcomes }),
+        page.getByRole('heading', {
+          name: localeCheck.outcomes,
+          exact: true,
+        }),
       ).toBeVisible();
 
       const structuredData = await page
@@ -650,6 +653,10 @@ test('production SEO signals and internal links are crawlable', async ({
   await expect(page.locator('link[hreflang="x-default"]')).toHaveAttribute(
     'href',
     'https://suprabhat-dev.com/',
+  );
+  await expect(page.locator('link[rel="sitemap"]')).toHaveAttribute(
+    'href',
+    '/sitemap-index.xml',
   );
   const homepagePaths = await page
     .locator('a[href^="/"]')

@@ -88,7 +88,7 @@ const profileTranslations: Partial<Record<Locale, ProfileTranslation>> = {
     portraitAlt: 'Retrato de Suprabhat Kumar, ingeniero de software frontend',
   },
   ar: {
-    name: 'صباح الخير',
+    name: 'سوبرابهات',
     title: 'مهندس واجهات أمامية أول',
     tagline: 'أداء SaaS | React/Next.js | Core Web Vitals | إمكانية الوصول',
     lead: 'أبني واجهات SaaS سريعة ومتاحة، ولوحات بيانات، ومواقع حديثة باستخدام React وNext.js وTypeScript.',
