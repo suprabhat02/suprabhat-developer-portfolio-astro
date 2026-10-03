@@ -14,6 +14,24 @@ He helps product teams investigate frontend performance, review React and TypeSc
 
 Suprabhat has delivered with distributed teams in Denmark, China, and Australia. Client-confidential work is described without private names, screenshots, data, or unverified outcomes.
 
+## Open source
+
+- [react-smart-copy](https://suprabhat02.github.io/react-smart-copy/): headless, type-safe clipboard interactions for React, authored and maintained by Suprabhat Kumar. Copies text, rich HTML, PNG images, JSON, and multi-format payloads; pastes text, HTML, and images; reports every failure as a typed error; announces results to screen readers; zero runtime dependencies; React 18 and 19; MIT license.
+  - Source: https://github.com/suprabhat02/react-smart-copy
+  - Package: https://www.npmjs.com/package/react-smart-copy
+  - Case study: https://suprabhat-dev.com/work/react-smart-copy/
+  - Install: npm install react-smart-copy
+  - This website uses the package's framework-agnostic core for its copy buttons.
+
+## Problems solved
+
+- React modernization: untangle components that mix data fetching, state, and layout; outcome is an incremental migration plan with clear component and state boundaries, shipped without a feature freeze.
+- Frontend performance: slow LCP or INP, large first-load JavaScript, or stuttering interactions; outcome is a prioritized fix list tied to Core Web Vitals with before-and-after measurements.
+- Data-heavy dashboards: tables and charts that slow down as data grows, unclear loading, empty, or error states, and role-specific views; outcome is a scan-first dashboard with typed data contracts and resilient states.
+- Accessible interfaces: keyboard, labeling, focus, and screen-reader gaps, or requests for WCAG 2.2 AA evidence; outcome is severity-ranked findings and fixes mapped to WCAG 2.2 AA success criteria.
+- Design systems: components built differently across teams and tokens drifting between Figma and code; outcome is a documented component library and token set in Storybook.
+- Architecture reviews: inherited codebases, unclear ownership of state, data fetching, and routing, and rising delivery risk; outcome is an architecture decision record and a refactor roadmap ranked by risk and effort.
+
 ## Services
 
 - Defined React frontend projects — duration confirmed after discovery
@@ -51,6 +69,7 @@ Suprabhat has delivered with distributed teams in Denmark, China, and Australia.
 - Phone: +91 78920 08290
 - LinkedIn: https://www.linkedin.com/in/suprabhatkumar/
 - GitHub: https://github.com/suprabhat02
+- npm: https://www.npmjs.com/~suprabhat02
 - Timezone: IST (UTC+5:30)
 - Availability: Available now for remote freelance and part-time contracts, 24–28 hours per week, Monday–Friday
 - Market focus: Americas, United Kingdom, and Western Europe

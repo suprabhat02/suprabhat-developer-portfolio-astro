@@ -2,12 +2,16 @@
 import geistMonoLatinFont from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
 import { getImage } from 'astro:assets';
 import {
+  heroPortraitPreloadMedia,
   heroPortraitQuality,
   heroPortraitSizes,
   heroPortraitWidths,
 } from '../data/images';
 import portraitImage from '../../public/assets/images/portrait-1100.webp';
 
+// The portrait is above the fold only in the two-column layout; on phones it
+// sits below the hero copy, so the preload is media-gated there to keep its
+// bandwidth for the font and CSS that paint the LCP text.
 const portraitPreload = await getImage({
   src: portraitImage,
   widths: heroPortraitWidths,
@@ -22,17 +26,18 @@ const portraitPreload = await getImage({
 <meta name="color-scheme" content="dark light" />
 <link
   rel="preload"
+  as="font"
+  type="font/woff2"
+  href={geistMonoLatinFont}
+  crossorigin="anonymous"
+/>
+<link
+  rel="preload"
   as="image"
   href={portraitPreload.src}
   type="image/avif"
   imagesrcset={portraitPreload.srcSet.attribute}
   imagesizes={heroPortraitSizes}
+  media={heroPortraitPreloadMedia}
   fetchpriority="high"
-/>
-<link
-  rel="preload"
-  as="font"
-  type="font/woff2"
-  href={geistMonoLatinFont}
-  crossorigin="anonymous"
 />

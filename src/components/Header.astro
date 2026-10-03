@@ -21,14 +21,17 @@ const formatLabel = (label: string, values: Record<string, string>) =>
     (current, [key, value]) => current.replace(`{${key}}`, value),
     label,
   );
-const currentLanguageAria = formatLabel(
+const languageCode = locale.toUpperCase();
+// WCAG 2.5.3 (Label in Name): the accessible name starts with the visible
+// code so voice-control users can say "click AR".
+const currentLanguageAria = `${languageCode}: ${formatLabel(
   t(
     locale,
     'language.current',
     'Change language, current language: {language}',
   ),
   { language: localeMeta[locale].label },
-);
+)}`;
 const languageSwitchAria = (next: Locale) =>
   t(
     locale,
@@ -170,7 +173,7 @@ const isActive = (item: (typeof headerNav)[number]) =>
               d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
             ></path>
           </svg>
-          <span id="lang-label">{locale.toUpperCase()}</span>
+          <span id="lang-label">{languageCode}</span>
           <svg
             class="chevron"
             width="12"

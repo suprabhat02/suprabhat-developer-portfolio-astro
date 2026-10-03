@@ -1,0 +1,74 @@
+---
+/**
+ * Copy-to-clipboard button powered by react-smart-copy's framework-agnostic
+ * core (no React is loaded). Follows the library's accessibility contract:
+ * a real button with a stable accessible name, a live region mounted before
+ * its first message, and labels stacked in one grid cell so the width never
+ * changes. Rendered `hidden` and revealed by the script, so it never appears
+ * on a page where it could not work.
+ */
+import type { Locale } from '../../i18n/config';
+import { t } from '../../i18n/messages';
+
+interface Props {
+  /** The exact text placed on the clipboard. */
+  value: string;
+  /** What is copied, used in the accessible name ("Copy install command"). */
+  label: string;
+  locale: Locale;
+  class?: string;
+}
+
+const { value, label, locale, class: className } = Astro.props;
+const copyText = t(locale, 'copy.action', 'Copy');
+---
+
+<span class:list={['copy-control', className]}>
+  <button
+    type="button"
+    class="copy-btn"
+    data-copy-value={value}
+    data-state="idle"
+    data-announce-copied={t(
+      locale,
+      'copy.announceCopied',
+      'Copied to clipboard',
+    )}
+    data-announce-failed={t(
+      locale,
+      'copy.announceFailed',
+      'Copy failed. Select the text and copy it manually.',
+    )}
+    aria-label={`${copyText} ${label}`}
+    hidden
+  >
+    <svg
+      class="copy-btn-icon"
+      width="15"
+      height="15"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <rect class="copy-sheet" x="9" y="9" width="12" height="12" rx="2"></rect>
+      <path
+        class="copy-sheet-back"
+        d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"></path>
+      <path class="copy-check" d="m9 12 2.5 2.5L16 10" pathLength="1"></path>
+    </svg>
+    <span class="copy-btn-labels" aria-hidden="true">
+      <span data-label="idle">{copyText}</span>
+      <span data-label="copied">{t(locale, 'copy.copied', 'Copied')}</span>
+      <span data-label="error">{t(locale, 'copy.failed', 'Retry')}</span>
+    </span>
+  </button>
+  <span class="sr-only" role="status" data-copy-status></span>
+</span>
+
+<script>
+  import '../../scripts/copy';
+</script>

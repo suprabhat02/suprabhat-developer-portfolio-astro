@@ -1,0 +1,163 @@
+---
+/**
+ * Aceternity-style timeline: a sticky year column, a rail whose gradient
+ * fill follows the reader's position, and markers that light up as they
+ * cross the middle of the viewport. All motion is CSS scroll-driven
+ * (`view-timeline` with a 50% inset), so it costs no JavaScript and shows a
+ * fully drawn timeline where scroll timelines are unsupported.
+ */
+import { getExperience } from '../data/experience';
+import type { Locale } from '../i18n/config';
+import { t } from '../i18n/messages';
+
+interface Props {
+  locale: Locale;
+  /** h3 under a homepage section h2; h2 directly under a page h1. */
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { locale, headingLevel = 'h3' } = Astro.props;
+const Heading = headingLevel;
+const SubHeading = headingLevel === 'h2' ? 'h3' : 'h4';
+const experience = getExperience(locale);
+
+const MONTHS: Record<string, string> = {
+  Jan: '01',
+  Feb: '02',
+  Mar: '03',
+  Apr: '04',
+  May: '05',
+  Jun: '06',
+  Jul: '07',
+  Aug: '08',
+  Sep: '09',
+  Oct: '10',
+  Nov: '11',
+  Dec: '12',
+};
+/** "May 2025" → "2025-05" for <time datetime>. */
+const toISO = (value: string) => {
+  const [month, year] = value.split(' ');
+  return year && MONTHS[month] ? `${year}-${MONTHS[month]}` : '';
+};
+const yearOf = (value: string) => value.split(' ')[1] ?? value;
+const roleKey = (promotion?: boolean) => (promotion ? 'senior' : 'developer');
+---
+
+<div class="xp-timeline">
+  <div class="xp-rail" aria-hidden="true">
+    <span class="xp-rail-fill"></span>
+  </div>
+  <ol
+    class="xp-list"
+    aria-label={t(locale, 'home.history', 'Work history, newest first')}
+  >
+    {
+      experience.map((job, index) => {
+        const title =
+          job.title !== undefined
+            ? t(locale, `experience.${job.id}.title`, job.title)
+            : (job.roles ?? [])
+                .map((role) =>
+                  t(
+                    locale,
+                    `experience.${job.id}.${roleKey(role.promotion)}`,
+                    role.title,
+                  ),
+                )
+                .join(' → ');
+        const details = [
+          job.mode && (job.modeLabel ?? job.mode),
+          job.location && (job.locationLabel ?? job.location),
+          job.duration && (job.durationLabel ?? job.duration),
+        ].filter(Boolean);
+
+        return (
+          <li class:list={['xp-item', { 'xp-item--current': index === 0 }]}>
+            <div class="xp-marker" aria-hidden="true">
+              <span class="xp-dot" />
+            </div>
+            <div class="xp-sticky">
+              <p class="xp-year" aria-hidden="true">
+                {yearOf(job.start)}
+              </p>
+              <p class="xp-company">{job.company}</p>
+              <p class="xp-dates">
+                <time datetime={toISO(job.start)}>
+                  {job.startLabel ?? job.start}
+                </time>
+                {' — '}
+                {toISO(job.end) ? (
+                  <time datetime={toISO(job.end)}>
+                    {job.endLabel ?? job.end}
+                  </time>
+                ) : (
+                  <span>{job.endLabel ?? job.end}</span>
+                )}
+              </p>
+            </div>
+            <div class="xp-card fx-glow" data-glow>
+              <Heading class="xp-title">{title}</Heading>
+              {details.length > 0 && (
+                <p class="xp-meta">{details.join(' · ')}</p>
+              )}
+              {job.bullets && (
+                <ul class="xp-bullets">
+                  {job.bullets.map((bullet, bulletIndex) => (
+                    <li>
+                      {t(
+                        locale,
+                        `experience.${job.id}.b${bulletIndex + 1}`,
+                        bullet,
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {job.roles && (
+                <div class="xp-roles">
+                  {job.roles.map((role) => (
+                    <div class="xp-role">
+                      <p class="xp-role-dates">
+                        <time datetime={toISO(role.start)}>
+                          {role.startLabel ?? role.start}
+                        </time>
+                        {' — '}
+                        <time datetime={toISO(role.end)}>
+                          {role.endLabel ?? role.end}
+                        </time>
+                      </p>
+                      <SubHeading class="xp-role-title">
+                        {t(
+                          locale,
+                          `experience.${job.id}.${roleKey(role.promotion)}`,
+                          role.title,
+                        )}
+                        {role.promotion && (
+                          <span class="promo-badge">
+                            {t(locale, 'home.promoted', 'Promoted')}
+                          </span>
+                        )}
+                      </SubHeading>
+                      <ul class="xp-bullets">
+                        {role.bullets.map((bullet, bulletIndex) => (
+                          <li>
+                            {t(
+                              locale,
+                              `experience.${job.id}.${roleKey(role.promotion)}.b${bulletIndex + 1}`,
+                              bullet,
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </li>
+        );
+      })
+    }
+  </ol>
+</div>

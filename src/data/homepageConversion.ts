@@ -5,6 +5,13 @@ interface ConversionItem {
   body: string;
 }
 
+interface ProblemItem extends ConversionItem {
+  /** Observable symptoms a buyer recognises in their own product. */
+  signals: readonly string[];
+  /** The concrete result of the engagement, stated without metrics. */
+  outcome: string;
+}
+
 interface EngagementItem extends ConversionItem {
   fit: string;
   deliverables: string;
@@ -25,7 +32,9 @@ interface HomepageConversionContent {
     eyebrow: string;
     title: string;
     lead: string;
-    items: readonly ConversionItem[];
+    signalsLabel: string;
+    outcomeLabel: string;
+    items: readonly ProblemItem[];
   };
   engagements: {
     eyebrow: string;
@@ -70,30 +79,74 @@ const content: Record<Locale, HomepageConversionContent> = {
       eyebrow: 'Problems I solve',
       title: 'Frontend work for complex product surfaces',
       lead: 'Focused help where maintainability, speed, accessibility, and product clarity intersect.',
+      signalsLabel: 'Typical signals',
+      outcomeLabel: 'Outcome',
       items: [
         {
           title: 'React modernization',
           body: 'Untangle brittle component and state patterns while preserving product continuity.',
+          signals: [
+            'Components that mix data fetching, state, and layout',
+            'Prop drilling or global state used as a workaround',
+            'Regressions after routine UI changes',
+          ],
+          outcome:
+            'An incremental migration plan with clear component and state boundaries, shipped without a feature freeze.',
         },
         {
           title: 'Frontend performance',
           body: 'Find and prioritize rendering, asset, interaction, and Core Web Vitals bottlenecks.',
+          signals: [
+            'Slow LCP or INP in field data or Lighthouse lab tests',
+            'Large JavaScript bundles on first load',
+            'Interactions that stutter on mid-range devices',
+          ],
+          outcome:
+            'A prioritized fix list tied to Core Web Vitals, with before-and-after measurements.',
         },
         {
           title: 'Data-heavy dashboards',
           body: 'Create clear information hierarchy and resilient loading, empty, error, and permission states.',
+          signals: [
+            'Tables and charts that slow down as data grows',
+            'Unclear loading, empty, or error states',
+            'Filters and views that differ by user role',
+          ],
+          outcome:
+            'A scan-first dashboard with typed data contracts and resilient states for every panel.',
         },
         {
           title: 'Accessible interfaces',
           body: 'Improve semantics, keyboard paths, focus behavior, forms, and assistive-technology support.',
+          signals: [
+            'Controls that cannot be reached or operated by keyboard',
+            'Missing labels, focus order, or screen-reader announcements',
+            'Customer or procurement requests for WCAG 2.2 AA evidence',
+          ],
+          outcome:
+            'Severity-ranked findings and fixes mapped to WCAG 2.2 AA success criteria.',
         },
         {
           title: 'Design systems',
           body: 'Build reusable components, tokens, documentation, and adoption patterns teams can maintain.',
+          signals: [
+            'The same component built differently across teams',
+            'Design tokens that drift between Figma and code',
+            'Slow reviews over visual inconsistencies',
+          ],
+          outcome:
+            'A documented component library and token set in Storybook that teams can extend.',
         },
         {
           title: 'Architecture reviews',
           body: 'Assess boundaries, state ownership, rendering strategy, testing, and delivery risks.',
+          signals: [
+            'A codebase inherited after team changes',
+            'Unclear ownership of state, data fetching, and routing',
+            'Rising delivery risk before a major release',
+          ],
+          outcome:
+            'An architecture decision record and a refactor roadmap ranked by risk and effort.',
         },
       ],
     },
@@ -230,30 +283,74 @@ const content: Record<Locale, HomepageConversionContent> = {
       eyebrow: 'Problemas que resuelvo',
       title: 'Frontend para superficies de producto complejas',
       lead: 'Ayuda especializada donde se cruzan mantenibilidad, velocidad, accesibilidad y claridad de producto.',
+      signalsLabel: 'Señales habituales',
+      outcomeLabel: 'Resultado',
       items: [
         {
           title: 'Modernización de React',
           body: 'Mejorar componentes y estado frágiles sin interrumpir la continuidad del producto.',
+          signals: [
+            'Componentes que mezclan obtención de datos, estado y maquetación',
+            'Prop drilling o estado global usado como parche',
+            'Regresiones tras cambios rutinarios de UI',
+          ],
+          outcome:
+            'Un plan de migración incremental con límites claros de componentes y estado, sin congelar funcionalidades.',
         },
         {
           title: 'Rendimiento frontend',
           body: 'Detectar y priorizar problemas de renderizado, recursos, interacción y Core Web Vitals.',
+          signals: [
+            'LCP o INP lentos en datos de campo o en pruebas de laboratorio de Lighthouse',
+            'Paquetes de JavaScript grandes en la primera carga',
+            'Interacciones que se entrecortan en dispositivos de gama media',
+          ],
+          outcome:
+            'Una lista de correcciones priorizada según Core Web Vitals, con mediciones de antes y después.',
         },
         {
           title: 'Dashboards de datos',
           body: 'Crear jerarquía clara y estados de carga, vacío, error y permisos resilientes.',
+          signals: [
+            'Tablas y gráficos que se ralentizan al crecer los datos',
+            'Estados de carga, vacío o error poco claros',
+            'Filtros y vistas que cambian según el rol',
+          ],
+          outcome:
+            'Un dashboard pensado para escanear, con contratos de datos tipados y estados resilientes en cada panel.',
         },
         {
           title: 'Interfaces accesibles',
           body: 'Mejorar semántica, teclado, foco, formularios y soporte para tecnologías de asistencia.',
+          signals: [
+            'Controles que no se alcanzan o no se operan con teclado',
+            'Faltan etiquetas, orden de foco o anuncios para lectores de pantalla',
+            'Clientes o procesos de compra que piden evidencia de WCAG 2.2 AA',
+          ],
+          outcome:
+            'Hallazgos ordenados por gravedad y correcciones vinculadas a los criterios de WCAG 2.2 AA.',
         },
         {
           title: 'Sistemas de diseño',
           body: 'Construir componentes, tokens, documentación y patrones de adopción mantenibles.',
+          signals: [
+            'El mismo componente construido de forma distinta en cada equipo',
+            'Tokens de diseño que divergen entre Figma y el código',
+            'Revisiones lentas por inconsistencias visuales',
+          ],
+          outcome:
+            'Una biblioteca de componentes y tokens documentada en Storybook que los equipos pueden ampliar.',
         },
         {
           title: 'Revisiones de arquitectura',
           body: 'Evaluar límites, estado, renderizado, pruebas y riesgos de entrega.',
+          signals: [
+            'Una base de código heredada tras cambios de equipo',
+            'Propiedad poco clara del estado, los datos y el enrutamiento',
+            'Riesgo de entrega creciente antes de un lanzamiento importante',
+          ],
+          outcome:
+            'Un registro de decisiones de arquitectura y una hoja de ruta de refactorización ordenada por riesgo y esfuerzo.',
         },
       ],
     },
@@ -355,30 +452,73 @@ const content: Record<Locale, HomepageConversionContent> = {
       eyebrow: 'المشكلات التي أحلها',
       title: 'هندسة واجهات لأسطح منتجات معقدة',
       lead: 'دعم مركز حيث تتقاطع قابلية الصيانة والسرعة والإتاحة ووضوح المنتج.',
+      signalsLabel: 'مؤشرات شائعة',
+      outcomeLabel: 'النتيجة',
       items: [
         {
           title: 'تحديث تطبيقات React',
           body: 'تحسين أنماط المكونات والحالة الهشة مع الحفاظ على استمرارية المنتج.',
+          signals: [
+            'مكونات تخلط جلب البيانات والحالة والتخطيط',
+            'تمرير الخصائص عبر طبقات كثيرة أو حالة عامة كحل مؤقت',
+            'أخطاء جديدة بعد تغييرات روتينية في الواجهة',
+          ],
+          outcome:
+            'خطة ترحيل تدريجية بحدود واضحة للمكونات والحالة، تُنفذ دون تجميد الميزات.',
         },
         {
           title: 'أداء الواجهات',
           body: 'اكتشاف وترتيب مشكلات العرض والأصول والتفاعل وCore Web Vitals.',
+          signals: [
+            'بطء LCP أو INP في البيانات الميدانية أو اختبارات Lighthouse المعملية',
+            'حزم JavaScript كبيرة عند التحميل الأول',
+            'تفاعلات متقطعة على الأجهزة المتوسطة',
+          ],
+          outcome:
+            'قائمة إصلاحات مرتبة حسب Core Web Vitals مع قياسات قبل التحسين وبعده.',
         },
         {
           title: 'لوحات بيانات كثيفة',
           body: 'إنشاء تسلسل معلومات واضح وحالات تحميل وفراغ وخطأ وصلاحيات مرنة.',
+          signals: [
+            'جداول ورسوم بيانية تبطؤ مع نمو البيانات',
+            'حالات تحميل أو فراغ أو خطأ غير واضحة',
+            'مرشحات وعروض تختلف حسب دور المستخدم',
+          ],
+          outcome:
+            'لوحة سهلة المسح بعقود بيانات مضبوطة الأنواع وحالات مرنة لكل لوحة.',
         },
         {
           title: 'واجهات متاحة',
           body: 'تحسين الدلالات ولوحة المفاتيح والتركيز والنماذج والتقنيات المساعدة.',
+          signals: [
+            'عناصر تحكم لا يمكن الوصول إليها أو تشغيلها بلوحة المفاتيح',
+            'غياب التسميات أو ترتيب التركيز أو إعلانات قارئ الشاشة',
+            'طلبات العملاء أو المشتريات لإثبات التوافق مع WCAG 2.2 AA',
+          ],
+          outcome:
+            'نتائج مرتبة حسب الخطورة وإصلاحات مرتبطة بمعايير نجاح WCAG 2.2 AA.',
         },
         {
           title: 'أنظمة التصميم',
           body: 'بناء مكونات ورموز وتوثيق وأنماط تبنٍ قابلة للصيانة.',
+          signals: [
+            'المكون نفسه مبني بطرق مختلفة في كل فريق',
+            'رموز تصميم تختلف بين Figma والشيفرة',
+            'مراجعات بطيئة بسبب عدم الاتساق البصري',
+          ],
+          outcome: 'مكتبة مكونات ورموز موثقة في Storybook يمكن للفرق توسيعها.',
         },
         {
           title: 'مراجعات المعمارية',
           body: 'تقييم الحدود وملكية الحالة واستراتيجية العرض والاختبارات ومخاطر التسليم.',
+          signals: [
+            'قاعدة شيفرة موروثة بعد تغييرات في الفريق',
+            'ملكية غير واضحة للحالة وجلب البيانات والتوجيه',
+            'تزايد مخاطر التسليم قبل إصدار رئيسي',
+          ],
+          outcome:
+            'سجل قرارات معمارية وخارطة إعادة هيكلة مرتبة حسب المخاطر والجهد.',
         },
       ],
     },

@@ -1,0 +1,97 @@
+---
+/**
+ * Featured open-source project card. Used on the homepage (under an h2) and
+ * on /work/ (under the page h1), so the heading level is configurable.
+ */
+import { getOpenSourceCopy, reactSmartCopy } from '../data/openSource';
+import type { Locale } from '../i18n/config';
+import { t } from '../i18n/messages';
+import CopyButton from './fx/CopyButton.astro';
+import Icon from './fx/Icon.astro';
+
+interface Props {
+  locale: Locale;
+  caseStudyHref: string;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { locale, caseStudyHref, headingLevel: Heading = 'h3' } = Astro.props;
+const copy = getOpenSourceCopy(locale);
+const externalLinks = [
+  { href: reactSmartCopy.links.docs, label: copy.docsLabel, icon: 'book-open' },
+  {
+    href: reactSmartCopy.links.repository,
+    label: copy.repositoryLabel,
+    icon: 'github',
+  },
+  { href: reactSmartCopy.links.npm, label: copy.npmLabel, icon: 'package' },
+] as const;
+const titleId = `oss-${reactSmartCopy.id}-title`;
+---
+
+<article
+  class="oss-card fx-glow fx-card-gradient fx-reveal"
+  aria-labelledby={titleId}
+  data-glow
+>
+  <div class="oss-copy">
+    <p class="oss-eyebrow">
+      <Icon name="package" size={16} />
+      {copy.eyebrow}
+    </p>
+    <Heading id={titleId} class="oss-title">{reactSmartCopy.name}</Heading>
+    <p class="oss-tagline">{copy.tagline}</p>
+    <p class="oss-description">{copy.description}</p>
+    <ul class="oss-facts">
+      {
+        copy.facts.map((fact) => (
+          <li>
+            <Icon name="check" size={16} />
+            <span>{fact}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <div class="oss-side">
+    <div class="oss-terminal" role="group" aria-label={copy.installLabel}>
+      <div class="oss-terminal-bar" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="oss-terminal-body">
+        <code dir="ltr"
+          ><span class="oss-prompt" aria-hidden="true">$</span>
+          {reactSmartCopy.install}</code
+        >
+        <CopyButton
+          value={reactSmartCopy.install}
+          label={t(locale, 'copy.installLabel', 'install command')}
+          {locale}
+        />
+      </div>
+    </div>
+
+    <nav class="oss-links" aria-label={copy.linksLabel}>
+      <ul>
+        {
+          externalLinks.map((link) => (
+            <li>
+              <a href={link.href} target="_blank" rel="noopener noreferrer">
+                <Icon name={link.icon} size={18} />
+                <span>{link.label}</span>
+                <Icon name="arrow-up-right" size={14} class="oss-external" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a class="oss-cta" href={caseStudyHref}>
+      {copy.caseStudyLabel}
+      <span aria-hidden="true">→</span>
+    </a>
+    <p class="oss-meta">{copy.meta}</p>
+  </div>
+</article>

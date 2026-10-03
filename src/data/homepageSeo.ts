@@ -1,6 +1,8 @@
 import { SITE_NAME, SITE_URL } from '../config/site';
 import { faqs } from './faqs';
 import { getServices } from './services';
+import { getHomepageConversionContent } from './homepageConversion';
+import { getReactSmartCopySchema } from './openSource';
 import { localeMeta, localePrefix, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
 
@@ -22,6 +24,7 @@ export const getHomepageSchema = (locale: Locale) => {
   const services = getServices(locale);
   const pageUrl = `${SITE_URL}${localePrefix(locale)}/`;
   const language = localeMeta[locale].htmlLang;
+  const { problems } = getHomepageConversionContent(locale);
 
   return [
     {
@@ -64,6 +67,22 @@ export const getHomepageSchema = (locale: Locale) => {
           },
         })),
       },
+    },
+    getReactSmartCopySchema(SITE_URL, language, locale),
+    {
+      '@type': 'ItemList',
+      '@id': `${pageUrl}#problems`,
+      name: problems.title,
+      description: problems.lead,
+      inLanguage: language,
+      itemListOrder: 'https://schema.org/ItemListUnordered',
+      numberOfItems: problems.items.length,
+      itemListElement: problems.items.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: item.title,
+        description: `${item.body} ${problems.outcomeLabel}: ${item.outcome}`,
+      })),
     },
     {
       '@type': 'FAQPage',

@@ -1,0 +1,229 @@
+---
+/**
+ * Animated line icons.
+ *
+ * Paths come from Lucide (https://lucide.dev, ISC License, Copyright (c)
+ * Lucide Contributors). They are inlined as SVG so no icon font or request is
+ * needed. Motion is pure CSS (see `.fx-icon` in motion.css):
+ * - strokes draw in as the icon scrolls into view (scroll-driven, no JS);
+ * - hovering or focusing the surrounding card redraws them and plays the
+ *   icon's own micro-motion (bob, wave, swing, pulse, nudge, spin);
+ * - everything is static under `prefers-reduced-motion: reduce`.
+ * Icons are decorative by default; pass `label` only when the icon is the
+ * sole content of a control.
+ */
+export type IconName =
+  | 'arrow-up-right'
+  | 'badge-check'
+  | 'book-open'
+  | 'check'
+  | 'code'
+  | 'database'
+  | 'flag'
+  | 'git-pull-request'
+  | 'github'
+  | 'globe'
+  | 'layers'
+  | 'linkedin'
+  | 'mail'
+  | 'message'
+  | 'package'
+  | 'search'
+  | 'shield-check'
+  | 'terminal'
+  | 'zap';
+
+type Motion = 'bob' | 'wave' | 'swing' | 'pulse' | 'nudge' | 'spin' | 'none';
+
+interface Shape {
+  tag: 'path' | 'circle' | 'rect' | 'line' | 'polyline' | 'ellipse';
+  attrs: Record<string, string | number>;
+}
+
+const p = (d: string): Shape => ({ tag: 'path', attrs: { d } });
+const circle = (cx: number, cy: number, r: number): Shape => ({
+  tag: 'circle',
+  attrs: { cx, cy, r },
+});
+
+const icons: Record<IconName, { motion: Motion; shapes: readonly Shape[] }> = {
+  'arrow-up-right': {
+    motion: 'nudge',
+    shapes: [p('M7 7h10v10'), p('M7 17 17 7')],
+  },
+  'badge-check': {
+    motion: 'pulse',
+    shapes: [
+      p(
+        'M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z',
+      ),
+      p('m9 12 2 2 4-4'),
+    ],
+  },
+  'book-open': {
+    motion: 'bob',
+    shapes: [
+      p('M12 7v14'),
+      p(
+        'M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z',
+      ),
+    ],
+  },
+  check: { motion: 'pulse', shapes: [p('M20 6 9 17l-5-5')] },
+  code: {
+    motion: 'nudge',
+    shapes: [p('m18 16 4-4-4-4'), p('m6 8-4 4 4 4'), p('m14.5 4-5 16')],
+  },
+  database: {
+    motion: 'bob',
+    shapes: [
+      { tag: 'ellipse', attrs: { cx: 12, cy: 5, rx: 9, ry: 3 } },
+      p('M3 5V19A9 3 0 0 0 21 19V5'),
+      p('M3 12A9 3 0 0 0 21 12'),
+    ],
+  },
+  flag: {
+    motion: 'wave',
+    shapes: [
+      p('M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z'),
+      { tag: 'line', attrs: { x1: 4, x2: 4, y1: 22, y2: 15 } },
+    ],
+  },
+  'git-pull-request': {
+    motion: 'pulse',
+    shapes: [
+      circle(18, 18, 3),
+      circle(6, 6, 3),
+      p('M13 6h3a2 2 0 0 1 2 2v7'),
+      { tag: 'line', attrs: { x1: 6, x2: 6, y1: 9, y2: 21 } },
+    ],
+  },
+  github: {
+    motion: 'swing',
+    shapes: [
+      p(
+        'M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4',
+      ),
+      p('M9 18c-4.51 2-5-2-7-2'),
+    ],
+  },
+  globe: {
+    motion: 'spin',
+    shapes: [
+      circle(12, 12, 10),
+      p('M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20'),
+      p('M2 12h20'),
+    ],
+  },
+  layers: {
+    motion: 'bob',
+    shapes: [
+      p(
+        'M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z',
+      ),
+      p('m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65'),
+      p('m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65'),
+    ],
+  },
+  linkedin: {
+    motion: 'pulse',
+    shapes: [
+      p(
+        'M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z',
+      ),
+      { tag: 'rect', attrs: { width: 4, height: 12, x: 2, y: 9 } },
+      circle(4, 4, 2),
+    ],
+  },
+  mail: {
+    motion: 'bob',
+    shapes: [
+      { tag: 'rect', attrs: { width: 20, height: 16, x: 2, y: 4, rx: 2 } },
+      p('m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7'),
+    ],
+  },
+  message: {
+    motion: 'bob',
+    shapes: [
+      p('M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'),
+      p('M13 8H7'),
+      p('M17 12H7'),
+    ],
+  },
+  package: {
+    motion: 'swing',
+    shapes: [
+      p(
+        'M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z',
+      ),
+      p('M12 22V12'),
+      p('m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7'),
+      p('m7.5 4.27 9 5.15'),
+    ],
+  },
+  search: {
+    motion: 'swing',
+    shapes: [circle(11, 11, 8), p('m21 21-4.3-4.3')],
+  },
+  'shield-check': {
+    motion: 'pulse',
+    shapes: [
+      p(
+        'M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z',
+      ),
+      p('m9 12 2 2 4-4'),
+    ],
+  },
+  terminal: {
+    motion: 'nudge',
+    shapes: [
+      { tag: 'polyline', attrs: { points: '4 17 10 11 4 5' } },
+      { tag: 'line', attrs: { x1: 12, x2: 20, y1: 19, y2: 19 } },
+    ],
+  },
+  zap: {
+    motion: 'pulse',
+    shapes: [
+      p(
+        'M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z',
+      ),
+    ],
+  },
+};
+
+interface Props {
+  name: IconName;
+  size?: number;
+  /** Accessible name; omit for decorative icons. */
+  label?: string;
+  /** Draw the strokes in as the icon scrolls into view. */
+  draw?: boolean;
+  class?: string;
+}
+
+const { name, size = 24, label, draw = true, class: className } = Astro.props;
+const icon = icons[name];
+---
+
+<svg
+  class:list={[
+    'fx-icon',
+    `fx-icon--${icon.motion}`,
+    { 'fx-icon--draw': draw },
+    className,
+  ]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+>
+  {icon.shapes.map(({ tag: Tag, attrs }) => <Tag {...attrs} pathLength="1" />)}
+</svg>

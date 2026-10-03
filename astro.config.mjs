@@ -20,6 +20,13 @@ export default defineConfig({
   markdown: {
     processor: satteri({ hastPlugins: [taskListLabels()] }),
   },
+  vite: {
+    optimizeDeps: {
+      // Pre-bundle client-only deps at dev-server start; discovering them on
+      // first use makes Vite re-optimize and reload every open page.
+      include: ['react-smart-copy/core'],
+    },
+  },
   integrations: [
     sitemap({
       i18n: {

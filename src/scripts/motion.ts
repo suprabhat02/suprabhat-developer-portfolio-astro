@@ -183,10 +183,15 @@ function initScrollState(): Cleanup {
       behavior: media.reducedMotion.matches ? 'auto' : 'smooth',
     });
 
-  sync();
+  // The markup already matches the top-of-page state, so reading scrollY at
+  // boot would only force a layout. Sync once layout has settled instead (to
+  // catch restored scroll positions), then on every scroll.
+  if (document.readyState === 'complete') sync();
+  else window.addEventListener('load', sync, { once: true });
   window.addEventListener('scroll', sync, { passive: true });
   backToTop?.addEventListener('click', onTopClick);
   return () => {
+    window.removeEventListener('load', sync);
     window.removeEventListener('scroll', sync);
     backToTop?.removeEventListener('click', onTopClick);
   };

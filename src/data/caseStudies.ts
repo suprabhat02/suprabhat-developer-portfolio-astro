@@ -3,6 +3,7 @@ import {
   additionalCaseStudies,
   additionalCaseStudyProof,
 } from './additionalCaseStudies';
+import { reactSmartCopyCaseStudy, reactSmartCopyProof } from './openSource';
 
 export interface CaseStudySection {
   id: string;
@@ -24,6 +25,19 @@ export interface CaseStudyProof {
   items: readonly string[];
 }
 
+export interface CaseStudyLink {
+  label: string;
+  href: string;
+}
+
+/** Public project resources, present only for open-source work. */
+export interface CaseStudyProject {
+  install: string;
+  installLabel: string;
+  linksLabel: string;
+  links: readonly CaseStudyLink[];
+}
+
 export interface CaseStudy {
   slug: string;
   title: string;
@@ -39,6 +53,7 @@ export interface CaseStudy {
   outcomes: readonly string[];
   nextSteps: readonly string[];
   relatedServices: readonly string[];
+  project?: CaseStudyProject;
 }
 
 type CaseStudyBase = Omit<CaseStudy, 'proof'>;
@@ -1429,7 +1444,9 @@ const withProof = (caseStudy: CaseStudyBase, locale: Locale): CaseStudy => ({
   proof:
     caseStudyProof[locale][caseStudy.slug] ??
     additionalCaseStudyProof[locale][caseStudy.slug] ??
-    [],
+    (caseStudy.slug === reactSmartCopyCaseStudy[locale].slug
+      ? reactSmartCopyProof[locale]
+      : []),
 });
 
 export const caseStudies: readonly CaseStudy[] = [
@@ -1437,6 +1454,7 @@ export const caseStudies: readonly CaseStudy[] = [
   withProof(designSystemUplift.en, 'en'),
   withProof(performanceModernization.en, 'en'),
   ...additionalCaseStudies.en.map((caseStudy) => withProof(caseStudy, 'en')),
+  withProof(reactSmartCopyCaseStudy.en, 'en'),
 ] as const;
 
 const localizedCaseStudies: Record<Locale, readonly CaseStudy[]> = {
@@ -1445,18 +1463,21 @@ const localizedCaseStudies: Record<Locale, readonly CaseStudy[]> = {
     withProof(designSystemUplift.en, 'en'),
     withProof(performanceModernization.en, 'en'),
     ...additionalCaseStudies.en.map((caseStudy) => withProof(caseStudy, 'en')),
+    withProof(reactSmartCopyCaseStudy.en, 'en'),
   ],
   es: [
     withProof(analyticsCommandCenter.es, 'es'),
     withProof(designSystemUplift.es, 'es'),
     withProof(performanceModernization.es, 'es'),
     ...additionalCaseStudies.es.map((caseStudy) => withProof(caseStudy, 'es')),
+    withProof(reactSmartCopyCaseStudy.es, 'es'),
   ],
   ar: [
     withProof(analyticsCommandCenter.ar, 'ar'),
     withProof(designSystemUplift.ar, 'ar'),
     withProof(performanceModernization.ar, 'ar'),
     ...additionalCaseStudies.ar.map((caseStudy) => withProof(caseStudy, 'ar')),
+    withProof(reactSmartCopyCaseStudy.ar, 'ar'),
   ],
 };
 

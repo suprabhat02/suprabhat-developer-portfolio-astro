@@ -40,14 +40,19 @@ test('homepage renders correct structure and passes accessibility', async ({
   await expect(
     page.locator('.hero-case-card[href="/work/performance-modernization/"]'),
   ).toBeVisible();
+  // Lazy by design (below the fold on phones); it must load once in view.
+  await expect(page.locator('.hero-portrait-wrap img')).toHaveAttribute(
+    'loading',
+    'lazy',
+  );
+  await page.locator('.hero-portrait-wrap').scrollIntoViewIfNeeded();
+  // The dev server transcodes the AVIF on first request, so allow for it.
   await expect(page.locator('.hero-portrait-wrap img')).toHaveJSProperty(
     'complete',
     true,
+    { timeout: 20_000 },
   );
-  await expect(page.locator('.hero-portrait-wrap img')).toHaveAttribute(
-    'fetchpriority',
-    'high',
-  );
+  await page.evaluate(() => window.scrollTo(0, 0));
   await expect(page.locator('.hero-portrait-wrap img')).toHaveAttribute(
     'srcset',
     /880w/,
@@ -62,6 +67,14 @@ test('homepage renders correct structure and passes accessibility', async ({
   await expect(page.locator('link[rel="preload"][as="image"]')).toHaveAttribute(
     'type',
     'image/avif',
+  );
+  await expect(page.locator('link[rel="preload"][as="image"]')).toHaveAttribute(
+    'media',
+    '(min-width: 1041px)',
+  );
+  await expect(page.locator('link[rel="preload"][as="image"]')).toHaveAttribute(
+    'fetchpriority',
+    'high',
   );
   await expect(page.locator('.site-nav a[aria-current="page"]')).toHaveCount(1);
   await expect(page.locator('.site-nav a[href="#home"]')).toHaveAttribute(
@@ -345,6 +358,8 @@ test('resume download and contact draft persistence work', async ({ page }) => {
 test('shared shell styling and controls stay consistent across locales', async ({
   page,
 }) => {
+  // Walks a dozen pages and three locale switches; give it a long-journey budget.
+  test.slow();
   await page.setViewportSize({ width: 1280, height: 900 });
 
   const readShellStyles = async (path: string) => {
@@ -409,7 +424,7 @@ test('shared shell styling and controls stay consistent across locales', async (
   const languageButton = page.locator('#lang-dd-btn');
   await expect(languageButton).toHaveAttribute(
     'aria-label',
-    'Change language, current language: English',
+    'EN: Change language, current language: English',
   );
   await expect(page.locator('.theme-toggle')).toHaveAttribute(
     'aria-label',
@@ -432,11 +447,12 @@ test('shared shell styling and controls stay consistent across locales', async (
 
   await page.locator('#lang-dd .hdr-menu a[lang="es"]').click();
   await expect(page).toHaveURL('/es/about/');
+  await page.waitForLoadState('load');
   await expect(page.locator('html')).toHaveAttribute('lang', 'es');
   await expect(page.locator('#lang-label')).toHaveText('ES');
   await expect(page.locator('#lang-dd-btn')).toHaveAttribute(
     'aria-label',
-    'Cambiar idioma, idioma actual: Español',
+    'ES: Cambiar idioma, idioma actual: Español',
   );
   await expect(page.locator('#lang-dd .hdr-menu a[lang="ar"]')).toHaveAttribute(
     'aria-label',
@@ -454,12 +470,13 @@ test('shared shell styling and controls stay consistent across locales', async (
   await page.locator('#lang-dd-btn').click();
   await page.locator('#lang-dd .hdr-menu a[lang="ar"]').click();
   await expect(page).toHaveURL('/ar/about/');
+  await page.waitForLoadState('load');
   await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
   await expect(page.locator('#lang-label')).toHaveText('AR');
   await expect(page.locator('#lang-dd-btn')).toHaveAttribute(
     'aria-label',
-    'تغيير اللغة، اللغة الحالية: العربية',
+    'AR: تغيير اللغة، اللغة الحالية: العربية',
   );
   await expect(page.locator('#lang-dd .hdr-menu a[lang="en"]')).toHaveAttribute(
     'aria-label',
@@ -473,6 +490,7 @@ test('shared shell styling and controls stay consistent across locales', async (
   await page.locator('#lang-dd-btn').click();
   await page.locator('#lang-dd .hdr-menu a[lang="en"]').click();
   await expect(page).toHaveURL('/about/');
+  await page.waitForLoadState('load');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
   await expect(page.locator('#lang-label')).toHaveText('EN');
@@ -508,6 +526,7 @@ test('case studies expose localized proof and outcomes', async ({ page }) => {
     'portfolio-seo-i18n-system',
     'accessible-contact-workflow',
     'frontend-quality-system',
+    'react-smart-copy',
   ];
   const localeChecks = [
     {
@@ -870,5 +889,67 @@ test('motion layer is progressive, accessible, and honors reduced motion', async
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
     const results = await new AxeBuilder({ page }).analyze();
     expect(results.violations, path).toEqual([]);
+  }
+});
+
+test('open-source spotlight links react-smart-copy and copies the install command', async ({
+  page,
+  context,
+}) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  for (const prefix of ['', '/es', '/ar']) {
+    await page.goto(`${prefix}/work/`);
+    const card = page.locator('.oss-card');
+    await expect(card).toBeVisible();
+    for (const href of [
+      'https://suprabhat02.github.io/react-smart-copy/',
+      'https://github.com/suprabhat02/react-smart-copy',
+      'https://www.npmjs.com/package/react-smart-copy',
+    ]) {
+      const link = card.locator(`a[href="${href}"]`);
+      await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    }
+    await expect(
+      card.locator(`a[href="${prefix}/work/react-smart-copy/"]`),
+    ).toBeVisible();
+  }
+
+  await page.goto('/work/');
+  const button = page.locator('.oss-card .copy-btn');
+  await expect(button).toBeVisible();
+  await button.click();
+  await expect(button).toHaveAttribute('data-state', 'copied');
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    'npm install react-smart-copy',
+  );
+  await expect(button).toHaveAttribute('data-state', 'idle', {
+    timeout: 4000,
+  });
+
+  await page.goto('/work/react-smart-copy/');
+  const structuredData = (
+    await page.locator('script[type="application/ld+json"]').allTextContents()
+  ).join('');
+  expect(structuredData).toContain('SoftwareSourceCode');
+});
+
+test('experience timeline keeps semantic order and heading hierarchy', async ({
+  page,
+}) => {
+  for (const prefix of ['', '/ar']) {
+    await page.goto(`${prefix}/experience/`);
+    const items = page.locator('.xp-list > .xp-item');
+    expect(await items.count()).toBeGreaterThan(1);
+    await expect(page.locator('main h1')).toHaveCount(1);
+    await expect(page.locator('.xp-card h2').first()).toBeVisible();
+    const titleSize = await page
+      .locator('.xp-card .xp-title')
+      .first()
+      .evaluate((element) => parseFloat(getComputedStyle(element).fontSize));
+    expect(titleSize).toBeLessThanOrEqual(24);
+    await expect(page.locator('.xp-item time').first()).toHaveAttribute(
+      'datetime',
+      /^\d{4}-\d{2}$/,
+    );
   }
 });

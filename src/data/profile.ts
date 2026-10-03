@@ -64,6 +64,11 @@ export const profile: Profile = {
       external: true,
     },
     { label: 'GitHub', href: 'https://github.com/suprabhat02', external: true },
+    {
+      label: 'npm',
+      href: 'https://www.npmjs.com/~suprabhat02',
+      external: true,
+    },
   ],
 } as const;
 

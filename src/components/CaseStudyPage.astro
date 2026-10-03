@@ -2,6 +2,8 @@
 import type { CaseStudy } from '../data/caseStudies';
 import { localePrefix, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
+import CopyButton from './fx/CopyButton.astro';
+import Icon from './fx/Icon.astro';
 
 interface Props {
   caseStudy: CaseStudy;
@@ -37,6 +39,40 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
       <p>{caseStudy.confidentialityNote}</p>
     </aside>
 
+    {
+      caseStudy.project && (
+        <div class="case-study-project fx-glow" data-glow>
+          <div
+            class="case-study-install"
+            role="group"
+            aria-label={caseStudy.project.installLabel}
+          >
+            <code dir="ltr">
+              <span aria-hidden="true">$ </span>
+              {caseStudy.project.install}
+            </code>
+            <CopyButton
+              value={caseStudy.project.install}
+              label={label('copy.installLabel', 'install command')}
+              {locale}
+            />
+          </div>
+          <nav aria-label={caseStudy.project.linksLabel}>
+            <ul class="case-study-project-links">
+              {caseStudy.project.links.map((link) => (
+                <li>
+                  <a href={link.href} target="_blank" rel="noopener noreferrer">
+                    {link.label}
+                    <Icon name="arrow-up-right" size={14} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      )
+    }
+
     <section class="case-study-proof" aria-labelledby="case-study-proof-title">
       <h2 id="case-study-proof-title">
         {label('caseStudy.projectProof', 'Project proof')}
@@ -45,7 +81,7 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
         {
           caseStudy.proof.map((panel) => (
             <section
-              class="case-study-proof-card fx-glow fx-reveal"
+              class="case-study-proof-card fx-glow fx-card-gradient fx-reveal"
               aria-labelledby={`case-study-proof-${panel.id}`}
               data-glow
             >
@@ -207,7 +243,7 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
   .case-study-note {
     max-width: 74ch;
     padding: 1rem 1.15rem;
-    border-color: rgba(240, 126, 28, 0.32);
+    border-color: var(--accent-border);
     background:
       linear-gradient(
         90deg,
@@ -231,6 +267,53 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
     color: var(--muted);
     font-size: 0.95rem;
     line-height: 1.7;
+  }
+
+  .case-study-project {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.15rem;
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-card);
+    background: var(--surface-strong);
+  }
+
+  .case-study-install {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+
+  .case-study-install code {
+    padding: 0.45rem 0.75rem;
+    border-radius: var(--radius-control);
+    background: var(--bg-deep);
+    color: var(--text);
+    font-size: 0.9rem;
+    overflow-wrap: anywhere;
+  }
+
+  .case-study-project-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .case-study-project-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--accent-ink);
+    font-weight: 700;
+    text-underline-offset: 0.25em;
   }
 
   .case-study-proof {

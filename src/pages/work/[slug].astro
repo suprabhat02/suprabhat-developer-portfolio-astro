@@ -2,6 +2,7 @@
 import CaseStudyPage from '../../components/CaseStudyPage.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCaseStudies, type CaseStudy } from '../../data/caseStudies';
+import { getReactSmartCopySchema } from '../../data/openSource';
 import { DEFAULT_OG_IMAGE, SITE_URL } from '../../config/site';
 import { localeMeta } from '../../i18n/config';
 
@@ -104,6 +105,9 @@ const schema = [
       name: service,
     })),
   },
+  ...(caseStudy.project
+    ? [getReactSmartCopySchema(SITE_URL, localeMeta[locale].htmlLang, 'en')]
+    : []),
 ];
 ---
 

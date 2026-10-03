@@ -2,6 +2,8 @@ import type { Locale } from '../i18n/config';
 
 export interface WorkItem {
   id: string;
+  /** Open-source work is featured separately on the homepage. */
+  kind?: 'client' | 'open-source';
   title: string;
   summary: string;
   tags: readonly string[];
@@ -15,6 +17,14 @@ export const internalWorkNotice =
   'Internal work — described without client names, screenshots, or confidential detail.';
 
 export const work: readonly WorkItem[] = [
+  {
+    id: 'react-smart-copy',
+    kind: 'open-source',
+    title: 'react-smart-copy',
+    summary:
+      'Authored and maintain an open-source React library for accessible, type-safe clipboard interactions with honest error states and zero runtime dependencies.',
+    tags: ['Open source', 'React', 'TypeScript', 'Accessibility'],
+  },
   {
     id: 'analytics-command-center',
     title: 'Analytics command center',
@@ -67,6 +77,14 @@ const localizedInternalWorkNotice: Partial<Record<Locale, string>> = {
 const localizedWork: Partial<Record<Locale, readonly WorkItem[]>> = {
   es: [
     {
+      id: 'react-smart-copy',
+      kind: 'open-source',
+      title: 'react-smart-copy',
+      summary:
+        'Creé y mantengo una biblioteca de React de código abierto para interacciones de portapapeles accesibles y tipadas, con estados de error honestos y sin dependencias.',
+      tags: ['Código abierto', 'React', 'TypeScript', 'Accesibilidad'],
+    },
+    {
       id: 'analytics-command-center',
       title: 'Centro de control analítico',
       summary:
@@ -110,6 +128,14 @@ const localizedWork: Partial<Record<Locale, readonly WorkItem[]>> = {
     },
   ],
   ar: [
+    {
+      id: 'react-smart-copy',
+      kind: 'open-source',
+      title: 'react-smart-copy',
+      summary:
+        'ألّفت وأصون مكتبة React مفتوحة المصدر لتفاعلات حافظة متاحة وآمنة الأنواع، مع حالات خطأ صادقة ودون اعتماديات وقت تشغيل.',
+      tags: ['مفتوح المصدر', 'React', 'TypeScript', 'إمكانية الوصول'],
+    },
     {
       id: 'analytics-command-center',
       title: 'مركز تحكم للتحليلات',

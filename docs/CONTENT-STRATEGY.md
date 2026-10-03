@@ -74,6 +74,18 @@ Audience keys:
 
 **[SEO/AI NOTE]** Connects Suprabhat Kumar to employers, Noida Extension, global team regions, frontend specialties, and current availability.
 
+## Problems I solve (expanded)
+
+**[ORIGINAL]** Six problem cards with a title and a one-line description.
+
+**[REWRITTEN]** Each card keeps its one-line description and adds three observable signals a buyer recognises in their own product, plus a concrete outcome stated without metrics. The copy is published in English, Spanish, and Arabic, mirrored in `llms.txt`, and exposed as an `ItemList` in the homepage JSON-LD.
+
+**[WHY]** Buyers qualify themselves faster when they can match symptoms to a service, and the signals use the vocabulary people search with (LCP, INP, prop drilling, WCAG 2.2 AA, design tokens).
+
+**[AUDIENCE]** A, B, C, E
+
+**[SEO/AI NOTE]** Adds problem-to-outcome entity pairs for React modernization, Core Web Vitals, dashboards, accessibility, design systems, and architecture reviews.
+
 ## Engineering principles
 
 **[ORIGINAL]** I ship with performance budgets, Core Web Vitals targets, and Lighthouse 100 as a baseline — not an afterthought.

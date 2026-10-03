@@ -1,0 +1,162 @@
+/*
+ * Design tokens — the single source of every color on the site.
+ *
+ * Change the look by editing the seed values below, in this file or live in
+ * DevTools (Elements → :root → Styles). Every role, tint, gradient, glow and
+ * border is derived from the seeds in OKLCH, whose lightness channel is fixed
+ * per role, so any hue keeps the same text contrast:
+ *
+ *   :root { --seed-primary-h: 160; }   → emerald brand
+ *   :root { --seed-primary-h: 25; }    → orange brand
+ *   :root { --seed-chroma: 0.12; }     → calmer, less saturated
+ *
+ * Roles (use these in components, never raw colors):
+ *   --bg, --bg-2, --bg-3, --bg-deep        page grounds, darkest to lightest
+ *   --bg-card, --surface, --surface-strong card and panel fills
+ *   --text, --text-2, --text-3             body, secondary, tertiary text
+ *   --accent (+ -strong/-vivid/-dim/-ink)   brand color and its text-safe ink
+ *   --accent-2                              secondary brand color
+ *   --on-accent                             text placed on an accent fill
+ *   --success, --warning, --danger          semantic states
+ * See docs/THEMING.md.
+ */
+
+:root {
+  /* ── Seeds ───────────────────────────────────────────────────────── */
+  --seed-primary-h: 292; /* electric violet */
+  --seed-secondary-h: 200; /* cyan */
+  --seed-neutral-h: 268; /* hue bias of the neutrals (midnight indigo) */
+  --seed-chroma: 0.2; /* brand saturation, 0–0.3 */
+  --seed-success-h: 155;
+  --seed-warning-h: 75;
+  --seed-danger-h: 25;
+
+  /* ── Roles: dark (default) ───────────────────────────────────────── */
+  --bg: oklch(0.15 0.035 var(--seed-neutral-h));
+  --bg-2: oklch(0.18 0.04 var(--seed-neutral-h));
+  --bg-3: oklch(0.23 0.045 var(--seed-neutral-h));
+  --bg-deep: oklch(0.12 0.03 var(--seed-neutral-h));
+  --bg-card: oklch(0.2 0.04 var(--seed-neutral-h));
+  --bg-card-hover: oklch(0.23 0.045 var(--seed-neutral-h));
+  --surface: oklch(0.18 0.037 var(--seed-neutral-h));
+  --surface-strong: oklch(0.22 0.042 var(--seed-neutral-h));
+  --text: oklch(0.97 0.012 var(--seed-neutral-h));
+  --text-2: oklch(0.82 0.035 var(--seed-neutral-h));
+  --text-3: oklch(0.71 0.04 var(--seed-neutral-h));
+  --accent: oklch(0.72 var(--seed-chroma) var(--seed-primary-h));
+  --accent-strong: oklch(
+    0.81 calc(var(--seed-chroma) * 0.7) var(--seed-primary-h)
+  );
+  --accent-vivid: oklch(0.78 var(--seed-chroma) var(--seed-primary-h));
+  --accent-dim: oklch(0.62 var(--seed-chroma) var(--seed-primary-h));
+  --accent-2: oklch(
+    0.82 calc(var(--seed-chroma) * 0.65) var(--seed-secondary-h)
+  );
+  --on-accent: oklch(0.14 0.03 var(--seed-neutral-h));
+  --success: oklch(0.78 0.16 var(--seed-success-h));
+  --warning: oklch(0.82 0.15 var(--seed-warning-h));
+  --danger: oklch(0.7 0.18 var(--seed-danger-h));
+
+  /* Alpha tints and structural colors, derived from the roles above. */
+  --accent-glow: color-mix(in oklch, var(--accent) 24%, transparent);
+  --accent-soft: color-mix(in oklch, var(--accent) 14%, transparent);
+  --accent-subtle: color-mix(in oklch, var(--accent) 9%, transparent);
+  --accent-border: color-mix(in oklch, var(--accent) 30%, transparent);
+  --accent-ink: var(--accent-strong);
+  --muted: var(--text-2);
+  --divider: color-mix(in oklch, var(--text) 8%, transparent);
+  --border: color-mix(in oklch, var(--text) 7%, transparent);
+  --line: var(--divider);
+  --gradient-brand: linear-gradient(
+    120deg,
+    var(--accent) 0%,
+    var(--accent-2) 100%
+  );
+  --shadow: 0 24px 70px oklch(0 0 0 / 0.4);
+  --shadow-sm: 0 2px 12px oklch(0 0 0 / 0.35);
+  --shadow-card: 0 1px 1px oklch(0 0 0 / 0.2), 0 4px 24px oklch(0 0 0 / 0.3);
+  --header-fill: color-mix(in oklch, var(--bg) 80%, transparent);
+  color-scheme: dark;
+}
+
+[data-theme='light'] {
+  --bg: oklch(0.985 0.006 var(--seed-neutral-h));
+  --bg-2: oklch(0.965 0.012 var(--seed-neutral-h));
+  --bg-3: oklch(0.93 0.018 var(--seed-neutral-h));
+  --bg-deep: oklch(0.93 0.02 var(--seed-neutral-h));
+  --bg-card: oklch(1 0 var(--seed-neutral-h));
+  --bg-card-hover: oklch(0.975 0.01 var(--seed-neutral-h));
+  --surface: oklch(1 0 var(--seed-neutral-h));
+  --surface-strong: oklch(0.965 0.012 var(--seed-neutral-h));
+  --text: oklch(0.22 0.04 var(--seed-neutral-h));
+  --text-2: oklch(0.4 0.045 var(--seed-neutral-h));
+  --text-3: oklch(0.5 0.045 var(--seed-neutral-h));
+  --accent: oklch(0.5 var(--seed-chroma) var(--seed-primary-h));
+  --accent-strong: oklch(0.45 var(--seed-chroma) var(--seed-primary-h));
+  --accent-vivid: oklch(0.44 var(--seed-chroma) var(--seed-primary-h));
+  --accent-dim: oklch(0.42 var(--seed-chroma) var(--seed-primary-h));
+  --accent-2: oklch(
+    0.48 calc(var(--seed-chroma) * 0.6) var(--seed-secondary-h)
+  );
+  --on-accent: oklch(1 0 var(--seed-neutral-h));
+  --success: oklch(0.48 0.13 var(--seed-success-h));
+  --warning: oklch(0.55 0.13 var(--seed-warning-h));
+  --danger: oklch(0.52 0.19 var(--seed-danger-h));
+
+  --shadow: 0 24px 70px oklch(0.3 0.05 var(--seed-neutral-h) / 0.12);
+  --shadow-sm: 0 2px 12px oklch(0.3 0.05 var(--seed-neutral-h) / 0.08);
+  --shadow-card:
+    0 1px 1px oklch(0.3 0.05 var(--seed-neutral-h) / 0.05),
+    0 4px 24px oklch(0.3 0.05 var(--seed-neutral-h) / 0.09);
+  --header-fill: color-mix(in oklch, var(--bg-card) 86%, transparent);
+  color-scheme: light;
+}
+
+/* Browsers without OKLCH get the default palette as static values. */
+@supports not (color: oklch(0 0 0)) {
+  :root {
+    --bg: #060a1a;
+    --bg-2: #0a1023;
+    --bg-3: #141c32;
+    --bg-deep: #030511;
+    --bg-card: #0e1528;
+    --bg-card-hover: #141c32;
+    --surface: #0b1122;
+    --surface-strong: #12192e;
+    --text: #f2f5fe;
+    --text-2: #bac4dc;
+    --text-3: #97a1bb;
+    --accent: #aa87ff;
+    --accent-strong: #c3afff;
+    --accent-vivid: #bc9aff;
+    --accent-dim: #8c67f2;
+    --accent-2: #34dde5;
+    --on-accent: #050815;
+    --success: #4ed589;
+    --warning: #fcb442;
+    --danger: #fa6863;
+  }
+
+  [data-theme='light'] {
+    --bg: #f8fafe;
+    --bg-2: #f0f3fc;
+    --bg-3: #e3e8f4;
+    --bg-deep: #e2e8f6;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f4f7fe;
+    --surface: #ffffff;
+    --surface-strong: #f0f3fc;
+    --text: #131a2d;
+    --text-2: #3d4760;
+    --text-3: #58637e;
+    --accent: #6b40c9;
+    --accent-strong: #5d2eb8;
+    --accent-vivid: #5b2bb4;
+    --accent-dim: #5623ae;
+    --accent-2: #007078;
+    --on-accent: #ffffff;
+    --success: #00723b;
+    --warning: #9d6400;
+    --danger: #be222a;
+  }
+}

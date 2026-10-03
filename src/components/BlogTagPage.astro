@@ -119,7 +119,7 @@ const schema = [
       <div class="article-list">
         {
           group.posts.map((post) => (
-            <article class="fx-glow fx-reveal" data-glow>
+            <article class="fx-glow fx-card-gradient fx-reveal" data-glow>
               <p class="meta">
                 <time datetime={post.data.pubDate.toISOString()}>
                   {post.data.pubDate.toLocaleDateString(dateLocale, {
