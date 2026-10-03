@@ -1,0 +1,29 @@
+---
+/**
+ * Aceternity "Flip Words" as a CSS slot machine. The visual column is
+ * decorative; the complete, translatable sentence is exposed once through
+ * `label` so screen readers and crawlers read stable text. Spans only:
+ * the component renders inside paragraphs, where lists are invalid.
+ */
+type FlipWordList = readonly [string, string, string, string];
+
+interface Props {
+  /** Exactly four words — the keyframes in motion.css cycle four slots. */
+  words: FlipWordList;
+  label: string;
+  class?: string;
+}
+
+const { words, label, class: className } = Astro.props;
+// The first word is repeated so the loop restarts without a visible jump.
+const slots = [...words, words[0]];
+---
+
+<span class:list={['fx-flip-wrap', className]}>
+  <span class="sr-only">{label}</span>
+  <span class="fx-flip" aria-hidden="true">
+    <span class="fx-flip-track">
+      {slots.map((word) => <span>{word}</span>)}
+    </span>
+  </span>
+</span>

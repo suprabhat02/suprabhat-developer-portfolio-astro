@@ -1,0 +1,29 @@
+---
+/**
+ * Aceternity "Meteors". Positions and timings are derived deterministically
+ * from the index so every build emits identical, cacheable markup.
+ */
+interface Props {
+  count?: number;
+}
+
+const { count = 14 } = Astro.props;
+const meteors = Array.from({ length: Math.max(0, count) }, (_, index) => {
+  const spread = (index * 37) % 100;
+  return {
+    x: `${spread}%`,
+    delay: `${((index * 1.7) % 8).toFixed(2)}s`,
+    duration: `${(6 + ((index * 3) % 7)).toFixed(0)}s`,
+  };
+});
+---
+
+<div class="fx-meteors" aria-hidden="true" data-motion-scope>
+  {
+    meteors.map((meteor) => (
+      <span
+        style={`--x:${meteor.x};--delay:${meteor.delay};--d:${meteor.duration}`}
+      />
+    ))
+  }
+</div>

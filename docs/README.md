@@ -1,6 +1,7 @@
 # Suprabhat Kumar — portfolio (Nocturne rebuild)
 
-Astro, static output, TypeScript strict. Dark-first Nocturne visual system.
+Astro, static output, TypeScript strict. Dark-first Nocturne visual system with
+a zero-dependency motion layer ported from Aceternity UI (see `docs/MOTION.md`).
 
 Production URL: `https://suprabhat-dev.com`
 
@@ -48,6 +49,9 @@ src/content/services.json        strict service collection (migration target)
 src/content/blog/            English articles
 src/content/blog-es/         Spanish articles
 src/content/blog-ar/         Arabic articles
+src/components/fx/           motion components (backdrop, flip words, meteors…)
+src/styles/motion.css        motion primitives and reduced-motion fallbacks
+src/scripts/motion.ts        pointer/scroll enhancements loaded by BaseLayout
 ```
 
 Editing `faqs.ts` updates both the visible FAQ and the FAQPage JSON-LD — they cannot drift.

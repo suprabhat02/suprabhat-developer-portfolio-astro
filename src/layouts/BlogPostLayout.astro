@@ -144,7 +144,7 @@ const alternateHref = (target: Locale) =>
           </h2>
           <div class="article-list article-list-compact">
             {relatedPosts.map((post) => (
-              <article>
+              <article class="fx-glow" data-glow>
                 <p class="meta">
                   <time datetime={post.pubDate.toISOString()}>
                     {post.pubDate.toLocaleDateString(dateLocale, {

@@ -1,0 +1,28 @@
+---
+/**
+ * Aceternity "Text Reveal": words brighten as they scroll into view.
+ * The text node content is unchanged for crawlers; each word is wrapped in
+ * a span that a CSS view timeline recolors between two AA-contrast colors.
+ */
+interface Props {
+  text: string;
+  tag?: 'p' | 'h2' | 'h3';
+  class?: string;
+  id?: string;
+}
+
+const { text, tag: Tag = 'p', class: className, id } = Astro.props;
+const words = text.split(/\s+/).filter(Boolean);
+const lastIndex = words.length - 1;
+---
+
+<Tag class:list={['fx-words', className]} id={id}>
+  {
+    words.map((word, index) => (
+      <>
+        <span>{word}</span>
+        {index === lastIndex ? '' : ' '}
+      </>
+    ))
+  }
+</Tag>

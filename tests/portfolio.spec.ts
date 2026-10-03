@@ -137,7 +137,15 @@ test('homepage renders correct structure and passes accessibility', async ({
     'approach',
     'blog',
   ]);
-  await expect(page.locator('.rec-card')).toHaveCount(3);
+  // The marquee repeats quotes as aria-hidden clones; only originals count.
+  await expect(
+    page.locator('#recommendations .recs-slot:not([data-clone]) .rec-card'),
+  ).toHaveCount(3);
+  await expect(
+    page.locator(
+      '#recommendations .recs-slot[data-clone]:not([aria-hidden="true"])',
+    ),
+  ).toHaveCount(0);
   await expect(page.locator('a[href="/recommendations/"]')).toBeVisible();
   const technologyIconUrls = await page
     .locator('#tools img')
@@ -758,6 +766,12 @@ test('production SEO signals and internal links are crawlable', async ({
 
   await page.goto('/blog/frontend-code-review-checklist/');
   await expect(page.locator('.article-related article')).toHaveCount(2);
+  // Markdown task-list checkboxes are named by their item text.
+  const taskCheckboxes = page.locator('.prose input[type="checkbox"]');
+  expect(await taskCheckboxes.count()).toBeGreaterThan(0);
+  for (const checkbox of await taskCheckboxes.all()) {
+    await expect(checkbox).toHaveAttribute('aria-label', /\S/);
+  }
   await expect(
     page.locator('a[rel="tag"][href="/blog/tags/accessibility/"]').first(),
   ).toBeVisible();
@@ -785,5 +799,76 @@ test('production SEO signals and internal links are crawlable', async ({
   for (const path of internalPaths) {
     const response = await page.request.get(path);
     expect(response.status(), `Expected ${path} to resolve`).toBeLessThan(400);
+  }
+});
+
+test('motion layer is progressive, accessible, and honors reduced motion', async ({
+  page,
+}) => {
+  await page.goto('/');
+
+  // Native effects only: no UI-framework runtime, islands, or hydration.
+  await expect(page.locator('astro-island')).toHaveCount(0);
+  const scriptSources = await page
+    .locator('script[src]')
+    .evaluateAll((scripts) =>
+      scripts.map((script) => (script as HTMLScriptElement).src),
+    );
+  for (const source of scriptSources) {
+    expect(source).not.toMatch(/react|preact|framer|motion\.dev|vue|svelte/i);
+  }
+
+  // Decorative duplicates never reach assistive technology.
+  const flipLabel = page.locator('.hero-flip .sr-only');
+  await expect(flipLabel).toHaveCount(1);
+  await expect(page.locator('.hero-flip .fx-flip')).toHaveAttribute(
+    'aria-hidden',
+    'true',
+  );
+  await expect(page.locator('.kw-marquee')).toHaveAttribute(
+    'aria-hidden',
+    'true',
+  );
+  for (const clone of await page
+    .locator('#recommendations [data-clone]')
+    .all()) {
+    await expect(clone).toHaveAttribute('aria-hidden', 'true');
+  }
+
+  // Reduced motion: animations stop and marquee clones are removed.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.reload();
+  const reduced = await page.evaluate(() => {
+    const track = document.querySelector('.recs-track');
+    const clone = document.querySelector('.recs-track > [data-clone]');
+    const spotlight = document.querySelector('.fx-spotlight');
+    return {
+      trackAnimation: track ? getComputedStyle(track).animationName : '',
+      cloneDisplay: clone ? getComputedStyle(clone).display : '',
+      spotlightAnimation: spotlight
+        ? getComputedStyle(spotlight).animationName
+        : '',
+    };
+  });
+  expect(reduced).toEqual({
+    trackAnimation: 'none',
+    cloneDisplay: 'none',
+    spotlightAnimation: 'none',
+  });
+  const reducedOverflow = await page.evaluate(
+    () =>
+      document.documentElement.scrollWidth >
+      document.documentElement.clientWidth,
+  );
+  expect(reducedOverflow).toBe(false);
+
+  // Light theme and RTL inner pages remain axe-clean with effects applied.
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.evaluate(() => localStorage.setItem('sk-theme', 'light'));
+  for (const path of ['/', '/ar/', '/work/performance-modernization/']) {
+    await page.goto(path);
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    const results = await new AxeBuilder({ page }).analyze();
+    expect(results.violations, path).toEqual([]);
   }
 });

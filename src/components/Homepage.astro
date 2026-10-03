@@ -15,6 +15,11 @@ import { localePrefix, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
 import HomepageConversion from './HomepageConversion.astro';
 import ContactForm from './ContactForm.astro';
+import Backdrop from './fx/Backdrop.astro';
+import FlipWords from './fx/FlipWords.astro';
+import Meteors from './fx/Meteors.astro';
+import SectionHeader from './fx/SectionHeader.astro';
+import TextReveal from './fx/TextReveal.astro';
 import { getHomepageConversionContent } from '../data/homepageConversion';
 import {
   heroPortraitQuality,
@@ -46,6 +51,33 @@ const heroStack = [
   'FastAPI',
   'PostgreSQL',
 ] as const;
+
+type FlipWordList = readonly [string, string, string, string];
+const problemTitles = conversion.problems.items.map((item) => item.title);
+const flipWords: FlipWordList | null =
+  problemTitles.length >= 4
+    ? [problemTitles[0], problemTitles[1], problemTitles[2], problemTitles[3]]
+    : null;
+const flipLabel = `${conversion.problems.eyebrow}: ${problemTitles.join(', ')}.`;
+
+/** Decorative keyword strip; the same terms are crawlable in #skills. */
+const marqueeKeywords = [
+  'React',
+  'Next.js',
+  'TypeScript',
+  'Redux Toolkit',
+  'TanStack Query',
+  'GraphQL',
+  'FastAPI',
+  'PostgreSQL',
+  'Design systems',
+  'Storybook',
+  'WCAG 2.2 AA',
+  'Core Web Vitals',
+  'Playwright',
+  'Astro',
+] as const;
+
 const skillColumns = [
   {
     heading: t(locale, 'skills.frontendCore', 'Frontend Core'),
@@ -98,9 +130,20 @@ const recruiterHighlights = [
     ),
   },
 ] as const;
-const heroProofCards = [
+
+interface HeroProofCard {
+  variant: 'work' | 'stack' | 'availability';
+  eyebrow: string;
+  title: string;
+  body: string;
+  href: string;
+  cta: string;
+  tags?: readonly string[];
+}
+
+const heroProofCards: readonly HeroProofCard[] = [
   {
-    className: 'hero-proof-card hero-case-card hero-proof-card--work',
+    variant: 'work',
     eyebrow: t(locale, 'home.heroWorkEyebrow', 'Selected work'),
     title: featuredCaseStudy.title,
     body: t(
@@ -113,7 +156,7 @@ const heroProofCards = [
     tags: featuredCaseStudy.tags.slice(0, 3),
   },
   {
-    className: 'hero-proof-card hero-proof-card--stack',
+    variant: 'stack',
     eyebrow: t(locale, 'home.heroStackEyebrow', 'Core stack'),
     title: t(locale, 'home.heroStackTitle', 'React + TypeScript systems'),
     body: t(
@@ -125,7 +168,7 @@ const heroProofCards = [
     cta: t(locale, 'home.heroStackCta', 'Explore expertise'),
   },
   {
-    className: 'hero-proof-card hero-proof-card--availability avail-card',
+    variant: 'availability',
     eyebrow: t(locale, 'home.availability', 'Availability'),
     title: t(
       locale,
@@ -141,6 +184,24 @@ const heroProofCards = [
     cta: t(locale, 'action.contact', 'Get in touch'),
   },
 ] as const;
+const heroProofClass: Record<HeroProofCard['variant'], string> = {
+  work: 'hero-case-card hero-proof-card--work',
+  stack: 'hero-proof-card--stack',
+  availability: 'hero-proof-card--availability avail-card',
+};
+
+const stats = [
+  { value: '6+', label: t(locale, 'home.statYears', 'Years experience') },
+  { value: '5', label: t(locale, 'home.statCompanies', 'Companies worked at') },
+  {
+    value: '2',
+    label: t(locale, 'home.statCapabilities', 'Full-stack capabilities'),
+  },
+  {
+    value: 'India',
+    label: t(locale, 'home.statRemote', 'Remote collaboration'),
+  },
+] as const;
 
 const posts = await getBlogPosts(locale);
 const articleIllustrations = [
@@ -153,6 +214,118 @@ const featured = recommendations.filter((r) =>
     r.id as (typeof featuredRecommendationIds)[number],
   ),
 );
+// Each marquee set repeats the featured quotes so one set always spans the
+// viewport; every repetition after the originals is a decorative clone.
+const marqueeSetSize = Math.max(featured.length * 2, 6);
+const recommendationSlots = Array.from(
+  { length: featured.length ? marqueeSetSize * 2 : 0 },
+  (_, index) => ({
+    item: featured[index % featured.length],
+    clone: index >= featured.length,
+  }),
+);
+
+const traits = [
+  {
+    illustration: '/assets/illustrations/about-performance.svg',
+    title: t(locale, 'trait.performance.title', 'Performance-first'),
+    body: t(
+      locale,
+      'trait.performance.body',
+      'I use performance budgets, Core Web Vitals, and measured browser evidence throughout delivery.',
+    ),
+  },
+  {
+    illustration: '/assets/illustrations/about-accessibility.svg',
+    title: t(locale, 'trait.accessibility.title', 'Accessibility by default'),
+    body: t(
+      locale,
+      'trait.accessibility.body',
+      'Semantic HTML, keyboard navigation, visible focus, and manual assistive-technology review guide implementation.',
+    ),
+  },
+  {
+    illustration: '/assets/illustrations/about-architecture.svg',
+    title: t(locale, 'trait.architecture.title', 'Scalable architecture'),
+    body: t(
+      locale,
+      'trait.architecture.body',
+      'Reusable component libraries, design tokens, and predictable state management that teams can own long-term.',
+    ),
+  },
+  {
+    illustration: '/assets/illustrations/about-fullstack.svg',
+    title: t(locale, 'trait.fullstack.title', 'Full-stack capable'),
+    body: t(
+      locale,
+      'trait.fullstack.body',
+      'FastAPI and PostgreSQL support full-stack delivery when a frontend feature needs a focused API or data layer.',
+    ),
+  },
+] as const;
+
+const expertiseCards = [
+  {
+    illustration: '/assets/illustrations/expertise-frontend.svg',
+    icon: 'frontend',
+    title: t(locale, 'expertise.frontend.title', 'Frontend Engineering'),
+    body: t(
+      locale,
+      'expertise.frontend.body',
+      'Build SaaS portals and data-heavy dashboards with clear state ownership, resilient data states, accessible interactions, and measured rendering performance.',
+    ),
+    tags: [
+      'React',
+      'Next.js',
+      'TypeScript',
+      'Redux Toolkit',
+      'RTK Query',
+      'TanStack Query',
+      'Tailwind CSS',
+      'Ant Design',
+      'Chakra UI',
+      'Core Web Vitals',
+    ],
+  },
+  {
+    illustration: '/assets/illustrations/expertise-backend.svg',
+    icon: 'backend',
+    title: t(locale, 'expertise.backend.title', 'Back-End & API Integration'),
+    body: t(
+      locale,
+      'expertise.backend.body',
+      'Integrate REST and GraphQL data flows, or build focused FastAPI and PostgreSQL features when the product needs end-to-end delivery.',
+    ),
+    tags: [
+      'FastAPI',
+      'PostgreSQL',
+      'REST APIs',
+      'Authentication flows',
+      'Data pipelines',
+      'GraphQL',
+      'Node.js',
+    ],
+  },
+  {
+    illustration: '/assets/illustrations/expertise-design-systems.svg',
+    icon: 'design',
+    title: t(locale, 'expertise.design.title', 'Design Systems & Performance'),
+    body: t(
+      locale,
+      'expertise.design.body',
+      'Create component libraries, design tokens, Storybook documentation, accessibility defaults, and adoption patterns teams can extend.',
+    ),
+    tags: [
+      'Design systems',
+      'Storybook',
+      'WCAG 2.2 AA',
+      'Performance budgets',
+      'Figma',
+      'Azure',
+      'Git',
+    ],
+  },
+] as const;
 
 // Converts "May 2025" → "2025-05" for <time datetime> semantic markup
 const M: Record<string, string> = {
@@ -174,7 +347,7 @@ const toISO = (s: string) => {
   return y && M[m] ? `${y}-${M[m]}` : '';
 };
 
-// Category labels shown above each tool chip in the marquee
+// Category labels shown above each tool chip
 const toolCategories: Record<string, string> = {
   HTML5: 'LANGUAGE',
   TypeScript: 'LANGUAGE',
@@ -201,16 +374,23 @@ const toolCategoryLabel = (toolName: string) => {
   const category = toolCategories[toolName] ?? 'TOOL';
   return t(locale, `tool.category.${category.toLowerCase()}`, category);
 };
+const faqIndex = featured.length > 0 ? '13' : '12';
+const contactIndex = featured.length > 0 ? '14' : '13';
 ---
 
 <div class="homepage-shell">
-  <!-- ── HERO BENTO ──────────────────────────────────── -->
-  <section id="home" class="hero" aria-labelledby="hero-name">
+  <!-- ── HERO ─────────────────────────────────────────────── -->
+  <section id="home" class="hero" aria-labelledby="hero-name" data-motion-scope>
+    <Backdrop pattern="grid" spotlight aurora />
     <div class="wrap">
       <div class="hero-grid">
         <div class="hero-content hero-card">
           <p class="hero-eyebrow">
-            <span>{conversion.hero.eyebrow}</span>
+            <span class="hero-status">
+              <span class="fx-ping" aria-hidden="true"></span>
+              {t(locale, 'home.availableNow', 'Available now')}
+            </span>
+            <span class="hero-eyebrow-text">{conversion.hero.eyebrow}</span>
             <img
               src="/assets/icons/india-flag-icon.svg"
               alt=""
@@ -228,12 +408,26 @@ const toolCategoryLabel = (toolName: string) => {
                 profile.name
               ) : (
                 <>
-                  Suprabhat <span>Kumar</span>
+                  Suprabhat <span class="fx-gradient-text">Kumar</span>
                 </>
               )
             }
           </h1>
           <p class="hero-sub">{conversion.hero.title}</p>
+          {
+            flipWords && (
+              <p class="hero-flip">
+                <span class="hero-flip-label" aria-hidden="true">
+                  {conversion.problems.eyebrow}
+                </span>
+                <FlipWords
+                  words={flipWords}
+                  label={flipLabel}
+                  class="hero-flip-words"
+                />
+              </p>
+            )
+          }
           <p class="hero-lead">{conversion.hero.lead}</p>
 
           <dl
@@ -262,12 +456,26 @@ const toolCategoryLabel = (toolName: string) => {
           </ul>
 
           <div class="hero-ctas">
-            <a href="#work" class="btn btn-primary"
-              >{conversion.hero.primaryCta}</a
-            >
-            <a href="#contact" class="btn btn-outline"
-              >{conversion.hero.secondaryCta}</a
-            >
+            <a href="#work" class="btn btn-primary">
+              {conversion.hero.primaryCta}
+              <svg
+                class="btn-arrow"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7"></path>
+              </svg>
+            </a>
+            <a href="#contact" class="btn btn-outline fx-moving-border">
+              {conversion.hero.secondaryCta}
+            </a>
             {
               linkedin && (
                 <a
@@ -284,23 +492,25 @@ const toolCategoryLabel = (toolName: string) => {
           <p class="hero-trust-line">{conversion.hero.trustLine}</p>
         </div>
 
-        <figure class="hero-portrait-wrap hero-card">
-          <Picture
-            src={portraitImage}
-            formats={['avif', 'webp']}
-            fallbackFormat="webp"
-            widths={heroPortraitWidths}
-            sizes={heroPortraitSizes}
-            width={800}
-            height={1067}
-            alt={profile.portrait.alt}
-            loading="eager"
-            fetchpriority="high"
-            decoding="async"
-            quality={heroPortraitQuality}
-            pictureAttributes={{ class: 'hero-picture' }}
-          />
-          <figcaption class="hero-portrait-cap">
+        <figure class="hero-portrait-wrap hero-card fx-tilt" data-tilt>
+          <div class="hero-portrait-frame fx-moving-border">
+            <Picture
+              src={portraitImage}
+              formats={['avif', 'webp']}
+              fallbackFormat="webp"
+              widths={heroPortraitWidths}
+              sizes={heroPortraitSizes}
+              width={800}
+              height={1067}
+              alt={profile.portrait.alt}
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              quality={heroPortraitQuality}
+              pictureAttributes={{ class: 'hero-picture' }}
+            />
+          </div>
+          <figcaption class="hero-portrait-cap fx-pop">
             {
               t(
                 locale,
@@ -309,6 +519,9 @@ const toolCategoryLabel = (toolName: string) => {
               )
             }
           </figcaption>
+          <span class="hero-orbit" aria-hidden="true">
+            <span></span>
+          </span>
         </figure>
 
         <div
@@ -317,11 +530,24 @@ const toolCategoryLabel = (toolName: string) => {
         >
           {
             heroProofCards.map((card) => (
-              <a class={card.className} href={card.href}>
-                <span class="hero-card-kicker">{card.eyebrow}</span>
+              <a
+                class:list={[
+                  'hero-proof-card',
+                  heroProofClass[card.variant],
+                  'fx-glow',
+                ]}
+                href={card.href}
+                data-glow
+              >
+                <span class="hero-card-kicker">
+                  {card.variant === 'availability' && (
+                    <span class="fx-ping" aria-hidden="true" />
+                  )}
+                  {card.eyebrow}
+                </span>
                 <strong>{card.title}</strong>
                 <span>{card.body}</span>
-                {'tags' in card && (
+                {card.tags && (
                   <span
                     class="hero-case-tags"
                     aria-label={t(
@@ -335,7 +561,9 @@ const toolCategoryLabel = (toolName: string) => {
                     ))}
                   </span>
                 )}
-                <span class="hero-card-link">{card.cta} →</span>
+                <span class="hero-card-link">
+                  {card.cta} <span aria-hidden="true">→</span>
+                </span>
               </a>
             ))
           }
@@ -344,100 +572,85 @@ const toolCategoryLabel = (toolName: string) => {
     </div>
   </section>
 
-  <!-- ── STATS BAND ────────────────────────────────── -->
-  <!-- Static, crawlable proof points; no runtime counter needed. -->
+  <!-- ── KEYWORD MARQUEE (decorative) ─────────────────────── -->
+  <div class="kw-marquee fx-marquee" aria-hidden="true" data-motion-scope>
+    <ul class="fx-marquee-track">
+      {
+        [...marqueeKeywords, ...marqueeKeywords].map((keyword, index) => (
+          <li data-clone={index >= marqueeKeywords.length ? '' : undefined}>
+            <span class="kw-dot" />
+            {keyword}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <!-- ── STATS BAND ───────────────────────────────────────── -->
   <aside
     class="stats-band"
     aria-label={t(locale, 'home.statAria', 'Career highlights')}
   >
     <div class="wrap">
       <div class="stats-grid">
-        <div class="stat-item reveal">
-          <span class="stat-num">6+</span>
-          <span class="stat-lbl">
-            {t(locale, 'home.statYears', 'Years experience')}
-          </span>
-        </div>
-        <div class="stat-item reveal d1">
-          <span class="stat-num">5</span>
-          <span class="stat-lbl">
-            {t(locale, 'home.statCompanies', 'Companies worked at')}
-          </span>
-        </div>
-        <div class="stat-item reveal d2">
-          <span class="stat-num">2</span>
-          <span class="stat-lbl">
-            {t(locale, 'home.statCapabilities', 'Full-stack capabilities')}
-          </span>
-        </div>
-        <div class="stat-item reveal d3">
-          <span class="stat-num">India</span>
-          <span class="stat-lbl">
-            {t(locale, 'home.statRemote', 'Remote collaboration')}
-          </span>
-        </div>
+        {
+          stats.map((stat) => (
+            <div class="stat-item fx-glow" data-glow>
+              <span class="stat-num">{stat.value}</span>
+              <span class="stat-lbl">{stat.label}</span>
+            </div>
+          ))
+        }
       </div>
     </div>
   </aside>
 
   <HomepageConversion {locale} {work} {pageHref} {caseStudySlugs} />
 
-  <!-- ── FEATURED ARTICLES ─────────────────────────── -->
-  <!--
-        Cards driven by the blog content collection — adding a post automatically
-        adds it here. tags[0] surfaces as the kicker label.
-        Section marked with article schema via the BlogPosting JSON-LD on each
-        article page; the index links feed crawler discovery.
-      -->
+  <!-- ── FEATURED ARTICLES (Focus cards) ──────────────────── -->
   <section
     id="blog"
-    class="section section-glow section-glow-tr"
+    class="section cv-auto section-glow section-glow-tr"
     aria-labelledby="blog-title"
   >
     <div class="wrap">
-      <div
-        class="section-head"
-        style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap"
+      <SectionHeader
+        index="06"
+        eyebrow={t(locale, 'nav.blog', 'Writing')}
+        title={t(locale, 'page.blog.title', 'Featured articles')}
+        titleId="blog-title"
+        lead={t(
+          locale,
+          'home.blogLead',
+          'Practical guides on performance, accessibility, and modern UI delivery.',
+        )}
+        class="section-head--split"
       >
-        <div class="reveal">
-          <span class="s-eyebrow">06 — {t(locale, 'nav.blog', 'Writing')}</span>
-          <h2 id="blog-title" class="s-title">
-            {t(locale, 'page.blog.title', 'Featured articles')}
-          </h2>
-          <p class="s-lead">
-            {
-              t(
-                locale,
-                'home.blogLead',
-                'Practical guides on performance, accessibility, and modern UI delivery.',
-              )
-            }
-          </p>
-        </div>
-        <a
-          href={pageHref('/blog/')}
-          class="btn btn-ghost reveal"
-          style="margin-bottom:14px"
-          >{t(locale, 'home.allArticles', 'All articles')} →</a
-        >
-      </div>
+        <a href={pageHref('/blog/')} class="btn btn-ghost section-head-cta">
+          {t(locale, 'home.allArticles', 'All articles')}
+          <span aria-hidden="true">→</span>
+        </a>
+      </SectionHeader>
 
-      <div class="articles-grid">
+      <div class="articles-grid fx-focus-group">
         {
           posts.slice(0, 3).map((post, i) => (
             <article
-              class={`article-card article-card--visual reveal${i > 0 ? ` d${i}` : ''}`}
+              class="article-card article-card--visual fx-focus-item fx-glow fx-reveal"
+              data-glow
             >
-              <img
-                class="card-illustration"
-                src={articleIllustrations[i]}
-                alt=""
-                aria-hidden="true"
-                width="512"
-                height="320"
-                loading="lazy"
-                decoding="async"
-              />
+              <div class="article-media">
+                <img
+                  class="card-illustration"
+                  src={articleIllustrations[i]}
+                  alt=""
+                  aria-hidden="true"
+                  width="512"
+                  height="320"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
               {post.data.tags[0] && (
                 <a
                   class="article-kicker"
@@ -476,140 +689,60 @@ const toolCategoryLabel = (toolName: string) => {
     </div>
   </section>
 
-  <!-- ── ABOUT ──────────────────────────────────────── -->
-  <!--
-        Statement and traits are editorial copy, not pulled from profile.ts —
-        they're more specific than the generic `lead` and `about` fields.
-        Trait cards use the same accent-line ::before decoration as expertise cards.
-      -->
-  <section id="about" class="section section-alt" aria-labelledby="about-title">
+  <!-- ── ABOUT (Text reveal) ──────────────────────────────── -->
+  <section
+    id="about"
+    class="section section-alt cv-auto"
+    aria-labelledby="about-title"
+  >
+    <Backdrop pattern="dots" />
     <div class="wrap">
-      <div class="section-head">
-        <span class="s-eyebrow reveal"
-          >07 — {t(locale, 'nav.about', 'About')}</span
-        >
-        <h2 id="about-title" class="s-title reveal">
-          {t(locale, 'home.about', 'About me')}
-        </h2>
-      </div>
+      <SectionHeader
+        index="07"
+        eyebrow={t(locale, 'nav.about', 'About')}
+        title={t(locale, 'home.about', 'About me')}
+        titleId="about-title"
+      />
 
-      <p class="about-statement reveal">
-        {
-          t(
-            locale,
-            'home.aboutStatement',
-            'Suprabhat Kumar, also known as Shubh, is a Senior Front-End Engineer with 6+ years building SaaS portals, enterprise dashboards, design systems, and accessible websites. Based in Noida Extension, with delivery experience across teams in Denmark, China, and Australia.',
-          )
-        }
-      </p>
+      <TextReveal
+        class="about-statement"
+        text={t(
+          locale,
+          'home.aboutStatement',
+          'Suprabhat Kumar, also known as Shubh, is a Senior Front-End Engineer with 6+ years building SaaS portals, enterprise dashboards, design systems, and accessible websites. Based in Noida Extension, with delivery experience across teams in Denmark, China, and Australia.',
+        )}
+      />
 
       <div class="about-traits">
-        <div class="trait-card trait-card--visual reveal">
-          <img
-            class="card-illustration"
-            src="/assets/illustrations/about-performance.svg"
-            alt=""
-            aria-hidden="true"
-            width="512"
-            height="320"
-            loading="lazy"
-            decoding="async"
-          />
-          <span class="trait-num">01</span>
-          <h3>
-            {t(locale, 'trait.performance.title', 'Performance-first')}
-          </h3>
-          <p>
-            {
-              t(
-                locale,
-                'trait.performance.body',
-                'I use performance budgets, Core Web Vitals, and measured browser evidence throughout delivery.',
-              )
-            }
-          </p>
-        </div>
-        <div class="trait-card trait-card--visual reveal d1">
-          <img
-            class="card-illustration"
-            src="/assets/illustrations/about-accessibility.svg"
-            alt=""
-            aria-hidden="true"
-            width="512"
-            height="320"
-            loading="lazy"
-            decoding="async"
-          />
-          <span class="trait-num">02</span>
-          <h3>
-            {t(locale, 'trait.accessibility.title', 'Accessibility by default')}
-          </h3>
-          <p>
-            {
-              t(
-                locale,
-                'trait.accessibility.body',
-                'Semantic HTML, keyboard navigation, visible focus, and manual assistive-technology review guide implementation.',
-              )
-            }
-          </p>
-        </div>
-        <div class="trait-card trait-card--visual reveal d2">
-          <img
-            class="card-illustration"
-            src="/assets/illustrations/about-architecture.svg"
-            alt=""
-            aria-hidden="true"
-            width="512"
-            height="320"
-            loading="lazy"
-            decoding="async"
-          />
-          <span class="trait-num">03</span>
-          <h3>
-            {t(locale, 'trait.architecture.title', 'Scalable architecture')}
-          </h3>
-          <p>
-            {
-              t(
-                locale,
-                'trait.architecture.body',
-                'Reusable component libraries, design tokens, and predictable state management that teams can own long-term.',
-              )
-            }
-          </p>
-        </div>
-        <div class="trait-card trait-card--visual reveal d3">
-          <img
-            class="card-illustration"
-            src="/assets/illustrations/about-fullstack.svg"
-            alt=""
-            aria-hidden="true"
-            width="512"
-            height="320"
-            loading="lazy"
-            decoding="async"
-          />
-          <span class="trait-num">04</span>
-          <h3>
-            {t(locale, 'trait.fullstack.title', 'Full-stack capable')}
-          </h3>
-          <p>
-            {
-              t(
-                locale,
-                'trait.fullstack.body',
-                'FastAPI and PostgreSQL support full-stack delivery when a frontend feature needs a focused API or data layer.',
-              )
-            }
-          </p>
-        </div>
+        {
+          traits.map((trait, index) => (
+            <div
+              class="trait-card trait-card--visual fx-glow fx-reveal"
+              data-glow
+            >
+              <img
+                class="card-illustration"
+                src={trait.illustration}
+                alt=""
+                aria-hidden="true"
+                width="512"
+                height="320"
+                loading="lazy"
+                decoding="async"
+              />
+              <span class="trait-num">0{index + 1}</span>
+              <h3>{trait.title}</h3>
+              <p>{trait.body}</p>
+            </div>
+          ))
+        }
       </div>
 
-      <p class="hero-ctas reveal">
-        <a href="#experience" class="btn btn-outline"
-          >{t(locale, 'home.experienceCta', 'Explore experience')} →</a
-        >
+      <p class="hero-ctas about-ctas">
+        <a href="#experience" class="btn btn-outline">
+          {t(locale, 'home.experienceCta', 'Explore experience')}
+          <span aria-hidden="true">→</span>
+        </a>
         <a
           href="/assets/suprabhat-kumar-senior-frontend-engineer-resume.pdf"
           class="btn btn-ghost"
@@ -621,219 +754,131 @@ const toolCategoryLabel = (toolName: string) => {
     </div>
   </section>
 
-  <!-- ── EXPERTISE ────────────────────────────────── -->
+  <!-- ── EXPERTISE (Glowing cards) ────────────────────────── -->
   <section
     id="expertise"
-    class="section section-glow section-glow-tl"
+    class="section cv-auto section-glow section-glow-tl"
     aria-labelledby="expertise-title"
   >
     <div class="wrap">
-      <div class="section-head reveal">
-        <span class="s-eyebrow">
-          08 — {t(locale, 'home.expertise', 'Expertise')}
-        </span>
-        <h2 id="expertise-title" class="s-title">
-          {t(locale, 'home.expertise', 'Core expertise')}
-        </h2>
-        <p class="s-lead">
-          {
-            t(
-              locale,
-              'home.expertiseLead',
-              'Senior frontend support where architecture, data, accessibility, and performance meet.',
-            )
-          }
-        </p>
-      </div>
+      <SectionHeader
+        index="08"
+        eyebrow={t(locale, 'home.expertise', 'Expertise')}
+        title={t(locale, 'home.expertise', 'Core expertise')}
+        titleId="expertise-title"
+        lead={t(
+          locale,
+          'home.expertiseLead',
+          'Senior frontend support where architecture, data, accessibility, and performance meet.',
+        )}
+      />
 
       <div class="expertise-grid">
-        <div class="expertise-card expertise-card--visual mo-reveal">
-          <img
-            class="card-illustration"
-            src="/assets/illustrations/expertise-frontend.svg"
-            alt=""
-            aria-hidden="true"
-            width="512"
-            height="320"
-            loading="lazy"
-            decoding="async"
-          />
-          <div class="expertise-icon" aria-hidden="true">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              ><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"
-              ></polygon><line x1="12" y1="22" x2="12" y2="15.5"
-              ></line><polyline points="22 8.5 12 15.5 2 8.5"></polyline></svg
+        {
+          expertiseCards.map((card) => (
+            <div
+              class="expertise-card expertise-card--visual fx-glow fx-tilt fx-reveal-scale"
+              data-glow
+              data-tilt
             >
-          </div>
-          <h3>
-            {t(locale, 'expertise.frontend.title', 'Frontend Engineering')}
-          </h3>
-          <p>
-            {
-              t(
-                locale,
-                'expertise.frontend.body',
-                'Build SaaS portals and data-heavy dashboards with clear state ownership, resilient data states, accessible interactions, and measured rendering performance.',
-              )
-            }
-          </p>
-          <div class="skill-tags">
-            <span class="skill-tag">React</span><span class="skill-tag"
-              >Next.js</span
-            ><span class="skill-tag">TypeScript</span><span class="skill-tag"
-              >Redux Toolkit</span
-            ><span class="skill-tag">RTK Query</span><span class="skill-tag"
-              >TanStack Query</span
-            ><span class="skill-tag">Tailwind CSS</span><span class="skill-tag"
-              >Ant Design</span
-            ><span class="skill-tag">Chakra UI</span><span class="skill-tag"
-              >Core Web Vitals</span
-            >
-          </div>
-        </div>
-
-        <div class="expertise-card expertise-card--visual mo-reveal">
-          <img
-            class="card-illustration"
-            src="/assets/illustrations/expertise-backend.svg"
-            alt=""
-            aria-hidden="true"
-            width="512"
-            height="320"
-            loading="lazy"
-            decoding="async"
-          />
-          <div class="expertise-icon" aria-hidden="true">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              ><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path
-                d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path
-                d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg
-            >
-          </div>
-          <h3>
-            {t(locale, 'expertise.backend.title', 'Back-End & API Integration')}
-          </h3>
-          <p>
-            {
-              t(
-                locale,
-                'expertise.backend.body',
-                'Integrate REST and GraphQL data flows, or build focused FastAPI and PostgreSQL features when the product needs end-to-end delivery.',
-              )
-            }
-          </p>
-          <div class="skill-tags">
-            <span class="skill-tag">FastAPI</span><span class="skill-tag"
-              >PostgreSQL</span
-            ><span class="skill-tag">REST APIs</span><span class="skill-tag"
-              >Authentication flows</span
-            ><span class="skill-tag">Data pipelines</span><span
-              class="skill-tag">GraphQL</span
-            ><span class="skill-tag">Node.js</span>
-          </div>
-        </div>
-
-        <div class="expertise-card expertise-card--visual mo-reveal">
-          <img
-            class="card-illustration"
-            src="/assets/illustrations/expertise-design-systems.svg"
-            alt=""
-            aria-hidden="true"
-            width="512"
-            height="320"
-            loading="lazy"
-            decoding="async"
-          />
-          <div class="expertise-icon" aria-hidden="true">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              ><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path
-                d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"
-              ></path></svg
-            >
-          </div>
-          <h3>
-            {
-              t(
-                locale,
-                'expertise.design.title',
-                'Design Systems & Performance',
-              )
-            }
-          </h3>
-          <p>
-            {
-              t(
-                locale,
-                'expertise.design.body',
-                'Create component libraries, design tokens, Storybook documentation, accessibility defaults, and adoption patterns teams can extend.',
-              )
-            }
-          </p>
-          <div class="skill-tags">
-            <span class="skill-tag">Design systems</span><span class="skill-tag"
-              >Storybook</span
-            ><span class="skill-tag">WCAG 2.2 AA</span><span class="skill-tag"
-              >Performance budgets</span
-            ><span class="skill-tag">Figma</span><span class="skill-tag"
-              >Azure</span
-            ><span class="skill-tag">Git</span>
-          </div>
-        </div>
+              <img
+                class="card-illustration"
+                src={card.illustration}
+                alt=""
+                aria-hidden="true"
+                width="512"
+                height="320"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="expertise-icon fx-pop" aria-hidden="true">
+                {card.icon === 'frontend' && (
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2" />
+                    <line x1="12" y1="22" x2="12" y2="15.5" />
+                    <polyline points="22 8.5 12 15.5 2 8.5" />
+                  </svg>
+                )}
+                {card.icon === 'backend' && (
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <ellipse cx="12" cy="5" rx="9" ry="3" />
+                    <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+                    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                  </svg>
+                )}
+                {card.icon === 'design' && (
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                    <path d="M2 17l10 5 10-5" />
+                    <path d="M2 12l10 5 10-5" />
+                  </svg>
+                )}
+              </div>
+              <h3>{card.title}</h3>
+              <p>{card.body}</p>
+              <div class="skill-tags">
+                {card.tags.map((tag) => (
+                  <span class="skill-tag">{tag}</span>
+                ))}
+              </div>
+            </div>
+          ))
+        }
       </div>
     </div>
   </section>
 
-  <!-- ── SKILLS TABLE ───────────────────────────────── -->
+  <!-- ── SKILLS (Card hover effect) ───────────────────────── -->
   <section
     id="skills"
-    class="section section-alt"
+    class="section section-alt cv-auto"
     aria-labelledby="skills-title"
   >
     <div class="wrap">
-      <div class="section-head reveal">
-        <span class="s-eyebrow">09 — Skills</span>
-        <h2 id="skills-title" class="s-title">
-          {t(locale, 'page.skills.eyebrow', 'Skills')}
-        </h2>
-        <p class="s-lead">
-          {
-            t(
-              locale,
-              'home.skillsLead',
-              'The technical stack I use to deliver scalable, performant, accessible UI systems.',
-            )
-          }
-        </p>
-      </div>
-      <div class="skills-table">
-        <div class="skills-row">
+      <SectionHeader
+        index="09"
+        eyebrow="Skills"
+        title={t(locale, 'page.skills.eyebrow', 'Skills')}
+        titleId="skills-title"
+        lead={t(
+          locale,
+          'home.skillsLead',
+          'The technical stack I use to deliver scalable, performant, accessible UI systems.',
+        )}
+      />
+      <div class="skills-table fx-reveal">
+        <div class="skills-row fx-hover-group" data-hover-group>
+          <span class="fx-hover-pill" aria-hidden="true"></span>
           {
             skillColumns.map((column) => (
-              <div class="skill-col mo-reveal">
+              <div class="skill-col">
                 <h3>{column.heading}</h3>
                 <ul class="skill-ul">
                   {column.items.map((item) => (
@@ -845,44 +890,42 @@ const toolCategoryLabel = (toolName: string) => {
           }
         </div>
       </div>
-      <p style="margin-top:28px" class="reveal d1">
-        <a href="#contact" class="btn btn-outline"
-          >{t(locale, 'home.skillsCta', 'Discuss a technical challenge')} →</a
-        >
+      <p class="section-cta">
+        <a href="#contact" class="btn btn-outline">
+          {t(locale, 'home.skillsCta', 'Discuss a technical challenge')}
+          <span aria-hidden="true">→</span>
+        </a>
       </p>
     </div>
   </section>
 
-  <!-- ── EXPERIENCE TIMELINE ───────────────────────── -->
+  <!-- ── EXPERIENCE (Tracing-beam timeline) ───────────────── -->
   <!-- Fully driven by experience.ts — add/edit a job there, HTML updates automatically -->
   <section
     id="experience"
-    class="section section-glow section-glow-br"
+    class="section cv-auto section-glow section-glow-br"
     aria-labelledby="exp-title"
   >
     <div class="wrap">
-      <div class="section-head reveal">
-        <span class="s-eyebrow">
-          10 — {t(locale, 'home.experience', 'Experience')}
-        </span>
-        <h2 id="exp-title" class="s-title">
-          {t(locale, 'home.experience', 'Experience')}
-        </h2>
-      </div>
-      <div class="timeline-wrap">
-        <!-- CSS-drawn timeline rail; no runtime animation required. -->
-        <div class="tl-line" id="tl-line" aria-hidden="true"></div>
+      <SectionHeader
+        index="10"
+        eyebrow={t(locale, 'home.experience', 'Experience')}
+        title={t(locale, 'home.experience', 'Experience')}
+        titleId="exp-title"
+      />
+      <div class="timeline-wrap fx-beam-scope">
+        <div class="tl-line fx-beam" id="tl-line" aria-hidden="true"></div>
         <ol
           class="exp-list"
           aria-label={t(locale, 'home.history', 'Work history, newest first')}
         >
           {
             experience.map((job, idx) => (
-              <li class={`exp-entry${idx === 0 ? ' current' : ''} mo-reveal`}>
+              <li class={`exp-entry${idx === 0 ? ' current' : ''}`}>
                 <div class="dot-col" aria-hidden="true">
                   <div class="exp-dot" />
                 </div>
-                <div class="exp-body">
+                <div class="exp-body fx-glow fx-reveal" data-glow>
                   <div class="exp-head">
                     <div>
                       <p class="exp-company">{job.company}</p>
@@ -971,41 +1014,36 @@ const toolCategoryLabel = (toolName: string) => {
     </div>
   </section>
 
-  <!-- ── TOOLS GRID ───────────────────────────────────── -->
+  <!-- ── TOOLS (Spotlight grid) ───────────────────────────── -->
   <section
     id="tools"
     class="section section-alt cv-auto"
     aria-labelledby="tools-title"
   >
+    <Backdrop pattern="dots" />
     <div class="wrap">
-      <div class="section-head reveal">
-        <span class="s-eyebrow">
-          11 — {t(locale, 'home.toolbox', 'Stack')}
-        </span>
-        <h2 id="tools-title" class="s-title">
-          {t(locale, 'page.tools.title', 'Tools & technologies')}
-        </h2>
-        <p class="s-lead">
-          {
-            t(
-              locale,
-              'home.stackLead',
-              'The stack I use to ship fast, accessible, scalable products.',
-            )
-          }
-        </p>
-      </div>
+      <SectionHeader
+        index="11"
+        eyebrow={t(locale, 'home.toolbox', 'Stack')}
+        title={t(locale, 'page.tools.title', 'Tools & technologies')}
+        titleId="tools-title"
+        lead={t(
+          locale,
+          'home.stackLead',
+          'The stack I use to ship fast, accessible, scalable products.',
+        )}
+      />
     </div>
 
     <div
-      class="tm-wrap mo-reveal"
+      class="tm-wrap wrap"
       aria-label={t(locale, 'home.stackAria', 'Technology stack')}
     >
       <ul class="tm-grid" role="list">
         {
           tools.map((tool) => (
             <li class="tm-item">
-              <div class="tm-chip">
+              <div class="tm-chip fx-glow" data-glow>
                 <span class="tm-cat">{toolCategoryLabel(tool.name)}</span>
                 <img
                   src={tool.icon}
@@ -1029,62 +1067,72 @@ const toolCategoryLabel = (toolName: string) => {
     featured.length > 0 && (
       <section
         id="recommendations"
-        class="section section-alt cv-auto"
+        class="section cv-auto"
         aria-labelledby="recs-title"
       >
         <div class="wrap">
-          <div class="section-head reveal">
-            <span class="s-eyebrow">
-              12 — {t(locale, 'home.recommendations', 'Recommendations')}
-            </span>
-            <h2 id="recs-title" class="s-title">
-              {t(locale, 'home.recommendations', 'Recommendations')}
-            </h2>
-            <p class="s-lead">
-              {t(
-                locale,
-                'home.recommendationsLead',
-                'What cross-functional partners say about working together.',
-              )}
-            </p>
-          </div>
-          <div class="recs-grid">
-            {featured.map((item) => (
-              <figure class="rec-card mo-reveal">
-                <div class="rec-quote-mark" aria-hidden="true">
-                  "
-                </div>
-                <blockquote
-                  lang={item.quoteLang}
-                  dir={item.quoteLang === 'en' ? 'ltr' : undefined}
-                >
-                  "{item.quote}"
-                </blockquote>
-                <figcaption class="rec-author">
-                  <img
-                    src={item.avatar}
-                    alt=""
-                    width="44"
-                    height="44"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <div>
-                    <span class="rec-name">{item.name}</span>
-                    <span class="rec-role">{item.role}</span>
+          <SectionHeader
+            index="12"
+            eyebrow={t(locale, 'home.recommendations', 'Recommendations')}
+            title={t(locale, 'home.recommendations', 'Recommendations')}
+            titleId="recs-title"
+            lead={t(
+              locale,
+              'home.recommendationsLead',
+              'What cross-functional partners say about working together.',
+            )}
+          />
+        </div>
+        <div
+          class="recs-marquee fx-marquee"
+          style="--duration:70s"
+          data-motion-scope
+        >
+          <ul class="fx-marquee-track recs-track">
+            {recommendationSlots.map(({ item, clone }) => (
+              <li
+                class="recs-slot"
+                data-clone={clone ? '' : undefined}
+                aria-hidden={clone ? 'true' : undefined}
+              >
+                <figure class="rec-card fx-glow" data-glow>
+                  <div class="rec-quote-mark" aria-hidden="true">
+                    “
                   </div>
-                </figcaption>
-              </figure>
+                  <blockquote
+                    lang={item.quoteLang}
+                    dir={item.quoteLang === 'en' ? 'ltr' : undefined}
+                  >
+                    "{item.quote}"
+                  </blockquote>
+                  <figcaption class="rec-author">
+                    <img
+                      src={item.avatar}
+                      alt=""
+                      width="44"
+                      height="44"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <div>
+                      <span class="rec-name">{item.name}</span>
+                      <span class="rec-role">{item.role}</span>
+                    </div>
+                  </figcaption>
+                </figure>
+              </li>
             ))}
-          </div>
-          <p style="margin-top:28px" class="reveal">
+          </ul>
+        </div>
+        <div class="wrap">
+          <p class="section-cta">
             <a href={pageHref('/recommendations/')} class="btn btn-ghost">
               {t(
                 locale,
                 'home.recommendationsCta',
                 'View verified recommendations',
               )}{' '}
-              →
+              <span aria-hidden="true">→</span>
             </a>
           </p>
         </div>
@@ -1092,7 +1140,7 @@ const toolCategoryLabel = (toolName: string) => {
     )
   }
 
-  <!-- ── FAQ ───────────────────────────────────────── -->
+  <!-- ── FAQ ──────────────────────────────────────────────── -->
   <!--
         Native <details>/<summary> handles open/close with zero JS.
         faq.answer drives both the visible text and the FAQPage JSON-LD route
@@ -1100,19 +1148,20 @@ const toolCategoryLabel = (toolName: string) => {
       -->
   <section
     id="faq"
-    class="section cv-auto section-glow section-glow-bl"
+    class="section section-alt cv-auto section-glow section-glow-bl"
     aria-labelledby="faq-title"
   >
     <div class="wrap">
       <div class="faq-2col">
-        <div class="reveal">
-          <span class="s-eyebrow"
-            >{featured.length > 0 ? '13' : '12'} — FAQ</span
-          >
+        <div class="faq-intro fx-reveal">
+          <span class="s-eyebrow">
+            <span class="s-index" aria-hidden="true">{faqIndex}</span>
+            FAQ
+          </span>
           <h2 id="faq-title" class="s-title">
             {t(locale, 'page.faq.title', 'Frequently asked questions')}
           </h2>
-          <p class="s-lead" style="margin-bottom:28px">
+          <p class="s-lead">
             {
               t(
                 locale,
@@ -1121,11 +1170,11 @@ const toolCategoryLabel = (toolName: string) => {
               )
             }
           </p>
-          <a href="#contact" class="btn btn-primary"
-            >{t(locale, 'action.start', 'Start a project')}</a
-          >
+          <a href="#contact" class="btn btn-primary">
+            {t(locale, 'action.start', 'Start a project')}
+          </a>
         </div>
-        <div class="reveal d1">
+        <div class="fx-reveal">
           <ul class="faq-list" role="list">
             {
               faqs.map((faq) => (
@@ -1150,12 +1199,16 @@ const toolCategoryLabel = (toolName: string) => {
     </div>
   </section>
 
-  <!-- \u2500\u2500 CTA BAND \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 -->
+  <!-- ── CTA BAND (Lamp + meteors) ────────────────────────── -->
   <section aria-labelledby="cta-title" class="cta-band">
     <div class="cta-glow-l" aria-hidden="true"></div>
     <div class="cta-glow-r" aria-hidden="true"></div>
+    <div class="fx-lamp" aria-hidden="true">
+      <span class="fx-lamp-line"></span>
+    </div>
+    <Meteors count={16} />
     <div class="wrap cta-inner">
-      <div class="reveal">
+      <div class="fx-reveal">
         <p class="cta-tag">
           {t(locale, 'home.ctaTag', 'Ready to collaborate')}
         </p>
@@ -1178,49 +1231,45 @@ const toolCategoryLabel = (toolName: string) => {
           }
         </p>
       </div>
-      <div class="cta-btns reveal d1">
-        <a href="#contact" class="btn btn-primary"
-          >{t(locale, 'action.start', 'Start a project')}</a
-        >
-        <a href={pageHref('/blog/')} class="btn btn-outline"
-          >{t(locale, 'nav.blog', 'Read the blog')}</a
-        >
+      <div class="cta-btns">
+        <a href="#contact" class="btn btn-primary">
+          {t(locale, 'action.start', 'Start a project')}
+        </a>
+        <a href={pageHref('/blog/')} class="btn btn-outline">
+          {t(locale, 'nav.blog', 'Read the blog')}
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- \u2500\u2500 CONTACT \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 -->
+  <!-- ── CONTACT ──────────────────────────────────────────── -->
   <section
     id="contact"
     class="section cv-auto section-glow section-glow-tl"
     aria-labelledby="contact-title"
   >
     <div class="wrap">
-      <div class="section-head reveal">
-        <span class="s-eyebrow">
-          {featured.length > 0 ? '14' : '13'} — {
-            t(locale, 'page.contact.eyebrow', 'Contact')
-          }
-        </span>
-        <h2 id="contact-title" class="s-title">
-          {t(locale, 'page.contact.eyebrow', 'Contact')}
-        </h2>
-        <p class="s-lead">
-          {
-            t(
-              locale,
-              'home.contactLead',
-              'Need senior frontend support for a dashboard, architecture review, design system, audit, or website? Send the context below.',
-            )
-          }
-        </p>
-      </div>
+      <SectionHeader
+        index={contactIndex}
+        eyebrow={t(locale, 'page.contact.eyebrow', 'Contact')}
+        title={t(locale, 'page.contact.eyebrow', 'Contact')}
+        titleId="contact-title"
+        lead={t(
+          locale,
+          'home.contactLead',
+          'Need senior frontend support for a dashboard, architecture review, design system, audit, or website? Send the context below.',
+        )}
+      />
       <div class="contact-2col">
-        <div class="reveal">
+        <div>
           <nav aria-label={t(locale, 'home.contactOptions', 'Contact options')}>
             <ul class="contact-links-list">
               <li>
-                <a href={`mailto:${profile.email}`} class="c-link">
+                <a
+                  href={`mailto:${profile.email}`}
+                  class="c-link fx-glow"
+                  data-glow
+                >
                   <span class="c-icon" aria-hidden="true">
                     <svg
                       width="18"
@@ -1249,7 +1298,8 @@ const toolCategoryLabel = (toolName: string) => {
                     <li>
                       <a
                         href={s.href}
-                        class="c-link"
+                        class="c-link fx-glow"
+                        data-glow
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -1264,10 +1314,8 @@ const toolCategoryLabel = (toolName: string) => {
                           </svg>
                         </span>
                         <div class="c-text">
-                          <>
-                            <strong>LinkedIn</strong>
-                            <span>{s.href.replace('https://', '')}</span>
-                          </>
+                          <strong>LinkedIn</strong>
+                          <span>{s.href.replace('https://', '')}</span>
                         </div>
                       </a>
                     </li>
@@ -1280,7 +1328,8 @@ const toolCategoryLabel = (toolName: string) => {
                     <li>
                       <a
                         href={s.href}
-                        class="c-link"
+                        class="c-link fx-glow"
+                        data-glow
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -1295,10 +1344,8 @@ const toolCategoryLabel = (toolName: string) => {
                           </svg>
                         </span>
                         <div class="c-text">
-                          <>
-                            <strong>GitHub</strong>
-                            <span>{s.href.replace('https://', '')}</span>
-                          </>
+                          <strong>GitHub</strong>
+                          <span>{s.href.replace('https://', '')}</span>
                         </div>
                       </a>
                     </li>
@@ -1306,64 +1353,16 @@ const toolCategoryLabel = (toolName: string) => {
               }
             </ul>
           </nav>
+          <div class="contact-aside fx-glow" data-glow>
+            <Backdrop pattern="dots" />
+            <span class="fx-ping fx-ping--static" aria-hidden="true"></span>
+            <p>{conversion.hero.trustLine}</p>
+          </div>
         </div>
 
-        <!-- Web3Forms \u2014 access key injected at build time from PUBLIC_WEB3FORMS_KEY env var -->
+        <!-- Web3Forms — access key injected at build time from PUBLIC_WEB3FORMS_KEY env var -->
         <ContactForm {locale} variant="homepage" />
       </div>
     </div>
   </section>
 </div>
-
-<!-- Back-to-top; hidden attr toggled by scroll JS below -->
-<button
-  type="button"
-  class="btt"
-  id="btt"
-  aria-label={t(locale, 'action.top', 'Back to top')}
-  hidden
->
-  <svg
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2.5"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    aria-hidden="true"
-  >
-    <path d="M18 15l-6-6-6 6"></path>
-  </svg>
-</button>
-
-<!--
-      Homepage client behaviours - functional only, no decorative runtime motion.
-      Astro defers all <script> modules automatically.
-      Covers: back-to-top.
-    -->
-<script>
-  (function () {
-    'use strict';
-
-    // Back to top.
-    const btt = document.getElementById('btt') as HTMLButtonElement | null;
-    if (btt) {
-      window.addEventListener(
-        'scroll',
-        function () {
-          btt.hidden = window.scrollY < 500;
-        },
-        { passive: true },
-      );
-      btt.addEventListener('click', function () {
-        const behavior = window.matchMedia('(prefers-reduced-motion: reduce)')
-          .matches
-          ? 'auto'
-          : 'smooth';
-        window.scrollTo({ top: 0, behavior });
-      });
-    }
-  })();
-</script>

@@ -1,6 +1,8 @@
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 import { URL } from 'node:url';
+import { satteri } from '@astrojs/markdown-satteri';
+import taskListLabels from './src/lib/taskListLabels.mjs';
 
 const siteUrl = 'https://suprabhat-dev.com';
 const nonDefaultLocalePattern = /^\/(?:es|ar)(?=\/|$)/;
@@ -15,6 +17,9 @@ export default defineConfig({
   site: siteUrl,
   output: 'static',
   trailingSlash: 'always',
+  markdown: {
+    processor: satteri({ hastPlugins: [taskListLabels()] }),
+  },
   integrations: [
     sitemap({
       i18n: {

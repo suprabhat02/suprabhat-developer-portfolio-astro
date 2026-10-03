@@ -3,10 +3,8 @@ import ContactForm from './ContactForm.astro';
 import FAQList from './FAQList.astro';
 import { getExperience } from '../data/experience';
 import { getProfile } from '../data/profile';
-import {
-  getRecommendations,
-  featuredRecommendationIds,
-} from '../data/recommendations';
+import { getRecommendations } from '../data/recommendations';
+import Meteors from './fx/Meteors.astro';
 import { getServices } from '../data/services';
 import { getSkills } from '../data/skills';
 import { tools } from '../data/tools';
@@ -36,13 +34,9 @@ const services = getServices(locale);
 const { skillsLead, skillGroups } = getSkills(locale);
 const internalWorkNotice = getInternalWorkNotice(locale);
 const work = getWork(locale);
+const pad = (value: number) => String(value).padStart(2, '0');
 const caseStudySlugs = new Set(
   getCaseStudies(locale).map((caseStudy) => caseStudy.slug),
-);
-const featured = recommendations.filter((item) =>
-  featuredRecommendationIds.includes(
-    item.id as (typeof featuredRecommendationIds)[number],
-  ),
 );
 const posts = await getBlogPosts(locale);
 const tagGroups = getBlogTagGroupsFromPosts(locale, posts);
@@ -93,234 +87,6 @@ const notFoundLinks = [
 ---
 
 {
-  page === 'home' && (
-    <>
-      <section class="hero" id="home">
-        <div class="wrap hero-grid">
-          <div>
-            <>
-              <p class="eyebrow">
-                {tx(
-                  'home.eyebrow',
-                  `${profile.eyebrow.role} · ${profile.eyebrow.from}`,
-                )}
-              </p>
-              <h1>{profile.name}</h1>
-              <p class="hero-tagline">{tx('home.tagline', profile.tagline)}</p>
-              <p class="lead">{tx('home.lead', profile.lead)}</p>
-              <div class="actions">
-                <>
-                  <a class="button primary" href={href('/work/')}>
-                    {tx('action.work', 'View selected work')}
-                  </a>
-                  <a class="button" href={href('/contact/')}>
-                    {tx('action.contact', 'Get in touch')}
-                  </a>
-                </>
-              </div>
-            </>
-          </div>
-          <figure class="portrait">
-            <img
-              src="/assets/images/portrait-800.webp"
-              srcset="/assets/images/portrait-400.webp 400w, /assets/images/portrait-550.webp 550w, /assets/images/portrait-600.webp 600w, /assets/images/portrait-800.webp 800w, /assets/images/portrait-900.webp 900w"
-              sizes="(max-width: 760px) 90vw, 42vw"
-              width="800"
-              height="1067"
-              alt={profile.portrait.alt}
-              fetchpriority="high"
-              decoding="async"
-            />
-          </figure>
-        </div>
-      </section>
-      <section class="section" id="about">
-        <div class="wrap split">
-          <>
-            <div>
-              <>
-                <p class="eyebrow">{tx('home.about', 'About')}</p>
-                <h2>
-                  {tx('home.aboutTitle', 'Engineering useful interfaces')}
-                </h2>
-              </>
-            </div>
-            <div>
-              {profile.about.slice(0, 2).map((paragraph) => (
-                <p>{paragraph}</p>
-              ))}
-              <a class="text-link" href={href('/about/')}>
-                {tx('action.moreAbout', 'More about my approach')}
-              </a>
-            </div>
-          </>
-        </div>
-      </section>
-      <section class="section alternate" id="skills">
-        <div class="wrap">
-          <>
-            <p class="eyebrow">{tx('home.expertise', 'Expertise')}</p>
-            <h2>{tx('home.skillsTitle', 'Frontend systems that hold up')}</h2>
-            <p class="lead">{skillsLead}</p>
-            <div class="grid three">
-              {skillGroups.map((group) => (
-                <article>
-                  <h3>{group.heading}</h3>
-                  <ul class="tag-list">
-                    {group.items.map((item) => (
-                      <li>{item}</li>
-                    ))}
-                  </ul>
-                </article>
-              ))}
-            </div>
-          </>
-        </div>
-      </section>
-      <section class="section" id="experience">
-        <div class="wrap">
-          <>
-            <p class="eyebrow">{tx('home.experience', 'Experience')}</p>
-            <h2>{tx('home.experienceTitle', 'Recent roles')}</h2>
-            <div class="grid two">
-              {experience.slice(0, 2).map((job) => (
-                <article>
-                  <p class="meta">
-                    {job.startLabel ?? job.start} — {job.endLabel ?? job.end}
-                  </p>
-                  <h3>{job.company}</h3>
-                  <p>{job.title}</p>
-                </article>
-              ))}
-            </div>
-            <a class="text-link" href={href('/experience/')}>
-              {tx('action.experience', 'View full experience')}
-            </a>
-          </>
-        </div>
-      </section>
-      <section class="section alternate" id="tools">
-        <div class="wrap">
-          <>
-            <p class="eyebrow">{tx('home.toolbox', 'Toolbox')}</p>
-            <h2>{tx('home.toolsTitle', 'Daily working stack')}</h2>
-            <ul class="tool-grid">
-              {tools.slice(0, 8).map((tool) => (
-                <li>
-                  <img
-                    src={tool.icon}
-                    alt=""
-                    width="36"
-                    height="36"
-                    loading="lazy"
-                    decoding="async"
-                    class:list={{ invert: tool.invertOnDark }}
-                  />
-                  <span>{tool.name}</span>
-                </li>
-              ))}
-            </ul>
-            <a class="text-link" href={href('/tools/')}>
-              {tx('action.tools', 'See all tools')}
-            </a>
-          </>
-        </div>
-      </section>
-      <section class="section" id="work">
-        <div class="wrap">
-          <>
-            <p class="eyebrow">{tx('home.work', 'Selected work')}</p>
-            <h2>{tx('home.workTitle', 'Internal product work')}</h2>
-            <div class="grid three">
-              {work.map((item) => (
-                <article>
-                  <h3>{item.title}</h3>
-                  <p>{item.summary}</p>
-                  <ul class="tag-list">
-                    {item.tags.map((tag) => (
-                      <li>{tag}</li>
-                    ))}
-                  </ul>
-                  {caseStudySlugs.has(item.id) && (
-                    <a class="text-link" href={href(`/work/${item.id}/`)}>
-                      {tx('caseStudy.read', 'Read case study')}
-                    </a>
-                  )}
-                </article>
-              ))}
-            </div>
-          </>
-        </div>
-      </section>
-      <section class="section alternate" id="recommendations">
-        <div class="wrap">
-          <>
-            <p class="eyebrow">
-              {tx('home.recommendations', 'Recommendations')}
-            </p>
-            <h2>
-              {tx('home.recommendationsTitle', 'Words from collaborators')}
-            </h2>
-            <div class="grid three">
-              {featured.map((item) => (
-                <figure class="quote">
-                  <blockquote
-                    lang={item.quoteLang}
-                    dir={item.quoteLang === 'en' ? 'ltr' : undefined}
-                  >
-                    “{item.quote}”
-                  </blockquote>
-                  <figcaption>
-                    {item.name}
-                    <span>{item.role}</span>
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
-          </>
-        </div>
-      </section>
-      <section class="section" id="faq">
-        <div class="wrap narrow">
-          <>
-            <p class="eyebrow">{tx('home.faq', 'FAQ')}</p>
-            <h2>{tx('home.faqTitle', 'Before we start')}</h2>
-            <FAQList {locale} />
-          </>
-        </div>
-      </section>
-      <section class="section cta" id="contact">
-        <div class="wrap split">
-          <>
-            <div>
-              <>
-                <p class="eyebrow">
-                  {tx('home.contact', 'Start a conversation')}
-                </p>
-                <h2>
-                  {tx(
-                    'home.contactTitle',
-                    'Have a product interface to improve?',
-                  )}
-                </h2>
-              </>
-            </div>
-            <div>
-              <>
-                <p>{profile.lead}</p>
-                <a class="button primary" href={href('/contact/')}>
-                  {tx('action.start', 'Contact Suprabhat')}
-                </a>
-              </>
-            </div>
-          </>
-        </div>
-      </section>
-    </>
-  )
-}
-
-{
   page === 'about' && (
     <section class="page section">
       <div class="wrap split">
@@ -340,8 +106,10 @@ const notFoundLinks = [
             {profile.about.map((paragraph) => (
               <p>{paragraph}</p>
             ))}
-            <h2>{tx('page.about.philosophy', 'Design philosophy')}</h2>
-            <p>{profile.philosophy}</p>
+            <div class="philosophy-card fx-glow" data-glow>
+              <h2>{tx('page.about.philosophy', 'Design philosophy')}</h2>
+              <p>{profile.philosophy}</p>
+            </div>
             <p>
               <a
                 class="button primary"
@@ -366,8 +134,11 @@ const notFoundLinks = [
           <h1>{tx('page.skills.title', 'Frontend engineering expertise')}</h1>
           <p class="lead">{skillsLead}</p>
           <div class="grid three">
-            {skillGroups.map((group) => (
-              <article>
+            {skillGroups.map((group, index) => (
+              <article class="fx-glow fx-reveal" data-glow>
+                <span class="card-index" aria-hidden="true">
+                  {pad(index + 1)}
+                </span>
                 <h2>{group.heading}</h2>
                 <ul class="tag-list">
                   {group.items.map((item) => (
@@ -391,9 +162,10 @@ const notFoundLinks = [
           <h1>
             {tx('page.experience.title', 'Six years of interface delivery')}
           </h1>
-          <div class="timeline">
+          <div class="timeline fx-beam-scope">
+            <span class="fx-beam" aria-hidden="true" />
             {experience.map((job) => (
-              <article>
+              <article class="fx-reveal">
                 <p class="meta">
                   {job.startLabel ?? job.start} — {job.endLabel ?? job.end}
                   {job.mode && ` · ${job.modeLabel ?? job.mode}`}
@@ -439,7 +211,7 @@ const notFoundLinks = [
           <h1>{tx('page.tools.title', 'A focused working stack')}</h1>
           <ul class="tool-grid">
             {tools.map((tool) => (
-              <li>
+              <li class="fx-glow" data-glow>
                 <img
                   src={tool.icon}
                   alt=""
@@ -467,9 +239,16 @@ const notFoundLinks = [
           <h1>{tx('page.work.title', 'Selected internal product work')}</h1>
           <p class="lead">{internalWorkNotice}</p>
           <div class="grid three">
-            {work.map((item) => (
-              <article>
-                <h2>{item.title}</h2>
+            {work.map((item, index) => (
+              <article
+                class="work-tile fx-glow fx-tilt fx-reveal-scale"
+                data-glow
+                data-tilt
+              >
+                <span class="card-index" aria-hidden="true">
+                  {pad(index + 1)}
+                </span>
+                <h2 class="fx-pop">{item.title}</h2>
                 <p>{item.summary}</p>
                 <ul class="tag-list">
                   {item.tags.map((tag) => (
@@ -501,7 +280,7 @@ const notFoundLinks = [
           {recommendations.length > 0 ? (
             <div class="grid two">
               {recommendations.map((item) => (
-                <figure class="quote">
+                <figure class="quote fx-glow fx-reveal" data-glow>
                   <blockquote
                     lang={item.quoteLang}
                     dir={item.quoteLang === 'en' ? 'ltr' : undefined}
@@ -543,8 +322,11 @@ const notFoundLinks = [
             design system, or public website.
           </p>
           <div class="grid three">
-            {services.map((service) => (
-              <article>
+            {services.map((service, index) => (
+              <article class="fx-glow fx-reveal" data-glow>
+                <span class="card-index" aria-hidden="true">
+                  {pad(index + 1)}
+                </span>
                 <h2>{service.name}</h2>
                 <p>{service.description}</p>
                 {service.fit && (
@@ -772,7 +554,7 @@ const notFoundLinks = [
 
         <div class="article-list">
           {posts.map((post) => (
-            <article>
+            <article class="fx-glow fx-reveal" data-glow>
               <p class="meta">
                 <time datetime={post.data.pubDate.toISOString()}>
                   {post.data.pubDate.toLocaleDateString(dateLocale, {
@@ -809,6 +591,7 @@ const notFoundLinks = [
     >
       <div class="wrap not-found-shell">
         <div class="not-found-hero">
+          <Meteors count={12} />
           <p class="eyebrow">{tx('page.notFound.eyebrow', 'Error 404')}</p>
           <div class="not-found-code" aria-hidden="true">
             <span>4</span>
@@ -866,7 +649,7 @@ const notFoundLinks = [
             <ul class="not-found-links">
               {notFoundLinks.map((item) => (
                 <li>
-                  <a href={item.href}>
+                  <a href={item.href} class="fx-glow" data-glow>
                     <span class="not-found-link-icon" aria-hidden="true">
                       <svg
                         viewBox="0 0 24 24"

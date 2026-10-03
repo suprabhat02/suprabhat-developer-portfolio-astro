@@ -1,0 +1,42 @@
+---
+/**
+ * Shared homepage section heading: numbered eyebrow, gradient-accented
+ * title and optional lead. Keeps heading levels consistent (always h2).
+ */
+interface Props {
+  index: string;
+  eyebrow: string;
+  title: string;
+  titleId: string;
+  lead?: string;
+  align?: 'start' | 'center';
+  class?: string;
+}
+
+const {
+  index,
+  eyebrow,
+  title,
+  titleId,
+  lead,
+  align = 'start',
+  class: className,
+} = Astro.props;
+---
+
+<header
+  class:list={[
+    'section-head',
+    'fx-reveal',
+    { 'section-head--center': align === 'center' },
+    className,
+  ]}
+>
+  <span class="s-eyebrow">
+    <span class="s-index" aria-hidden="true">{index}</span>
+    {eyebrow}
+  </span>
+  <h2 id={titleId} class="s-title">{title}</h2>
+  {lead && <p class="s-lead">{lead}</p>}
+  <slot />
+</header>

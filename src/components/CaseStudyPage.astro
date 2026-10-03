@@ -45,8 +45,9 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
         {
           caseStudy.proof.map((panel) => (
             <section
-              class="case-study-proof-card"
+              class="case-study-proof-card fx-glow fx-reveal"
               aria-labelledby={`case-study-proof-${panel.id}`}
+              data-glow
             >
               <h3 id={`case-study-proof-${panel.id}`}>{panel.heading}</h3>
               <ul class="bullets">
@@ -66,7 +67,7 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
     >
       {
         caseStudy.meta.map((item) => (
-          <div>
+          <div class="fx-glow" data-glow>
             <dt>{item.label}</dt>
             <dd>{item.value}</dd>
           </div>
@@ -80,7 +81,11 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
   </header>
 
   <div class="case-study-shell wrap">
-    <nav class="case-study-toc" aria-labelledby="case-study-toc-title">
+    <nav
+      class="case-study-toc"
+      aria-labelledby="case-study-toc-title"
+      data-scrollspy
+    >
       <h2 id="case-study-toc-title">
         {label('caseStudy.toc', 'On this page')}
       </h2>
@@ -117,13 +122,13 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
   </div>
 
   <section class="case-study-highlights wrap" aria-label={caseStudy.title}>
-    <div class="case-study-panel">
+    <div class="case-study-panel fx-glow fx-reveal" data-glow>
       <h2>{label('caseStudy.outcomes', 'Outcomes')}</h2>
       <ul class="bullets">
         {caseStudy.outcomes.map((outcome) => <li>{outcome}</li>)}
       </ul>
     </div>
-    <div class="case-study-panel">
+    <div class="case-study-panel fx-glow fx-reveal" data-glow>
       <h2>{label('caseStudy.nextSteps', 'Next steps')}</h2>
       <ul class="bullets">
         {caseStudy.nextSteps.map((step) => <li>{step}</li>)}
@@ -203,6 +208,13 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
     max-width: 74ch;
     padding: 1rem 1.15rem;
     border-color: rgba(240, 126, 28, 0.32);
+    background:
+      linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--accent) 10%, transparent),
+        transparent 60%
+      ),
+      color-mix(in srgb, var(--surface-strong) 86%, transparent);
   }
 
   .case-study-note h2,
@@ -307,14 +319,61 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
     list-style: none;
   }
 
+  .case-study-toc ol {
+    position: relative;
+  }
+
   .case-study-toc a {
+    position: relative;
+    display: block;
+    padding-block: 0.2rem;
+    padding-inline-start: 0.85rem;
     color: var(--muted);
     font-size: 0.95rem;
     text-decoration: none;
+    transition:
+      color 160ms ease,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .case-study-toc a:hover {
+  .case-study-toc a::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block: 0.35rem;
+    width: 2px;
+    border-radius: var(--radius-pill);
+    background: var(--line);
+    transition:
+      background-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .case-study-toc a:hover,
+  .case-study-toc a[aria-current='location'] {
     color: var(--accent-strong);
+  }
+
+  .case-study-toc a[aria-current='location'] {
+    transform: translateX(3px);
+  }
+
+  :global([dir='rtl']) .case-study-toc a[aria-current='location'] {
+    transform: translateX(-3px);
+  }
+
+  .case-study-toc a[aria-current='location']::before {
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .case-study-body section {
+    transition: border-color 200ms ease;
+  }
+
+  .case-study-body section:target,
+  .case-study-body section:focus-within {
+    border-color: var(--accent-border);
   }
 
   .case-study-body {
@@ -404,6 +463,14 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
 
   .case-study-footer .actions {
     justify-content: flex-end;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .case-study-toc a,
+    .case-study-toc a[aria-current='location'] {
+      transition: none;
+      transform: none;
+    }
   }
 
   @media (max-width: 980px) {

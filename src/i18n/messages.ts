@@ -56,6 +56,7 @@ const es: Messages = {
   'home.contactTitle': '¿Tienes una interfaz de producto que mejorar?',
   'home.writing': 'Artículos destacados',
   'home.availability': 'Disponibilidad',
+  'home.availableNow': 'Disponible ahora',
   'home.availabilityLead': 'Colaboración remota en productos',
   'home.availabilityMeta':
     'Asíncrono primero · Progreso transparente · Hitos compartidos',
@@ -442,6 +443,7 @@ const ar: Messages = {
   'home.contactTitle': 'هل لديك واجهة منتج تحتاج إلى تحسين؟',
   'home.writing': 'مقالات مختارة',
   'home.availability': 'التوافر',
+  'home.availableNow': 'متاح الآن',
   'home.availabilityLead': 'تعاون عن بُعد في تطوير المنتجات',
   'home.availabilityMeta': 'تواصل غير متزامن أولًا · تقدم شفاف · معالم مشتركة',
   'home.blogLead': 'أدلة عملية حول الأداء وإمكانية الوصول وتقديم واجهات حديثة.',

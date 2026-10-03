@@ -1,0 +1,46 @@
+---
+/**
+ * Decorative section backdrop: Aceternity grid/dot background, spotlight
+ * beams and aurora blobs. Purely presentational and hidden from assistive
+ * technology; the parent must establish a positioned stacking context.
+ */
+interface Props {
+  pattern?: 'grid' | 'dots' | 'none';
+  spotlight?: boolean;
+  aurora?: boolean;
+  class?: string;
+}
+
+const {
+  pattern = 'grid',
+  spotlight = false,
+  aurora = false,
+  class: className,
+} = Astro.props;
+---
+
+<div
+  class:list={['fx-backdrop', className]}
+  aria-hidden="true"
+  data-motion-scope
+>
+  {pattern === 'grid' && <div class="fx-grid" />}
+  {pattern === 'dots' && <div class="fx-dots" />}
+  {
+    aurora && (
+      <div class="fx-aurora">
+        <span />
+        <span />
+        <span />
+      </div>
+    )
+  }
+  {
+    spotlight && (
+      <>
+        <div class="fx-spotlight" />
+        <div class="fx-spotlight fx-spotlight--accent" />
+      </>
+    )
+  }
+</div>

@@ -56,6 +56,9 @@ const navLabel = (key: string) =>
       >
     </nav>
   </div>
+  <div class="wrap footer-wordmark" aria-hidden="true">
+    {locale === 'ar' ? displayName : 'Suprabhat'}
+  </div>
   <div class="wrap footer-bottom">
     <span>© {new Date().getFullYear()} {displayName}</span><a
       href="#main-content">{t(locale, 'action.top', 'Back to top')}</a

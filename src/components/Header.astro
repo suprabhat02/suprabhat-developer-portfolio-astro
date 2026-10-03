@@ -121,6 +121,7 @@ const isActive = (item: (typeof headerNav)[number]) =>
       class="desktop-nav site-nav"
       aria-label={t(locale, 'nav.primary', 'Primary navigation')}
     >
+      <span class="nav-pill" aria-hidden="true"></span>
       <ul>
         {
           headerNav.map((item) => (
@@ -270,6 +271,7 @@ const isActive = (item: (typeof headerNav)[number]) =>
       </button>
     </div>
   </div>
+  <span class="hdr-progress fx-scroll-progress" aria-hidden="true"></span>
 </header>
 
 <div
