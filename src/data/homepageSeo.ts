@@ -55,11 +55,15 @@ export const getHomepageSchema = (locale: Locale) => {
             name: service.name,
             description: [
               service.description,
-              service.fit ? `Best for: ${service.fit}.` : '',
-              service.deliverables
-                ? `Deliverables: ${service.deliverables}.`
+              service.fit
+                ? `${t(locale, 'service.fit', 'Best for')}: ${service.fit}.`
                 : '',
-              service.duration ? `Duration: ${service.duration}.` : '',
+              service.deliverables
+                ? `${t(locale, 'service.deliverables', 'Deliverables')}: ${service.deliverables}.`
+                : '',
+              service.duration
+                ? `${t(locale, 'service.duration', 'Duration')}: ${service.duration}.`
+                : '',
             ]
               .filter(Boolean)
               .join(' '),

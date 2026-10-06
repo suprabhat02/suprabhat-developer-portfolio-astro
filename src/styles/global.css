@@ -161,6 +161,14 @@ textarea {
   );
   pointer-events: none;
 }
+/* The header pill sets its own width; its row must always fill it, so the
+   page-gutter `.wrap` widths (which shrink on phones) never apply here.
+   Otherwise the slack lands at the inline end and, in RTL, the controls
+   drift away from the edge. */
+.site-header > .header-inner {
+  width: 100%;
+  max-width: none;
+}
 .header-inner {
   width: 100%;
   min-height: 62px;
@@ -1218,6 +1226,167 @@ main {
 .contact-form label.f-label {
   display: block;
 }
+/* Placeholders: muted example values, never a substitute for the labels. */
+.contact-form ::placeholder {
+  color: var(--text-3);
+  opacity: 1;
+}
+/* Free text takes the direction of what is typed (English in the Arabic
+   form, Arabic in the English one); empty fields keep the page direction,
+   so placeholders stay aligned. Email is always LTR via its dir attribute. */
+.contact-form :is(input[name='name'], input[name='company'], textarea) {
+  unicode-bidi: plaintext;
+}
+/* A select still showing its placeholder option reads as unfilled. */
+.contact-form select:has(> option[value='']:checked) {
+  color: var(--text-3);
+}
+.contact-form select option {
+  color: var(--text);
+  background: var(--bg-2);
+}
+
+/* ── Toasts (src/scripts/toast.ts) ─────────────────────────────────── */
+.toast-region {
+  position: fixed;
+  z-index: 90;
+  inset-block-end: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  inset-inline-end: 1.25rem;
+  display: grid;
+  gap: 0.75rem;
+  width: min(24rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+.toast {
+  --toast-tone: var(--success);
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.85rem;
+  overflow: hidden;
+  overflow: clip;
+  padding: 1rem 1rem 1.15rem;
+  border: 1px solid color-mix(in oklch, var(--toast-tone) 45%, var(--border));
+  border-radius: var(--radius-card);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in oklch, var(--toast-tone) 14%, transparent),
+      transparent 60%
+    ),
+    var(--bg-2);
+  box-shadow:
+    var(--shadow),
+    0 18px 50px -24px color-mix(in oklch, var(--toast-tone) 60%, transparent);
+  color: var(--text);
+  pointer-events: auto;
+  animation: toast-in 420ms var(--fx-ease-spring, ease-out) both;
+}
+.toast--error {
+  --toast-tone: var(--danger);
+}
+.toast[data-leaving] {
+  animation: toast-out 260ms ease-in both;
+}
+.toast-icon {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: color-mix(in oklch, var(--toast-tone) 20%, transparent);
+  color: var(--toast-tone);
+}
+.toast-icon svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.toast-body strong {
+  display: block;
+  margin-block-end: 0.2rem;
+  font-size: 0.95rem;
+}
+.toast-body p {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+.toast-close {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  margin: -0.35rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.toast-close:hover,
+.toast-close:focus-visible {
+  background: color-mix(in oklch, var(--text) 10%, transparent);
+  color: var(--text);
+}
+/* Remaining lifetime; freezes while the toast is hovered or focused. */
+.toast-progress {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  height: 3px;
+  background: var(--toast-tone);
+  transform-origin: left;
+  animation: toast-life var(--toast-life, 6s) linear both;
+}
+[dir='rtl'] .toast-progress {
+  transform-origin: right;
+}
+.toast[data-paused] .toast-progress {
+  animation-play-state: paused;
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    translate: 0 1rem;
+    scale: 0.96;
+  }
+}
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    translate: 0 0.5rem;
+    scale: 0.96;
+  }
+}
+@keyframes toast-life {
+  to {
+    transform: scaleX(0);
+  }
+}
+@media (max-width: 580px) {
+  .toast-region {
+    inset-inline: 1rem;
+    width: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .toast,
+  .toast[data-leaving] {
+    animation: none;
+  }
+  .toast-progress {
+    display: none;
+  }
+}
 .f-label > span[aria-hidden='true'] {
   color: var(--accent);
 }
@@ -1323,6 +1492,9 @@ main {
   padding-block: 4rem 1.5rem;
   border-top: 1px solid var(--line);
   background: var(--surface);
+  /* Always below the fold: skip its rendering until scrolled near. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 32rem;
 }
 .footer-grid {
   display: grid;
@@ -2293,17 +2465,6 @@ main {
 
 .copy-btn[data-state='copied'] :is(.copy-sheet, .copy-sheet-back) {
   opacity: 0.25;
-}
-
-.contact-email-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.contact-email-row .text-link {
-  margin-top: 0;
 }
 
 /* Hover border gradient (Aceternity), plus an optional grid-pattern fill.

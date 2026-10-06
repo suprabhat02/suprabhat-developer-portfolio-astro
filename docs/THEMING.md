@@ -70,3 +70,20 @@ literal:
 ```css
 background: color-mix(in oklch, var(--info) 12%, transparent);
 ```
+
+## Effects that follow the tokens
+
+Everything decorative reads the same roles, so a seed change re-themes it
+with no extra work:
+
+- **Aurora background** (`.fx-aurora-bg`, motion.css): stripes use `--bg`,
+  bands use `--accent`, `--accent-2` and `--accent-strong`.
+- **Living-card scenes** (`LiveScene.astro`, scenes.css): every fill and
+  stroke resolves from `--accent`, `--accent-2`, `--success`, `--warning`,
+  `--danger` and `--text` through the `--sc-*` aliases at the top of
+  scenes.css.
+- **Collaboration globe** (`src/scripts/globe.ts`): reads `--accent`,
+  `--accent-2`, `--accent-strong`, `--text`, `--text-2` and `--bg-2` from
+  the page when it mounts, and again whenever `data-theme` changes. Edits
+  made live in DevTools apply on the next theme toggle.
+- **Toasts** (`.toast`, global.css): `--success` and `--danger` set the tone.

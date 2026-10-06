@@ -7,6 +7,7 @@ import Backdrop from './fx/Backdrop.astro';
 import Meteors from './fx/Meteors.astro';
 import SectionHeader from './fx/SectionHeader.astro';
 import Icon, { type IconName } from './fx/Icon.astro';
+import LiveScene from './fx/LiveScene.astro';
 import OpenSourceSpotlight from './OpenSourceSpotlight.astro';
 
 interface Props {
@@ -238,14 +239,15 @@ const pad = (value: number) => String(value).padStart(2, '0');
       titleId="engagements-title"
       lead={content.engagements.lead}
     />
-    <div
-      class="conversion-grid conversion-grid--two fx-hover-group"
-      data-hover-group=":scope > .engagement-card"
-    >
-      <span class="fx-hover-pill" aria-hidden="true"></span>
+    <div class="conversion-grid conversion-grid--two">
       {
         content.engagements.items.map((item, index) => (
-          <article class="conversion-card engagement-card fx-reveal">
+          <article
+            class="conversion-card engagement-card fx-live fx-glow fx-tilt fx-card-gradient fx-reveal"
+            data-glow
+            data-tilt
+          >
+            <LiveScene scene={item.visual} />
             <span class="engagement-index" aria-hidden="true">
               {pad(index + 1)}
             </span>
@@ -293,8 +295,9 @@ const pad = (value: number) => String(value).padStart(2, '0');
       {
         content.approach.items.map((item, index) => (
           <li
-            class="conversion-card conversion-card--compact step-card fx-glow fx-card-gradient fx-reveal"
+            class="conversion-card conversion-card--compact step-card fx-live fx-glow fx-tilt fx-card-gradient fx-reveal"
             data-glow
+            data-tilt
           >
             <span class="step-head">
               <span class="step-num" aria-hidden="true">
@@ -305,6 +308,7 @@ const pad = (value: number) => String(value).padStart(2, '0');
                 size={22}
               />
             </span>
+            <LiveScene scene={item.visual} />
             <h3>{item.title}</h3>
             <p>{item.body}</p>
           </li>
@@ -332,16 +336,20 @@ const pad = (value: number) => String(value).padStart(2, '0');
       {
         content.collaboration.items.map((item, index) => (
           <article
-            class="conversion-card conversion-card--compact collab-card fx-glow fx-reveal"
+            class="conversion-card conversion-card--compact collab-card fx-live fx-glow fx-tilt fx-card-gradient fx-reveal"
             data-glow
+            data-tilt
           >
-            <span class="collab-icon">
-              <Icon
-                name={collaborationIcons[index % collaborationIcons.length]}
-                size={22}
-              />
-            </span>
-            <h3>{item.title}</h3>
+            <LiveScene scene={item.visual} />
+            <div class="collab-head">
+              <span class="collab-icon">
+                <Icon
+                  name={collaborationIcons[index % collaborationIcons.length]}
+                  size={20}
+                />
+              </span>
+              <h3>{item.title}</h3>
+            </div>
             <p>{item.body}</p>
           </article>
         ))

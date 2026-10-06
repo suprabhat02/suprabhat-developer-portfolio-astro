@@ -1,8 +1,14 @@
+import type { SceneName } from '../components/fx/scenes';
 import type { Locale } from '../i18n/config';
 
 interface ConversionItem {
   title: string;
   body: string;
+}
+
+/** A card that renders an animated scene matching its copy. */
+interface VisualItem extends ConversionItem {
+  visual: SceneName;
 }
 
 interface ProblemItem extends ConversionItem {
@@ -12,7 +18,7 @@ interface ProblemItem extends ConversionItem {
   outcome: string;
 }
 
-interface EngagementItem extends ConversionItem {
+interface EngagementItem extends VisualItem {
   fit: string;
   deliverables: string;
   duration: string;
@@ -48,13 +54,13 @@ interface HomepageConversionContent {
   approach: {
     eyebrow: string;
     title: string;
-    items: readonly ConversionItem[];
+    items: readonly VisualItem[];
   };
   collaboration: {
     eyebrow: string;
     title: string;
     lead: string;
-    items: readonly ConversionItem[];
+    items: readonly VisualItem[];
   };
 }
 
@@ -160,6 +166,7 @@ const content: Record<Locale, HomepageConversionContent> = {
       items: [
         {
           title: 'Defined React frontend project',
+          visual: 'pipeline',
           body: 'Deliver a bounded React, Next.js, or TypeScript build without adding embedded team overhead.',
           fit: 'SaaS teams, startups, and agencies with an approved scope and product owner',
           deliverables:
@@ -168,6 +175,7 @@ const content: Record<Locale, HomepageConversionContent> = {
         },
         {
           title: 'Frontend performance audit',
+          visual: 'perf',
           body: 'Locate rendering, asset, routing, and interaction bottlenecks in a React application.',
           fit: 'SaaS teams with weak Lighthouse lab scores or slow product flows',
           deliverables:
@@ -176,6 +184,7 @@ const content: Record<Locale, HomepageConversionContent> = {
         },
         {
           title: 'React and TypeScript architecture review',
+          visual: 'graph',
           body: 'Assess component boundaries, state ownership, data flow, rendering, tests, and delivery risks.',
           fit: 'Engineering managers inheriting or scaling a React codebase',
           deliverables:
@@ -184,6 +193,7 @@ const content: Record<Locale, HomepageConversionContent> = {
         },
         {
           title: 'Async architecture advisory',
+          visual: 'advisory',
           body: 'Get focused code review or architecture guidance without an embedded engagement.',
           fit: 'Engineering leads who need a senior second opinion across time zones',
           deliverables:
@@ -192,6 +202,7 @@ const content: Record<Locale, HomepageConversionContent> = {
         },
         {
           title: 'SaaS dashboard development',
+          visual: 'chart',
           body: 'Build data-heavy admin panels and analytics interfaces in React and TypeScript.',
           fit: 'Product teams building dashboards, internal tools, or analytics products',
           deliverables:
@@ -200,6 +211,7 @@ const content: Record<Locale, HomepageConversionContent> = {
         },
         {
           title: 'Design system engineering',
+          visual: 'tokens',
           body: 'Standardize components and visual decisions across products and teams.',
           fit: 'Teams with inconsistent UI across multiple products or engineers',
           deliverables:
@@ -208,6 +220,7 @@ const content: Record<Locale, HomepageConversionContent> = {
         },
         {
           title: 'Accessibility audit',
+          visual: 'a11y',
           body: 'Review key workflows against WCAG 2.2 AA criteria with manual and axe-based testing.',
           fit: 'Teams serving enterprise clients or regulated industries',
           deliverables:
@@ -216,6 +229,7 @@ const content: Record<Locale, HomepageConversionContent> = {
         },
         {
           title: 'Website design and development',
+          visual: 'browser',
           body: 'Design and build a responsive, accessible website using technology suited to its content and delivery model.',
           fit: 'Startups, businesses, and agencies needing a complete web presence',
           deliverables:
@@ -230,14 +244,17 @@ const content: Record<Locale, HomepageConversionContent> = {
       items: [
         {
           title: 'Clarify the decision',
+          visual: 'scan',
           body: 'Start with users, constraints, failure states, and the business decision the interface supports.',
         },
         {
           title: 'Design the system',
+          visual: 'stack',
           body: 'Choose component, data, state, and rendering boundaries that fit the actual product.',
         },
         {
           title: 'Verify the result',
+          visual: 'verify',
           body: 'Use type checks, tests, accessibility review, performance budgets, and documented handover.',
         },
       ],
@@ -249,14 +266,17 @@ const content: Record<Locale, HomepageConversionContent> = {
       items: [
         {
           title: 'Async by default',
+          visual: 'chat',
           body: 'Written context, decisions, and progress updates reduce meeting dependency.',
         },
         {
           title: 'Shared milestones',
+          visual: 'milestones',
           body: 'Scope, review points, risks, and next actions remain visible throughout delivery.',
         },
         {
           title: 'Review and handover',
+          visual: 'merge',
           body: 'Changes include review context, documentation, knowledge transfer, and full source ownership after final payment.',
         },
       ],
@@ -364,6 +384,7 @@ const content: Record<Locale, HomepageConversionContent> = {
       items: [
         {
           title: 'Proyecto freelance definido',
+          visual: 'pipeline',
           body: 'Una funcionalidad, dashboard, parte de un sistema de diseño o modernización delimitada.',
           fit: 'Equipos con un resultado y responsable claros',
           deliverables: 'Implementación, pruebas, documentación y entrega',
@@ -371,6 +392,7 @@ const content: Record<Locale, HomepageConversionContent> = {
         },
         {
           title: 'Ingeniería de producto a tiempo parcial',
+          visual: 'chart',
           body: 'Entrega frontend continua junto a un equipo de producto existente.',
           fit: 'Equipos que necesitan capacidad frontend sénior',
           deliverables:
@@ -379,6 +401,7 @@ const content: Record<Locale, HomepageConversionContent> = {
         },
         {
           title: 'Auditoría técnica',
+          visual: 'perf',
           body: 'Revisión enfocada de rendimiento, accesibilidad, arquitectura o calidad frontend.',
           fit: 'Equipos que necesitan evidencia priorizada',
           deliverables:
@@ -387,6 +410,7 @@ const content: Record<Locale, HomepageConversionContent> = {
         },
         {
           title: 'Sesiones de asesoría',
+          visual: 'advisory',
           body: 'Apoyo estructurado para decisiones de arquitectura, entrega o sistema de diseño.',
           fit: 'Líderes que validan un enfoque',
           deliverables: 'Preparación, sesión y notas de decisión',
@@ -400,14 +424,17 @@ const content: Record<Locale, HomepageConversionContent> = {
       items: [
         {
           title: 'Aclarar la decisión',
+          visual: 'scan',
           body: 'Comenzar por usuarios, restricciones, fallos y la decisión de negocio que apoya la interfaz.',
         },
         {
           title: 'Diseñar el sistema',
+          visual: 'stack',
           body: 'Elegir límites de componentes, datos, estado y renderizado adecuados al producto.',
         },
         {
           title: 'Verificar el resultado',
+          visual: 'verify',
           body: 'Usar tipos, pruebas, revisión de accesibilidad, presupuestos de rendimiento y entrega documentada.',
         },
       ],
@@ -419,14 +446,17 @@ const content: Record<Locale, HomepageConversionContent> = {
       items: [
         {
           title: 'Asíncrono por defecto',
+          visual: 'chat',
           body: 'El contexto, las decisiones y el progreso por escrito reducen la dependencia de reuniones.',
         },
         {
           title: 'Hitos compartidos',
+          visual: 'milestones',
           body: 'Alcance, revisiones, riesgos y siguientes acciones permanecen visibles.',
         },
         {
           title: 'Revisión y entrega',
+          visual: 'merge',
           body: 'Los cambios incluyen contexto, documentación y transferencia al equipo responsable.',
         },
       ],
@@ -532,6 +562,7 @@ const content: Record<Locale, HomepageConversionContent> = {
       items: [
         {
           title: 'مشروع مستقل محدد',
+          visual: 'pipeline',
           body: 'ميزة أو لوحة بيانات أو جزء من نظام تصميم أو مبادرة تحديث محددة.',
           fit: 'فرق لديها نتيجة ومسؤول واضحان',
           deliverables: 'تنفيذ واختبارات وتوثيق وتسليم',
@@ -539,6 +570,7 @@ const content: Record<Locale, HomepageConversionContent> = {
         },
         {
           title: 'هندسة منتج بدوام جزئي',
+          visual: 'chart',
           body: 'تسليم واجهات مستمر إلى جانب فريق منتج قائم.',
           fit: 'فرق تحتاج خبرة واجهات أولى',
           deliverables: 'تسليم تدريجي ومراجعات وتحديثات ونقل معرفة',
@@ -546,6 +578,7 @@ const content: Record<Locale, HomepageConversionContent> = {
         },
         {
           title: 'تدقيق تقني',
+          visual: 'perf',
           body: 'مراجعة مركزة للأداء أو الإتاحة أو المعمارية أو جودة الواجهة.',
           fit: 'فرق تحتاج أدلة مرتبة قبل التنفيذ',
           deliverables: 'نتائج ومخاطر وتوصيات وخطة تحقق',
@@ -553,6 +586,7 @@ const content: Record<Locale, HomepageConversionContent> = {
         },
         {
           title: 'جلسات استشارية',
+          visual: 'advisory',
           body: 'دعم منظم لقرارات المعمارية أو التسليم أو نظام التصميم.',
           fit: 'قادة يتحققون من نهج أو مفاضلة',
           deliverables: 'تحضير وجلسة وملاحظات قرار',
@@ -566,14 +600,17 @@ const content: Record<Locale, HomepageConversionContent> = {
       items: [
         {
           title: 'توضيح القرار',
+          visual: 'scan',
           body: 'البدء بالمستخدمين والقيود وحالات الفشل وقرار العمل الذي تدعمه الواجهة.',
         },
         {
           title: 'تصميم النظام',
+          visual: 'stack',
           body: 'اختيار حدود المكونات والبيانات والحالة والعرض المناسبة للمنتج.',
         },
         {
           title: 'التحقق من النتيجة',
+          visual: 'verify',
           body: 'استخدام الأنواع والاختبارات ومراجعة الإتاحة وميزانيات الأداء والتسليم الموثق.',
         },
       ],
@@ -585,14 +622,17 @@ const content: Record<Locale, HomepageConversionContent> = {
       items: [
         {
           title: 'غير متزامن افتراضيًا',
+          visual: 'chat',
           body: 'السياق والقرارات وتحديثات التقدم المكتوبة تقلل الاعتماد على الاجتماعات.',
         },
         {
           title: 'مراحل مشتركة',
+          visual: 'milestones',
           body: 'يبقى النطاق ونقاط المراجعة والمخاطر والخطوات التالية واضحة.',
         },
         {
           title: 'المراجعة والتسليم',
+          visual: 'merge',
           body: 'تشمل التغييرات سياق المراجعة والتوثيق ونقل المعرفة للفريق المسؤول.',
         },
       ],

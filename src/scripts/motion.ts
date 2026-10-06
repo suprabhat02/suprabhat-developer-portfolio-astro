@@ -12,6 +12,8 @@
  *   `prefers-reduced-motion`.
  */
 
+import type { ToastOptions } from './toast';
+
 type Cleanup = () => void;
 
 const media = {
@@ -62,6 +64,7 @@ function initPointerGlow(): Cleanup {
 }
 
 /* ── 3D tilt: rotates the hovered card toward the pointer ──────────── */
+/* Also exposes the pointer offset as `--px/--py` for parallax layers. */
 
 const MAX_TILT_DEG = 7;
 
@@ -70,8 +73,9 @@ function initTilt(): Cleanup {
 
   const reset = (element: HTMLElement) => {
     element.removeAttribute('data-tilting');
-    element.style.removeProperty('--rx');
-    element.style.removeProperty('--ry');
+    ['--rx', '--ry', '--px', '--py'].forEach((property) =>
+      element.style.removeProperty(property),
+    );
   };
 
   const onMove = rafThrottle((event: PointerEvent) => {
@@ -89,6 +93,9 @@ function initTilt(): Cleanup {
     card.setAttribute('data-tilting', '');
     card.style.setProperty('--rx', `${(-y * MAX_TILT_DEG).toFixed(2)}deg`);
     card.style.setProperty('--ry', `${(x * MAX_TILT_DEG).toFixed(2)}deg`);
+    // Normalised pointer offset (−0.5…0.5) for parallax layers inside.
+    card.style.setProperty('--px', x.toFixed(3));
+    card.style.setProperty('--py', y.toFixed(3));
   });
 
   const onLeaveDocument = () => {
@@ -323,6 +330,75 @@ function initInViewMotion(): Cleanup {
   return () => observer.disconnect();
 }
 
+/* ── Living cards on touch screens: arm scenes near the viewport ───── */
+/*
+ * Scene animations exist only while they can play (see scenes.css). Touch
+ * screens have no hover, so scenes are tied to scrolling instead; this
+ * marks cards near the viewport so only those few carry animations.
+ */
+
+function initLiveScenes(): Cleanup {
+  // Mirrors the `@media (hover: none)` block in scenes.css.
+  const noHover = window.matchMedia('(hover: none)').matches;
+  if (!noHover || media.reducedMotion.matches) return () => undefined;
+  const cards = document.querySelectorAll<HTMLElement>('.fx-live');
+  if (!cards.length || !('IntersectionObserver' in window)) {
+    return () => undefined;
+  }
+  const observer = new IntersectionObserver(
+    (entries) =>
+      entries.forEach((entry) =>
+        entry.target.toggleAttribute('data-inview', entry.isIntersecting),
+      ),
+    { rootMargin: '25% 0px' },
+  );
+  cards.forEach((card) => observer.observe(card));
+  return () => observer.disconnect();
+}
+
+/* ── Globe: fetch the renderer only when one approaches the viewport ─ */
+
+function initLazyGlobes(): Cleanup {
+  const hosts = document.querySelectorAll<HTMLElement>('[data-globe]');
+  if (!hosts.length || !('IntersectionObserver' in window)) {
+    return () => undefined;
+  }
+  const unmounts: Cleanup[] = [];
+  const observer = new IntersectionObserver(
+    (entries) =>
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        observer.unobserve(entry.target);
+        import('./globe')
+          .then(({ mountGlobe }) =>
+            unmounts.push(mountGlobe(entry.target as HTMLElement)),
+          )
+          .catch((error: unknown) => console.error(error));
+      }),
+    { rootMargin: '400px 0px' },
+  );
+  hosts.forEach((host) => observer.observe(host));
+  return () => {
+    observer.disconnect();
+    unmounts.forEach((unmount) => unmount());
+  };
+}
+
+/* ── Toasts: render requests from any script (see scripts/toast.ts) ── */
+
+function initToasts(): Cleanup {
+  const onToast = (event: Event) => {
+    const region = document.querySelector<HTMLElement>('[data-toast-region]');
+    if (!region || !(event instanceof CustomEvent)) return;
+    const detail = event.detail as ToastOptions;
+    import('./toast')
+      .then(({ showToast }) => showToast(region, detail))
+      .catch((error: unknown) => console.error(error));
+  };
+  document.addEventListener('portfolio:toast', onToast);
+  return () => document.removeEventListener('portfolio:toast', onToast);
+}
+
 /* ── Boot ──────────────────────────────────────────────────────────── */
 
 const initializers: ReadonlyArray<() => Cleanup> = [
@@ -333,6 +409,9 @@ const initializers: ReadonlyArray<() => Cleanup> = [
   initPointerGlow,
   initTilt,
   initHoverGroups,
+  initLiveScenes,
+  initLazyGlobes,
+  initToasts,
 ];
 
 const boot = () => {

@@ -584,13 +584,17 @@
   }
 }
 
-/* Proof cards */
+/* Proof cards. Below the fold on phones, so their scenes are skipped by
+   content-visibility until scrolled near (the size is remembered after the
+   first render). On wide screens the row is visible and renders as usual. */
 .hero-bottom {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
   margin-block-start: clamp(0.5rem, 2vw, 1.5rem);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 22rem;
 }
 
 .hero-proof-card {
@@ -614,7 +618,6 @@
   border-color: var(--accent-border);
   box-shadow: 0 24px 60px -28px var(--accent-glow);
   color: var(--text);
-  transform: translateY(-4px);
 }
 
 .hero-card-kicker {
@@ -688,13 +691,11 @@
 }
 
 .hero-proof-card--availability {
-  --card-fill:
-    linear-gradient(
-      160deg,
-      color-mix(in oklch, var(--success) 9%, transparent),
-      transparent 55%
-    ),
-    var(--bg-card);
+  --gc-pattern: linear-gradient(
+    160deg,
+    color-mix(in oklch, var(--success) 9%, transparent),
+    transparent 55%
+  );
 }
 
 /* ── Keyword marquee ────────────────────────────────────────────────── */
@@ -744,14 +745,6 @@
   display: grid;
   gap: 0.35rem;
   padding: 1.25rem 1.35rem;
-  transition:
-    transform 320ms var(--fx-ease-out),
-    border-color 200ms ease;
-}
-
-.stat-item:hover {
-  border-color: var(--accent-border);
-  transform: translateY(-3px);
 }
 
 .stat-num {
@@ -1251,10 +1244,6 @@
   background: transparent;
   border-color: var(--border);
   transition: border-color 200ms ease;
-}
-
-.fx-hover-group[data-hovering] > .engagement-card {
-  border-color: transparent;
 }
 
 .engagement-index {
@@ -1907,6 +1896,9 @@ details[open] .faq-icon {
   isolation: isolate;
   overflow: hidden;
   overflow: clip;
+  /* Far below the fold: skip its rendering (globe, meteors) until near. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 46rem;
   padding-block: clamp(5rem, 10vw, 8rem) clamp(4rem, 8vw, 6rem);
   background:
     radial-gradient(
@@ -1952,22 +1944,47 @@ details[open] .faq-icon {
   z-index: -1;
 }
 
+/* Meteors stay atmospheric: dimmed, and faded behind the copy column. */
 .cta-band .fx-meteors {
   z-index: -1;
+  --meteor-fade: linear-gradient(
+    var(--meteor-dir, to right),
+    rgb(0 0 0 / 0.35) 0%,
+    rgb(0 0 0 / 0.35) 42%,
+    #000 75%
+  );
+  opacity: 0.55;
+  mask-image: var(--meteor-fade);
 }
 
+[dir='rtl'] .cta-band .fx-meteors {
+  --meteor-dir: to left;
+}
+
+@media (max-width: 900px) {
+  .cta-band .fx-meteors {
+    opacity: 0.45;
+    mask-image: none;
+  }
+}
+
+/* Two columns: the pitch and the collaboration globe. */
 .cta-inner {
   position: relative;
   display: grid;
-  justify-items: center;
-  gap: 2rem;
-  text-align: center;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4.5rem);
 }
 
-.cta-inner > div:first-child {
+.cta-copy {
   display: grid;
-  justify-items: center;
-  gap: 1rem;
+  justify-items: start;
+  gap: 1.1rem;
+}
+
+.cta-copy .cta-btns {
+  margin-block-start: 0.9rem;
 }
 
 .cta-tag {
@@ -1985,8 +2002,7 @@ details[open] .faq-icon {
   color: var(--accent-ink);
 }
 
-.cta-tag::before,
-.cta-tag::after {
+.cta-tag::before {
   content: '';
   width: 1.5rem;
   height: 1px;
@@ -1995,16 +2011,16 @@ details[open] .faq-icon {
 }
 
 .cta-title {
-  max-width: 20ch;
+  max-width: 18ch;
   color: var(--text);
   background: linear-gradient(180deg, var(--text) 30%, var(--text-2));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-size: clamp(2.1rem, 5.2vw, 4rem);
+  font-size: clamp(2rem, 4.2vw, 3.4rem);
   font-weight: 800;
   letter-spacing: -0.04em;
-  line-height: 1.02;
+  line-height: 1.04;
 }
 
 .cta-sub {
@@ -2017,8 +2033,17 @@ details[open] .faq-icon {
 .cta-btns {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .cta-inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cta-globe {
+    width: min(100%, 24rem);
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -2420,6 +2445,26 @@ textarea.f-input {
       transparent 70%
     ),
     var(--accent-subtle);
+}
+
+/* Collaboration: icon chip beside the title, under the scene */
+.collab-head {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-block-end: 0.75rem;
+}
+
+.collab-head .collab-icon {
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 0;
+  border-radius: 12px;
+}
+
+.collab-head h3 {
+  margin: 0;
 }
 
 /* Contact rows: link plus optional copy button */

@@ -164,6 +164,107 @@
   animation-duration: 34s;
 }
 
+/*
+ * Aceternity "Aurora Background", rebuilt to run on the compositor.
+ * The original animates `background-position`, which repaints every
+ * frame. Here both layers tile seamlessly (every stripe period divides
+ * its tile), the blended layer moves by exactly one shared tile width with
+ * `transform`, and the blur, skew and mask stay static.
+ */
+.fx-aurora-bg {
+  --au-stripe: var(--bg);
+  --au-stripes: repeating-linear-gradient(
+    90deg,
+    var(--au-stripe) 0%,
+    var(--au-stripe) 9%,
+    transparent 12.5%,
+    transparent 15%,
+    var(--au-stripe) 20%
+  );
+  --au-colors: repeating-linear-gradient(
+    90deg,
+    var(--accent) 10%,
+    var(--accent-2) 15%,
+    var(--accent-strong) 20%,
+    color-mix(in oklch, var(--accent-2) 60%, var(--accent)) 25%,
+    var(--accent) 30%
+  );
+  position: absolute;
+  inset: -2rem -12rem;
+  overflow: hidden;
+  overflow: clip;
+  opacity: var(--au-opacity, 0.62);
+  filter: blur(12px);
+  transform: skewX(-10deg);
+  mask-image: radial-gradient(
+    ellipse 95% 110% at 100% 0%,
+    #000 18%,
+    transparent 78%
+  );
+}
+
+[dir='rtl'] .fx-aurora-bg {
+  transform: skewX(10deg);
+  mask-image: radial-gradient(
+    ellipse 95% 110% at 0% 0%,
+    #000 18%,
+    transparent 78%
+  );
+}
+
+/* One column on phones: glow across the top, away from the copy. */
+@media (max-width: 760px) {
+  .fx-aurora-bg,
+  [dir='rtl'] .fx-aurora-bg {
+    opacity: calc(var(--au-opacity, 0.62) * 0.75);
+    mask-image: radial-gradient(
+      ellipse 120% 38% at 50% 0%,
+      #000 10%,
+      transparent 80%
+    );
+  }
+}
+
+.fx-aurora-bg > span {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  background-image: var(--au-stripes), var(--au-colors);
+  background-repeat: repeat-x;
+}
+
+.fx-aurora-base {
+  width: 100%;
+  background-size:
+    900px 100%,
+    600px 100%;
+}
+
+.fx-aurora-flow {
+  width: calc(100% + 1800px);
+  background-size:
+    600px 100%,
+    450px 100%;
+  mix-blend-mode: difference;
+  will-change: transform;
+  animation: fx-aurora-flow 70s linear infinite;
+}
+
+[data-theme='light'] .fx-aurora-bg {
+  --au-opacity: 0.55;
+  --au-stripe: var(--bg);
+}
+
+[data-theme='light'] .fx-aurora-flow {
+  mix-blend-mode: multiply;
+}
+
+@keyframes fx-aurora-flow {
+  to {
+    transform: translate3d(-1800px, 0, 0);
+  }
+}
+
 /* ── Gradient text (Aceternity text shimmer) ────────────────────────── */
 
 .fx-gradient-text {
@@ -391,6 +492,11 @@
 
 /* ── Meteors (Aceternity "Meteors") ─────────────────────────────────── */
 
+/*
+ * Size container, so each meteor's travel can be derived from the host's
+ * real height: at 35° below horizontal a drop of H needs H / sin(35°)
+ * (≈ 1.75 H) of travel, plus its tail, to exit the bottom edge.
+ */
 .fx-meteors {
   position: absolute;
   z-index: -1;
@@ -398,9 +504,11 @@
   overflow: hidden;
   overflow: clip;
   pointer-events: none;
+  container-type: size;
 }
 
 .fx-meteors span {
+  --travel: 42rem;
   position: absolute;
   inset-block-start: -2%;
   left: var(--x, 50%);
@@ -815,13 +923,19 @@
   }
 }
 
+@supports (height: 1cqh) {
+  .fx-meteors span {
+    --travel: calc(175cqh + 6rem);
+  }
+}
+
 @keyframes fx-meteor {
   0% {
     transform: rotate(215deg) translateX(0);
   }
   70%,
   100% {
-    transform: rotate(215deg) translateX(-42rem);
+    transform: rotate(215deg) translateX(calc(-1 * var(--travel)));
   }
 }
 
@@ -848,23 +962,32 @@
   }
 }
 
+/*
+ * Reveals animate the individual `translate`/`scale`/`rotate` properties,
+ * never `transform`: a filled `transform` keyframe would permanently
+ * override the 3D tilt that cards apply through `transform`.
+ */
 @keyframes fx-reveal {
   from {
-    transform: translate3d(0, 2.75rem, 0) scale(0.97);
+    translate: 0 2.75rem;
+    scale: 0.97;
     filter: blur(6px);
   }
   to {
-    transform: none;
+    translate: none;
+    scale: none;
     filter: none;
   }
 }
 
 @keyframes fx-reveal-scale {
   from {
-    transform: perspective(1200px) rotateX(14deg) scale(0.9);
+    rotate: x 14deg;
+    scale: 0.9;
   }
   to {
-    transform: none;
+    rotate: none;
+    scale: none;
   }
 }
 
@@ -907,6 +1030,7 @@
   }
 
   .fx-aurora span,
+  .fx-aurora-flow,
   .fx-moving-border::before,
   .fx-meteors span,
   .fx-ping::after,

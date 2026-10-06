@@ -20,8 +20,10 @@ import Meteors from './fx/Meteors.astro';
 import SectionHeader from './fx/SectionHeader.astro';
 import TextReveal from './fx/TextReveal.astro';
 import ExperienceTimeline from './ExperienceTimeline.astro';
-import CopyButton from './fx/CopyButton.astro';
 import Icon, { type IconName } from './fx/Icon.astro';
+import LiveScene from './fx/LiveScene.astro';
+import Globe from './fx/Globe.astro';
+import type { SceneName } from './fx/scenes';
 import { getHomepageConversionContent } from '../data/homepageConversion';
 import {
   heroPortraitQuality,
@@ -185,6 +187,11 @@ const heroProofCards: readonly HeroProofCard[] = [
     cta: t(locale, 'action.contact', 'Get in touch'),
   },
 ] as const;
+const heroProofScene: Record<HeroProofCard['variant'], SceneName> = {
+  work: 'perf',
+  stack: 'orbit',
+  availability: 'zones',
+};
 const heroProofClass: Record<HeroProofCard['variant'], string> = {
   work: 'hero-case-card hero-proof-card--work',
   stack: 'hero-proof-card--stack',
@@ -361,8 +368,6 @@ interface ContactLink {
   display: string;
   icon: IconName;
   external: boolean;
-  /** Text to place on the clipboard, when the row offers a copy button. */
-  copy?: string;
 }
 
 const socialIcons: Record<string, IconName> = {
@@ -377,7 +382,6 @@ const contactLinks: readonly ContactLink[] = [
     display: profile.email,
     icon: 'mail',
     external: false,
-    copy: profile.email,
   },
   ...profile.social.map((social) => ({
     href: social.href,
@@ -402,7 +406,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
 <div class="homepage-shell">
   <!-- ── HERO ─────────────────────────────────────────────── -->
   <section id="home" class="hero" aria-labelledby="hero-name" data-motion-scope>
-    <Backdrop pattern="grid" spotlight aurora />
+    <Backdrop pattern="aurora" />
     <div class="wrap">
       <div class="hero-grid">
         <div class="hero-content hero-card">
@@ -424,15 +428,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
           </p>
 
           <h1 id="hero-name" class="hero-name">
-            {
-              locale === 'ar' ? (
-                profile.name
-              ) : (
-                <>
-                  Suprabhat <span class="fx-gradient-text">Kumar</span>
-                </>
-              )
-            }
+            {locale === 'ar' ? profile.name : 'Suprabhat Kumar'}
           </h1>
           <p class="hero-sub">{conversion.hero.title}</p>
           {
@@ -562,11 +558,13 @@ const contactIndex = featured.length > 0 ? '14' : '13';
                 class:list={[
                   'hero-proof-card',
                   heroProofClass[card.variant],
-                  'fx-glow',
+                  'fx-live fx-glow fx-tilt fx-card-gradient',
                 ]}
                 href={card.href}
                 data-glow
+                data-tilt
               >
+                <LiveScene scene={heroProofScene[card.variant]} size="sm" />
                 <span class="hero-card-kicker">
                   {card.variant === 'availability' && (
                     <span class="fx-ping" aria-hidden="true" />
@@ -623,7 +621,11 @@ const contactIndex = featured.length > 0 ? '14' : '13';
       <div class="stats-grid">
         {
           stats.map((stat) => (
-            <div class="stat-item fx-glow" data-glow>
+            <div
+              class="stat-item fx-glow fx-tilt fx-card-gradient"
+              data-glow
+              data-tilt
+            >
               <span class="stat-num">{stat.value}</span>
               <span class="stat-lbl">{stat.label}</span>
             </div>
@@ -1090,9 +1092,9 @@ const contactIndex = featured.length > 0 ? '14' : '13';
     <div class="fx-lamp" aria-hidden="true">
       <span class="fx-lamp-line"></span>
     </div>
-    <Meteors count={16} />
+    <Meteors count={12} />
     <div class="wrap cta-inner">
-      <div class="fx-reveal">
+      <div class="cta-copy fx-reveal">
         <p class="cta-tag">
           {t(locale, 'home.ctaTag', 'Ready to collaborate')}
         </p>
@@ -1114,15 +1116,16 @@ const contactIndex = featured.length > 0 ? '14' : '13';
             )
           }
         </p>
+        <div class="cta-btns">
+          <a href="#contact" class="btn btn-primary">
+            {t(locale, 'action.start', 'Start a project')}
+          </a>
+          <a href={pageHref('/blog/')} class="btn btn-outline">
+            {t(locale, 'nav.blog', 'Read the blog')}
+          </a>
+        </div>
       </div>
-      <div class="cta-btns">
-        <a href="#contact" class="btn btn-primary">
-          {t(locale, 'action.start', 'Start a project')}
-        </a>
-        <a href={pageHref('/blog/')} class="btn btn-outline">
-          {t(locale, 'nav.blog', 'Read the blog')}
-        </a>
-      </div>
+      <Globe {locale} class="cta-globe" />
     </div>
   </section>
 
@@ -1166,13 +1169,6 @@ const contactIndex = featured.length > 0 ? '14' : '13';
                         <span dir="ltr">{link.display}</span>
                       </span>
                     </a>
-                    {link.copy && (
-                      <CopyButton
-                        value={link.copy}
-                        label={t(locale, 'copy.emailLabel', 'email address')}
-                        {locale}
-                      />
-                    )}
                   </li>
                 ))
               }

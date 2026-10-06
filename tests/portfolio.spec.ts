@@ -104,7 +104,8 @@ test('homepage renders correct structure and passes accessibility', async ({
       band.querySelector('.cta-glow-r') as HTMLElement,
     ).position,
   }));
-  expect(ctaLayout.height).toBeLessThan(700);
+  // Two columns on desktop, copy above the globe on phones.
+  expect(ctaLayout.height).toBeLessThan(1200);
   expect(ctaLayout.leftGlowPosition).toBe('absolute');
   expect(ctaLayout.rightGlowPosition).toBe('absolute');
 
@@ -860,19 +861,17 @@ test('motion layer is progressive, accessible, and honors reduced motion', async
   const reduced = await page.evaluate(() => {
     const track = document.querySelector('.recs-track');
     const clone = document.querySelector('.recs-track > [data-clone]');
-    const spotlight = document.querySelector('.fx-spotlight');
+    const aurora = document.querySelector('.fx-aurora-flow');
     return {
       trackAnimation: track ? getComputedStyle(track).animationName : '',
       cloneDisplay: clone ? getComputedStyle(clone).display : '',
-      spotlightAnimation: spotlight
-        ? getComputedStyle(spotlight).animationName
-        : '',
+      auroraAnimation: aurora ? getComputedStyle(aurora).animationName : '',
     };
   });
   expect(reduced).toEqual({
     trackAnimation: 'none',
     cloneDisplay: 'none',
-    spotlightAnimation: 'none',
+    auroraAnimation: 'none',
   });
   const reducedOverflow = await page.evaluate(
     () =>
@@ -952,4 +951,204 @@ test('experience timeline keeps semantic order and heading hierarchy', async ({
       /^\d{4}-\d{2}$/,
     );
   }
+});
+
+test('living cards render decorative scenes with depth and stay static at rest', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const cards = page.locator('.fx-live');
+  expect(await cards.count()).toBeGreaterThanOrEqual(17);
+  // Every living card has the full effect stack and a decorative scene.
+  const summary = await cards.evaluateAll((elements) =>
+    elements.map((card) => ({
+      glow: card.hasAttribute('data-glow'),
+      tilt: card.hasAttribute('data-tilt'),
+      border: card.classList.contains('fx-card-gradient'),
+      sceneHidden:
+        card.querySelector('.lv-scene')?.getAttribute('aria-hidden') ?? null,
+    })),
+  );
+  for (const card of summary) {
+    expect(card).toEqual({
+      glow: true,
+      tilt: true,
+      border: true,
+      sceneHidden: 'true',
+    });
+  }
+  // Nothing animates on a clock until a card is engaged (touch screens tie
+  // the scenes to scrolling instead, which is not time-based).
+  const running = await page.evaluate(
+    () =>
+      document
+        .getAnimations()
+        .filter(
+          (animation) =>
+            animation.playState === 'running' &&
+            animation.timeline instanceof DocumentTimeline &&
+            animation.effect instanceof KeyframeEffect &&
+            animation.effect.target instanceof Element &&
+            animation.effect.target.closest('.lv-scene'),
+        ).length,
+  );
+  expect(running).toBe(0);
+});
+
+test('hero uses the aurora backdrop and a plain-text name', async ({
+  page,
+}) => {
+  for (const prefix of ['', '/ar']) {
+    await page.goto(`${prefix}/`);
+    const hero = page.locator('#home');
+    await expect(hero.locator('.fx-aurora-bg')).toHaveCount(1);
+    await expect(hero.locator('.fx-grid')).toHaveCount(0);
+    await expect(page.locator('#hero-name .fx-gradient-text')).toHaveCount(0);
+    const fill = await page
+      .locator('#hero-name')
+      .evaluate((element) => getComputedStyle(element).webkitTextFillColor);
+    expect(fill).not.toBe('rgba(0, 0, 0, 0)');
+  }
+});
+
+test('CTA globe loads lazily, is described, and marks India', async ({
+  page,
+}) => {
+  const globeRequests: string[] = [];
+  page.on('request', (request) => {
+    if (/\/globe\.[\w-]+\.js$/.test(new URL(request.url()).pathname)) {
+      globeRequests.push(request.url());
+    }
+  });
+  await page.goto('/ar/');
+  await page.waitForLoadState('load');
+  expect(globeRequests).toHaveLength(0);
+
+  const globe = page.locator('[data-globe]');
+  await expect(globe).toHaveAttribute('role', 'img');
+  await expect(globe).toHaveAttribute('data-home-label', 'الهند');
+  await expect(globe).toHaveAttribute('aria-label', /الهند/);
+  await globe.scrollIntoViewIfNeeded();
+  await expect(globe).toHaveAttribute('data-ready', '', { timeout: 15_000 });
+  // The first frame paints on the next animation frame after mounting.
+  await expect
+    .poll(() =>
+      globe.locator('canvas').evaluate((canvas) => {
+        const context = (canvas as HTMLCanvasElement).getContext('2d');
+        if (!context) return 0;
+        const { width, height } = canvas as HTMLCanvasElement;
+        const pixels = context.getImageData(0, 0, width, height).data;
+        let opaque = 0;
+        for (let index = 3; index < pixels.length; index += 4 * 97) {
+          if (pixels[index] > 0) opaque++;
+        }
+        return opaque;
+      }),
+    )
+    .toBeGreaterThan(100);
+  await expect(page.locator('.cta-band .fx-meteors')).toHaveCSS(
+    'container-type',
+    'size',
+  );
+});
+
+test('contact form shows placeholders and toasts, resetting only on success', async ({
+  page,
+}) => {
+  let succeed = false;
+  await page.route('https://api.web3forms.com/submit', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: succeed }),
+    }),
+  );
+  await page.goto('/');
+  const form = page.locator('#homepage-contact-form');
+  for (const name of ['name', 'email', 'company', 'message']) {
+    await expect(form.locator(`[name="${name}"]`)).toHaveAttribute(
+      'placeholder',
+      /\S/,
+    );
+  }
+  for (const name of ['project_type', 'budget', 'timeline']) {
+    await expect(
+      form.locator(`[name="${name}"] option[value=""]`),
+    ).toHaveAttribute('disabled', '');
+  }
+
+  await form.evaluate((element) => {
+    const key = element.querySelector<HTMLInputElement>('[name="access_key"]');
+    if (key) key.value = 'test-key';
+  });
+  await form.locator('[name="name"]').fill('Test Person');
+  await form.locator('[name="email"]').fill('test@example.com');
+  await form.locator('[name="project_type"]').selectOption('design-system');
+  await form.locator('[name="budget"]').selectOption('5k-15k');
+  await form.locator('[name="timeline"]').selectOption('exploring');
+  await form.locator('[name="message"]').fill('Need a design system.');
+
+  await form.getByRole('button', { name: 'Send enquiry' }).click();
+  const failure = page.locator('.toast--error');
+  await expect(failure).toBeVisible();
+  await expect(failure).toHaveAttribute('role', 'alert');
+  await expect(failure).toContainText('Message not sent');
+  await expect(form.locator('[name="name"]')).toHaveValue('Test Person');
+
+  succeed = true;
+  await form.getByRole('button', { name: 'Send enquiry' }).click();
+  const success = page.locator('.toast--success');
+  await expect(success).toBeVisible();
+  await expect(success).toContainText('Message sent');
+  await expect(form.locator('[name="name"]')).toHaveValue('');
+  await expect(form.locator('[name="budget"]')).toHaveValue('');
+  await expect(page.locator('[data-toast-region]')).toHaveAttribute(
+    'aria-live',
+    'polite',
+  );
+
+  await success.getByRole('button', { name: 'Dismiss notification' }).click();
+  await expect(success).toHaveCount(0);
+});
+
+test('mobile header controls sit at the inline end in every direction', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  for (const prefix of ['', '/ar']) {
+    await page.goto(`${prefix}/`);
+    const gaps = await page.evaluate(() => {
+      const header = document.querySelector('.site-header');
+      const brand = document.querySelector('.site-header .brand');
+      const actions = document.querySelector('.site-header .header-actions');
+      if (!header || !brand || !actions) return null;
+      const h = header.getBoundingClientRect();
+      const b = brand.getBoundingClientRect();
+      const a = actions.getBoundingClientRect();
+      const rtl = document.documentElement.dir === 'rtl';
+      return {
+        brand: rtl ? h.right - b.right : b.left - h.left,
+        actions: rtl ? a.left - h.left : h.right - a.right,
+      };
+    });
+    expect(gaps).not.toBeNull();
+    expect(Math.abs((gaps?.brand ?? 0) - (gaps?.actions ?? 99))).toBeLessThan(
+      2,
+    );
+  }
+});
+
+test('services page is fully localized, including structured data', async ({
+  page,
+}) => {
+  await page.goto('/ar/services/');
+  const main = page.locator('main');
+  for (const english of ['Best for:', 'Deliverables:', 'Duration:', 'Six ']) {
+    await expect(main).not.toContainText(english);
+  }
+  await expect(main).toContainText('المخرجات:');
+  const structuredData = (
+    await page.locator('script[type="application/ld+json"]').allTextContents()
+  ).join('');
+  expect(structuredData).not.toContain('Best for:');
 });

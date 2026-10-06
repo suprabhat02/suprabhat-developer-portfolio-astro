@@ -1,11 +1,12 @@
 ---
 /**
- * Decorative section backdrop: Aceternity grid/dot background, spotlight
- * beams and aurora blobs. Purely presentational and hidden from assistive
- * technology; the parent must establish a positioned stacking context.
+ * Decorative section backdrop: Aceternity grid/dot background, aurora
+ * background, spotlight beams and aurora blobs. Purely presentational and
+ * hidden from assistive technology; the parent must establish a positioned
+ * stacking context.
  */
 interface Props {
-  pattern?: 'grid' | 'dots' | 'none';
+  pattern?: 'grid' | 'dots' | 'aurora' | 'none';
   spotlight?: boolean;
   aurora?: boolean;
   class?: string;
@@ -26,6 +27,14 @@ const {
 >
   {pattern === 'grid' && <div class="fx-grid" />}
   {pattern === 'dots' && <div class="fx-dots" />}
+  {
+    pattern === 'aurora' && (
+      <div class="fx-aurora-bg">
+        <span class="fx-aurora-base" />
+        <span class="fx-aurora-flow" />
+      </div>
+    )
+  }
   {
     aurora && (
       <div class="fx-aurora">

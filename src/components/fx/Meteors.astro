@@ -8,10 +8,12 @@ interface Props {
 }
 
 const { count = 14 } = Astro.props;
+// Meteors fall down and to the right, so starts span -40%…100% to sweep
+// the whole host, including its lower-left corner.
 const meteors = Array.from({ length: Math.max(0, count) }, (_, index) => {
-  const spread = (index * 37) % 100;
+  const spread = ((index * 37) % 100) * 1.4 - 40;
   return {
-    x: `${spread}%`,
+    x: `${spread.toFixed(1)}%`,
     delay: `${((index * 1.7) % 8).toFixed(2)}s`,
     duration: `${(6 + ((index * 3) % 7)).toFixed(0)}s`,
   };

@@ -1,0 +1,822 @@
+---
+/**
+ * Animated SVG mini-scene for "living" cards (see `.fx-live` in
+ * src/styles/scenes.css).
+ *
+ * - Purely decorative: hidden from assistive technology, no text content
+ *   beyond universal figures (a score, "AA").
+ * - At rest every scene shows its finished state. Hovering or focusing the
+ *   card plays the scene's story on a loop; on touch screens the story is
+ *   tied to scrolling instead. Nothing animates while idle, and everything
+ *   is static under `prefers-reduced-motion: reduce`.
+ * - Layers marked `.lv-l` drift with the pointer (`--px/--py`, written by
+ *   the tilt handler in motion.ts) at their own depth `--d`, producing
+ *   parallax inside the card.
+ * - Elements are positioned with SVG attributes on wrapper groups and
+ *   animated with CSS on the inner element, so the two never fight over
+ *   `transform`.
+ */
+import type { SceneName } from './scenes';
+import '../../styles/scenes.css';
+
+interface Props {
+  scene: SceneName;
+  size?: 'md' | 'sm';
+  class?: string;
+}
+
+const { scene, size = 'md', class: className } = Astro.props;
+---
+
+<div
+  class:list={[
+    'lv-scene',
+    `lv-scene--${size}`,
+    `lv-scene--${scene}`,
+    className,
+  ]}
+  aria-hidden="true"
+>
+  <svg
+    viewBox="0 0 320 120"
+    preserveAspectRatio="xMidYMid meet"
+    focusable="false"
+  >
+    {
+      scene === 'pipeline' && (
+        <>
+          <g class="lv-l" style="--d:.4">
+            <line class="ln" x1="46" y1="60" x2="274" y2="60" />
+          </g>
+          <g class="lv-l" style="--d:.7">
+            <line class="sa lv-faint-stroke" x1="46" y1="60" x2="274" y2="60" />
+            <circle class="fb lv-head k k-travel" cx="46" cy="60" r="5" />
+          </g>
+          <g class="lv-l" style="--d:1">
+            {[46, 122, 198, 274].map((x, i) => (
+              <g transform={`translate(${x} 60)`}>
+                <circle class="t k k-stage" style={`--i:${i}`} r="15" />
+                <path
+                  class="sb k k-tick"
+                  style={`--i:${i}`}
+                  d="M-6 0l4 4 8-8"
+                  pathLength="1"
+                />
+              </g>
+            ))}
+          </g>
+          <g class="lv-l" style="--d:1.5" transform="translate(274 26)">
+            <g class="k k-drop">
+              <rect class="fas" x="-11" y="-9" width="22" height="18" rx="4" />
+              <path class="sa" d="M-11 -2h22M0 -9v7" />
+            </g>
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'perf' && (
+        <>
+          <g class="lv-l" style="--d:.4">
+            <line class="ln" x1="28" y1="100" x2="196" y2="100" />
+            <line class="ln" x1="28" y1="16" x2="28" y2="100" />
+          </g>
+          <g class="lv-l" style="--d:.8">
+            {[
+              [30, 22, 70],
+              [52, 37, 96],
+              [40, 52, 124],
+              [76, 67, 88],
+              [60, 82, 112],
+            ].map(([x, y, w], i) => (
+              <rect
+                class={`${i % 2 ? 'fb' : 'fa'} k k-shrink`}
+                style={`--i:${i}`}
+                x={x}
+                y={y}
+                width={w}
+                height="8"
+                rx="4"
+              />
+            ))}
+          </g>
+          <g class="lv-l" style="--d:1.3" transform="translate(258 60)">
+            <circle class="ln lv-track" r="32" />
+            <circle
+              class="lv-ring k k-score"
+              r="32"
+              pathLength="100"
+              transform="rotate(-90)"
+            />
+            <text class="tx k k-hi" y="6" text-anchor="middle">
+              100
+            </text>
+            <text class="tx tx-warn k k-lo" y="6" text-anchor="middle">
+              42
+            </text>
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'graph' && (
+        <>
+          <g class="lv-l" style="--d:.5">
+            {[
+              'M52 32L160 60',
+              'M52 88L160 60',
+              'M160 60L268 32',
+              'M160 60L268 88',
+              'M52 32L52 88',
+              'M268 32L268 88',
+            ].map((d, i) => (
+              <>
+                <path class="ln" d={d} />
+                <path
+                  class="sa k k-draw"
+                  style={`--i:${i}`}
+                  d={d}
+                  pathLength="1"
+                />
+              </>
+            ))}
+          </g>
+          <g class="lv-l" style="--d:1">
+            {[
+              [52, 32],
+              [52, 88],
+              [268, 32],
+            ].map(([x, y]) => (
+              <circle class="t" cx={x} cy={y} r="9" />
+            ))}
+            <circle class="fa" cx="160" cy="60" r="12" />
+            <circle class="lv-risk k k-fix" cx="268" cy="88" r="9" />
+          </g>
+          <g class="lv-l" style="--d:1.4">
+            <g class="k k-scan">
+              <rect
+                class="lv-beam"
+                x="12"
+                y="8"
+                width="22"
+                height="104"
+                rx="6"
+              />
+              <line class="sb" x1="23" y1="8" x2="23" y2="112" />
+            </g>
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'advisory' && (
+        <>
+          <g class="lv-l" style="--d:.5">
+            <path class="ln lv-dash" d="M84 52Q160 -6 236 52" />
+            <path class="ln lv-dash" d="M236 70Q160 126 84 70" />
+          </g>
+          <g class="lv-l" style="--d:.9">
+            <path
+              class="sa lv-packet k k-packet"
+              d="M84 52Q160 -6 236 52"
+              pathLength="1"
+            />
+            <path
+              class="sb lv-packet k k-packet"
+              style="--i:6"
+              d="M236 70Q160 126 84 70"
+              pathLength="1"
+            />
+          </g>
+          {[56, 264].map((x, i) => (
+            <g
+              class="lv-l"
+              style={`--d:${1.2 + i * 0.2}`}
+              transform={`translate(${x} 60)`}
+            >
+              <circle class="t" r="24" />
+              <line
+                class="sa k k-spin"
+                style={`--i:${i * 3}`}
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="-15"
+              />
+              <line class="sb" x1="0" y1="0" x2={i ? -8 : 9} y2="5" />
+              <circle class="fa" r="2.5" />
+            </g>
+          ))}
+        </>
+      )
+    }
+    {
+      scene === 'chart' && (
+        <>
+          <g class="lv-l" style="--d:.4">
+            {[30, 54, 78].map((y) => (
+              <line class="ln lv-dash" x1="24" y1={y} x2="296" y2={y} />
+            ))}
+            <line class="ln" x1="24" y1="100" x2="296" y2="100" />
+          </g>
+          <g class="lv-l" style="--d:.7">
+            {[40, 76, 112, 148, 184, 220, 256].map((x, i) => (
+              <rect
+                class="fbs k k-grow"
+                style={`--i:${i}`}
+                x={x}
+                y={100 - (16 + ((i * 7) % 5) * 6)}
+                width="18"
+                height={16 + ((i * 7) % 5) * 6}
+                rx="3"
+              />
+            ))}
+          </g>
+          <g class="lv-l" style="--d:1">
+            <path
+              class="lv-area k k-fade"
+              d="M28 88L68 70L108 78L148 50L188 58L228 34L268 40L296 22L296 100L28 100Z"
+            />
+            <path
+              class="sa lv-thick k k-draw"
+              d="M28 88L68 70L108 78L148 50L188 58L228 34L268 40L296 22"
+              pathLength="1"
+            />
+          </g>
+          <g class="lv-l" style="--d:1.4" transform="translate(296 22)">
+            <circle class="fa k k-pop" r="5" />
+            <circle class="sa lv-halo k k-ping" r="5" />
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'tokens' && (
+        <>
+          <g class="lv-l" style="--d:.5">
+            {[
+              'M60 26C110 26 120 46 172 46',
+              'M60 50C110 50 130 42 188 42',
+              'M60 74C110 74 130 80 166 80',
+              'M60 98C120 98 200 96 252 80',
+            ].map((d, i) => (
+              <path
+                class="ln k k-draw"
+                style={`--i:${i}`}
+                d={d}
+                pathLength="1"
+              />
+            ))}
+          </g>
+          <g class="lv-l" style="--d:1.2">
+            {['fa', 'fb', 'fok', 'ftx'].map((tone, i) => (
+              <g transform={`translate(48 ${26 + i * 24})`}>
+                <circle class={`${tone} k k-beat`} style={`--i:${i}`} r="10" />
+              </g>
+            ))}
+          </g>
+          <g class="lv-l" style="--d:.9">
+            <rect class="t" x="150" y="20" width="148" height="82" rx="12" />
+            <circle
+              class="fa k k-paint"
+              style="--i:0"
+              cx="172"
+              cy="46"
+              r="10"
+            />
+            <rect
+              class="fb k k-paint"
+              style="--i:1"
+              x="190"
+              y="38"
+              width="88"
+              height="8"
+              rx="4"
+            />
+            <rect
+              class="ftx lv-dim"
+              x="190"
+              y="52"
+              width="60"
+              height="6"
+              rx="3"
+            />
+            <rect
+              class="fok k k-paint"
+              style="--i:2"
+              x="166"
+              y="72"
+              width="62"
+              height="16"
+              rx="8"
+            />
+            <rect
+              class="ftx k k-paint lv-dim"
+              style="--i:3"
+              x="238"
+              y="74"
+              width="44"
+              height="12"
+              rx="6"
+            />
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'a11y' && (
+        <>
+          <g class="lv-l" style="--d:.6">
+            <rect class="fas" x="34" y="56" width="70" height="26" rx="9" />
+            <rect class="t" x="122" y="56" width="92" height="26" rx="7" />
+            <line class="sb" x1="134" y1="62" x2="134" y2="76" />
+            <rect class="t" x="232" y="60" width="18" height="18" rx="5" />
+            <rect
+              class="ftx lv-dim"
+              x="256"
+              y="66"
+              width="34"
+              height="6"
+              rx="3"
+            />
+          </g>
+          <g class="lv-l" style="--d:1">
+            {[
+              [29, 51, 80, 36, 12],
+              [117, 51, 102, 36, 10],
+              [227, 55, 28, 28, 8],
+            ].map(([x, y, w, h, r], i) => (
+              <rect
+                class="lv-focus k k-focus"
+                style={`--i:${i * 9}`}
+                x={x}
+                y={y}
+                width={w}
+                height={h}
+                rx={r}
+              />
+            ))}
+          </g>
+          <g class="lv-l" style="--d:1.4">
+            {[69, 168, 241].map((x, i) => (
+              <g transform={`translate(${x} 32)`}>
+                <circle class="lv-okbg" r="10" />
+                <path
+                  class="ok k k-tick"
+                  style={`--i:${i * 9 + 2}`}
+                  d="M-4 0l3 3 6-6"
+                  pathLength="1"
+                />
+              </g>
+            ))}
+            <g transform="translate(286 22)">
+              <rect
+                class="fbs k k-pop"
+                style="--i:26"
+                x="-18"
+                y="-11"
+                width="36"
+                height="22"
+                rx="7"
+              />
+              <text class="tx tx-sm" y="4" text-anchor="middle">
+                AA
+              </text>
+            </g>
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'browser' && (
+        <>
+          <g class="lv-l" style="--d:.4">
+            <rect class="t" x="28" y="8" width="264" height="104" rx="12" />
+            <line class="ln" x1="28" y1="26" x2="292" y2="26" />
+            {[42, 54, 66].map((x) => (
+              <circle class="ftx lv-dim" cx={x} cy="17" r="3" />
+            ))}
+            <rect
+              class="ftx lv-faint"
+              x="96"
+              y="13"
+              width="128"
+              height="8"
+              rx="4"
+            />
+          </g>
+          <g class="lv-l" style="--d:.9">
+            {[
+              ['fas', 42, 36, 146, 28],
+              ['fbs', 198, 36, 80, 28],
+              ['t', 42, 72, 74, 30],
+              ['t', 124, 72, 74, 30],
+              ['t', 206, 72, 72, 30],
+            ].map(([tone, x, y, w, h], i) => (
+              <rect
+                class={`${tone} k k-rise`}
+                style={`--i:${i}`}
+                x={x}
+                y={y}
+                width={w}
+                height={h}
+                rx="6"
+              />
+            ))}
+          </g>
+          <g class="lv-l" style="--d:1.6" transform="translate(236 84)">
+            <path
+              class="lv-cursor k k-cursor"
+              d="M0 0V15L4.5 11L8 18L10.5 17L7 10H12Z"
+            />
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'scan' && (
+        <>
+          <g class="lv-l" style="--d:.5">
+            <rect class="t" x="36" y="12" width="128" height="96" rx="10" />
+            {[28, 42, 56, 70, 84].map((y, i) => (
+              <rect
+                class="ftx lv-faint"
+                x="50"
+                y={y}
+                width={[96, 80, 100, 64, 88][i]}
+                height="6"
+                rx="3"
+              />
+            ))}
+            <rect
+              class="fb lv-mark k k-mark"
+              x="50"
+              y="56"
+              width="100"
+              height="6"
+              rx="3"
+            />
+          </g>
+          <g class="lv-l" style="--d:1.5" transform="translate(70 36)">
+            <g class="k k-lens">
+              <circle class="sa lv-thick" r="15" />
+              <line class="sa lv-thick" x1="11" y1="11" x2="22" y2="22" />
+            </g>
+          </g>
+          <g class="lv-l" style="--d:1">
+            <path
+              class="ln k k-draw"
+              style="--i:4"
+              d="M164 59C186 59 186 60 200 60"
+              pathLength="1"
+            />
+            <rect
+              class="fas k k-pop"
+              style="--i:5"
+              x="200"
+              y="36"
+              width="92"
+              height="48"
+              rx="12"
+            />
+            <g transform="translate(224 60)">
+              <path
+                class="sb lv-thick k k-tick"
+                style="--i:6"
+                d="M-7 0l5 5 9-10"
+                pathLength="1"
+              />
+            </g>
+            <rect
+              class="ftx lv-dim"
+              x="242"
+              y="52"
+              width="38"
+              height="6"
+              rx="3"
+            />
+            <rect
+              class="ftx lv-faint"
+              x="242"
+              y="64"
+              width="26"
+              height="5"
+              rx="2.5"
+            />
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'stack' && (
+        <>
+          {[
+            ['fas', 84, 1.4],
+            ['fbs', 62, 1],
+            ['fa', 40, 0.6],
+          ].map(([tone, y, d], i) => (
+            <g
+              class="lv-l"
+              style={`--d:${d}`}
+              transform={`translate(132 ${y})`}
+            >
+              <polygon
+                class={`${tone} lv-plane k k-layer`}
+                style={`--i:${i};--ty:${(i - 1) * 22}px`}
+                points="0,-18 62,0 0,18 -62,0"
+              />
+            </g>
+          ))}
+          <g class="lv-l" style="--d:.8">
+            {[40, 62, 84].map((y, i) => (
+              <>
+                <path
+                  class="ln k k-draw"
+                  style={`--i:${i + 2}`}
+                  d={`M196 ${y}H232`}
+                  pathLength="1"
+                />
+                <rect
+                  class="t k k-rise"
+                  style={`--i:${i + 3}`}
+                  x="236"
+                  y={y - 9}
+                  width="56"
+                  height="18"
+                  rx="6"
+                />
+              </>
+            ))}
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'verify' && (
+        <>
+          <g class="lv-l" style="--d:.7">
+            {[0, 1, 2].map((i) => (
+              <>
+                <rect
+                  class="t"
+                  x="36"
+                  y={22 + i * 28}
+                  width="18"
+                  height="18"
+                  rx="5"
+                />
+                <g transform={`translate(45 ${31 + i * 28})`}>
+                  <path
+                    class="ok k k-tick"
+                    style={`--i:${i * 3}`}
+                    d="M-4.5 0l3 3 6-6"
+                    pathLength="1"
+                  />
+                </g>
+                <rect
+                  class="ftx lv-dim"
+                  x="64"
+                  y={28 + i * 28}
+                  width={[96, 72, 84][i]}
+                  height="6"
+                  rx="3"
+                />
+              </>
+            ))}
+          </g>
+          <g class="lv-l" style="--d:1.1">
+            <rect class="t" x="190" y="74" width="104" height="12" rx="6" />
+            <rect
+              class="lv-gate k k-fill"
+              x="190"
+              y="74"
+              width="104"
+              height="12"
+              rx="6"
+            />
+          </g>
+          <g class="lv-l" style="--d:1.5" transform="translate(242 40)">
+            <g class="k k-pop" style="--i:9">
+              <path
+                class="sb lv-thick"
+                d="M15 6C15 16 8 21 0.7 24A1.2 1.2 0 0 1 -0.7 24C-8 21 -15 16 -15 6V-9C-15 -10 -14 -11 -13 -11C-9 -11 -4 -13 -1 -16A1.5 1.5 0 0 1 1 -16C4 -13 9 -11 13 -11C14 -11 15 -10 15 -9Z"
+              />
+              <path class="ok lv-thick" d="M-6 2l4 4 8-8" />
+            </g>
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'chat' && (
+        <>
+          <g class="lv-l" style="--d:.5">
+            <circle class="fa lv-dim" cx="26" cy="30" r="8" />
+            <circle class="fb lv-dim" cx="294" cy="60" r="8" />
+            <circle class="fa lv-dim" cx="26" cy="92" r="8" />
+          </g>
+          <g class="lv-l" style="--d:1">
+            <rect
+              class="t k k-rise"
+              style="--i:0"
+              x="42"
+              y="18"
+              width="132"
+              height="24"
+              rx="12"
+            />
+            <rect
+              class="fbs k k-rise"
+              style="--i:3"
+              x="150"
+              y="48"
+              width="132"
+              height="24"
+              rx="12"
+            />
+            <rect
+              class="t k k-rise"
+              style="--i:6"
+              x="42"
+              y="80"
+              width="64"
+              height="24"
+              rx="12"
+            />
+          </g>
+          <g class="lv-l" style="--d:1.3">
+            {[60, 74, 88].map((x, i) => (
+              <circle
+                class="ftx k k-type"
+                style={`--i:${i}`}
+                cx={x}
+                cy="92"
+                r="3.2"
+              />
+            ))}
+            <rect
+              class="ftx lv-faint"
+              x="56"
+              y="27"
+              width="90"
+              height="6"
+              rx="3"
+            />
+            <rect
+              class="ftx lv-dim"
+              x="164"
+              y="57"
+              width="100"
+              height="6"
+              rx="3"
+            />
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'milestones' && (
+        <>
+          <g class="lv-l" style="--d:.5">
+            <line class="ln lv-thick" x1="30" y1="64" x2="270" y2="64" />
+          </g>
+          <g class="lv-l" style="--d:.8">
+            <line
+              class="sa lv-thick k k-progress"
+              x1="30"
+              y1="64"
+              x2="270"
+              y2="64"
+            />
+          </g>
+          <g class="lv-l" style="--d:1.1">
+            {[60, 120, 180, 240].map((x, i) => (
+              <g transform={`translate(${x} 64) rotate(45)`}>
+                <rect
+                  class="lv-gem k k-hit"
+                  style={`--i:${i * 3}`}
+                  x="-7"
+                  y="-7"
+                  width="14"
+                  height="14"
+                  rx="3"
+                />
+              </g>
+            ))}
+          </g>
+          <g class="lv-l" style="--d:1.5" transform="translate(284 64)">
+            <line class="sa lv-thick" x1="0" y1="0" x2="0" y2="-44" />
+            <path
+              class="fb k k-wave"
+              d="M0 -44C8 -48 14 -40 24 -44V-28C14 -24 8 -32 0 -28Z"
+            />
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'merge' && (
+        <>
+          <g class="lv-l" style="--d:.5">
+            <line class="ln lv-thick" x1="24" y1="84" x2="296" y2="84" />
+            {[44, 96, 276].map((x) => (
+              <circle class="t" cx={x} cy="84" r="7" />
+            ))}
+          </g>
+          <g class="lv-l" style="--d:1">
+            <path
+              class="sb lv-thick k k-draw"
+              d="M96 84C124 84 120 38 150 38H196C226 38 222 84 250 84"
+              pathLength="1"
+            />
+            {[150, 196].map((x, i) => (
+              <g transform={`translate(${x} 38)`}>
+                <circle class="fb k k-pop" style={`--i:${i * 2 + 2}`} r="7" />
+              </g>
+            ))}
+          </g>
+          <g class="lv-l" style="--d:1.4" transform="translate(250 84)">
+            <circle class="fa k k-pop" style="--i:6" r="9" />
+            <circle class="sa lv-halo k k-ping" style="--i:6" r="9" />
+            <g transform="translate(0 -40)">
+              <circle class="lv-okbg" r="11" />
+              <path
+                class="ok k k-tick"
+                style="--i:7"
+                d="M-5 0l3.5 3.5 7-7"
+                pathLength="1"
+              />
+            </g>
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'orbit' && (
+        <g transform="translate(160 60)">
+          {[0, 60, -60].map((angle, i) => (
+            <g
+              class="lv-l"
+              style={`--d:${0.6 + i * 0.35}`}
+              transform={`rotate(${angle})`}
+            >
+              <ellipse class="ln" rx="74" ry="22" />
+              <ellipse
+                class="sa lv-electron k k-orbit"
+                style={`--i:${i * 4}`}
+                rx="74"
+                ry="22"
+                pathLength="1"
+              />
+            </g>
+          ))}
+          <g class="lv-l" style="--d:1.6">
+            <circle class="fb k k-beat" r="9" />
+          </g>
+        </g>
+      )
+    }
+    {
+      scene === 'zones' && (
+        <>
+          <g class="lv-l" style="--d:.4">
+            {Array.from({ length: 13 }, (_, i) => (
+              <line
+                class="ln"
+                x1={28 + i * 22}
+                y1="96"
+                x2={28 + i * 22}
+                y2={i % 3 ? 100 : 104}
+              />
+            ))}
+            <line class="ln" x1="28" y1="96" x2="292" y2="96" />
+          </g>
+          <g class="lv-l" style="--d:.8">
+            <g class="k k-sweep">
+              <rect
+                class="lv-window"
+                x="148"
+                y="22"
+                width="76"
+                height="70"
+                rx="10"
+              />
+            </g>
+          </g>
+          <g class="lv-l" style="--d:1.3">
+            {[
+              [70, 62, 'fa'],
+              [170, 48, 'fb'],
+              [246, 56, 'fok'],
+            ].map(([x, y, tone], i) => (
+              <g transform={`translate(${x} ${y})`}>
+                <circle class={`${tone} lv-pin`} r="6" />
+                <circle class="lv-halo k k-ping" style={`--i:${i * 4}`} r="6" />
+              </g>
+            ))}
+          </g>
+        </>
+      )
+    }
+  </svg>
+</div>

@@ -89,6 +89,10 @@ const formClass =
         'form.networkError',
         'Network error. Please email directly.',
       )}
+      data-success-title={t(locale, 'form.successTitle', 'Message sent')}
+      data-failure-title={t(locale, 'form.failureTitle', 'Message not sent')}
+      data-dismiss={t(locale, 'form.dismiss', 'Dismiss notification')}
+      data-toast-region-label={t(locale, 'form.toastRegion', 'Notifications')}
       data-draft-key={`portfolio-contact-draft:${locale}:${variant}`}
       data-draft-saved={t(
         locale,
@@ -152,6 +156,11 @@ const formClass =
               id={fieldId('name')}
               name="name"
               autocomplete="name"
+              placeholder={t(
+                locale,
+                'form.placeholderName',
+                'e.g. Alex Morgan',
+              )}
               required
               aria-describedby={fieldId('name-error')}
             />
@@ -169,6 +178,11 @@ const formClass =
               name="email"
               autocomplete="email"
               inputmode="email"
+              placeholder={t(
+                locale,
+                'form.placeholderEmail',
+                'you@company.com',
+              )}
               required
               dir="ltr"
               aria-describedby={fieldId('email-error')}
@@ -189,6 +203,11 @@ const formClass =
             id={fieldId('company')}
             name="company"
             autocomplete="organization"
+            placeholder={t(
+              locale,
+              'form.placeholderCompany',
+              'e.g. Acme Analytics',
+            )}
           />
         </div>
       </fieldset>
@@ -207,8 +226,8 @@ const formClass =
             required
             aria-describedby={fieldId('project-type-error')}
           >
-            <option value="">
-              {t(locale, 'form.selectOption', 'Select an option')}
+            <option value="" disabled selected>
+              {t(locale, 'form.chooseProjectType', 'Choose a project type')}
             </option>
             <option value="product-frontend">
               {t(
@@ -261,8 +280,8 @@ const formClass =
               required
               aria-describedby={fieldId('budget-error')}
             >
-              <option value="">
-                {t(locale, 'form.selectOption', 'Select an option')}
+              <option value="" disabled selected>
+                {t(locale, 'form.chooseBudget', 'Choose a budget range')}
               </option>
               <option value="5k-15k">
                 {t(locale, 'form.budget5k15k', 'USD 5,000–15,000')}
@@ -291,8 +310,8 @@ const formClass =
               required
               aria-describedby={fieldId('timeline-error')}
             >
-              <option value="">
-                {t(locale, 'form.selectOption', 'Select an option')}
+              <option value="" disabled selected>
+                {t(locale, 'form.chooseTimeline', 'Choose a timeline')}
               </option>
               <option value="within-month">
                 {t(locale, 'form.timelineMonth', 'Within one month')}
@@ -347,7 +366,9 @@ const formClass =
       </div>
       <p class="form-email-fallback">
         {t(locale, 'home.preferEmail', 'Prefer email?')}{' '}
-        <a href={`mailto:${email}`}>{email}</a>
+        <a href={`mailto:${email}`} dir="ltr">
+          {email}
+        </a>
       </p>
       {linkedin && (
         <p class="form-email-fallback">
@@ -380,6 +401,25 @@ const formClass =
 }
 
 <script>
+  // Type-only import: this script keeps no runtime imports, so Astro inlines
+  // it and the form adds no request to the critical path. Toasts are
+  // requested with an event that motion.ts renders (see scripts/toast.ts).
+  import type { ToastOptions, ToastTone } from '../scripts/toast';
+
+  /** The live region must exist before anything is announced into it. */
+  const getToastRegion = (label: string): HTMLElement => {
+    const existing = document.querySelector<HTMLElement>('[data-toast-region]');
+    if (existing) return existing;
+    const region = document.createElement('div');
+    region.className = 'toast-region';
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', label);
+    region.setAttribute('aria-live', 'polite');
+    region.setAttribute('data-toast-region', '');
+    document.body.append(region);
+    return region;
+  };
+
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   document
@@ -433,6 +473,20 @@ const formClass =
         form.addEventListener('input', saveDraft);
         form.addEventListener('change', saveDraft);
       }
+
+      getToastRegion(form.dataset.toastRegionLabel ?? 'Notifications');
+      const notify = (tone: ToastTone, message: string) => {
+        const detail: ToastOptions = {
+          tone,
+          title:
+            (tone === 'success'
+              ? form.dataset.successTitle
+              : form.dataset.failureTitle) ?? '',
+          message,
+          dismissLabel: form.dataset.dismiss ?? 'Dismiss',
+        };
+        document.dispatchEvent(new CustomEvent('portfolio:toast', { detail }));
+      };
 
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -497,7 +551,7 @@ const formClass =
         const accessKey = new FormData(form).get('access_key');
         if (!status || !submit) return;
         if (typeof accessKey !== 'string' || !accessKey.trim()) {
-          status.textContent = form.dataset.unconfigured ?? '';
+          notify('error', form.dataset.unconfigured ?? '');
           return;
         }
 
@@ -512,12 +566,15 @@ const formClass =
             body: new FormData(form),
             headers: { Accept: 'application/json' },
           });
-          if (!response.ok) throw new Error('Web3Forms request failed');
-          const result = (await response.json()) as { success?: boolean };
-          status.textContent = result.success
-            ? (form.dataset.success ?? '')
-            : (form.dataset.failure ?? '');
-          if (result.success) {
+          const result = response.ok
+            ? ((await response.json()) as { success?: boolean })
+            : { success: false };
+          status.textContent = '';
+          if (!result.success) {
+            // Keep everything the visitor typed so they can retry or email.
+            notify('error', form.dataset.failure ?? '');
+          } else {
+            notify('success', form.dataset.success ?? '');
             form.reset();
             if (draftKey) {
               try {
@@ -529,7 +586,8 @@ const formClass =
             if (draftStatus) draftStatus.textContent = '';
           }
         } catch {
-          status.textContent = form.dataset.networkError ?? '';
+          status.textContent = '';
+          notify('error', form.dataset.networkError ?? '');
         } finally {
           submit.disabled = false;
           submit.textContent = form.dataset.send ?? submitLabel;
