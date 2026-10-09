@@ -1,4 +1,5 @@
 ---
+import geistMonoLatinFont from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
 import { getImage } from 'astro:assets';
 import {
   heroPortraitPreloadMedia,
@@ -23,6 +24,13 @@ const portraitPreload = await getImage({
 ---
 
 <meta name="color-scheme" content="dark light" />
+<link
+  rel="preload"
+  as="font"
+  type="font/woff2"
+  href={geistMonoLatinFont}
+  crossorigin="anonymous"
+/>
 <link
   rel="preload"
   as="image"

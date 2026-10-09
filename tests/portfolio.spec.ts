@@ -388,8 +388,8 @@ test('shared shell styling and controls stay consistent across locales', async (
 
   const baseline = await readShellStyles('/');
   expect(baseline).toMatchObject({
-    controlRadius: '9999px',
-    headerRadius: '9999px',
+    controlRadius: '10px',
+    headerRadius: '20px',
     navRadius: '6px',
     themeIconCount: 2,
   });
@@ -418,7 +418,7 @@ test('shared shell styling and controls stay consistent across locales', async (
       )
       .first()
       .evaluate((element) => getComputedStyle(element).borderRadius);
-    expect(cardRadius).toBe('12px');
+    expect(cardRadius).toBe('16px');
   }
 
   await page.goto('/about/');
@@ -825,6 +825,8 @@ test('production SEO signals and internal links are crawlable', async ({
 test('motion layer is progressive, accessible, and honors reduced motion', async ({
   page,
 }) => {
+  // Three full-page axe scans plus a reduced-motion reload: long journey.
+  test.slow();
   await page.goto('/');
 
   // Native effects only: no UI-framework runtime, islands, or hydration.
@@ -1153,19 +1155,9 @@ test('services page is fully localized, including structured data', async ({
   expect(structuredData).not.toContain('Best for:');
 });
 
-test('Geist system: typography, compact glass header and About photo', async ({
-  page,
-}) => {
+test('compact header and About photo', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
-  const fonts = await page.evaluate(() => ({
-    body: getComputedStyle(document.body).fontFamily,
-    label: getComputedStyle(document.querySelector('.s-eyebrow') as HTMLElement)
-      .fontFamily,
-  }));
-  expect(fonts.body).toMatch(/^"?Geist Variable/);
-  expect(fonts.label).toMatch(/Geist Mono/);
-
   const header = await page.locator('.site-header').evaluate((element) => {
     const box = element.getBoundingClientRect();
     const style = getComputedStyle(element);

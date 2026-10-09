@@ -135,13 +135,13 @@ const readPalette = (element: HTMLElement): Palette => {
     return getComputedStyle(probe).color || fallback;
   };
   const palette: Palette = {
-    land: token('--text-2', '#a1a1a1'),
-    home: token('--accent-2', '#2ec5d3'),
-    arc: token('--accent', '#52a8ff'),
-    hub: token('--accent-strong', '#8fc2ff'),
-    glow: token('--accent-vivid', '#0070f3'),
-    sphere: token('--bg-2', '#0a0a0a'),
-    label: token('--text', '#ededed'),
+    land: token('--text-2', '#bac4dc'),
+    home: token('--accent-2', '#34dde5'),
+    arc: token('--accent', '#aa87ff'),
+    hub: token('--accent-strong', '#c3afff'),
+    glow: token('--accent-vivid', '#bc9aff'),
+    sphere: token('--bg-2', '#0a1023'),
+    label: token('--text', '#f2f5fe'),
     font: getComputedStyle(element).fontFamily,
     // A strong halo reads as haze on light backgrounds; keep it subtle there.
     haloAlpha: document.documentElement.dataset.theme === 'light' ? 0.22 : 0.5,

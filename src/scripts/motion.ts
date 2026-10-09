@@ -12,7 +12,6 @@
  *   `prefers-reduced-motion`.
  */
 
-import geistMonoLatinFont from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
 import type { ToastOptions } from './toast';
 
 type Cleanup = () => void;
@@ -411,43 +410,6 @@ function initToasts(): Cleanup {
   return () => document.removeEventListener('portfolio:toast', onToast);
 }
 
-/* ── Geist Mono: registered after load, off the first-paint path ──── */
-
-const MONO_UNICODE_RANGE =
-  'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD';
-
-function initDeferredMono(): Cleanup {
-  if (!('fonts' in document) || typeof FontFace === 'undefined') {
-    return () => undefined;
-  }
-  let handle = 0;
-  const register = () => {
-    const face = new FontFace(
-      'Geist Mono Variable',
-      `url(${geistMonoLatinFont}) format('woff2')`,
-      { weight: '100 900', display: 'swap', unicodeRange: MONO_UNICODE_RANGE },
-    );
-    document.fonts.add(face);
-    face.load().catch(() => undefined);
-  };
-  const schedule = () => {
-    // Safari has no requestIdleCallback; fall back to a short timer.
-    handle =
-      typeof window.requestIdleCallback === 'function'
-        ? window.requestIdleCallback(register, { timeout: 3000 })
-        : window.setTimeout(register, 1200);
-  };
-  if (document.readyState === 'complete') schedule();
-  else window.addEventListener('load', schedule, { once: true });
-  return () => {
-    window.removeEventListener('load', schedule);
-    if (typeof window.cancelIdleCallback === 'function') {
-      window.cancelIdleCallback(handle);
-    }
-    window.clearTimeout(handle);
-  };
-}
-
 /* ── Boot ──────────────────────────────────────────────────────────── */
 
 const initializers: ReadonlyArray<() => Cleanup> = [
@@ -461,7 +423,6 @@ const initializers: ReadonlyArray<() => Cleanup> = [
   initLiveScenes,
   initLazyGlobes,
   initToasts,
-  initDeferredMono,
 ];
 
 const boot = () => {

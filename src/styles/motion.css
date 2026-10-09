@@ -245,9 +245,7 @@
   background-size:
     600px 100%,
     450px 100%;
-  /* Screen keeps the bands in the accent hues on black (difference would
-     invert blue into its orange complement). */
-  mix-blend-mode: screen;
+  mix-blend-mode: difference;
   will-change: transform;
   animation: fx-aurora-flow 70s linear infinite;
 }

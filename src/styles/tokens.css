@@ -1,309 +1,162 @@
 /*
- * Design tokens: the single source of every color and type/space/radius
- * decision on the site, built on Vercel's Geist design system.
+ * Design tokens — the single source of every color on the site.
  *
- * Three layers, top to bottom:
+ * Change the look by editing the seed values below, in this file or live in
+ * DevTools (Elements → :root → Styles). Every role, tint, gradient, glow and
+ * border is derived from the seeds in OKLCH, whose lightness channel is fixed
+ * per role, so any hue keeps the same text contrast:
  *
- *  1. Primitives: the Geist scales exactly as Vercel publishes them
- *     (vercel.com/geist/colors, vercel.com/geist/vercel-brand.css). Each
- *     value is `light-dark(light, dark)`; the theme toggle sets
- *     `color-scheme` on <html>, so one declaration serves both themes.
- *     Step semantics: 100 bg · 200 hover bg · 300 active bg · 400 border ·
- *     500 hover border · 600 active border · 700 high-contrast fill ·
- *     800 hover fill · 900 secondary text · 1000 primary text.
+ *   :root { --seed-primary-h: 160; }   → emerald brand
+ *   :root { --seed-primary-h: 25; }    → orange brand
+ *   :root { --seed-chroma: 0.12; }     → calmer, less saturated
  *
- *  2. Brand alias: `--brand-*` points at one accent scale. Re-theme the
- *     whole site by re-pointing it, here or live in DevTools:
- *       :root { --brand-700: var(--green-700); --brand-900: var(--green-900);
- *               --brand-400: var(--green-400); --brand-100: var(--green-100); }
- *
- *  3. Roles: the names components use (never primitives directly).
- *       --bg, --bg-2, --bg-3, --bg-deep        page grounds
- *       --bg-card, --surface, --surface-strong card and panel fills
- *       --text, --text-2, --text-3             primary / secondary / tertiary
- *       --accent, --accent-strong, --accent-ink brand blue for text and lines
- *       --accent-fill + --on-accent             brand blue fills and their text
- *       --accent-2                              teal, for gradients and glows
- *       --btn-primary-*                         Geist's inverted primary button
- *       --success, --warning, --danger          semantic states
+ * Roles (use these in components, never raw colors):
+ *   --bg, --bg-2, --bg-3, --bg-deep        page grounds, darkest to lightest
+ *   --bg-card, --surface, --surface-strong card and panel fills
+ *   --text, --text-2, --text-3             body, secondary, tertiary text
+ *   --accent (+ -strong/-vivid/-dim/-ink)   brand color and its text-safe ink
+ *   --accent-2                              secondary brand color
+ *   --on-accent                             text placed on an accent fill
+ *   --success, --warning, --danger          semantic states
  * See docs/THEMING.md.
  */
 
 :root {
-  color-scheme: dark;
+  /* ── Seeds ───────────────────────────────────────────────────────── */
+  --seed-primary-h: 292; /* electric violet */
+  --seed-secondary-h: 200; /* cyan */
+  --seed-neutral-h: 268; /* hue bias of the neutrals (midnight indigo) */
+  --seed-chroma: 0.2; /* brand saturation, 0–0.3 */
+  --seed-success-h: 155;
+  --seed-warning-h: 75;
+  --seed-danger-h: 25;
 
-  /* ── 1. Primitives (Geist) ───────────────────────────────────────── */
-  --background-100: light-dark(oklch(1 0 0), oklch(0 0 0));
-  --background-200: light-dark(oklch(0.984 0 0), oklch(0.027 0 0));
+  /* ── Roles: dark (default) ───────────────────────────────────────── */
+  --bg: oklch(0.15 0.035 var(--seed-neutral-h));
+  --bg-2: oklch(0.18 0.04 var(--seed-neutral-h));
+  --bg-3: oklch(0.23 0.045 var(--seed-neutral-h));
+  --bg-deep: oklch(0.12 0.03 var(--seed-neutral-h));
+  --bg-card: oklch(0.2 0.04 var(--seed-neutral-h));
+  --bg-card-hover: oklch(0.23 0.045 var(--seed-neutral-h));
+  --surface: oklch(0.18 0.037 var(--seed-neutral-h));
+  --surface-strong: oklch(0.22 0.042 var(--seed-neutral-h));
+  --text: oklch(0.97 0.012 var(--seed-neutral-h));
+  --text-2: oklch(0.82 0.035 var(--seed-neutral-h));
+  --text-3: oklch(0.71 0.04 var(--seed-neutral-h));
+  --accent: oklch(0.72 var(--seed-chroma) var(--seed-primary-h));
+  --accent-strong: oklch(
+    0.81 calc(var(--seed-chroma) * 0.7) var(--seed-primary-h)
+  );
+  --accent-vivid: oklch(0.78 var(--seed-chroma) var(--seed-primary-h));
+  --accent-dim: oklch(0.62 var(--seed-chroma) var(--seed-primary-h));
+  --accent-2: oklch(
+    0.82 calc(var(--seed-chroma) * 0.65) var(--seed-secondary-h)
+  );
+  --on-accent: oklch(0.14 0.03 var(--seed-neutral-h));
+  --success: oklch(0.78 0.16 var(--seed-success-h));
+  --warning: oklch(0.82 0.15 var(--seed-warning-h));
+  --danger: oklch(0.7 0.18 var(--seed-danger-h));
 
-  --gray-100: light-dark(oklch(0.961 0 0), oklch(0.218 0 0));
-  --gray-200: light-dark(oklch(0.94 0 0), oklch(0.239 0 0));
-  --gray-300: light-dark(oklch(0.925 0 0), oklch(0.281 0 0));
-  --gray-400: light-dark(oklch(0.937 0 0), oklch(0.301 0 0));
-  --gray-500: light-dark(oklch(0.836 0 0), oklch(0.39 0 0));
-  --gray-600: light-dark(oklch(0.732 0 0), oklch(0.623 0 0));
-  --gray-700: light-dark(oklch(0.65 0 0), oklch(0.65 0 0));
-  --gray-800: light-dark(oklch(0.59 0 0), oklch(0.59 0 0));
-  --gray-900: light-dark(oklch(0.42 0 0), oklch(0.706 0 0));
-  --gray-1000: light-dark(oklch(0.205 0 0), oklch(0.946 0 0));
-
-  --gray-alpha-100: light-dark(oklch(0 0 0 / 0.05), oklch(1 0 0 / 0.07));
-  --gray-alpha-200: light-dark(oklch(0 0 0 / 0.081), oklch(1 0 0 / 0.09));
-  --gray-alpha-300: light-dark(oklch(0 0 0 / 0.1), oklch(1 0 0 / 0.13));
-  --gray-alpha-400: light-dark(oklch(0 0 0 / 0.08), oklch(1 0 0 / 0.14));
-  --gray-alpha-500: light-dark(oklch(0 0 0 / 0.21), oklch(1 0 0 / 0.24));
-  --gray-alpha-600: light-dark(oklch(0 0 0 / 0.24), oklch(1 0 0 / 0.51));
-  --gray-alpha-700: light-dark(oklch(0 0 0 / 0.44), oklch(1 0 0 / 0.54));
-
-  --blue-100: light-dark(
-    oklch(97.32% 0.0141 251.56),
-    oklch(22.17% 0.069 259.89)
-  );
-  --blue-400: light-dark(
-    oklch(91.58% 0.0473 245.116),
-    oklch(34.1% 0.121 254.74)
-  );
-  --blue-700: light-dark(
-    oklch(57.61% 0.2508 258.23),
-    oklch(57.61% 0.2321 258.23)
-  );
-  --blue-900: light-dark(
-    oklch(53.18% 0.2399 256.99),
-    oklch(71.7% 0.1648 250.794)
-  );
-  --blue-1000: light-dark(
-    oklch(26.67% 0.1099 254.34),
-    oklch(96.75% 0.0179 242.423)
-  );
-
-  --green-100: light-dark(
-    oklch(97.59% 0.0289 145.42),
-    oklch(23.09% 0.0716 149.68)
-  );
-  --green-400: light-dark(
-    oklch(91.49% 0.0976 146.24),
-    oklch(34.39% 0.1039 147.78)
-  );
-  --green-700: light-dark(
-    oklch(64.58% 0.1746 147.27),
-    oklch(64.58% 0.199 147.27)
-  );
-  --green-900: light-dark(
-    oklch(51.75% 0.1453 147.65),
-    oklch(73.1% 0.2158 148.29)
-  );
-
-  --amber-100: light-dark(
-    oklch(97.48% 0.0331 85.79),
-    oklch(22.46% 0.0538 76.04)
-  );
-  --amber-700: light-dark(
-    oklch(81.87% 0.1969 76.46),
-    oklch(81.87% 0.1969 76.46)
-  );
-  --amber-900: light-dark(
-    oklch(52.79% 0.1496 54.65),
-    oklch(77.21% 0.1991 64.28)
-  );
-
-  --red-100: light-dark(oklch(96.5% 0.0223 13.09), oklch(22.1% 0.0657 15.11));
-  --red-700: light-dark(oklch(62.56% 0.2524 23.03), oklch(62.56% 0.2234 23.03));
-  --red-900: light-dark(oklch(54.99% 0.232 25.29), oklch(69.96% 0.2136 22.03));
-
-  /* Teal: Geist publishes only its 100/1000 endpoints; these mid steps are
-     derived to sit beside blue in gradients and glows. */
-  --teal-700: light-dark(oklch(0.5 0.1 190), oklch(0.82 0.12 185));
-
-  /* ── 2. Brand alias ──────────────────────────────────────────────── */
-  --brand-100: var(--blue-100);
-  --brand-400: var(--blue-400);
-  --brand-700: var(--blue-700);
-  --brand-900: var(--blue-900);
-  --brand-1000: var(--blue-1000);
-  --brand-alt: var(--teal-700);
-
-  /* ── 3. Roles ────────────────────────────────────────────────────── */
-  --bg: var(--background-100);
-  --bg-2: var(--background-200);
-  --bg-3: var(--gray-100);
-  --bg-deep: var(--background-100);
-  --bg-card: light-dark(var(--background-100), var(--background-200));
-  --bg-card-hover: light-dark(var(--background-200), var(--gray-100));
-  --surface: var(--bg-card);
-  --surface-strong: light-dark(var(--background-200), var(--gray-100));
-
-  --text: var(--gray-1000);
-  --text-2: var(--gray-900);
-  /* Tertiary text: dark uses gray-700; light sits between 800 and 900 so
-     small labels keep ≥4.5:1 on every light ground. */
-  --text-3: light-dark(oklch(0.51 0 0), var(--gray-700));
-
-  /* Blue-900 is Geist's text/link blue; blue-700 (#0070f3) is the fill. */
-  --accent: var(--brand-900);
-  --accent-strong: light-dark(var(--brand-900), oklch(0.8 0.12 250));
-  --accent-vivid: var(--brand-700);
-  --accent-dim: light-dark(oklch(0.47 0.22 257), var(--brand-700));
+  /* Alpha tints and structural colors, derived from the roles above. */
+  --accent-glow: color-mix(in oklch, var(--accent) 24%, transparent);
+  --accent-soft: color-mix(in oklch, var(--accent) 14%, transparent);
+  --accent-subtle: color-mix(in oklch, var(--accent) 9%, transparent);
+  --accent-border: color-mix(in oklch, var(--accent) 30%, transparent);
   --accent-ink: var(--accent-strong);
-  --accent-fill: var(--brand-700);
-  --on-accent: oklch(1 0 0);
-  --accent-2: var(--brand-alt);
-
-  --success: var(--green-900);
-  --warning: var(--amber-900);
-  --danger: var(--red-900);
-
-  /* Geist's primary button inverts the ground. */
-  --btn-primary-bg: var(--gray-1000);
-  --btn-primary-fg: var(--background-100);
-  --btn-primary-hover: light-dark(oklch(0.32 0 0), oklch(0.82 0 0));
-
-  /* Tints and structure, derived from the roles above. */
-  --accent-glow: color-mix(in oklch, var(--brand-700) 32%, transparent);
-  --accent-soft: color-mix(in oklch, var(--brand-700) 14%, transparent);
-  --accent-subtle: color-mix(in oklch, var(--brand-700) 8%, transparent);
-  --accent-border: color-mix(in oklch, var(--brand-700) 42%, transparent);
   --muted: var(--text-2);
-  --border: var(--gray-alpha-400);
-  --divider: var(--gray-alpha-400);
+  --divider: color-mix(in oklch, var(--text) 8%, transparent);
+  --border: color-mix(in oklch, var(--text) 7%, transparent);
   --line: var(--divider);
-  --border-hover: var(--gray-alpha-500);
   --gradient-brand: linear-gradient(
     120deg,
-    var(--brand-700) 0%,
-    var(--brand-alt) 100%
+    var(--accent) 0%,
+    var(--accent-2) 100%
   );
-
-  /* Elevation: Geist's shadow-as-border plus soft depth. */
-  --shadow-border: 0 0 0 1px var(--gray-alpha-400);
-  --shadow-sm: 0 1px 2px light-dark(oklch(0 0 0 / 0.04), oklch(0 0 0 / 0.4));
-  --shadow-card:
-    var(--shadow-border),
-    0 4px 12px light-dark(oklch(0 0 0 / 0.05), oklch(0 0 0 / 0.35));
-  --shadow: 0 8px 30px light-dark(oklch(0 0 0 / 0.12), oklch(0 0 0 / 0.55));
-
-  /* Frosted glass (header, floating chrome). */
-  --glass-fill: light-dark(
-    color-mix(in oklch, var(--background-100) 64%, transparent),
-    color-mix(in oklch, var(--background-200) 72%, transparent)
-  );
-  --glass-edge: light-dark(oklch(0 0 0 / 0.08), oklch(1 0 0 / 0.14));
-  --glass-highlight: light-dark(oklch(1 0 0 / 0.8), oklch(1 0 0 / 0.08));
-  --header-fill: var(--glass-fill);
-
-  /* ── Type (Geist) ────────────────────────────────────────────────── */
-  --weight-regular: 400;
-  --weight-heading: 450;
-  --weight-medium: 500;
-  --weight-semibold: 600;
-  --tracking-display: -0.06em;
-  --tracking-title: -0.05em;
-  --tracking-section: -0.04em;
-  --tracking-subsection: -0.02em;
-  --tracking-body: -0.011em;
-
-  /* ── Space (4px base) ────────────────────────────────────────────── */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-10: 40px;
-  --space-12: 48px;
-  --space-16: 64px;
-  --space-24: 96px;
-  --space-32: 128px;
+  --shadow: 0 24px 70px oklch(0 0 0 / 0.4);
+  --shadow-sm: 0 2px 12px oklch(0 0 0 / 0.35);
+  --shadow-card: 0 1px 1px oklch(0 0 0 / 0.2), 0 4px 24px oklch(0 0 0 / 0.3);
+  --header-fill: color-mix(in oklch, var(--bg) 80%, transparent);
+  color-scheme: dark;
 }
 
 [data-theme='light'] {
+  --bg: oklch(0.985 0.006 var(--seed-neutral-h));
+  --bg-2: oklch(0.965 0.012 var(--seed-neutral-h));
+  --bg-3: oklch(0.93 0.018 var(--seed-neutral-h));
+  --bg-deep: oklch(0.93 0.02 var(--seed-neutral-h));
+  --bg-card: oklch(1 0 var(--seed-neutral-h));
+  --bg-card-hover: oklch(0.975 0.01 var(--seed-neutral-h));
+  --surface: oklch(1 0 var(--seed-neutral-h));
+  --surface-strong: oklch(0.965 0.012 var(--seed-neutral-h));
+  --text: oklch(0.22 0.04 var(--seed-neutral-h));
+  --text-2: oklch(0.4 0.045 var(--seed-neutral-h));
+  --text-3: oklch(0.5 0.045 var(--seed-neutral-h));
+  --accent: oklch(0.5 var(--seed-chroma) var(--seed-primary-h));
+  --accent-strong: oklch(0.45 var(--seed-chroma) var(--seed-primary-h));
+  --accent-vivid: oklch(0.44 var(--seed-chroma) var(--seed-primary-h));
+  --accent-dim: oklch(0.42 var(--seed-chroma) var(--seed-primary-h));
+  --accent-2: oklch(
+    0.48 calc(var(--seed-chroma) * 0.6) var(--seed-secondary-h)
+  );
+  --on-accent: oklch(1 0 var(--seed-neutral-h));
+  --success: oklch(0.48 0.13 var(--seed-success-h));
+  --warning: oklch(0.55 0.13 var(--seed-warning-h));
+  --danger: oklch(0.52 0.19 var(--seed-danger-h));
+
+  --shadow: 0 24px 70px oklch(0.3 0.05 var(--seed-neutral-h) / 0.12);
+  --shadow-sm: 0 2px 12px oklch(0.3 0.05 var(--seed-neutral-h) / 0.08);
+  --shadow-card:
+    0 1px 1px oklch(0.3 0.05 var(--seed-neutral-h) / 0.05),
+    0 4px 24px oklch(0.3 0.05 var(--seed-neutral-h) / 0.09);
+  --header-fill: color-mix(in oklch, var(--bg-card) 86%, transparent);
   color-scheme: light;
 }
 
-/*
- * Browsers without `light-dark()` get the published Geist hex values,
- * switched by the same data-theme attribute.
- */
-@supports not (color: light-dark(white, black)) {
+/* Browsers without OKLCH get the default palette as static values. */
+@supports not (color: oklch(0 0 0)) {
   :root {
-    --background-100: #000000;
-    --background-200: #0a0a0a;
-    --gray-100: #1a1a1a;
-    --gray-200: #1f1f1f;
-    --gray-300: #292929;
-    --gray-400: #2e2e2e;
-    --gray-500: #454545;
-    --gray-600: #7b7b7b;
-    --gray-700: #a0a0a0;
-    --gray-800: #949494;
-    --gray-900: #b4b4b4;
-    --gray-1000: #ededed;
-    --gray-alpha-100: #ffffff12;
-    --gray-alpha-200: #ffffff17;
-    --gray-alpha-300: #ffffff22;
-    --gray-alpha-400: #ffffff24;
-    --gray-alpha-500: #ffffff3d;
-    --gray-alpha-600: #ffffff82;
-    --gray-alpha-700: #ffffff8a;
-    --blue-100: #0f1b38;
-    --blue-400: #0f3058;
-    --blue-700: #0070f3;
-    --blue-900: #52a8ff;
-    --blue-1000: #eaf5ff;
-    --green-900: #45d16c;
-    --amber-900: #ffa52a;
-    --red-900: #ff6166;
-    --teal-700: #4fe0d0;
-    --text-3: #a0a0a0;
-    --accent-strong: #8fc2ff;
-    --accent-dim: #0070f3;
-    --bg-card: #0a0a0a;
-    --bg-card-hover: #1a1a1a;
-    --surface-strong: #1a1a1a;
-    --btn-primary-hover: #cccccc;
-    --glass-fill: #0a0a0ab8;
-    --glass-edge: #ffffff24;
-    --glass-highlight: #ffffff14;
+    --bg: #060a1a;
+    --bg-2: #0a1023;
+    --bg-3: #141c32;
+    --bg-deep: #030511;
+    --bg-card: #0e1528;
+    --bg-card-hover: #141c32;
+    --surface: #0b1122;
+    --surface-strong: #12192e;
+    --text: #f2f5fe;
+    --text-2: #bac4dc;
+    --text-3: #97a1bb;
+    --accent: #aa87ff;
+    --accent-strong: #c3afff;
+    --accent-vivid: #bc9aff;
+    --accent-dim: #8c67f2;
+    --accent-2: #34dde5;
+    --on-accent: #050815;
+    --success: #4ed589;
+    --warning: #fcb442;
+    --danger: #fa6863;
   }
 
   [data-theme='light'] {
-    --background-100: #ffffff;
-    --background-200: #fafafa;
-    --gray-100: #f2f2f2;
-    --gray-200: #ebebeb;
-    --gray-300: #e6e6e6;
-    --gray-400: #eaeaea;
-    --gray-500: #c9c9c9;
-    --gray-600: #a8a8a8;
-    --gray-700: #8f8f8f;
-    --gray-800: #7d7d7d;
-    --gray-900: #4d4d4d;
-    --gray-1000: #171717;
-    --gray-alpha-100: #0000000d;
-    --gray-alpha-200: #00000015;
-    --gray-alpha-300: #0000001a;
-    --gray-alpha-400: #00000014;
-    --gray-alpha-500: #00000036;
-    --gray-alpha-600: #0000003d;
-    --gray-alpha-700: #00000070;
-    --blue-100: #f0f7ff;
-    --blue-400: #cfe5ff;
-    --blue-700: #0070f3;
-    --blue-900: #005fd6;
-    --blue-1000: #002359;
-    --green-900: #1a7f37;
-    --amber-900: #a35200;
-    --red-900: #d4202e;
-    --teal-700: #00707a;
-    --text-3: #666666;
-    --accent-strong: #005fd6;
-    --accent-dim: #0057c7;
+    --bg: #f8fafe;
+    --bg-2: #f0f3fc;
+    --bg-3: #e3e8f4;
+    --bg-deep: #e2e8f6;
     --bg-card: #ffffff;
-    --bg-card-hover: #fafafa;
-    --surface-strong: #fafafa;
-    --btn-primary-hover: #383838;
-    --glass-fill: #ffffffa3;
-    --glass-edge: #00000014;
-    --glass-highlight: #ffffffcc;
+    --bg-card-hover: #f4f7fe;
+    --surface: #ffffff;
+    --surface-strong: #f0f3fc;
+    --text: #131a2d;
+    --text-2: #3d4760;
+    --text-3: #58637e;
+    --accent: #6b40c9;
+    --accent-strong: #5d2eb8;
+    --accent-vivid: #5b2bb4;
+    --accent-dim: #5623ae;
+    --accent-2: #007078;
+    --on-accent: #ffffff;
+    --success: #00723b;
+    --warning: #9d6400;
+    --danger: #be222a;
   }
 }
