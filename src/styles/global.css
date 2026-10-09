@@ -1,21 +1,89 @@
-@import '@fontsource-variable/geist-mono';
 @import './tokens.css';
+
+/*
+ * Geist Sans (body, headings and the LCP text). It is preloaded, so it is
+ * normally ready before the first render; `optional` then uses it from the
+ * first frame and never swaps text later, which removes a full-page
+ * re-layout. If it arrives late, the metric-matched fallback below simply
+ * stays for that view (it occupies the same space) and the font is cached
+ * for the next page.
+ */
+@font-face {
+  font-family: 'Geist Variable';
+  font-style: normal;
+  font-display: optional;
+  font-weight: 100 900;
+  src: url('../../node_modules/@fontsource-variable/geist/files/geist-latin-wght-normal.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Geist Variable';
+  font-style: normal;
+  font-display: optional;
+  font-weight: 100 900;
+  src: url('../../node_modules/@fontsource-variable/geist/files/geist-latin-ext-wght-normal.woff2')
+    format('woff2-variations');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/*
+ * Metric-matched fallback for Geist Sans (the technique next/font applies):
+ * Arial-compatible locals scaled to Geist's average width and vertical
+ * metrics, so the swap to the web font moves no text and causes no layout
+ * shift. Values computed from the shipped font file with Capsize.
+ */
+@font-face {
+  font-family: 'Geist Fallback';
+  src:
+    local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Arimo'),
+    local('Helvetica');
+  size-adjust: 105.8%;
+  ascent-override: 94.99%;
+  descent-override: 27.88%;
+  line-gap-override: 0%;
+}
+
+/*
+ * Geist Mono (labels and code) is registered by motion.ts once the page has
+ * loaded. Declaring it here would make Chrome fetch it during style
+ * resolution, even for labels in sections that are not rendered yet, and
+ * put it on the first-paint path. Until it arrives, labels use the system
+ * monospace; nothing rendered at load uses it, so the upgrade re-lays out
+ * almost nothing.
+ */
 
 :root {
   /* Colors live in tokens.css; this block holds shape and type tokens. */
-  --radius-shell: 20px;
-  --radius-card: 16px;
-  --radius-control: 10px;
+  /* Geist radii: 6 small controls, 8 default; cards one step softer. */
+  --radius-shell: 9999px;
+  --radius-card: 12px;
+  --radius-control: 8px;
   --radius-small: 6px;
   --radius-micro: 2px;
   --radius-hairline: 1px;
-  --radius-pill: 999px;
+  --radius-pill: 9999px;
   --radius-circle: 50%;
   --r: var(--radius-card);
   --r-sm: var(--radius-control);
   --r-xs: var(--radius-small);
-  --font: 'Geist Mono Variable', 'Geist Mono', ui-monospace, monospace;
-  --mono: var(--font);
+  --font:
+    'Geist Variable', 'Geist Fallback', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Arial, sans-serif;
+  /* Rhythm: one place to tune how much the layout breathes. */
+  --section-space: clamp(6rem, 12vw, 10.5rem);
+  --head-space: clamp(3rem, 6.5vw, 4.75rem);
+  --grid-gap: clamp(1.25rem, 2.6vw, 1.75rem);
+  --card-pad: clamp(1.6rem, 3.4vw, 2.35rem);
+  --mono:
+    'Geist Mono Variable', 'Geist Mono', ui-monospace, 'SFMono-Regular',
+    Consolas, 'Liberation Mono', monospace;
 }
 
 *,
@@ -37,8 +105,14 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font);
-  font-size: 1.05rem;
-  line-height: 1.7;
+  font-size: 1rem;
+  font-weight: var(--weight-regular);
+  line-height: 1.65;
+  letter-spacing: var(--tracking-body);
+  /* No `text-rendering: optimizeLegibility`: it forces full shaping of
+     every text run (measured ~2x first-layout cost on this page); Chrome
+     already kerns display text by default. */
+  -webkit-font-smoothing: antialiased;
   overflow-x: clip;
 }
 img {
@@ -60,7 +134,7 @@ textarea {
   outline-offset: 4px;
 }
 ::selection {
-  background: var(--accent);
+  background: var(--accent-fill);
   color: var(--on-accent);
 }
 
@@ -86,9 +160,9 @@ textarea {
   top: 0.75rem;
   left: 0.75rem;
   padding: 0.75rem 1rem;
-  background: var(--accent);
+  background: var(--accent-fill);
   color: var(--on-accent);
-  font-weight: 700;
+  font-weight: 600;
   border-radius: var(--radius-small);
   transform: translateY(-160%);
 }
@@ -107,45 +181,59 @@ textarea {
 .site-header {
   position: fixed;
   z-index: 60;
-  top: 16px;
+  top: 14px;
   left: 50%;
   width: calc(100% - 40px);
   max-width: min(1220px, calc(100vw - 40px));
   transform: translateX(-50%);
-  background: var(--header-fill);
-  border: 1px solid color-mix(in oklch, var(--text) 10%, transparent);
+  /* Frosted glass: translucent ground, blurred and saturated backdrop, a
+     hairline edge and a top inner highlight, in both themes. */
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-edge);
   border-radius: var(--radius-shell);
   box-shadow:
-    0 10px 40px rgba(0, 0, 0, 0.35),
-    0 0 0 1px color-mix(in oklch, var(--accent) 6%, transparent);
-  backdrop-filter: blur(28px) saturate(1.8) brightness(0.95);
-  -webkit-backdrop-filter: blur(28px) saturate(1.8) brightness(0.95);
+    inset 0 1px 0 var(--glass-highlight),
+    0 8px 32px light-dark(oklch(0 0 0 / 0.08), oklch(0 0 0 / 0.5));
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   animation: header-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
   transition:
     background 180ms ease,
     border-color 180ms ease,
     box-shadow 180ms ease;
 }
-[data-theme='light'] .site-header {
-  background: var(--header-fill);
-  border-color: color-mix(in oklch, var(--text) 12%, transparent);
-  box-shadow: var(--shadow-sm);
+/* Desktop: a compact pill sized to its content (brand, links, controls),
+   centered over the page rather than spanning the content width. */
+@media (min-width: 1041px) {
+  .site-header {
+    width: max-content;
+  }
+  .site-header .header-inner {
+    gap: clamp(1rem, 2.4vw, 2.25rem);
+    min-height: 52px;
+    padding-inline: 18px 8px;
+  }
+  .site-header .site-nav {
+    position: relative;
+    left: auto;
+    transform: none;
+  }
+  .site-header .header-actions {
+    margin-inline-start: 0;
+  }
 }
 /* Floating-navbar compact state: transform and paint only, never layout. */
 .site-header[data-scrolled] {
-  transform: translate(-50%, -6px);
-  border-color: color-mix(in oklch, var(--accent) 22%, transparent);
+  transform: translate(-50%, -4px);
+  border-color: light-dark(oklch(0 0 0 / 0.1), oklch(1 0 0 / 0.18));
   box-shadow:
-    0 18px 50px rgba(0, 0, 0, 0.45),
-    0 0 0 1px color-mix(in oklch, var(--accent) 10%, transparent);
+    inset 0 1px 0 var(--glass-highlight),
+    0 12px 40px light-dark(oklch(0 0 0 / 0.12), oklch(0 0 0 / 0.6));
   transition:
     transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
     background 180ms ease,
     border-color 180ms ease,
     box-shadow 180ms ease;
-}
-[data-theme='light'] .site-header[data-scrolled] {
-  box-shadow: var(--shadow);
 }
 .hdr-progress {
   position: absolute;
@@ -187,7 +275,7 @@ textarea {
   z-index: 1;
   color: var(--text);
   font-size: 17px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.04em;
   text-decoration: none;
 }
@@ -201,7 +289,7 @@ textarea {
   height: 8px;
   aspect-ratio: 1;
   border-radius: var(--radius-micro);
-  background: var(--accent);
+  background: var(--accent-fill);
   flex-shrink: 0;
   box-shadow:
     0 0 14px var(--accent-glow),
@@ -223,9 +311,7 @@ textarea {
   width: var(--pw, 0px);
   height: 34px;
   border-radius: var(--radius-small);
-  background: var(--accent-subtle);
-  box-shadow: inset 0 0 0 1px
-    color-mix(in oklch, var(--accent) 24%, transparent);
+  background: var(--gray-alpha-200);
   opacity: 0;
   transform: translate3d(var(--px, 0px), -50%, 0);
   transition:
@@ -264,20 +350,16 @@ textarea {
 .desktop-nav a::after {
   display: none;
 }
+/* Geist nav: gray links; hover and current get primary text on a
+   gray-alpha pill. */
+.desktop-nav a {
+  color: var(--text-2);
+}
 .desktop-nav a:hover,
 .desktop-nav a.active,
 .desktop-nav a[aria-current='page'] {
-  color: var(--accent);
-  background: var(--accent-subtle);
-}
-[data-theme='light'] .desktop-nav a {
-  color: var(--text-2);
-}
-[data-theme='light'] .desktop-nav a:hover,
-[data-theme='light'] .desktop-nav a.active,
-[data-theme='light'] .desktop-nav a[aria-current='page'] {
-  color: var(--accent-strong);
-  background: var(--accent-subtle);
+  color: var(--text);
+  background: var(--gray-alpha-100);
 }
 .header-actions {
   display: flex;
@@ -294,8 +376,8 @@ textarea {
   min-height: 34px;
   display: grid;
   place-items: center;
-  border: 1px solid color-mix(in oklch, var(--text) 14%, transparent);
-  border-radius: var(--radius-control);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--text);
   cursor: pointer;
@@ -350,8 +432,8 @@ textarea {
   justify-content: center;
   gap: 6px;
   padding: 0 12px;
-  border: 1px solid color-mix(in oklch, var(--text) 14%, transparent);
-  border-radius: var(--radius-control);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--text-2);
   font-size: 13px;
@@ -454,7 +536,7 @@ textarea {
   width: 6px;
   aspect-ratio: 1;
   border-radius: var(--radius-pill);
-  background: var(--accent);
+  background: var(--accent-fill);
   flex-shrink: 0;
   opacity: 0;
 }
@@ -468,9 +550,9 @@ textarea {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 1px solid color-mix(in oklch, var(--accent) 20%, transparent);
-  border-radius: var(--radius-control);
-  background: color-mix(in oklch, var(--accent) 8%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--gray-alpha-100);
   color: var(--text);
   cursor: pointer;
 }
@@ -496,7 +578,7 @@ textarea {
   border-radius: var(--radius-card);
   color: var(--text);
   font-size: clamp(1.6rem, 4vw, 2.2rem);
-  font-weight: 700;
+  font-weight: 600;
   text-decoration: none;
 }
 .mob-menu a:hover {
@@ -532,12 +614,12 @@ textarea {
   border-radius: var(--radius-pill) !important;
   color: var(--text-2);
   font-size: 13px !important;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   text-align: center;
 }
 .mob-lang-btn.is-active {
-  background: var(--accent);
+  background: var(--accent-fill);
   color: var(--on-accent);
 }
 
@@ -653,12 +735,13 @@ main {
 }
 .hero-tagline {
   color: var(--accent-strong);
-  font-weight: 650;
+  font-weight: 500;
 }
 .lead {
   color: var(--muted);
-  font-size: clamp(1.1rem, 2vw, 1.35rem);
-  max-width: 68ch;
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  line-height: 1.7;
+  max-width: 64ch;
 }
 .portrait {
   position: relative;
@@ -683,11 +766,11 @@ main {
   margin: 0 0 1rem;
   color: var(--accent-strong);
   font-size: 0.8rem;
-  font-weight: 750;
+  font-weight: 600;
   text-transform: uppercase;
 }
 .section {
-  padding-block: clamp(5rem, 10vw, 9rem);
+  padding-block: var(--section-space);
 }
 .page {
   padding-top: 11rem;
@@ -712,8 +795,8 @@ main {
 }
 .grid {
   display: grid;
-  gap: 1rem;
-  margin-top: 2.5rem;
+  gap: var(--grid-gap);
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
 }
 .grid.two {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -750,7 +833,7 @@ main {
   align-items: center;
   gap: 0 0.8rem;
   color: var(--text);
-  font-weight: 700;
+  font-weight: 600;
 }
 .quote figcaption img {
   grid-row: span 2;
@@ -779,14 +862,18 @@ main {
   border-radius: var(--radius-control);
   color: var(--text);
   background: var(--surface);
-  font-weight: 700;
+  font-weight: 600;
   text-decoration: none;
   cursor: pointer;
 }
 .button.primary {
-  color: var(--on-accent);
-  background: var(--accent);
-  border-color: var(--accent);
+  color: var(--btn-primary-fg);
+  background: var(--btn-primary-bg);
+  border-color: var(--btn-primary-bg);
+}
+.button.primary:hover {
+  background: var(--btn-primary-hover);
+  border-color: var(--btn-primary-hover);
 }
 .button:hover {
   transform: translateY(-2px);
@@ -796,7 +883,7 @@ main {
   display: inline-block;
   margin-top: 1rem;
   color: var(--accent-strong);
-  font-weight: 700;
+  font-weight: 600;
 }
 .tag-list {
   display: flex;
@@ -826,7 +913,7 @@ main {
 }
 .tag-count {
   color: var(--accent-strong);
-  font-weight: 750;
+  font-weight: 600;
 }
 .not-found-page {
   position: relative;
@@ -892,7 +979,7 @@ main {
   gap: 0.02em;
   margin: clamp(1.5rem, 4vw, 3rem) 0 clamp(1rem, 3vw, 2rem);
   font-size: clamp(5.8rem, 18vw, 13rem);
-  font-weight: 850;
+  font-weight: 600;
   letter-spacing: -0.15em;
   line-height: 0.72;
 }
@@ -940,7 +1027,7 @@ main {
   border: 1px solid var(--accent-border);
   border-radius: var(--radius-pill);
   font-size: 0.82rem;
-  font-weight: 800;
+  font-weight: 600;
   text-transform: uppercase;
 }
 .not-found-body {
@@ -1062,7 +1149,7 @@ main {
 .meta {
   color: var(--accent-strong);
   font-size: 0.85rem;
-  font-weight: 650;
+  font-weight: 500;
 }
 .timeline {
   position: relative;
@@ -1089,7 +1176,7 @@ main {
   width: 0.75rem;
   aspect-ratio: 1;
   border-radius: var(--radius-circle);
-  background: var(--accent);
+  background: var(--accent-fill);
 }
 .timeline h2 {
   margin-bottom: 0.5rem;
@@ -1121,7 +1208,7 @@ main {
   padding-block: 1.25rem;
   padding-inline: 0 2rem;
   font-size: 1.15rem;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
 }
 .faq-list p {
@@ -1152,12 +1239,12 @@ main {
   content: '✓';
   margin-inline-end: 0.35rem;
   color: var(--success);
-  font-weight: 800;
+  font-weight: 600;
 }
 .contact-form label {
   display: grid;
   gap: 0.4rem;
-  font-weight: 650;
+  font-weight: 500;
 }
 .contact-form input,
 .contact-form textarea,
@@ -1187,7 +1274,7 @@ main {
   padding-inline-end: 0.75rem;
   color: var(--text);
   font-size: 0.825rem;
-  font-weight: 750;
+  font-weight: 600;
   letter-spacing: 0;
 }
 .form-actions {
@@ -1418,7 +1505,7 @@ main {
   border-radius: var(--radius-control);
 }
 .cta {
-  background: var(--accent);
+  background: var(--accent-fill);
   color: var(--on-accent);
 }
 .cta .eyebrow,
@@ -1507,7 +1594,7 @@ main {
 }
 .footer-name {
   font-size: 1.4rem;
-  font-weight: 750;
+  font-weight: 600;
   text-decoration: none;
 }
 .footer-grid nav {
@@ -1757,7 +1844,7 @@ main {
   width: 6px;
   height: 6px;
   border-radius: var(--radius-circle);
-  background: var(--accent);
+  background: var(--accent-fill);
   box-shadow: 0 0 10px var(--accent);
   flex-shrink: 0;
 }
@@ -1810,7 +1897,7 @@ main {
   margin-block-end: 1rem;
   color: var(--accent-strong);
   font-size: 0.78rem;
-  font-weight: 750;
+  font-weight: 600;
   letter-spacing: 0.12em;
 }
 
@@ -1853,11 +1940,7 @@ main {
   transform: translateX(120%);
 }
 .button.primary {
-  box-shadow: 0 10px 34px -10px var(--accent-glow);
-}
-.button.primary:hover {
-  box-shadow: 0 16px 40px -10px
-    color-mix(in oklch, var(--accent) 55%, transparent);
+  box-shadow: var(--shadow-sm);
 }
 
 .text-link {
@@ -2017,7 +2100,7 @@ main {
   -webkit-background-clip: text;
   /* Sized so the full word always fits its line and stays centred. */
   font-size: clamp(3rem, 14vw, 11.5rem);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.06em;
   line-height: 0.8;
   text-align: center;
@@ -2166,7 +2249,7 @@ main {
 
 .xp-item--current .xp-dot {
   border-color: var(--accent);
-  background: var(--accent);
+  background: var(--accent-fill);
   box-shadow:
     0 0 0 6px var(--bg),
     0 0 22px 4px var(--accent-glow);
@@ -2186,7 +2269,7 @@ main {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: clamp(2.25rem, 5vw, 3.75rem);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.05em;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -2202,7 +2285,7 @@ main {
   margin: 0.55rem 0 0;
   color: var(--accent-ink);
   font-size: 0.85rem;
-  font-weight: 750;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -2296,7 +2379,7 @@ main {
   background: color-mix(in oklch, var(--success) 12%, transparent);
   color: var(--text);
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 [dir='rtl'] .xp-year,
@@ -2351,7 +2434,7 @@ main {
 @keyframes xp-dot-on {
   to {
     border-color: var(--accent);
-    background: var(--accent);
+    background: var(--accent-fill);
     box-shadow:
       0 0 0 6px var(--bg),
       0 0 22px 4px var(--accent-glow);
@@ -2411,7 +2494,7 @@ main {
   color: var(--text);
   font: inherit;
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   transition:
     border-color 160ms ease,
@@ -2537,7 +2620,7 @@ main {
   margin: 0 0 1rem;
   color: var(--accent-ink);
   font-size: 0.75rem;
-  font-weight: 750;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -2550,7 +2633,7 @@ main {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: clamp(1.75rem, 4vw, 2.6rem);
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.04em;
   line-height: 1.1;
 }
@@ -2559,7 +2642,7 @@ main {
   margin: 0 0 1rem;
   color: var(--text);
   font-size: clamp(1rem, 1.8vw, 1.15rem);
-  font-weight: 650;
+  font-weight: 500;
 }
 
 .oss-description {
@@ -2657,7 +2740,7 @@ main {
   border: 1px solid var(--border);
   border-radius: var(--radius-control);
   color: var(--text);
-  font-weight: 650;
+  font-weight: 500;
   text-decoration: none;
   transition:
     border-color 160ms ease,
@@ -2686,9 +2769,9 @@ main {
   min-height: 46px;
   padding: 0.7rem 1.3rem;
   border-radius: var(--radius-control);
-  background: var(--accent);
+  background: var(--accent-fill);
   color: var(--on-accent);
-  font-weight: 750;
+  font-weight: 600;
   text-decoration: none;
   box-shadow: 0 12px 32px -12px var(--accent-glow);
   transition:
@@ -2734,4 +2817,56 @@ main {
     transition: none;
     transform: none;
   }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Geist typography layer
+   Sans for reading text and headings, with Geist's signature negative
+   tracking that tightens as size grows; Mono for labels, indices, figures
+   and code, as on vercel.com.
+══════════════════════════════════════════════════════════════════════ */
+:where(h1, h2, h3, h4) {
+  font-weight: var(--weight-semibold);
+}
+:where(h3, h4) {
+  letter-spacing: var(--tracking-subsection);
+}
+.page h1,
+.article-page h1,
+.case-study-hero h1 {
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-display);
+}
+.section h2 {
+  letter-spacing: var(--tracking-title);
+}
+:where(code, kbd, pre, samp) {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+.eyebrow,
+.not-found-kicker,
+.card-index,
+.xp-year,
+.xp-dates,
+.xp-role-dates,
+.xp-company,
+.oss-eyebrow,
+.oss-meta,
+.promo-badge,
+.toast-progress {
+  font-family: var(--mono);
+}
+.eyebrow,
+.xp-company,
+.oss-eyebrow {
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.02em;
+}
+
+/* Arabic letters only join with zero tracking: no letter-spacing in RTL. */
+[dir='rtl'] *,
+[dir='rtl'] *::before,
+[dir='rtl'] *::after {
+  letter-spacing: 0 !important;
 }

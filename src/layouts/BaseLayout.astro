@@ -8,6 +8,7 @@ import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
 import { SITE_NAME, SITE_URL } from '../config/site';
 import { getBlogFeedHref, getBlogFeedMeta } from '../data/blog';
 import { t } from '../i18n/messages';
+import geistSansLatinFont from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
 import '../styles/global.css';
 import '../styles/motion.css';
 
@@ -168,7 +169,15 @@ const combinedSchema = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#060a1a" />
+    <meta name="theme-color" content="#000000" />
+    <!-- Geist Sans renders every page's headline text; fetch it with the CSS. -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href={geistSansLatinFont}
+      crossorigin="anonymous"
+    />
     <link rel="icon" type="image/svg+xml" href="/assets/favicons/favicon.svg" />
     <link
       rel="icon"

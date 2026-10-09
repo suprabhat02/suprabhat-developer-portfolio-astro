@@ -119,22 +119,35 @@ function buildArc(a: Vec3, b: Vec3): Float32Array {
   return out;
 }
 
+/**
+ * Resolves theme tokens to concrete colors. Tokens may hold expressions
+ * such as `light-dark()` or `color-mix()` that canvas cannot parse, so each
+ * one is applied to a probe's `color` and read back computed, which the
+ * browser resolves for the active color scheme.
+ */
 const readPalette = (element: HTMLElement): Palette => {
-  const style = getComputedStyle(element);
-  const token = (name: string, fallback: string) =>
-    style.getPropertyValue(name).trim() || fallback;
-  return {
-    land: token('--text-2', '#b8c0d8'),
-    home: token('--accent-2', '#34dde5'),
-    arc: token('--accent', '#aa87ff'),
-    hub: token('--accent-strong', '#c9b3ff'),
-    glow: token('--accent', '#aa87ff'),
-    sphere: token('--bg-2', '#0b1024'),
-    label: token('--text', '#f2f5fe'),
-    font: style.fontFamily,
-    // A violet halo reads as haze on light backgrounds; keep it subtle there.
+  const probe = document.createElement('span');
+  probe.hidden = true;
+  element.append(probe);
+  const token = (name: string, fallback: string) => {
+    probe.style.color = fallback;
+    probe.style.color = `var(${name})`;
+    return getComputedStyle(probe).color || fallback;
+  };
+  const palette: Palette = {
+    land: token('--text-2', '#a1a1a1'),
+    home: token('--accent-2', '#2ec5d3'),
+    arc: token('--accent', '#52a8ff'),
+    hub: token('--accent-strong', '#8fc2ff'),
+    glow: token('--accent-vivid', '#0070f3'),
+    sphere: token('--bg-2', '#0a0a0a'),
+    label: token('--text', '#ededed'),
+    font: getComputedStyle(element).fontFamily,
+    // A strong halo reads as haze on light backgrounds; keep it subtle there.
     haloAlpha: document.documentElement.dataset.theme === 'light' ? 0.22 : 0.5,
   };
+  probe.remove();
+  return palette;
 };
 
 export function mountGlobe(host: HTMLElement): () => void {

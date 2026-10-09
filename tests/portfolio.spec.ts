@@ -388,8 +388,8 @@ test('shared shell styling and controls stay consistent across locales', async (
 
   const baseline = await readShellStyles('/');
   expect(baseline).toMatchObject({
-    controlRadius: '10px',
-    headerRadius: '20px',
+    controlRadius: '9999px',
+    headerRadius: '9999px',
     navRadius: '6px',
     themeIconCount: 2,
   });
@@ -418,7 +418,7 @@ test('shared shell styling and controls stay consistent across locales', async (
       )
       .first()
       .evaluate((element) => getComputedStyle(element).borderRadius);
-    expect(cardRadius).toBe('16px');
+    expect(cardRadius).toBe('12px');
   }
 
   await page.goto('/about/');
@@ -1151,4 +1151,72 @@ test('services page is fully localized, including structured data', async ({
     await page.locator('script[type="application/ld+json"]').allTextContents()
   ).join('');
   expect(structuredData).not.toContain('Best for:');
+});
+
+test('Geist system: typography, compact glass header and About photo', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  const fonts = await page.evaluate(() => ({
+    body: getComputedStyle(document.body).fontFamily,
+    label: getComputedStyle(document.querySelector('.s-eyebrow') as HTMLElement)
+      .fontFamily,
+  }));
+  expect(fonts.body).toMatch(/^"?Geist Variable/);
+  expect(fonts.label).toMatch(/Geist Mono/);
+
+  const header = await page.locator('.site-header').evaluate((element) => {
+    const box = element.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    return {
+      width: box.width,
+      center: box.left + box.width / 2,
+      viewportCenter: document.documentElement.clientWidth / 2,
+      blur: style.backdropFilter,
+    };
+  });
+  expect(header.width).toBeLessThan(900);
+  // Fixed elements center on the full window, which includes the reserved
+  // scrollbar gutter (scrollbar-gutter: stable), so allow half a gutter.
+  expect(Math.abs(header.center - header.viewportCenter)).toBeLessThan(9);
+  expect(header.blur).toContain('blur');
+
+  const photo = page.locator('.about-photo img');
+  await expect(photo).toHaveAttribute('loading', 'lazy');
+  await expect(photo).toHaveAttribute('alt', /Suprabhat Kumar/);
+});
+
+test('scenes play on tap on touch screens and never on scroll', async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    hasTouch: true,
+  });
+  const page = await context.newPage();
+  await page.goto('/');
+  const card = page.locator('.engagement-card').first();
+  await card.scrollIntoViewIfNeeded();
+  const running = () =>
+    page.evaluate(
+      () =>
+        document
+          .getAnimations()
+          .filter(
+            (animation) =>
+              animation.playState === 'running' &&
+              animation.effect instanceof KeyframeEffect &&
+              animation.effect.target instanceof Element &&
+              animation.effect.target.closest('.lv-scene'),
+          ).length,
+    );
+  expect(await running()).toBe(0);
+  await card.locator('h3').tap();
+  await expect(card).toHaveAttribute('data-active', '');
+  expect(await running()).toBeGreaterThan(0);
+  await page.locator('#engagements .section-head').tap();
+  await expect(card).not.toHaveAttribute('data-active', '');
+  await context.close();
 });

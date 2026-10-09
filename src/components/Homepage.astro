@@ -31,6 +31,7 @@ import {
   heroPortraitWidths,
 } from '../data/images';
 import portraitImage from '../../public/assets/images/portrait-1100.webp';
+import parkPortraitImage from '../../public/assets/images/portrait-park-900.webp';
 import '../styles/homepage.css';
 
 const { locale = 'en' } = Astro.props as { locale?: Locale };
@@ -734,14 +735,41 @@ const contactIndex = featured.length > 0 ? '14' : '13';
         titleId="about-title"
       />
 
-      <TextReveal
-        class="about-statement"
-        text={t(
-          locale,
-          'home.aboutStatement',
-          'Suprabhat Kumar, also known as Shubh, is a Senior Front-End Engineer with 6+ years building SaaS portals, enterprise dashboards, design systems, and accessible websites. Based in Noida Extension, with delivery experience across teams in Denmark, China, and Australia.',
-        )}
-      />
+      <div class="about-split">
+        <TextReveal
+          class="about-statement"
+          text={t(
+            locale,
+            'home.aboutStatement',
+            'Suprabhat Kumar, also known as Shubh, is a Senior Front-End Engineer with 6+ years building SaaS portals, enterprise dashboards, design systems, and accessible websites. Based in Noida Extension, with delivery experience across teams in Denmark, China, and Australia.',
+          )}
+        />
+        <figure class="about-photo fx-reveal">
+          <div class="about-photo-frame">
+            <Picture
+              src={parkPortraitImage}
+              formats={['avif', 'webp']}
+              fallbackFormat="webp"
+              widths={[320, 440, 560, 720]}
+              sizes="(max-width: 760px) min(78vw, 340px), (max-width: 1040px) 300px, 340px"
+              width={900}
+              height={1200}
+              alt={t(
+                locale,
+                'home.parkPhotoAlt',
+                'Suprabhat Kumar smiling in a navy puffer jacket on a grassy park hill, with bare winter trees and a city skyline behind him.',
+              )}
+              loading="lazy"
+              decoding="async"
+              quality={72}
+            />
+          </div>
+          <figcaption class="about-photo-cap">
+            <span class="fx-ping fx-ping--static" aria-hidden="true"></span>
+            {t(locale, 'home.parkPhotoCaption', 'Away from the keyboard')}
+          </figcaption>
+        </figure>
+      </div>
 
       <div class="about-traits">
         {

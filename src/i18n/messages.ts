@@ -230,6 +230,9 @@ const es: Messages = {
   'page.recommendations.title': 'Lo que dicen los colaboradores',
   'page.services.eyebrow': 'Servicios',
   'page.services.title': 'Servicios de ingeniería frontend',
+  'home.parkPhotoAlt':
+    'Suprabhat Kumar sonríe con una chaqueta acolchada azul marino en la colina de un parque, con árboles de invierno sin hojas y el perfil de una ciudad al fondo.',
+  'home.parkPhotoCaption': 'Lejos del teclado',
   'globe.label':
     'Globo que muestra la colaboración remota desde India con equipos de Norteamérica, Europa, Oriente Medio y Asia-Pacífico',
   'globe.home': 'India',
@@ -629,6 +632,9 @@ const ar: Messages = {
   'page.recommendations.title': 'ما يقوله المتعاونون',
   'page.services.eyebrow': 'الخدمات',
   'page.services.title': 'خدمات هندسة الواجهات الأمامية',
+  'home.parkPhotoAlt':
+    'سوبرابهات كومار يبتسم مرتديًا سترة منفوخة كحلية على تلة عشبية في حديقة، وخلفه أشجار شتوية عارية وأفق مدينة.',
+  'home.parkPhotoCaption': 'بعيدًا عن لوحة المفاتيح',
   'globe.label':
     'كرة أرضية تُظهر التعاون عن بُعد من الهند مع فرق في أمريكا الشمالية وأوروبا والشرق الأوسط وآسيا والمحيط الهادئ',
   'globe.home': 'الهند',

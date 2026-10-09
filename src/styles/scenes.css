@@ -3,8 +3,10 @@
  * treatment that drives them.
  *
  * A living card combines four effects:
- *   1. its scene, which plays a short story on hover/focus (or scroll on
- *      touch screens) and rests in its finished state otherwise;
+ *   1. its scene, which plays a short story only while the card is
+ *      engaged (hover, keyboard focus, or a tap on touch screens, which
+ *      motion.ts records as `data-active`) and rests in its finished state
+ *      otherwise. Scrolling never plays it;
  *   2. the orbiting gradient border (`fx-card-gradient`);
  *   3. the pointer spotlight (`fx-glow` + `data-glow`);
  *   4. 3D tilt (`fx-tilt` + `data-tilt`) with multi-depth parallax: scene
@@ -31,8 +33,9 @@
   --lv-dur: 4s;
   --lv-step: 140ms;
   position: relative;
-  height: 7.25rem;
-  margin-block-end: 1.25rem;
+  isolation: isolate;
+  height: clamp(9rem, 16vw, 10.5rem);
+  margin-block-end: 1.5rem;
   overflow: hidden;
   overflow: clip;
   border: 1px solid var(--border-strong);
@@ -52,8 +55,67 @@
 }
 
 .lv-scene--sm {
-  height: 5.25rem;
-  margin-block-end: 0.85rem;
+  height: 7.5rem;
+  margin-block-end: 1rem;
+}
+
+/* Pointer spotlight inside the scene, following the card's pointer
+   position (--px/--py from the tilt handler), plus a one-shot sheen that
+   sweeps across when the card is engaged. Both are paint-only layers. */
+.lv-scene::before,
+.lv-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+
+.lv-scene::before {
+  background: radial-gradient(
+    14rem circle at calc(50% + var(--px, 0) * 100%)
+      calc(50% + var(--py, 0) * 100%),
+    color-mix(in oklch, var(--accent-vivid) 22%, transparent),
+    transparent 70%
+  );
+}
+
+.lv-scene::after {
+  z-index: 1;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    color-mix(in oklch, var(--text) 10%, transparent) 50%,
+    transparent 65%
+  );
+  translate: -100% 0;
+}
+
+:is(.fx-live:hover, .fx-live:focus-within, .fx-live[data-active])
+  .lv-scene::before {
+  opacity: 1;
+}
+
+:is(.fx-live:hover, .fx-live:focus-within, .fx-live[data-active])
+  .lv-scene::after {
+  opacity: 1;
+  translate: 100% 0;
+  transition:
+    translate 1100ms var(--fx-ease-out),
+    opacity 200ms ease;
+}
+
+/* The artwork leans in a touch when the card is engaged. */
+.lv-scene svg {
+  transition: scale 600ms var(--fx-ease-out);
+}
+
+:is(.fx-live:hover, .fx-live:focus-within, .fx-live[data-active])
+  .lv-scene
+  svg {
+  scale: 1.035;
 }
 
 .lv-scene svg {
@@ -149,7 +211,7 @@
   fill: var(--text);
   font-family: inherit;
   font-size: 17px;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.02em;
 }
 
@@ -276,8 +338,8 @@
  * the style engine; an attribute-substring selector would be tested
  * against every element) and name their keyframes in `--lv-anim`; the animation
  * itself is attached only while the scene can play: when its card is
- * hovered or focused, or (touch screens) when motion.ts marks the card as
- * near the viewport with `data-inview`. At rest no animation objects
+ * hovered, focused or tapped (`data-active`, set by motion.ts on touch
+ * screens). At rest no animation objects
  * exist, so a page full of scenes adds no style or timeline work at load,
  * and leaving a card returns it to its resting frame.
  */
@@ -291,13 +353,15 @@
   animation-delay: calc(var(--i, 0) * var(--lv-step));
 }
 
-:is(.fx-live:hover, .fx-live:focus-within, .fx-live[data-inview]) .lv-scene .k {
+:is(.fx-live:hover, .fx-live:focus-within, .fx-live[data-active]) .lv-scene .k {
   animation-name: var(--lv-anim, none);
 }
 
-.fx-live:is(:hover, :focus-within) .lv-scene {
+:is(.fx-live:hover, .fx-live:focus-within, .fx-live[data-active]) .lv-scene {
   border-color: var(--accent-border);
-  box-shadow: inset 0 0 32px -12px var(--accent-glow);
+  box-shadow:
+    inset 0 0 40px -14px var(--accent-glow),
+    0 10px 30px -18px var(--accent-glow);
 }
 
 .lv-scene .k-progress,
@@ -463,6 +527,9 @@
 }
 .lv-scene--merge {
   --lv-step: 400ms;
+}
+.lv-scene--zones {
+  --lv-step: 200ms;
 }
 .lv-scene--orbit {
   --lv-dur: 3.2s;
@@ -953,24 +1020,6 @@
   transition-duration: 160ms;
 }
 
-/* ── Touch screens: the story is tied to scrolling instead of hover ─ */
-
-@media (hover: none) {
-  @supports (animation-timeline: view()) {
-    .fx-live {
-      view-timeline: --lv-card block;
-    }
-
-    .lv-scene .k {
-      animation-duration: auto;
-      animation-iteration-count: 1;
-      animation-delay: 0s;
-      animation-timeline: --lv-card;
-      animation-range: entry 60% cover 62%;
-    }
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .lv-scene .k {
     animation: none !important;
@@ -979,5 +1028,14 @@
   .fx-live :is(.lv-l, .lv-lift) {
     translate: none;
     transition: none;
+  }
+
+  .lv-scene svg {
+    scale: none !important;
+    transition: none;
+  }
+
+  .lv-scene::after {
+    display: none;
   }
 }
