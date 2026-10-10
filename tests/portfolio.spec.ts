@@ -388,9 +388,9 @@ test('shared shell styling and controls stay consistent across locales', async (
 
   const baseline = await readShellStyles('/');
   expect(baseline).toMatchObject({
-    controlRadius: '10px',
-    headerRadius: '20px',
-    navRadius: '6px',
+    controlRadius: '6px',
+    headerRadius: '12px',
+    navRadius: '4px',
     themeIconCount: 2,
   });
 
@@ -418,7 +418,7 @@ test('shared shell styling and controls stay consistent across locales', async (
       )
       .first()
       .evaluate((element) => getComputedStyle(element).borderRadius);
-    expect(cardRadius).toBe('16px');
+    expect(cardRadius).toBe('10px');
   }
 
   await page.goto('/about/');

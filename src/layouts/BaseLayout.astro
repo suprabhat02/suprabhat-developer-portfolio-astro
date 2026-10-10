@@ -3,6 +3,9 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SEOHead from '../components/SEOHead.astro';
 import Backdrop from '../components/fx/Backdrop.astro';
+// Dev-only brand palette switcher. Re-enable by uncommenting this import and
+// the `<PalettePicker />` line in the body below, then run `npm run dev`.
+// import PalettePicker from '../components/fx/PalettePicker.astro';
 import { getProfile } from '../data/profile';
 import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
 import { SITE_NAME, SITE_URL } from '../config/site';
@@ -168,7 +171,7 @@ const combinedSchema = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#060a1a" />
+    <meta name="theme-color" content="#000d18" />
     <link rel="icon" type="image/svg+xml" href="/assets/favicons/favicon.svg" />
     <link
       rel="icon"
@@ -272,6 +275,8 @@ const combinedSchema = {
         <path d="M18 15l-6-6-6 6"></path>
       </svg>
     </button>
+    {/* Dev-only palette switcher (see commented import above to re-enable). */}
+    {/* import.meta.env.DEV && <PalettePicker /> */}
     <script>
       import '../scripts/motion';
     </script>

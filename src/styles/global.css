@@ -3,10 +3,10 @@
 
 :root {
   /* Colors live in tokens.css; this block holds shape and type tokens. */
-  --radius-shell: 20px;
-  --radius-card: 16px;
-  --radius-control: 10px;
-  --radius-small: 6px;
+  --radius-shell: 12px;
+  --radius-card: 10px;
+  --radius-control: 6px;
+  --radius-small: 4px;
   --radius-micro: 2px;
   --radius-hairline: 1px;
   --radius-pill: 999px;
@@ -1187,6 +1187,7 @@ main {
   border-radius: var(--radius-control);
   background: var(--bg);
   color: var(--text);
+  font: inherit;
 }
 .form-row {
   display: grid;

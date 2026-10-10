@@ -1086,7 +1086,7 @@
   position: relative;
   flex: 1;
   height: var(--h);
-  border-radius: 6px 6px 0 0;
+  border-radius: 4px 4px 0 0;
   background: linear-gradient(
     to top,
     color-mix(in oklch, var(--accent) 35%, transparent),
@@ -1152,7 +1152,7 @@
   width: 76px;
   height: 38px;
   border: 2px solid var(--accent);
-  border-radius: 9px;
+  border-radius: 6px;
   box-shadow: 0 0 0 4px var(--accent-soft);
   animation: bento-focus 4.5s var(--fx-ease-out) infinite;
   animation-play-state: paused;
@@ -1187,7 +1187,7 @@
   width: 44px;
   height: 44px;
   border: 2px solid var(--bg-card);
-  border-radius: 12px;
+  border-radius: 8px;
   background: var(--accent);
   box-shadow: var(--shadow-sm);
   transform: translateX(calc((var(--i) - 1.5) * 14px)) rotate(-8deg);
@@ -1221,7 +1221,7 @@
   width: 120px;
   height: 44px;
   border: 1px solid var(--accent-border);
-  border-radius: 10px;
+  border-radius: 6px;
   background: color-mix(
     in srgb,
     var(--accent) calc(12% + var(--i) * 14%),
@@ -1371,7 +1371,7 @@
   width: 2.5rem;
   height: 2.5rem;
   margin-block-end: 1rem;
-  border-radius: 12px;
+  border-radius: 8px;
   background:
     radial-gradient(circle at 30% 30%, var(--accent-strong), transparent 60%),
     linear-gradient(135deg, var(--accent), var(--accent-2));
@@ -1708,7 +1708,7 @@
   height: 3rem;
   margin-block-start: -2.25rem;
   border: 1px solid var(--accent-border);
-  border-radius: 14px;
+  border-radius: 9px;
   background: var(--bg-card);
   box-shadow: 0 12px 30px -10px var(--accent-glow);
   color: var(--accent);
@@ -2209,7 +2209,7 @@ details[open] .faq-icon {
   width: 2.6rem;
   height: 2.6rem;
   border: 1px solid var(--accent-border);
-  border-radius: 12px;
+  border-radius: 8px;
   background: var(--accent-subtle);
   color: var(--accent);
 }
@@ -2543,7 +2543,7 @@ textarea.f-input {
   height: 3rem;
   margin-block-end: 1.25rem;
   border: 1px solid var(--accent-border);
-  border-radius: 14px;
+  border-radius: 9px;
   background:
     radial-gradient(
       circle at 30% 20%,
@@ -2578,7 +2578,7 @@ textarea.f-input {
   width: 2.5rem;
   height: 2.5rem;
   margin: 0;
-  border-radius: 12px;
+  border-radius: 8px;
 }
 
 .collab-head h3 {

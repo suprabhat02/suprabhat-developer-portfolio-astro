@@ -135,13 +135,13 @@ const readPalette = (element: HTMLElement): Palette => {
     return getComputedStyle(probe).color || fallback;
   };
   const palette: Palette = {
-    land: token('--text-2', '#bac4dc'),
-    home: token('--accent-2', '#34dde5'),
-    arc: token('--accent', '#aa87ff'),
-    hub: token('--accent-strong', '#c3afff'),
-    glow: token('--accent-vivid', '#bc9aff'),
-    sphere: token('--bg-2', '#0a1023'),
-    label: token('--text', '#f2f5fe'),
+    land: token('--text-2', '#afc8d8'),
+    home: token('--accent-2', '#41dfcf'),
+    arc: token('--accent', '#00baff'),
+    hub: token('--accent-strong', '#3ad3ff'),
+    glow: token('--accent-vivid', '#00ceff'),
+    sphere: token('--bg-2', '#001421'),
+    label: token('--text', '#eef7fc'),
     font: getComputedStyle(element).fontFamily,
     // A strong halo reads as haze on light backgrounds; keep it subtle there.
     haloAlpha: document.documentElement.dataset.theme === 'light' ? 0.22 : 0.5,
@@ -487,10 +487,11 @@ export function mountGlobe(host: HTMLElement): () => void {
     pointer.x = event.clientX;
     pointer.y = event.clientY;
     const scale = 0.006;
-    velocity = dx * scale;
+    // Globe follows the drag: rightward drag turns east, upward drag tilts up.
+    velocity = -dx * scale;
     dragYaw += velocity;
     if (event.pointerType !== 'touch') {
-      dragPitch = Math.max(-0.6, Math.min(0.6, dragPitch - dy * scale));
+      dragPitch = Math.max(-0.6, Math.min(0.6, dragPitch + dy * scale));
     }
     schedule();
   };
