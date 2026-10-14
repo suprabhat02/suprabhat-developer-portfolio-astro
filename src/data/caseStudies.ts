@@ -62,8 +62,7 @@ const analyticsCommandCenter: Record<Locale, CaseStudyBase> = {
   en: {
     slug: 'analytics-command-center',
     title: 'Analytics command center',
-    seoTitle:
-      'Analytics Command Center Case Study | React Dashboard UI Engineering',
+    seoTitle: 'Analytics Command Center Case Study | React Dashboard UI',
     description:
       'An anonymized frontend case study for a role-based analytics dashboard with accessible charts, resilient data states, performance, and scalable React UI.',
     eyebrow: 'Case study · Internal product work',

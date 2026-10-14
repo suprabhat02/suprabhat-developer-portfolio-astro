@@ -25,6 +25,7 @@ interface Props {
   hideCanonical?: boolean;
   ogType?: string;
   schema?: Record<string, unknown> | Record<string, unknown>[];
+  localeHrefs?: Partial<Record<Locale, string>>;
 }
 const {
   title,
@@ -37,6 +38,7 @@ const {
   hideCanonical = false,
   ogType = 'website',
   schema,
+  localeHrefs,
 } = Astro.props;
 const noindex = requestedNoindex || import.meta.env.ROBOTS === 'noindex';
 const isHome = page === 'home';
@@ -118,6 +120,7 @@ const combinedSchema = {
       name: SITE_NAME,
       alternateName: profile.nickname,
       jobTitle: profile.title,
+      hasOccupation: { '@type': 'Occupation', name: profile.title },
       description: profile.lead,
       url: `${SITE_URL}/`,
       image: `${SITE_URL}${profile.portrait.src}`,
@@ -235,12 +238,17 @@ const combinedSchema = {
       {noindex}
       {hideCanonical}
       {ogType}
+      localeAlternates={noindex || hideAlternates
+        ? []
+        : locales
+            .filter((item) => item !== locale)
+            .map((item) => localeMeta[item].htmlLang)}
       imageAlt={`${profile.name}, ${profile.title}`}
       schema={combinedSchema}
     />
   </head>
   <body>
-    <Header {locale} {page} path={pagePath} />
+    <Header {locale} {page} path={pagePath} {localeHrefs} />
     <main
       id="main-content"
       class:list={['site-main', { 'site-main--page': !isHome }]}

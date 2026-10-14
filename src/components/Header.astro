@@ -7,15 +7,17 @@ interface Props {
   locale: Locale;
   page: string;
   path?: string;
+  localeHrefs?: Partial<Record<Locale, string>>;
 }
 
-const { locale, page, path } = Astro.props;
+const { locale, page, path, localeHrefs } = Astro.props;
 const displayName = getProfile(locale).name;
 const prefix = localePrefix(locale);
 const localHref = (href: string) => `${prefix}${href}` || '/';
 const pagePath =
   path ?? (page === 'home' || page === '404' ? '/' : `/${page}/`);
-const localeHref = (next: Locale) => `${localePrefix(next)}${pagePath}` || '/';
+const localeHref = (next: Locale) =>
+  localeHrefs?.[next] ?? (`${localePrefix(next)}${pagePath}` || '/');
 const formatLabel = (label: string, values: Record<string, string>) =>
   Object.entries(values).reduce(
     (current, [key, value]) => current.replace(`{${key}}`, value),

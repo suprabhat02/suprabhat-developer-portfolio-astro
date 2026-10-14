@@ -1212,3 +1212,35 @@ test('scenes play on tap on touch screens and never on scroll', async ({
   await expect(card).not.toHaveAttribute('data-active', '');
   await context.close();
 });
+
+test('language switcher targets translated posts and tags, never 404s', async ({
+  page,
+}) => {
+  const switcherHrefs = () =>
+    page
+      .locator('#lang-dd .hdr-menu a')
+      .evaluateAll((links) =>
+        links.map((link) => (link as HTMLAnchorElement).pathname),
+      );
+
+  await page.goto('/es/blog/frontend-code-review-checklist/');
+  expect(await switcherHrefs()).toEqual([
+    '/blog/frontend-code-review-checklist/',
+    '/es/blog/frontend-code-review-checklist/',
+    '/ar/blog/frontend-code-review-checklist/',
+  ]);
+
+  await page.goto('/es/blog/tags/accesibilidad/');
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    'content',
+    'noindex,follow',
+  );
+  const tagHrefs = await switcherHrefs();
+  expect(tagHrefs[0]).toBe('/blog/tags/accessibility/');
+  for (const path of tagHrefs) {
+    expect((await page.request.get(path)).status(), path).toBe(200);
+  }
+
+  await page.goto('/404.html');
+  expect(await switcherHrefs()).toEqual(['/', '/es/', '/ar/']);
+});

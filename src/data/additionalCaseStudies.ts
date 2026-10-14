@@ -8,10 +8,9 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     {
       slug: 'portfolio-seo-i18n-system',
       title: 'Portfolio SEO and i18n system',
-      seoTitle:
-        'Portfolio SEO and i18n System Case Study | Astro, Hreflang, Structured Data',
+      seoTitle: 'Portfolio SEO and i18n Case Study | Astro, Hreflang',
       description:
-        'A frontend architecture case study showing how a static Astro portfolio became localized, crawlable, accessible, and performance-focused without client-side content dependencies.',
+        'How a static Astro portfolio became localized, crawlable, accessible, and performance-focused without client-side content dependencies.',
       eyebrow: 'Case study · Portfolio architecture',
       summary:
         'A production portfolio architecture designed for recruiters, search engines, assistive technology, and AI crawlers. The work turned localized pages, case studies, schema, navigation, and content discovery into one coherent static system.',
@@ -138,10 +137,9 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     {
       slug: 'accessible-contact-workflow',
       title: 'Accessible contact workflow',
-      seoTitle:
-        'Accessible Contact Workflow Case Study | Lead UX, Forms, Privacy, Frontend',
+      seoTitle: 'Accessible Contact Workflow Case Study | Forms & Privacy',
       description:
-        'A frontend case study about designing a low-friction contact workflow with accessible labels, validation, fallback contact paths, privacy clarity, and crawlable conversion content.',
+        'Designing a low-friction contact workflow with accessible labels, validation, fallback contact paths, privacy clarity, and crawlable content.',
       eyebrow: 'Case study · Conversion UX',
       summary:
         'A contact and lead-qualification workflow designed to make the next step obvious for clients while keeping the form accessible, lightweight, privacy-aware, and reliable when JavaScript or third-party form handling is unavailable.',
@@ -251,10 +249,9 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     {
       slug: 'frontend-quality-system',
       title: 'Frontend quality system',
-      seoTitle:
-        'Frontend Quality System Case Study | Accessibility, Playwright, Astro Checks',
+      seoTitle: 'Frontend Quality System Case Study | Playwright & a11y',
       description:
-        'A frontend engineering case study for a quality system that combines typed content, accessibility checks, crawlable routes, responsive layout validation, and static build confidence.',
+        'A frontend quality system combining typed content, accessibility checks, crawlable routes, responsive layout validation, and static build confidence.',
       eyebrow: 'Case study · Engineering quality',
       summary:
         'A practical quality system designed to protect portfolio credibility: typed content data, static route generation, accessibility tests, visual consistency checks, internal-link coverage, and build-time feedback before changes reach production.',
@@ -369,8 +366,7 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     {
       slug: 'portfolio-seo-i18n-system',
       title: 'Sistema SEO e i18n para portfolio',
-      seoTitle:
-        'Caso de estudio de SEO e i18n para portfolio | Astro, hreflang y datos estructurados',
+      seoTitle: 'Caso de estudio de SEO e i18n para portfolio | Astro',
       description:
         'Caso de arquitectura frontend sobre cómo un portfolio Astro estático se volvió localizado, rastreable, accesible y orientado al rendimiento sin depender de contenido renderizado en cliente.',
       eyebrow: 'Caso de estudio · Arquitectura de portfolio',
@@ -499,8 +495,7 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     {
       slug: 'accessible-contact-workflow',
       title: 'Flujo de contacto accesible',
-      seoTitle:
-        'Caso de estudio de flujo de contacto accesible | UX de leads, formularios y privacidad',
+      seoTitle: 'Caso de estudio de flujo de contacto accesible',
       description:
         'Caso frontend sobre el diseño de un flujo de contacto con etiquetas accesibles, validación, vías alternativas, claridad de privacidad y contenido de conversión rastreable.',
       eyebrow: 'Caso de estudio · UX de conversión',
@@ -615,8 +610,7 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     {
       slug: 'frontend-quality-system',
       title: 'Sistema de calidad frontend',
-      seoTitle:
-        'Caso de estudio de sistema de calidad frontend | Accesibilidad, Playwright y Astro',
+      seoTitle: 'Caso de estudio de sistema de calidad frontend',
       description:
         'Caso de ingeniería frontend para un sistema de calidad que combina contenido tipado, pruebas de accesibilidad, rutas rastreables, validación responsive y confianza de build estático.',
       eyebrow: 'Caso de estudio · Calidad de ingeniería',
@@ -730,8 +724,7 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     {
       slug: 'portfolio-seo-i18n-system',
       title: 'نظام SEO وتدويل لمحفظة الأعمال',
-      seoTitle:
-        'دراسة حالة لنظام SEO وتدويل المحفظة | Astro وhreflang والبيانات المنظمة',
+      seoTitle: 'دراسة حالة لنظام SEO وتدويل المحفظة | Astro',
       description:
         'دراسة حالة في معمارية الواجهة توضح كيف أصبح موقع Astro ثابتًا ومحليًا وقابلًا للفهرسة ومتاحًا ومركزًا على الأداء دون الاعتماد على محتوى عميل ثقيل.',
       eyebrow: 'دراسة حالة · معمارية المحفظة',
@@ -860,8 +853,7 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     {
       slug: 'accessible-contact-workflow',
       title: 'مسار تواصل متاح',
-      seoTitle:
-        'دراسة حالة لمسار تواصل متاح | UX للعملاء المحتملين والنماذج والخصوصية',
+      seoTitle: 'دراسة حالة لمسار تواصل متاح',
       description:
         'دراسة Frontend حول تصميم مسار تواصل قليل الاحتكاك مع تسميات متاحة، تحقق، مسارات بديلة، وضوح خصوصية، ومحتوى تحويل قابل للفهرسة.',
       eyebrow: 'دراسة حالة · UX للتحويل',
@@ -970,8 +962,7 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     {
       slug: 'frontend-quality-system',
       title: 'نظام جودة Frontend',
-      seoTitle:
-        'دراسة حالة لنظام جودة Frontend | الإتاحة وPlaywright وفحوص Astro',
+      seoTitle: 'دراسة حالة لنظام جودة Frontend | Playwright',
       description:
         'دراسة هندسية لنظام جودة يجمع المحتوى typed وفحوص الإتاحة والمسارات القابلة للفهرسة والتحقق responsive وثقة build ثابت.',
       eyebrow: 'دراسة حالة · جودة هندسية',

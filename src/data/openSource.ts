@@ -135,8 +135,7 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
   en: {
     slug: 'react-smart-copy',
     title: 'react-smart-copy',
-    seoTitle:
-      'react-smart-copy Case Study | Accessible, Type-Safe React Clipboard Library',
+    seoTitle: 'react-smart-copy Case Study | React Clipboard Library',
     description:
       'How react-smart-copy, an open-source TypeScript library, handles React copy and paste with typed errors, screen-reader announcements, and no dependencies.',
     eyebrow: 'Case study · Open source',
@@ -241,8 +240,7 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
   es: {
     slug: 'react-smart-copy',
     title: 'react-smart-copy',
-    seoTitle:
-      'Caso de estudio react-smart-copy | Biblioteca de portapapeles accesible y tipada para React',
+    seoTitle: 'react-smart-copy | Biblioteca de portapapeles para React',
     description:
       'Cómo react-smart-copy, una biblioteca de TypeScript de código abierto, gestiona copiar y pegar en React con errores tipados, anuncios accesibles y sin dependencias.',
     eyebrow: 'Caso de estudio · Código abierto',
@@ -353,8 +351,7 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
   ar: {
     slug: 'react-smart-copy',
     title: 'react-smart-copy',
-    seoTitle:
-      'دراسة حالة react-smart-copy | مكتبة حافظة متاحة وآمنة الأنواع لـ React',
+    seoTitle: 'react-smart-copy | مكتبة حافظة متاحة لـ React',
     description:
       'كيف تدير react-smart-copy، وهي مكتبة TypeScript مفتوحة المصدر، النسخ واللصق في React بأخطاء مضبوطة الأنواع وإعلانات متاحة ودون اعتماديات.',
     eyebrow: 'دراسة حالة · مفتوح المصدر',

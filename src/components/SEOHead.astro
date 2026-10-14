@@ -9,6 +9,7 @@ interface Props {
   schema?: Record<string, unknown> | Record<string, unknown>[];
   ogType?: string;
   imageAlt?: string;
+  localeAlternates?: string[];
 }
 
 const {
@@ -21,8 +22,11 @@ const {
   schema,
   ogType = 'website',
   imageAlt = 'Suprabhat Kumar, Senior Front-End Engineer',
+  localeAlternates = [],
 } = Astro.props;
 const image = new URL('/assets/images/og-image.jpg', canonical);
+const ogLocale = (code: string) =>
+  code === 'ar' ? 'ar_AR' : code === 'es' ? 'es_ES' : 'en_US';
 ---
 
 <title>{title}</title>
@@ -32,10 +36,12 @@ const image = new URL('/assets/images/og-image.jpg', canonical);
 {!hideCanonical && <link rel="canonical" href={canonical} />}
 <meta property="og:type" content={ogType} />
 <meta property="og:site_name" content="Suprabhat Kumar" />
-<meta
-  property="og:locale"
-  content={locale === 'ar' ? 'ar_AR' : locale === 'es' ? 'es_ES' : 'en_US'}
-/>
+<meta property="og:locale" content={ogLocale(locale)} />
+{
+  localeAlternates.map((code) => (
+    <meta property="og:locale:alternate" content={ogLocale(code)} />
+  ))
+}
 <meta property="og:url" content={canonical} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />

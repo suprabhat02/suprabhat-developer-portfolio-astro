@@ -1,5 +1,6 @@
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
+import { readFileSync, readdirSync } from 'node:fs';
 import { URL } from 'node:url';
 import { satteri } from '@astrojs/markdown-satteri';
 import taskListLabels from './src/lib/taskListLabels.mjs';
@@ -12,6 +13,31 @@ const defaultLocaleUrlFor = (url) => {
   const defaultPath = parsedUrl.pathname.replace(nonDefaultLocalePattern, '');
   return new URL(defaultPath || '/', siteUrl).href;
 };
+
+// Post URL -> updatedDate ?? pubDate, read from frontmatter for sitemap lastmod.
+const postLastmod = new Map(
+  [
+    ['blog', ''],
+    ['blog-es', '/es'],
+    ['blog-ar', '/ar'],
+  ].flatMap(([dir, prefix]) =>
+    readdirSync(new URL(`./src/content/${dir}/`, import.meta.url))
+      .filter((file) => file.endsWith('.md'))
+      .map((file) => {
+        const source = readFileSync(
+          new URL(`./src/content/${dir}/${file}`, import.meta.url),
+          'utf8',
+        );
+        const date = (field) =>
+          source.match(new RegExp(`^${field}:\\s*['"]?([\\d-]+)`, 'm'))?.[1];
+        return [
+          `${siteUrl}${prefix}/blog/${file.replace(/\.md$/, '')}/`,
+          date('updatedDate') ?? date('pubDate'),
+        ];
+      })
+      .filter(([, date]) => date),
+  ),
+);
 
 export default defineConfig({
   site: siteUrl,
@@ -39,15 +65,21 @@ export default defineConfig({
       },
       filter: (page) => {
         const pathname = new URL(page).pathname;
-        return !/\/404(?:\/|\.html)?$/.test(pathname);
+        // Tag archives are noindex, so they stay out of the sitemap too.
+        return (
+          !/\/404(?:\/|\.html)?$/.test(pathname) &&
+          !/\/blog\/tags\//.test(pathname)
+        );
       },
       serialize: (item) => {
-        if (!item.links?.length) return item;
+        const lastmod = postLastmod.get(item.url);
+        const dated = lastmod ? { ...item, lastmod } : item;
+        if (!dated.links?.length) return dated;
 
         return {
-          ...item,
+          ...dated,
           links: [
-            ...item.links,
+            ...dated.links,
             {
               lang: 'x-default',
               url: defaultLocaleUrlFor(item.url),

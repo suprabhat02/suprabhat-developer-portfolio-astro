@@ -6,6 +6,7 @@ import {
   getBlogPostHref,
   getBlogTagHref,
   getBlogTagGroupsFromPosts,
+  getBlogTagLocaleHrefs,
   type LocalizedBlogPost,
 } from '../data/blog';
 import { localeMeta, localePrefix, type Locale } from '../i18n/config';
@@ -31,6 +32,7 @@ const description = t(
   'Frontend engineering articles about {tag}, including practical guidance, implementation tradeoffs, accessibility, performance, and maintainable UI delivery.',
 ).replace('{tag}', group.tag);
 const tagGroups = getBlogTagGroupsFromPosts(locale, posts);
+const localeHrefs = await getBlogTagLocaleHrefs(locale, group);
 const pageUrl = `${SITE_URL}${getBlogTagHref(locale, group.tag)}`;
 const schema = [
   {
@@ -81,7 +83,9 @@ const schema = [
   {locale}
   page="blog"
   path={`/blog/tags/${group.slug}/`}
+  noindex
   hideAlternates
+  {localeHrefs}
   schema={schema}
 >
   <section class="page section">

@@ -1,5 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { localeMeta, localePrefix, type Locale } from '../i18n/config';
+import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
 
 export type LocalizedBlogPost =
   | CollectionEntry<'blog'>
@@ -121,6 +121,41 @@ export const getBlogTagGroupsFromPosts = (
 
 export const getBlogTagGroups = async (locale: Locale) =>
   getBlogTagGroupsFromPosts(locale, await getBlogPosts(locale));
+
+/**
+ * Tag slugs are translated, so each locale links to the tag sitting at the
+ * same position in the translated posts. If they disagree or are missing,
+ * fall back to that locale's blog index rather than a 404.
+ */
+export const getBlogTagLocaleHrefs = async (
+  locale: Locale,
+  group: BlogTagGroup,
+): Promise<Record<Locale, string>> => {
+  const key = normalizeTag(group.tag);
+  const entries = await Promise.all(
+    locales.map(async (target): Promise<[Locale, string]> => {
+      if (target === locale) return [target, getBlogTagHref(target, group.tag)];
+      const targetPosts = await getBlogPosts(target);
+      const matches = new Set<string>();
+      for (const post of group.posts) {
+        const index = post.data.tags.findIndex(
+          (tag) => normalizeTag(tag) === key,
+        );
+        const translated = targetPosts.find(({ id }) => id === post.id)?.data
+          .tags[index];
+        matches.add(translated ?? '');
+      }
+      const [match] = [...matches];
+      return [
+        target,
+        matches.size === 1 && match
+          ? getBlogTagHref(target, match)
+          : `${localePrefix(target)}/blog/`,
+      ];
+    }),
+  );
+  return Object.fromEntries(entries) as Record<Locale, string>;
+};
 
 export const findBlogTagGroup = (
   locale: Locale,
