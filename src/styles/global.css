@@ -1506,6 +1506,102 @@ main {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-control);
+  /* Code reads left to right, including inside Arabic articles. */
+  direction: ltr;
+  text-align: left;
+}
+/* Shiki css-variables theme (astro.config.mjs) resolved to role tokens. */
+.prose {
+  --astro-code-foreground: var(--text);
+  --astro-code-background: var(--surface);
+  --astro-code-token-comment: var(--text-3);
+  --astro-code-token-keyword: var(--accent-2);
+  --astro-code-token-constant: var(--accent-strong);
+  --astro-code-token-function: var(--accent-strong);
+  --astro-code-token-parameter: var(--text);
+  --astro-code-token-punctuation: var(--text-2);
+  --astro-code-token-string: var(--success);
+  --astro-code-token-string-expression: var(--success);
+  --astro-code-token-link: var(--accent-strong);
+  --astro-code-token-inserted: var(--success);
+  --astro-code-token-deleted: var(--danger);
+  --astro-code-token-changed: var(--text);
+}
+.prose details {
+  margin-block: 1.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.prose summary {
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+}
+.prose details[open] > summary {
+  margin-block-end: 0.75rem;
+}
+.prose details ol {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding-inline-start: 1.5rem;
+}
+.prose figure {
+  margin-block: 2rem;
+  margin-inline: 0;
+}
+.prose figcaption {
+  margin-block-start: 0.75rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+/* Self-scoring checklist: a CSS counter tallies ticked boxes, no script. */
+.scorecard {
+  counter-reset: score;
+  min-width: 0;
+  margin-block: 2rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+.scorecard legend {
+  padding-inline: 0.5rem;
+  color: var(--text);
+  font-weight: 700;
+}
+.prose .scorecard ul {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.scorecard label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+.scorecard input {
+  flex: none;
+  inline-size: 1.15rem;
+  block-size: 1.15rem;
+  margin: 0.2rem 0 0;
+  accent-color: var(--accent);
+}
+.scorecard input:checked {
+  counter-increment: score;
+}
+.prose .scorecard-total {
+  margin-block: 1.25rem 0;
+  color: var(--text);
+  font-weight: 700;
+}
+.scorecard-value::before {
+  content: counter(score);
 }
 
 .site-footer {

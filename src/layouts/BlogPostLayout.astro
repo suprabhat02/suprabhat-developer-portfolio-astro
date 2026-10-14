@@ -12,6 +12,7 @@ import { getBlogTagHref, type BlogPostSummary } from '../data/blog';
 
 interface Props {
   title: string;
+  seoTitle?: string;
   description: string;
   pubDate: Date;
   updatedDate?: Date;
@@ -22,6 +23,7 @@ interface Props {
 }
 const {
   title,
+  seoTitle,
   description,
   pubDate,
   updatedDate,
@@ -93,9 +95,10 @@ const schema = [
 ];
 const pagePath = `/blog/${slug}/`;
 const siteName = ' — Suprabhat Kumar';
+const headline = seoTitle ?? title;
 // Append the name only while the full title still fits a results snippet.
 const pageTitle =
-  title.length + siteName.length <= 60 ? `${title}${siteName}` : title;
+  headline.length + siteName.length <= 60 ? `${headline}${siteName}` : headline;
 ---
 
 <BaseLayout
