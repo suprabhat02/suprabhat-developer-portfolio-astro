@@ -121,6 +121,11 @@ const combinedSchema = {
       alternateName: profile.nickname,
       jobTitle: profile.title,
       hasOccupation: { '@type': 'Occupation', name: profile.title },
+      alumniOf: {
+        '@type': 'EducationalOrganization',
+        name: 'Visvesvaraya Technological University',
+        alternateName: 'VTU',
+      },
       description: profile.lead,
       url: `${SITE_URL}/`,
       image: `${SITE_URL}${profile.portrait.src}`,
