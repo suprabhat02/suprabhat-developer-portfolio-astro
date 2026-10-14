@@ -4,6 +4,8 @@ import { z } from 'astro/zod';
 
 const postSchema = z.object({
   title: z.string(),
+  // Shorter search-result title when the on-page headline is too long.
+  seoTitle: z.string().max(60).optional(),
   description: z.string(),
   pubDate: z.coerce.date(),
   updatedDate: z.coerce.date().optional(),

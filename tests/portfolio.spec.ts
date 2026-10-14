@@ -749,7 +749,7 @@ test('production SEO signals and internal links are crawlable', async ({
   );
 
   await page.goto('/blog/');
-  await expect(page.locator('.article-list article')).toHaveCount(3);
+  await expect(page.locator('.article-list article')).toHaveCount(6);
   await expect(
     page.locator('link[type="application/rss+xml"][href="/rss.xml"]'),
   ).toHaveCount(1);

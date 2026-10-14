@@ -45,6 +45,8 @@ export default defineConfig({
   trailingSlash: 'always',
   markdown: {
     processor: satteri({ hastPlugins: [taskListLabels()] }),
+    // Code colors come from role tokens in global.css, so they follow the theme.
+    shikiConfig: { theme: 'css-variables' },
   },
   vite: {
     optimizeDeps: {
