@@ -215,16 +215,20 @@ textarea {
 [dir='rtl'] .footer-wordmark {
   letter-spacing: 0;
 }
-.brand .logo-mark {
-  width: 8px;
-  height: 8px;
-  aspect-ratio: 1;
-  border-radius: var(--radius-micro);
-  background: var(--accent);
+.brand :is(.brand-wordmark, .brand-mark) {
+  display: block;
   flex-shrink: 0;
-  box-shadow:
-    0 0 14px var(--accent-glow),
-    0 0 4px var(--accent);
+  width: auto;
+  height: 18px;
+}
+.brand:is(:hover, :focus-visible) rect {
+  fill: var(--accent-strong);
+}
+/* Scoped to hover/focus so theme toggles still recolor the mark instantly. */
+@media (prefers-reduced-motion: no-preference) {
+  .brand:is(:hover, :focus-visible) rect {
+    transition: fill 150ms ease;
+  }
 }
 .desktop-nav {
   display: block;
@@ -2140,6 +2144,16 @@ main {
   white-space: nowrap;
   user-select: none;
   pointer-events: none;
+}
+/* Same faint fade as the text wordmark; the container's text clip can't reach SVG. */
+.footer-wordmark-svg {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: 0.86em;
+  color: color-mix(in oklch, var(--text) 14%, transparent);
+  -webkit-mask-image: linear-gradient(180deg, var(--text), transparent 85%);
+  mask-image: linear-gradient(180deg, var(--text), transparent 85%);
 }
 
 @media (prefers-reduced-motion: reduce) {
