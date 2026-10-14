@@ -30,13 +30,13 @@
 
 ## Tech stack
 
-| Area | Tools |
-|---|---|
-| Framework | Astro (static output), TypeScript in strict mode |
-| Content | Markdown content collections, `@astrojs/rss`, `@astrojs/sitemap` |
-| Quality | ESLint, Prettier, `astro check`, Playwright, `@axe-core/playwright` |
-| Assets | Sharp, SVGO, generated OG images |
-| Delivery | GitHub Actions → GitHub Pages |
+| Area      | Tools                                                               |
+| --------- | ------------------------------------------------------------------- |
+| Framework | Astro (static output), TypeScript in strict mode                    |
+| Content   | Markdown content collections, `@astrojs/rss`, `@astrojs/sitemap`    |
+| Quality   | ESLint, Prettier, `astro check`, Playwright, `@axe-core/playwright` |
+| Assets    | Sharp, SVGO, generated OG images                                    |
+| Delivery  | GitHub Actions → GitHub Pages                                       |
 
 ## Project structure
 
