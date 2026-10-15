@@ -13,7 +13,7 @@ export const contentVerificationTodos: readonly ContentVerificationTodo[] = [
     id: 'article-sources',
     status: 'blocked',
     question:
-      'Provide the draft/source files for the eleven approved article slugs; only three published article files exist in the repository.',
+      'Provide the draft/source files for the eleven approved article slugs; seven articles are published so far, each in English, Spanish and Arabic (21 article files).',
     affectedContent: ['blog index', 'article routes'],
   },
   {

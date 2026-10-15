@@ -4,7 +4,7 @@ The current site is complete without the items below. They are needed only for t
 
 ## Blog expansion
 
-1. **New article pages.** The existing `/blog/` index and its three published articles are complete. To add another article, provide its working title and draft text. The final title, description, date, tags, URL slug, formatting, and localized route setup can be prepared from that draft.
+1. **New article pages.** The existing `/blog/` index and its seven published articles, each in English, Spanish, and Arabic (21 article pages), are complete. To add another article, provide its working title and draft text. The final title, description, date, tags, URL slug, formatting, and localized route setup can be prepared from that draft.
 
 ## Account configuration
 
