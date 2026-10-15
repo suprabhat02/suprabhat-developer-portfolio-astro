@@ -3,6 +3,7 @@ title: 'Diseño de interfaces web en la nube: buenas prácticas para UIs escalab
 seoTitle: 'Interfaces web en la nube: buenas prácticas'
 description: 'Buenas prácticas para interfaces web en la nube: límites de componentes, contratos de estado, accesibilidad a escala y presupuestos de rendimiento.'
 pubDate: 2026-10-14
+heroImage: /images/blog/cloud-web-interface-design-best-practices-cover-1600x840.png
 tags: ['Arquitectura frontend', 'Accesibilidad', 'Rendimiento', 'Ingeniería UI']
 draft: false
 ---

@@ -2,6 +2,7 @@
 title: 'Por qué una UI limpia y minimalista funciona en sitios profesionales'
 description: 'Cómo la jerarquía, el espaciado, la tipografía, el contenido enfocado y la interacción contenida ayudan a los sitios profesionales a comunicar con claridad y convertir con menos fricción.'
 pubDate: 2026-08-27
+heroImage: /images/blog/why-clean-minimal-ui-professional-website-cover-1600x840.png
 tags: ['Diseño UI', 'Diseño web', 'Accesibilidad', 'Rendimiento']
 draft: false
 ---

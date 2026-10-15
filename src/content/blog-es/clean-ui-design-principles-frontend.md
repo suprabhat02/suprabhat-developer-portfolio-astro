@@ -3,6 +3,7 @@ title: 'Principios de UI limpia que todo ingeniero frontend debería conocer'
 seoTitle: 'Principios de UI limpia para ingenieros frontend'
 description: 'La UI limpia es una propiedad de ingeniería: escalas de espaciado, tokens de color OKLCH, presupuestos de movimiento y contraste medible en el código.'
 pubDate: 2026-10-14
+heroImage: /images/blog/clean-ui-design-principles-frontend-cover-1600x840.png
 tags: ['Diseño UI', 'Sistemas de diseño', 'Accesibilidad', 'Rendimiento']
 draft: false
 ---
