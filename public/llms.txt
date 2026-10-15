@@ -64,6 +64,9 @@ Suprabhat has delivered with distributed teams in Denmark, China, and Australia.
   - [Cloud Web Interface Design: Best Practices for Scalable, Accessible UIs](https://suprabhat-dev.com/blog/cloud-web-interface-design-best-practices/)
   - [Clean UI Design Principles Every Frontend Engineer Should Know](https://suprabhat-dev.com/blog/clean-ui-design-principles-frontend/)
   - [What to Look for When Hiring a Frontend Engineer](https://suprabhat-dev.com/blog/hiring-senior-frontend-engineer/)
+  - [Why Minimal UI Improves Clarity and Conversion](https://suprabhat-dev.com/blog/why-clean-minimal-ui-professional-website/)
+  - [Frontend Code Review Checklist for Safer Releases](https://suprabhat-dev.com/blog/frontend-code-review-checklist/)
+  - [How to Build Scalable React UI Without Overengineering](https://suprabhat-dev.com/blog/frontend-best-practices-clean-ui/)
 - [Contact](https://suprabhat-dev.com/contact/): Qualified project enquiry form and direct email.
 
 ## Contact and availability
