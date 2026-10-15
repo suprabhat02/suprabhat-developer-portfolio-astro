@@ -1343,6 +1343,28 @@ test('Person sameAs links every public profile in all locales', async ({
   }
 });
 
+test('tools page groups every tool exactly once in every locale', async ({
+  page,
+}) => {
+  for (const prefix of ['', '/es', '/ar']) {
+    await page.goto(`${prefix}/tools/`);
+    await expect(page.locator('main h1')).toHaveCount(1);
+    await expect(page.locator('main .lead')).toHaveText(/\S{20,}|\S+ \S+/);
+    await expect(page.locator('.tool-group h2')).toHaveCount(5);
+    const names = await page.locator('.tool-grid li span').allTextContents();
+    expect(names, prefix || '/en').toHaveLength(20);
+    expect(new Set(names).size, prefix || '/en').toBe(20);
+    await expect(page.locator('.tool-closing a')).toHaveAttribute(
+      'href',
+      `${prefix}/work/`,
+    );
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+      'content',
+      'index,follow',
+    );
+  }
+});
+
 test('case-study dates come from data, not the old 2026-09-06 placeholder', async () => {
   type JsonLdNode = {
     '@type'?: string;

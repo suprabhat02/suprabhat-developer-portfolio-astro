@@ -224,6 +224,24 @@ const es: Messages = {
   'page.experience.title': 'Seis años entregando interfaces',
   'page.tools.eyebrow': 'Herramientas',
   'page.tools.title': 'Un stack de trabajo enfocado',
+  'page.tools.intro':
+    'Estas son las herramientas que más utilizo en el trabajo frontend en producción. La lista es corta a propósito: elijo una herramienta después de entender la tarea del usuario, el flujo de datos, los estados de error y el coste de mantenimiento, no porque sea nueva.',
+  'page.tools.group.languages.title': 'Lenguajes y frameworks',
+  'page.tools.group.languages.description':
+    'La base de cada interfaz que entrego: marcado semántico, componentes tipados y renderizado en servidor y en cliente.',
+  'page.tools.group.data.title': 'Datos y estado',
+  'page.tools.group.data.description':
+    'Estado predecible, datos del servidor en caché y límites de API tipados para paneles con muchos datos.',
+  'page.tools.group.styling.title': 'Estilos y sistemas de diseño',
+  'page.tools.group.styling.description':
+    'Desde la entrega del diseño hasta componentes documentados y reutilizables.',
+  'page.tools.group.backend.title': 'Backend, datos y nube',
+  'page.tools.group.backend.description':
+    'Para funcionalidades full-stack junto al frontend.',
+  'page.tools.group.workflow.title': 'Flujo de trabajo y mantenimiento',
+  'page.tools.group.workflow.description':
+    'Control de versiones, bases de código heredadas y redacción y revisión asistidas por IA.',
+  'page.tools.closing': 'Mira cómo se combinan en los casos de estudio.',
   'page.work.eyebrow': 'Proyectos',
   'page.work.title': 'Trabajo interno de producto seleccionado',
   'page.recommendations.eyebrow': 'Recomendaciones',
@@ -635,6 +653,24 @@ const ar: Messages = {
   'page.experience.title': 'ست سنوات في تقديم الواجهات',
   'page.tools.eyebrow': 'الأدوات',
   'page.tools.title': 'مجموعة عمل مركزة',
+  'page.tools.intro':
+    'هذه هي الأدوات التي أستخدمها أكثر من غيرها في عمل الواجهات الأمامية في بيئات الإنتاج. القائمة قصيرة عن قصد: أختار الأداة بعد فهم مهمة المستخدم وتدفق البيانات وحالات الخطأ وتكلفة الصيانة، لا لأنها جديدة.',
+  'page.tools.group.languages.title': 'اللغات وأُطر العمل',
+  'page.tools.group.languages.description':
+    'أساس كل واجهة أقدّمها: ترميز دلالي، ومكونات محددة الأنواع، وعرض على الخادم والعميل.',
+  'page.tools.group.data.title': 'البيانات والحالة',
+  'page.tools.group.data.description':
+    'حالة يمكن التنبؤ بها، وبيانات خادم مخزنة مؤقتًا، وحدود API محددة الأنواع للوحات البيانات الكثيفة.',
+  'page.tools.group.styling.title': 'التنسيق وأنظمة التصميم',
+  'page.tools.group.styling.description':
+    'من تسليم التصميم إلى مكونات موثقة قابلة لإعادة الاستخدام.',
+  'page.tools.group.backend.title': 'الخلفية والبيانات والسحابة',
+  'page.tools.group.backend.description':
+    'لميزات full-stack إلى جانب الواجهة الأمامية.',
+  'page.tools.group.workflow.title': 'سير العمل والصيانة',
+  'page.tools.group.workflow.description':
+    'التحكم في الإصدارات، وقواعد الشيفرة القديمة، والصياغة والمراجعة بمساعدة الذكاء الاصطناعي.',
+  'page.tools.closing': 'شاهد كيف تجتمع هذه الأدوات في دراسات الحالة.',
   'page.work.eyebrow': 'الأعمال',
   'page.work.title': 'أعمال داخلية مختارة للمنتج',
   'page.recommendations.eyebrow': 'التوصيات',

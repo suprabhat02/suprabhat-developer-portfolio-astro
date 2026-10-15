@@ -1091,6 +1091,24 @@ main {
 [data-theme='dark'] .tool-grid img.invert {
   filter: invert(1);
 }
+.tool-group {
+  margin-top: 3rem;
+}
+.tool-group h2 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  line-height: 1.2;
+}
+.tool-group p {
+  max-width: 68ch;
+  color: var(--muted);
+}
+.tool-group .tool-grid {
+  margin-block: 1.25rem 0;
+}
+.tool-closing {
+  margin-top: 3rem;
+}
 .meta {
   color: var(--accent-strong);
   font-size: 0.85rem;

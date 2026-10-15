@@ -33,3 +33,66 @@ export const tools: readonly Tool[] = [
   { name: 'PostgreSQL', icon: '/assets/techicons/postgresql.svg', alt: '' },
   { name: 'MongoDB', icon: '/assets/techicons/mongodb.svg', alt: '' },
 ] as const;
+
+export interface ToolGroup {
+  id: string;
+  heading: string;
+  description: string;
+  tools: readonly string[];
+}
+
+/** English copy; es/ar live in messages.ts under page.tools.group.<id>.*. */
+export const toolGroups: readonly ToolGroup[] = [
+  {
+    id: 'languages',
+    heading: 'Languages and frameworks',
+    description:
+      'The base of every interface I ship: semantic markup, typed components, and server and client rendering.',
+    tools: ['HTML5', 'TypeScript', 'React', 'Next.js'],
+  },
+  {
+    id: 'data',
+    heading: 'Data and state',
+    description:
+      'Predictable state, cached server data and typed API boundaries for data-heavy dashboards.',
+    tools: ['Redux', 'TanStack Query', 'GraphQL'],
+  },
+  {
+    id: 'styling',
+    heading: 'Styling and design systems',
+    description: 'From design handoff to documented, reusable components.',
+    tools: ['Figma', 'Tailwind CSS', 'Bootstrap 5', 'Sass', 'Storybook'],
+  },
+  {
+    id: 'backend',
+    heading: 'Backend, data and cloud',
+    description: 'Used for full-stack features alongside the frontend.',
+    tools: ['Node.js', 'FastAPI', 'PostgreSQL', 'MongoDB', 'Azure'],
+  },
+  {
+    id: 'workflow',
+    heading: 'Workflow and maintenance',
+    description:
+      'Version control, legacy codebases and AI-assisted drafting and review.',
+    tools: ['Git', 'jQuery', 'Claude AI'],
+  },
+];
+
+const toolsByName = new Map(tools.map((tool) => [tool.name, tool]));
+
+/** Groups with resolved tools; fails the build if a tool is missing or grouped twice. */
+export const getToolGroups = () => {
+  const grouped = toolGroups.flatMap((group) => group.tools);
+  const unique = new Set(grouped);
+  if (unique.size !== grouped.length || unique.size !== tools.length) {
+    throw new Error('Every tool must appear in exactly one tool group.');
+  }
+  return toolGroups.map((group) => ({
+    ...group,
+    tools: group.tools.map((name) => {
+      const tool = toolsByName.get(name);
+      if (!tool) throw new Error(`Unknown tool in group ${group.id}: ${name}`);
+      return tool;
+    }),
+  }));
+};

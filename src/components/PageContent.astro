@@ -8,7 +8,7 @@ import OpenSourceSpotlight from './OpenSourceSpotlight.astro';
 import ExperienceTimeline from './ExperienceTimeline.astro';
 import { getServices } from '../data/services';
 import { getSkills } from '../data/skills';
-import { tools } from '../data/tools';
+import { getToolGroups } from '../data/tools';
 import { getCaseStudies } from '../data/caseStudies';
 import { getInternalWorkNotice, getWork } from '../data/work';
 import { engagement } from '../data/engagement';
@@ -180,22 +180,47 @@ const notFoundLinks = [
         <>
           <p class="eyebrow">{tx('page.tools.eyebrow', 'Tools')}</p>
           <h1>{tx('page.tools.title', 'A focused working stack')}</h1>
-          <ul class="tool-grid">
-            {tools.map((tool) => (
-              <li class="fx-glow" data-glow>
-                <img
-                  src={tool.icon}
-                  alt=""
-                  width="44"
-                  height="44"
-                  loading="lazy"
-                  decoding="async"
-                  class:list={{ invert: tool.invertOnDark }}
-                />
-                <span>{tool.name}</span>
-              </li>
-            ))}
-          </ul>
+          <p class="lead">
+            {tx(
+              'page.tools.intro',
+              'These are the tools I reach for most often in production frontend work. The list is short on purpose: I choose a tool after understanding the user task, the data flow, the failure states and the maintenance cost, not because it is new.',
+            )}
+          </p>
+          {getToolGroups().map((group) => (
+            <div class="tool-group">
+              <h2>{tx(`page.tools.group.${group.id}.title`, group.heading)}</h2>
+              <p>
+                {tx(
+                  `page.tools.group.${group.id}.description`,
+                  group.description,
+                )}
+              </p>
+              <ul class="tool-grid">
+                {group.tools.map((tool) => (
+                  <li class="fx-glow" data-glow>
+                    <img
+                      src={tool.icon}
+                      alt=""
+                      width="44"
+                      height="44"
+                      loading="lazy"
+                      decoding="async"
+                      class:list={{ invert: tool.invertOnDark }}
+                    />
+                    <span>{tool.name}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+          <p class="tool-closing">
+            <a class="text-link" href={href('/work/')}>
+              {tx(
+                'page.tools.closing',
+                'See how these come together in the case studies.',
+              )}
+            </a>
+          </p>
         </>
       </div>
     </section>
