@@ -9,6 +9,8 @@ import Backdrop from '../components/fx/Backdrop.astro';
 import { getProfile } from '../data/profile';
 import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
 import {
+  DEV_PROFILE_URL,
+  HASHNODE_BLOG_URL,
   SITE_DESCRIPTION,
   SITE_NAME,
   SITE_URL,
@@ -148,7 +150,12 @@ const combinedSchema = {
       telephone: profile.phone,
       inLanguage: meta.htmlLang,
       sameAs: [
-        ...new Set([...profile.social.map((item) => item.href), X_PROFILE_URL]),
+        ...new Set([
+          ...profile.social.map((item) => item.href),
+          X_PROFILE_URL,
+          DEV_PROFILE_URL,
+          HASHNODE_BLOG_URL,
+        ]),
       ],
       homeLocation: {
         '@type': 'Place',

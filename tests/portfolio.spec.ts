@@ -1314,6 +1314,35 @@ test('blog index shows the newest article above the fold, before topics', async 
   }
 });
 
+test('Person sameAs links every public profile in all locales', async ({
+  page,
+}) => {
+  type JsonLdNode = {
+    '@type'?: string;
+    '@graph'?: JsonLdNode[];
+    sameAs?: string[];
+  };
+  for (const path of ['/', '/es/', '/ar/']) {
+    await page.goto(path);
+    const blocks = await page
+      .locator('script[type="application/ld+json"]')
+      .evaluateAll((scripts) =>
+        scripts.map((script) => JSON.parse(script.textContent ?? 'null')),
+      );
+    const person = (blocks as (JsonLdNode | JsonLdNode[])[])
+      .flat()
+      .flatMap((node) => node['@graph'] ?? [node])
+      .find((node) => node['@type'] === 'Person');
+    expect(person?.sameAs, path).toEqual(
+      expect.arrayContaining([
+        'https://x.com/SuprabhatKarn97',
+        'https://dev.to/suprabhat02',
+        'https://suprabhatkumar.hashnode.dev',
+      ]),
+    );
+  }
+});
+
 test('every case study shares its own built image, not the default', async () => {
   const dist = new URL('../dist/', import.meta.url);
   const pages = (
