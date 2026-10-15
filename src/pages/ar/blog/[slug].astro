@@ -20,6 +20,10 @@ const relatedPosts = getRelatedBlogPosts(posts, post).map((relatedPost) =>
 );
 ---
 
-<BlogPostLayout {...post.data} slug={post.id} locale="ar" {relatedPosts}
-  ><Content /></BlogPostLayout
+<BlogPostLayout
+  {...post.data}
+  slug={post.id}
+  locale="ar"
+  body={post.body ?? ''}
+  {relatedPosts}><Content /></BlogPostLayout
 >

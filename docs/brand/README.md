@@ -8,21 +8,23 @@ uses Geist Mono SemiBold outlines, re-kerned by hand, with the custom s swapped 
 everything is flat, and every file is converted to outlines (no font dependency).
 
 Colors (from `src/styles/tokens.css` fallbacks):
+
 - Dark: ink `#eef7fc`, accent `#00baff`, ground `#000d18`
 - Light: ink `#041d2a`, accent `#0073b7`
 
 ## Files
-| File | Use |
-|---|---|
-| `logo/logo-mark.svg`, `logo-wordmark.svg`, `logo-lockup.svg` | Standalone and adaptive (follow the OS light/dark setting). Use these for GitHub READMEs, npm, and anywhere outside the site. |
-| `logo/*-on-dark.svg`, `*-on-light.svg` | Fixed colors for social banners, slides, the resume PDF, and email signatures. |
-| `logo/logo-mark-inline.svg`, `logo-wordmark-inline.svg` | For inlining **inside the site**: `currentColor` + `var(--accent)`, so they follow the site's own theme toggle. |
-| `favicons/favicon.svg` | Adaptive, transparent background. Navy glyph in light tabs, white glyph in dark tabs. |
-| `favicons/favicon.ico` (16/32/48), `favicon-16x16.png`, `favicon-32x32.png` | Legacy fallback on a navy tile. |
-| `favicons/apple-touch-icon.png` (180, full-bleed) | iOS adds its own corner rounding. |
-| `favicons/android-chrome-192/512.png` | Android `purpose: any`. |
-| `favicons/maskable-512x512.png` | Android `purpose: maskable` (the glyph sits inside the 80% safe zone). |
-| `favicons/site.webmanifest` | Updated: adds the maskable icon and the SVG icon. |
+
+| File                                                                        | Use                                                                                                                           |
+| --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `logo/logo-mark.svg`, `logo-wordmark.svg`, `logo-lockup.svg`                | Standalone and adaptive (follow the OS light/dark setting). Use these for GitHub READMEs, npm, and anywhere outside the site. |
+| `logo/*-on-dark.svg`, `*-on-light.svg`                                      | Fixed colors for social banners, slides, the resume PDF, and email signatures.                                                |
+| `logo/logo-mark-inline.svg`, `logo-wordmark-inline.svg`                     | For inlining **inside the site**: `currentColor` + `var(--accent)`, so they follow the site's own theme toggle.               |
+| `favicons/favicon.svg`                                                      | Adaptive, transparent background. Navy glyph in light tabs, white glyph in dark tabs.                                         |
+| `favicons/favicon.ico` (16/32/48), `favicon-16x16.png`, `favicon-32x32.png` | Legacy fallback on a navy tile.                                                                                               |
+| `favicons/apple-touch-icon.png` (180, full-bleed)                           | iOS adds its own corner rounding.                                                                                             |
+| `favicons/android-chrome-192/512.png`                                       | Android `purpose: any`.                                                                                                       |
+| `favicons/maskable-512x512.png`                                             | Android `purpose: maskable` (the glyph sits inside the 80% safe zone).                                                        |
+| `favicons/site.webmanifest`                                                 | Updated: adds the maskable icon and the SVG icon.                                                                             |
 
 ---
 

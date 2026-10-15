@@ -180,7 +180,7 @@ const analyticsCommandCenter: Record<Locale, CaseStudyBase> = {
   es: {
     slug: 'analytics-command-center',
     title: 'Centro de control analítico',
-    seoTitle: 'Caso de estudio de centro analítico | Dashboard React accesible',
+    seoTitle: 'Caso de centro analítico | Dashboard React accesible',
     description:
       'Caso frontend anonimizado de un dashboard analítico por roles con gráficos accesibles, estados resilientes, rendimiento y arquitectura UI en React.',
     eyebrow: 'Caso de estudio · Trabajo interno de producto',

@@ -3,6 +3,7 @@ dist/
 .astro/
 test-results/
 playwright-report/
+lighthouse-reports/
 coverage/
 .netlify/
 suprabhat-dev-static-site.zip

@@ -4,6 +4,11 @@ import { getBlogFeedHref } from '../data/blog';
 import { localePrefix, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
 import { getProfile } from '../data/profile';
+import {
+  DEV_PROFILE_URL,
+  HASHNODE_BLOG_URL,
+  X_PROFILE_URL,
+} from '../config/site';
 import BrandWordmark from '../assets/brand/logo-wordmark-inline.svg';
 interface Props {
   locale: Locale;
@@ -15,6 +20,11 @@ const href = (path: string) => `${prefix}${path}` || '/';
 const rssHref = getBlogFeedHref(locale);
 const navLabel = (key: string) =>
   t(locale, `nav.${key}`, key[0].toUpperCase() + key.slice(1));
+const profiles = [
+  { label: 'X', href: X_PROFILE_URL },
+  { label: 'DEV', href: DEV_PROFILE_URL },
+  { label: 'Hashnode', href: HASHNODE_BLOG_URL },
+];
 ---
 
 <footer class="site-footer">
@@ -29,6 +39,20 @@ const navLabel = (key: string) =>
           )
         }
       </p>
+      <ul
+        class="footer-profiles"
+        aria-label={t(locale, 'footer.profiles', 'Profiles elsewhere')}
+      >
+        {
+          profiles.map((profile) => (
+            <li>
+              <a href={profile.href} target="_blank" rel="me noopener">
+                {profile.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
     </div>
     <nav aria-label={t(locale, 'footer.siteLinks', 'Site links')}>
       <strong>{t(locale, 'footer.navigate', 'Navigate')}</strong>{

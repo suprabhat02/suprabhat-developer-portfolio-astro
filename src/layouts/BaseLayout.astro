@@ -1,4 +1,5 @@
 ---
+import geistMonoLatinFont from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SEOHead from '../components/SEOHead.astro';
@@ -9,6 +10,8 @@ import Backdrop from '../components/fx/Backdrop.astro';
 import { getProfile } from '../data/profile';
 import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
 import {
+  DEV_PROFILE_URL,
+  HASHNODE_BLOG_URL,
   SITE_DESCRIPTION,
   SITE_NAME,
   SITE_URL,
@@ -148,7 +151,12 @@ const combinedSchema = {
       telephone: profile.phone,
       inLanguage: meta.htmlLang,
       sameAs: [
-        ...new Set([...profile.social.map((item) => item.href), X_PROFILE_URL]),
+        ...new Set([
+          ...profile.social.map((item) => item.href),
+          X_PROFILE_URL,
+          DEV_PROFILE_URL,
+          HASHNODE_BLOG_URL,
+        ]),
       ],
       homeLocation: {
         '@type': 'Place',
@@ -197,6 +205,14 @@ const combinedSchema = {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000d18" />
+    <!-- Otherwise found only after the CSS; a late swap shifts the LCP text. -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href={geistMonoLatinFont}
+      crossorigin="anonymous"
+    />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/svg+xml" href="/assets/favicons/favicon.svg" />
     <link

@@ -242,7 +242,7 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
     title: 'react-smart-copy',
     seoTitle: 'react-smart-copy | Biblioteca de portapapeles para React',
     description:
-      'Cómo react-smart-copy, una biblioteca de TypeScript de código abierto, gestiona copiar y pegar en React con errores tipados, anuncios accesibles y sin dependencias.',
+      'Cómo react-smart-copy, biblioteca TypeScript de código abierto, gestiona copiar y pegar en React con errores tipados, anuncios accesibles y sin dependencias.',
     eyebrow: 'Caso de estudio · Código abierto',
     summary:
       'Una biblioteca de React headless y de código abierto para interacciones con el portapapeles. Modela toda la interacción alrededor de una copia (copiando, copiado, error, reintento y pegado) para que los equipos obtengan respuestas honestas, controles accesibles y errores tipados sin reescribir el mismo código frágil.',

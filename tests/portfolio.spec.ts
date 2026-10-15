@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-import { readFile } from 'node:fs/promises';
+import { access, readdir, readFile } from 'node:fs/promises';
 
 test('homepage renders correct structure and passes accessibility', async ({
   page,
@@ -1243,4 +1243,171 @@ test('language switcher targets translated posts and tags, never 404s', async ({
 
   await page.goto('/404.html');
   expect(await switcherHrefs()).toEqual(['/', '/es/', '/ar/']);
+});
+
+test('long page and article headings wrap instead of clipping', async ({
+  page,
+}) => {
+  const paths = [
+    '/blog/accessibility-in-react-what-developers-skip/',
+    '/es/blog/accessibility-in-react-what-developers-skip/',
+    '/ar/blog/accessibility-in-react-what-developers-skip/',
+    '/accessibility/',
+    '/es/work/analytics-command-center/',
+  ];
+  for (const width of [360, 390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const path of paths) {
+      await page.goto(path);
+      await page.evaluate(() => document.fonts.ready);
+      const overflowing = await page
+        .locator('h1, h2, h3')
+        .evaluateAll((headings) =>
+          headings
+            .filter((heading) => heading.scrollWidth > heading.clientWidth)
+            .map((heading) => heading.textContent?.trim()),
+        );
+      expect(overflowing, `${path} at ${width}px`).toEqual([]);
+    }
+  }
+});
+
+test('footer back-to-top and profile links meet the 24px target size', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+  for (const path of ['/', '/es/', '/ar/']) {
+    await page.goto(path);
+    const targets = page.locator(
+      '.footer-bottom > a[href$="#main-content"], .footer-profiles a',
+    );
+    await expect(targets).toHaveCount(4);
+    for (const box of await targets.evaluateAll((links) =>
+      links.map((link) => link.getBoundingClientRect().toJSON()),
+    )) {
+      expect(box.width, path).toBeGreaterThanOrEqual(24);
+      expect(box.height, path).toBeGreaterThanOrEqual(24);
+    }
+    expect(
+      await page
+        .locator('.footer-profiles a')
+        .evaluateAll((links) => links.map((link) => link.getAttribute('rel'))),
+    ).toEqual(['me noopener', 'me noopener', 'me noopener']);
+  }
+});
+
+test('blog index shows the newest article above the fold, before topics', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  for (const prefix of ['', '/es', '/ar']) {
+    await page.goto(`${prefix}/blog/`);
+    await page.evaluate(() => document.fonts.ready);
+    const newest = page.locator('.article-list > article').first();
+    for (const part of [newest.locator('.meta'), newest.locator('h2')]) {
+      const box = await part.boundingBox();
+      expect(box!.y + box!.height, prefix || '/en').toBeLessThanOrEqual(900);
+    }
+    await expect(
+      page.locator('.article-list > article:first-child + .topic-cloud'),
+    ).toHaveCount(1);
+  }
+});
+
+test('Person sameAs links every public profile in all locales', async ({
+  page,
+}) => {
+  type JsonLdNode = {
+    '@type'?: string;
+    '@graph'?: JsonLdNode[];
+    sameAs?: string[];
+  };
+  for (const path of ['/', '/es/', '/ar/']) {
+    await page.goto(path);
+    const blocks = await page
+      .locator('script[type="application/ld+json"]')
+      .evaluateAll((scripts) =>
+        scripts.map((script) => JSON.parse(script.textContent ?? 'null')),
+      );
+    const person = (blocks as (JsonLdNode | JsonLdNode[])[])
+      .flat()
+      .flatMap((node) => node['@graph'] ?? [node])
+      .find((node) => node['@type'] === 'Person');
+    expect(person?.sameAs, path).toEqual(
+      expect.arrayContaining([
+        'https://x.com/SuprabhatKarn97',
+        'https://dev.to/suprabhat02',
+        'https://suprabhatkumar.hashnode.dev',
+      ]),
+    );
+  }
+});
+
+test('every case study shares its own built image, not the default', async () => {
+  const dist = new URL('../dist/', import.meta.url);
+  const pages = (
+    await Promise.all(
+      ['work', 'es/work', 'ar/work'].map(async (dir) =>
+        (await readdir(new URL(`${dir}/`, dist), { withFileTypes: true }))
+          .filter((entry) => entry.isDirectory())
+          .map((entry) => `${dir}/${entry.name}/index.html`),
+      ),
+    )
+  ).flat();
+  expect(pages).toHaveLength(21);
+
+  for (const path of pages) {
+    const html = await readFile(new URL(path, dist), 'utf-8');
+    const ogImage = html.match(/property="og:image" content="([^"]+)"/)?.[1];
+    expect(ogImage, path).toMatch(
+      /^https:\/\/suprabhat-dev\.com\/images\/work\/[a-z0-9-]+-og-1200x630\.png$/,
+    );
+    expect(ogImage, path).not.toContain('og-image.jpg');
+    const { pathname } = new URL(ogImage!);
+    await expect(
+      access(new URL(`.${pathname}`, dist)),
+    ).resolves.toBeUndefined();
+    expect(html, path).toContain(`"image":"${ogImage}"`);
+  }
+});
+
+test('articles show cover, reading time, share links and RSS in every locale', async ({
+  page,
+}) => {
+  const slug = 'accessibility-in-react-what-developers-skip';
+  for (const prefix of ['', '/es', '/ar']) {
+    await page.goto(`${prefix}/blog/${slug}/`);
+    const canonical = `https://suprabhat-dev.com${prefix}/blog/${slug}/`;
+
+    const cover = page.locator('.article-page header img.article-cover');
+    await expect(
+      page.locator('.article-page header picture source[type="image/avif"]'),
+    ).toHaveCount(1);
+    await expect(cover).toHaveAttribute('srcset', /\b400w\b.*\b760w\b/);
+    await expect(cover).toHaveAttribute('alt', /\S/);
+    await expect(cover).toHaveAttribute('width', '1600');
+    await expect(cover).toHaveAttribute('height', '840');
+    await expect(cover).not.toHaveAttribute('loading', 'lazy');
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+      'content',
+      /\/images\/blog\/[a-z0-9-]+-cover-1600x840\.png$/,
+    );
+
+    await expect(page.locator('.article-reading-time')).toHaveText(/\d/);
+
+    const share = page.locator('.article-share');
+    const hrefs = await share
+      .locator('a')
+      .evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+    expect(hrefs).toEqual([
+      expect.stringMatching(
+        `^https://x\\.com/intent/tweet\\?url=${encodeURIComponent(canonical)}&text=`,
+      ),
+      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`,
+      `${prefix}/rss.xml`,
+    ]);
+    const copy = share.locator('button[data-copy-value]');
+    await expect(copy).toBeVisible();
+    await expect(copy).toHaveAttribute('data-copy-value', canonical);
+  }
 });

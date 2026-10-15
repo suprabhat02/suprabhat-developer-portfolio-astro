@@ -1,7 +1,10 @@
 ---
 import { join } from 'node:path';
 import sharp from 'sharp';
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import BaseLayout from './BaseLayout.astro';
+import CopyButton from '../components/fx/CopyButton.astro';
 import { SITE_URL, DEFAULT_OG_IMAGE } from '../config/site';
 import {
   localeMeta,
@@ -12,8 +15,10 @@ import {
 } from '../i18n/config';
 import { t } from '../i18n/messages';
 import {
+  getBlogFeedHref,
   getBlogPosts,
   getBlogTagHref,
+  getReadingMinutes,
   type BlogPostSummary,
 } from '../data/blog';
 import { getProfile } from '../data/profile';
@@ -28,6 +33,7 @@ interface Props {
   tags: string[];
   slug: string;
   locale?: Locale;
+  body?: string;
   relatedPosts?: BlogPostSummary[];
 }
 const {
@@ -40,6 +46,7 @@ const {
   tags,
   slug,
   locale = defaultLocale,
+  body = '',
   relatedPosts = [],
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -57,6 +64,40 @@ const imageUrl = new URL(heroImage ?? DEFAULT_OG_IMAGE, SITE_URL).href;
 const heroSize = heroImage?.startsWith('/')
   ? await sharp(join(process.cwd(), 'public', heroImage)).metadata()
   : undefined;
+const coverAlt = t(locale, 'blog.coverAlt', 'Article cover: {title}').replace(
+  '{title}',
+  title,
+);
+// The public PNG stays the share image; the page gets resized AVIF/WebP copies.
+const coverImages = import.meta.glob<ImageMetadata>(
+  '../../public/images/blog/*.png',
+  { eager: true, import: 'default' },
+);
+const coverImage = heroImage
+  ? coverImages[`../../public${heroImage}`]
+  : undefined;
+const readingDuration = new Intl.NumberFormat(dateLocale, {
+  style: 'unit',
+  unit: 'minute',
+  // Arabic needs the long form for correct dual/plural nouns.
+  unitDisplay: locale === 'ar' ? 'long' : 'short',
+}).format(getReadingMinutes(body));
+const readingTime = t(locale, 'blog.readingTime', '{duration} read').replace(
+  '{duration}',
+  readingDuration,
+);
+const shareUrl = encodeURIComponent(canonical.href);
+const shareLinks = [
+  {
+    label: t(locale, 'blog.share.x', 'Share on X'),
+    href: `https://x.com/intent/tweet?url=${shareUrl}&text=${encodeURIComponent(title)}`,
+  },
+  {
+    label: t(locale, 'blog.share.linkedin', 'Share on LinkedIn'),
+    href: `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`,
+  },
+];
+const rssHref = getBlogFeedHref(locale);
 const translatedLocales = (
   await Promise.all(
     locales.map(async (target) =>
@@ -163,6 +204,7 @@ const pageTitle =
         <time datetime={pubDate.toISOString()}
           >{pubDate.toLocaleDateString(dateLocale, { dateStyle: 'long' })}</time
         >
+        <span class="article-reading-time">{readingTime}</span>
         {
           showUpdated && updatedDate && (
             <span class="article-updated">
@@ -186,8 +228,56 @@ const pageTitle =
           ))
         }
       </ul>
+      {
+        coverImage && (
+          <Picture
+            src={coverImage}
+            formats={['avif', 'webp']}
+            widths={[400, 760, 1140, 1520]}
+            sizes="(max-width: 800px) calc(100vw - 2.5rem), 760px"
+            alt={coverAlt}
+            class="article-cover"
+            loading="eager"
+            decoding="async"
+          />
+        )
+      }
     </header>
     <div class="prose"><slot /></div>
+
+    <footer class="article-share" aria-labelledby="article-share-title">
+      <h2 id="article-share-title">
+        {t(locale, 'blog.share.title', 'Share this article')}
+      </h2>
+      <ul>
+        {
+          shareLinks.map((link) => (
+            <li>
+              <a
+                class="button"
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <CopyButton
+            value={canonical.href}
+            label={t(locale, 'blog.share.linkLabel', 'article link')}
+            {locale}
+          />
+        </li>
+        <li>
+          <a class="text-link" href={rssHref}>
+            {t(locale, 'blog.rss', 'Subscribe via RSS')}
+          </a>
+        </li>
+      </ul>
+    </footer>
 
     {
       relatedPosts.length > 0 && (

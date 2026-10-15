@@ -1,4 +1,7 @@
+import { mkdir, readFile } from 'node:fs/promises';
+import { chromium } from '@playwright/test';
 import sharp from 'sharp';
+import { createServer } from 'vite';
 
 const width = 1200;
 const height = 630;
@@ -40,3 +43,83 @@ await sharp({
   .toFile('public/assets/images/og-image.jpg');
 
 console.log('Generated public/assets/images/og-image.jpg (1200x630).');
+
+// Case-study share cards in the blog-cover style. Every locale reuses the
+// English card, so it is drawn from the English title and tags.
+const vite = await createServer({
+  configFile: false,
+  logLevel: 'error',
+  appType: 'custom',
+  server: { middlewareMode: true, hmr: false },
+  optimizeDeps: { noDiscovery: true },
+});
+const { getCaseStudies } = await vite.ssrLoadModule('/src/data/caseStudies.ts');
+const caseStudies = getCaseStudies('en');
+await vite.close();
+
+const geistMono = (
+  await readFile(
+    'node_modules/@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2',
+  )
+).toString('base64');
+const escapeHtml = (text) =>
+  text.replace(
+    /[&<>"]/g,
+    (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char],
+  );
+const caseStudyCard = ({ title, tags }) => `<!doctype html>
+<html lang="en">
+  <head>
+    <style>
+      @font-face {
+        font-family: 'Geist Mono';
+        font-weight: 100 900;
+        src: url(data:font/woff2;base64,${geistMono}) format('woff2');
+      }
+      * { margin: 0; box-sizing: border-box; }
+      body {
+        position: relative;
+        width: ${width}px;
+        height: ${height}px;
+        overflow: hidden;
+        background: #000d18;
+        color: #eef7fc;
+        font-family: 'Geist Mono', monospace;
+      }
+      .bar { position: absolute; inset: 0 auto 0 0; width: 10px; background: #00baff; }
+      .mark { position: absolute; top: 68px; left: 98px; width: 50px; height: 44px; }
+      .copy { position: absolute; top: 180px; left: 98px; right: 98px; }
+      .eyebrow { color: #00baff; font-size: 22px; font-weight: 600; letter-spacing: 0.14em; }
+      h1 { margin-top: 22px; font-size: 64px; font-weight: 700; line-height: 1.12; }
+      .tags { margin-top: 26px; color: #afc8d8; font-size: 25px; line-height: 1.5; }
+      .domain { position: absolute; left: 98px; bottom: 64px; color: #00baff; font-size: 24px; }
+    </style>
+  </head>
+  <body>
+    <div class="bar"></div>
+    <svg class="mark" viewBox="0 0 25.1 22" aria-hidden="true">
+      <path fill="#eef7fc" d="M16.6 0H6.99A6.99 6.25 0 0 0 6.99 12.5H11.27A2.73 2.75 0 0 1 11.27 18H1V22H11.27A7.53 6.75 0 0 0 11.27 8.5H6.99A2.19 2.25 0 0 1 6.99 4H16.6Z"/>
+      <rect fill="#00baff" x="21.1" y="18" width="4" height="4"/>
+    </svg>
+    <div class="copy">
+      <p class="eyebrow">CASE STUDY</p>
+      <h1>${escapeHtml(title)}</h1>
+      <p class="tags">${tags.map(escapeHtml).join(' · ')}</p>
+    </div>
+    <p class="domain">suprabhat-dev.com</p>
+  </body>
+</html>`;
+
+await mkdir('public/images/work', { recursive: true });
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width, height } });
+for (const caseStudy of caseStudies) {
+  await page.setContent(caseStudyCard(caseStudy));
+  await page.evaluate('document.fonts.ready');
+  const output = `public/images/work/${caseStudy.slug}-og-1200x630.png`;
+  await sharp(await page.screenshot())
+    .png({ compressionLevel: 9, palette: true })
+    .toFile(output);
+  console.log(`Generated ${output} (1200x630).`);
+}
+await browser.close();

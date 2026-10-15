@@ -534,47 +534,55 @@ const notFoundLinks = [
           )}
         </p>
 
-        <nav
-          class="topic-cloud"
-          aria-label={tx('blog.taxonomy.allTopics', 'All article topics')}
-        >
-          <strong>{tx('blog.taxonomy.allTopics', 'All article topics')}</strong>
-          <ul class="tag-list">
-            {tagGroups.map((group) => (
-              <li>
-                <a href={getBlogTagHref(locale, group.tag)}>
-                  <span>{group.tag}</span>
-                  <span class="tag-count">{group.count}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
         <div class="article-list">
-          {posts.map((post) => (
-            <article class="fx-glow fx-card-gradient fx-reveal" data-glow>
-              <p class="meta">
-                <time datetime={post.data.pubDate.toISOString()}>
-                  {post.data.pubDate.toLocaleDateString(dateLocale, {
-                    dateStyle: 'long',
-                  })}
-                </time>
-              </p>
-              <h2>
-                <a href={href(`/blog/${post.id}/`)}>{post.data.title}</a>
-              </h2>
-              <p>{post.data.description}</p>
-              <ul class="tag-list">
-                {post.data.tags.map((tag) => (
-                  <li>
-                    <a href={getBlogTagHref(locale, tag)} rel="tag">
-                      {tag}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </article>
+          {posts.map((post, index) => (
+            <>
+              <article class="fx-glow fx-card-gradient fx-reveal" data-glow>
+                <p class="meta">
+                  <time datetime={post.data.pubDate.toISOString()}>
+                    {post.data.pubDate.toLocaleDateString(dateLocale, {
+                      dateStyle: 'long',
+                    })}
+                  </time>
+                </p>
+                <h2>
+                  <a href={href(`/blog/${post.id}/`)}>{post.data.title}</a>
+                </h2>
+                <p>{post.data.description}</p>
+                <ul class="tag-list">
+                  {post.data.tags.map((tag) => (
+                    <li>
+                      <a href={getBlogTagHref(locale, tag)} rel="tag">
+                        {tag}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+              {index === 0 && (
+                <nav
+                  class="topic-cloud"
+                  aria-label={tx(
+                    'blog.taxonomy.allTopics',
+                    'All article topics',
+                  )}
+                >
+                  <strong>
+                    {tx('blog.taxonomy.allTopics', 'All article topics')}
+                  </strong>
+                  <ul class="tag-list">
+                    {tagGroups.map((group) => (
+                      <li>
+                        <a href={getBlogTagHref(locale, group.tag)}>
+                          <span>{group.tag}</span>
+                          <span class="tag-count">{group.count}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              )}
+            </>
           ))}
         </div>
       </div>
