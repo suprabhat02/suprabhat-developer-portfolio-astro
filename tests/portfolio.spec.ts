@@ -1380,11 +1380,18 @@ test('articles show cover, reading time, share links and RSS in every locale', a
     const canonical = `https://suprabhat-dev.com${prefix}/blog/${slug}/`;
 
     const cover = page.locator('.article-page header img.article-cover');
-    await expect(cover).toHaveAttribute('src', /-cover-1600x840\.png$/);
+    await expect(
+      page.locator('.article-page header picture source[type="image/avif"]'),
+    ).toHaveCount(1);
+    await expect(cover).toHaveAttribute('srcset', /\b400w\b.*\b760w\b/);
     await expect(cover).toHaveAttribute('alt', /\S/);
     await expect(cover).toHaveAttribute('width', '1600');
     await expect(cover).toHaveAttribute('height', '840');
     await expect(cover).not.toHaveAttribute('loading', 'lazy');
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+      'content',
+      /\/images\/blog\/[a-z0-9-]+-cover-1600x840\.png$/,
+    );
 
     await expect(page.locator('.article-reading-time')).toHaveText(/\d/);
 

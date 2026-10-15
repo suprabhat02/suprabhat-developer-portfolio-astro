@@ -1,6 +1,8 @@
 ---
 import { join } from 'node:path';
 import sharp from 'sharp';
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import BaseLayout from './BaseLayout.astro';
 import CopyButton from '../components/fx/CopyButton.astro';
 import { SITE_URL, DEFAULT_OG_IMAGE } from '../config/site';
@@ -66,6 +68,14 @@ const coverAlt = t(locale, 'blog.coverAlt', 'Article cover: {title}').replace(
   '{title}',
   title,
 );
+// The public PNG stays the share image; the page gets resized AVIF/WebP copies.
+const coverImages = import.meta.glob<ImageMetadata>(
+  '../../public/images/blog/*.png',
+  { eager: true, import: 'default' },
+);
+const coverImage = heroImage
+  ? coverImages[`../../public${heroImage}`]
+  : undefined;
 const readingDuration = new Intl.NumberFormat(dateLocale, {
   style: 'unit',
   unit: 'minute',
@@ -219,13 +229,15 @@ const pageTitle =
         }
       </ul>
       {
-        heroImage && (
-          <img
-            class="article-cover"
-            src={heroImage}
+        coverImage && (
+          <Picture
+            src={coverImage}
+            formats={['avif', 'webp']}
+            widths={[400, 760, 1140, 1520]}
+            sizes="(max-width: 800px) calc(100vw - 2.5rem), 760px"
             alt={coverAlt}
-            width={heroSize?.width}
-            height={heroSize?.height}
+            class="article-cover"
+            loading="eager"
             decoding="async"
           />
         )
