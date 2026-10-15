@@ -368,7 +368,7 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
       title: 'Sistema SEO e i18n para portfolio',
       seoTitle: 'Caso de estudio de SEO e i18n para portfolio | Astro',
       description:
-        'Caso de arquitectura frontend sobre cómo un portfolio Astro estático se volvió localizado, rastreable, accesible y orientado al rendimiento sin depender de contenido renderizado en cliente.',
+        'Caso de arquitectura frontend: cómo un portfolio Astro estático se volvió localizado, rastreable, accesible y rápido sin contenido renderizado en cliente.',
       eyebrow: 'Caso de estudio · Arquitectura de portfolio',
       summary:
         'Una arquitectura de portfolio pensada para recruiters, motores de búsqueda, tecnologías de asistencia y crawlers de IA. El trabajo convirtió páginas localizadas, casos de estudio, schema, navegación y descubrimiento de contenido en un sistema estático coherente.',
@@ -497,7 +497,7 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
       title: 'Flujo de contacto accesible',
       seoTitle: 'Caso de estudio de flujo de contacto accesible',
       description:
-        'Caso frontend sobre el diseño de un flujo de contacto con etiquetas accesibles, validación, vías alternativas, claridad de privacidad y contenido de conversión rastreable.',
+        'Caso frontend sobre un flujo de contacto con etiquetas accesibles, validación, vías alternativas, privacidad clara y contenido de conversión rastreable.',
       eyebrow: 'Caso de estudio · UX de conversión',
       summary:
         'Un flujo de contacto y calificación de leads diseñado para que el siguiente paso sea obvio para clientes, manteniendo el formulario accesible, ligero, claro sobre privacidad y fiable cuando JavaScript o el proveedor externo no están disponibles.',
@@ -612,7 +612,7 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
       title: 'Sistema de calidad frontend',
       seoTitle: 'Caso de estudio de sistema de calidad frontend',
       description:
-        'Caso de ingeniería frontend para un sistema de calidad que combina contenido tipado, pruebas de accesibilidad, rutas rastreables, validación responsive y confianza de build estático.',
+        'Caso de ingeniería frontend: un sistema de calidad con contenido tipado, pruebas de accesibilidad, rutas rastreables, validación responsive y build estático.',
       eyebrow: 'Caso de estudio · Calidad de ingeniería',
       summary:
         'Un sistema práctico de calidad diseñado para proteger la credibilidad del portfolio: datos tipados, generación estática de rutas, pruebas de accesibilidad, consistencia visual, cobertura de enlaces internos y feedback de build antes de producción.',

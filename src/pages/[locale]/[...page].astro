@@ -72,7 +72,16 @@ const pageLabelFallbacks: Record<PageName, string> = {
   blog: 'Blog',
 };
 const pageLabel = t(locale, pageLabelKeys[page], pageLabelFallbacks[page]);
-const title = `${pageLabel} — Suprabhat Kumar`;
+const titleOverrides: Partial<
+  Record<Locale, Partial<Record<PageName, string>>>
+> = {
+  ar: {
+    contact: 'تواصل مع سوبرابهات كومار | مهندس واجهات أمامية أول',
+    experience: 'خبرة سوبرابهات كومار | مهندس واجهات أمامية أول',
+  },
+};
+const title =
+  titleOverrides[locale]?.[page] ?? `${pageLabel} — Suprabhat Kumar`;
 const descriptions: Record<Locale, Record<PageName, string>> = {
   es: {
     about:
