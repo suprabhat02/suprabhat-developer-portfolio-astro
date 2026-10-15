@@ -2,6 +2,7 @@
 title: 'Frontend Code Review Checklist for Safer Releases'
 description: 'Review frontend behavior, accessibility, responsive layouts, performance, and maintainability in a risk-first order before a production release.'
 pubDate: 2026-08-27
+heroImage: /images/blog/frontend-code-review-checklist-cover-1600x840.png
 tags: ['Code Review', 'Accessibility', 'Performance', 'Frontend']
 draft: false
 ---

@@ -3,6 +3,7 @@ title: 'Clean UI Design Principles Every Frontend Engineer Should Know'
 seoTitle: 'Clean UI Design Principles for Frontend Engineers'
 description: 'Clean UI is an engineering property: spacing scales, OKLCH color tokens, motion budgets, and contrast ratios you can measure and enforce in code.'
 pubDate: 2026-10-14
+heroImage: /images/blog/clean-ui-design-principles-frontend-cover-1600x840.png
 tags: ['UI Design', 'Design Systems', 'Accessibility', 'Performance']
 draft: false
 ---

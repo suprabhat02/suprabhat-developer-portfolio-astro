@@ -8,7 +8,12 @@ import Backdrop from '../components/fx/Backdrop.astro';
 // import PalettePicker from '../components/fx/PalettePicker.astro';
 import { getProfile } from '../data/profile';
 import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
-import { SITE_NAME, SITE_URL } from '../config/site';
+import {
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+  X_PROFILE_URL,
+} from '../config/site';
 import { getBlogFeedHref, getBlogFeedMeta } from '../data/blog';
 import { t } from '../i18n/messages';
 import '../styles/global.css';
@@ -26,6 +31,11 @@ interface Props {
   ogType?: string;
   schema?: Record<string, unknown> | Record<string, unknown>[];
   localeHrefs?: Partial<Record<Locale, string>>;
+  image?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  /** Locales this page exists in; limits hreflang and translation links. */
+  alternateLocales?: readonly Locale[];
 }
 const {
   title,
@@ -39,8 +49,14 @@ const {
   ogType = 'website',
   schema,
   localeHrefs,
+  image,
+  imageWidth,
+  imageHeight,
+  alternateLocales = locales,
 } = Astro.props;
 const noindex = requestedNoindex || import.meta.env.ROBOTS === 'noindex';
+const showAlternates =
+  !noindex && !hideAlternates && alternateLocales.length > 1;
 const isHome = page === 'home';
 const meta = localeMeta[locale];
 const profile = getProfile(locale);
@@ -48,7 +64,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 const pagePath = path ?? (page === 'home' ? '/' : `/${page}/`);
 const alternateHref = (alternateLocale: Locale) =>
   new URL(`${localePrefix(alternateLocale)}${pagePath}`, Astro.site).href;
-const languageAlternates = locales.map((supportedLocale) => ({
+const languageAlternates = alternateLocales.map((supportedLocale) => ({
   '@type': 'WebPage',
   url: alternateHref(supportedLocale),
   inLanguage: localeMeta[supportedLocale].htmlLang,
@@ -97,15 +113,14 @@ const pageSchema = {
   isPartOf: { '@id': `${SITE_URL}/#website` },
   about: { '@id': `${SITE_URL}/#person` },
 };
-const pageSchemaWithAlternates =
-  noindex || hideAlternates
-    ? pageSchema
-    : {
-        ...pageSchema,
-        workTranslation: languageAlternates.filter(
-          (alternate) => alternate.inLanguage !== meta.htmlLang,
-        ),
-      };
+const pageSchemaWithAlternates = !showAlternates
+  ? pageSchema
+  : {
+      ...pageSchema,
+      workTranslation: languageAlternates.filter(
+        (alternate) => alternate.inLanguage !== meta.htmlLang,
+      ),
+    };
 const suppliedSchemas = schema
   ? Array.isArray(schema)
     ? schema
@@ -132,7 +147,9 @@ const combinedSchema = {
       email: profile.email,
       telephone: profile.phone,
       inLanguage: meta.htmlLang,
-      sameAs: profile.social.map((item) => item.href),
+      sameAs: [
+        ...new Set([...profile.social.map((item) => item.href), X_PROFILE_URL]),
+      ],
       homeLocation: {
         '@type': 'Place',
         name: 'Noida Extension, Uttar Pradesh, India',
@@ -162,7 +179,7 @@ const combinedSchema = {
       '@id': `${SITE_URL}/#website`,
       url: `${SITE_URL}/`,
       name: SITE_NAME,
-      description,
+      description: SITE_DESCRIPTION,
       inLanguage: locales.map(
         (supportedLocale) => localeMeta[supportedLocale].htmlLang,
       ),
@@ -213,9 +230,8 @@ const combinedSchema = {
     }
     <slot name="head" />
     {
-      !noindex &&
-        !hideAlternates &&
-        locales.map((alternateLocale) => (
+      showAlternates &&
+        alternateLocales.map((alternateLocale) => (
           <link
             rel="alternate"
             hreflang={localeMeta[alternateLocale].htmlLang}
@@ -224,7 +240,7 @@ const combinedSchema = {
         ))
     }
     {
-      !noindex && !hideAlternates && (
+      showAlternates && alternateLocales.includes('en') && (
         <link rel="alternate" hreflang="x-default" href={alternateHref('en')} />
       )
     }
@@ -244,12 +260,15 @@ const combinedSchema = {
       {noindex}
       {hideCanonical}
       {ogType}
-      localeAlternates={noindex || hideAlternates
-        ? []
-        : locales
+      localeAlternates={showAlternates
+        ? alternateLocales
             .filter((item) => item !== locale)
-            .map((item) => localeMeta[item].htmlLang)}
+            .map((item) => localeMeta[item].htmlLang)
+        : []}
       imageAlt={`${profile.name}, ${profile.title}`}
+      {image}
+      {imageWidth}
+      {imageHeight}
       schema={combinedSchema}
     />
   </head>

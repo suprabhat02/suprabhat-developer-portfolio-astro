@@ -143,7 +143,8 @@ export const getBlogTagLocaleHrefs = async (
         );
         const translated = targetPosts.find(({ id }) => id === post.id)?.data
           .tags[index];
-        matches.add(translated ?? '');
+        // Untranslated posts say nothing about the equivalent tag.
+        if (translated) matches.add(translated);
       }
       const [match] = [...matches];
       return [

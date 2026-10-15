@@ -2,6 +2,7 @@
 title: 'Why Minimal UI Improves Clarity and Conversion'
 description: 'See how hierarchy, spacing, typography, focused content, and restrained interaction make professional websites easier to understand and use.'
 pubDate: 2026-08-27
+heroImage: /images/blog/why-clean-minimal-ui-professional-website-cover-1600x840.png
 tags: ['UI Design', 'Web Design', 'Accessibility', 'Performance']
 draft: false
 ---

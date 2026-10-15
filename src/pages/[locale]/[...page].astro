@@ -5,7 +5,7 @@ import { localeMeta, localePrefix, type Locale } from '../../i18n/config';
 import { t } from '../../i18n/messages';
 import { faqs } from '../../data/faqs';
 import { getServices } from '../../data/services';
-import { SITE_URL } from '../../config/site';
+import { SITE_URL, NOINDEX_PAGES } from '../../config/site';
 
 type PageName =
   | 'about'
@@ -203,7 +203,14 @@ const schema = [
 
 {
   (
-    <BaseLayout {title} {description} {locale} {page} {schema}>
+    <BaseLayout
+      {title}
+      {description}
+      {locale}
+      {page}
+      {schema}
+      noindex={(NOINDEX_PAGES as readonly string[]).includes(page)}
+    >
       <PageContent {page} {locale} />
     </BaseLayout>
   )

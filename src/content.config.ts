@@ -9,6 +9,8 @@ const postSchema = z.object({
   description: z.string(),
   pubDate: z.coerce.date(),
   updatedDate: z.coerce.date().optional(),
+  // Share image path (root-relative or absolute URL); falls back to the site default.
+  heroImage: z.string().optional(),
   tags: z.array(z.string()).default([]),
   draft: z.boolean().default(false),
 });

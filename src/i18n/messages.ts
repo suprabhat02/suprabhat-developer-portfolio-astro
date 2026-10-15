@@ -270,6 +270,7 @@ const es: Messages = {
   'blog.backToAll': 'Todos los artículos',
   'blog.relatedEyebrow': 'Leer después',
   'blog.relatedTitle': 'Artículos frontend relacionados',
+  'blog.updated': 'Actualizado:',
   'page.notFound.title': 'Esa página no está aquí',
   'page.notFound.body':
     'La dirección puede haber cambiado o la página puede haber dejado de existir.',
@@ -671,6 +672,7 @@ const ar: Messages = {
   'blog.backToAll': 'كل المقالات',
   'blog.relatedEyebrow': 'اقرأ التالي',
   'blog.relatedTitle': 'مقالات واجهات أمامية ذات صلة',
+  'blog.updated': 'آخر تحديث:',
   'page.notFound.title': 'هذه الصفحة غير موجودة',
   'page.notFound.body': 'ربما تغيّر العنوان أو لم تعد الصفحة موجودة.',
   'page.notFound.eyebrow': 'خطأ 404',

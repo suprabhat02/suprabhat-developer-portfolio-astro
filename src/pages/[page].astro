@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageContent from '../components/PageContent.astro';
 import { faqs } from '../data/faqs';
 import { services } from '../data/services';
-import { SITE_URL } from '../config/site';
+import { SITE_URL, NOINDEX_PAGES } from '../config/site';
 
 const pages = {
   about: [
@@ -148,6 +148,11 @@ const schema = [
 ];
 ---
 
-<BaseLayout {title} {description} page={page} schema={schema}
+<BaseLayout
+  {title}
+  {description}
+  page={page}
+  schema={schema}
+  noindex={(NOINDEX_PAGES as readonly string[]).includes(page)}
   ><PageContent {page} locale="en" /></BaseLayout
 >

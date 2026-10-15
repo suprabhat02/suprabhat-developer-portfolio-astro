@@ -68,9 +68,11 @@ export default defineConfig({
       filter: (page) => {
         const pathname = new URL(page).pathname;
         // Tag archives are noindex, so they stay out of the sitemap too.
+        // Keep the page list in sync with NOINDEX_PAGES in src/config/site.ts.
         return (
           !/\/404(?:\/|\.html)?$/.test(pathname) &&
-          !/\/blog\/tags\//.test(pathname)
+          !/\/blog\/tags\//.test(pathname) &&
+          !/^(?:\/(?:es|ar))?\/(?:privacy|skills)\/$/.test(pathname)
         );
       },
       serialize: (item) => {

@@ -1477,6 +1477,21 @@ main {
   padding-bottom: 3rem;
   border-bottom: 1px solid var(--line);
 }
+.article-byline {
+  display: grid;
+  gap: 0.25rem;
+  margin-block: 1.5rem 0.75rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.article-byline a {
+  color: var(--text);
+  font-weight: 700;
+  text-decoration-color: var(--accent);
+}
+.article-updated {
+  margin-inline-start: 0.75rem;
+}
 .article-related {
   margin-top: 4rem;
   padding-top: 3rem;
