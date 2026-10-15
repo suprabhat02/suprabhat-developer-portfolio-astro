@@ -7,6 +7,8 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
   en: [
     {
       slug: 'portfolio-seo-i18n-system',
+      datePublished: '2026-09-06',
+      dateModified: '2026-10-15',
       title: 'Portfolio SEO and i18n system',
       seoTitle: 'Portfolio SEO and i18n Case Study | Astro, Hreflang',
       description:
@@ -136,6 +138,8 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     },
     {
       slug: 'accessible-contact-workflow',
+      datePublished: '2026-09-06',
+      dateModified: '2026-10-15',
       title: 'Accessible contact workflow',
       seoTitle: 'Accessible Contact Workflow Case Study | Forms & Privacy',
       description:
@@ -248,6 +252,8 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     },
     {
       slug: 'frontend-quality-system',
+      datePublished: '2026-09-06',
+      dateModified: '2026-10-15',
       title: 'Frontend quality system',
       seoTitle: 'Frontend Quality System Case Study | Playwright & a11y',
       description:
@@ -365,6 +371,8 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
   es: [
     {
       slug: 'portfolio-seo-i18n-system',
+      datePublished: '2026-09-06',
+      dateModified: '2026-10-15',
       title: 'Sistema SEO e i18n para portfolio',
       seoTitle: 'Caso de estudio de SEO e i18n para portfolio | Astro',
       description:
@@ -494,6 +502,8 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     },
     {
       slug: 'accessible-contact-workflow',
+      datePublished: '2026-09-06',
+      dateModified: '2026-10-15',
       title: 'Flujo de contacto accesible',
       seoTitle: 'Caso de estudio de flujo de contacto accesible',
       description:
@@ -609,6 +619,8 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     },
     {
       slug: 'frontend-quality-system',
+      datePublished: '2026-09-06',
+      dateModified: '2026-10-15',
       title: 'Sistema de calidad frontend',
       seoTitle: 'Caso de estudio de sistema de calidad frontend',
       description:
@@ -723,6 +735,8 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
   ar: [
     {
       slug: 'portfolio-seo-i18n-system',
+      datePublished: '2026-09-06',
+      dateModified: '2026-10-15',
       title: 'نظام SEO وتدويل لمحفظة الأعمال',
       seoTitle: 'دراسة حالة لنظام SEO وتدويل المحفظة | Astro',
       description:
@@ -852,6 +866,8 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     },
     {
       slug: 'accessible-contact-workflow',
+      datePublished: '2026-09-06',
+      dateModified: '2026-10-15',
       title: 'مسار تواصل متاح',
       seoTitle: 'دراسة حالة لمسار تواصل متاح',
       description:
@@ -961,6 +977,8 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     },
     {
       slug: 'frontend-quality-system',
+      datePublished: '2026-09-06',
+      dateModified: '2026-10-15',
       title: 'نظام جودة Frontend',
       seoTitle: 'دراسة حالة لنظام جودة Frontend | Playwright',
       description:

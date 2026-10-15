@@ -40,6 +40,10 @@ export interface CaseStudyProject {
 
 export interface CaseStudy {
   slug: string;
+  /** Date of the first commit that added the slug (git log --reverse -S). */
+  datePublished: string;
+  /** Date of the last commit to the study's content or proof (git log -L). */
+  dateModified: string;
   title: string;
   seoTitle: string;
   description: string;
@@ -61,6 +65,8 @@ type CaseStudyBase = Omit<CaseStudy, 'proof'>;
 const analyticsCommandCenter: Record<Locale, CaseStudyBase> = {
   en: {
     slug: 'analytics-command-center',
+    datePublished: '2026-09-01',
+    dateModified: '2026-10-15',
     title: 'Analytics command center',
     seoTitle: 'Analytics Command Center Case Study | React Dashboard UI',
     description:
@@ -179,6 +185,8 @@ const analyticsCommandCenter: Record<Locale, CaseStudyBase> = {
   },
   es: {
     slug: 'analytics-command-center',
+    datePublished: '2026-09-01',
+    dateModified: '2026-10-15',
     title: 'Centro de control analítico',
     seoTitle: 'Caso de centro analítico | Dashboard React accesible',
     description:
@@ -303,6 +311,8 @@ const analyticsCommandCenter: Record<Locale, CaseStudyBase> = {
   },
   ar: {
     slug: 'analytics-command-center',
+    datePublished: '2026-09-01',
+    dateModified: '2026-10-15',
     title: 'مركز تحكم للتحليلات',
     seoTitle: 'دراسة حالة لمركز تحكم تحليلي | هندسة واجهات لوحات React',
     description:
@@ -430,6 +440,8 @@ const analyticsCommandCenter: Record<Locale, CaseStudyBase> = {
 const designSystemUplift: Record<Locale, CaseStudyBase> = {
   en: {
     slug: 'design-system-uplift',
+    datePublished: '2026-09-01',
+    dateModified: '2026-09-09',
     title: 'Design system uplift',
     seoTitle: 'Design System Uplift Case Study | Scalable React UI',
     description:
@@ -548,6 +560,8 @@ const designSystemUplift: Record<Locale, CaseStudyBase> = {
   },
   es: {
     slug: 'design-system-uplift',
+    datePublished: '2026-09-01',
+    dateModified: '2026-09-09',
     title: 'Mejora del sistema de diseño',
     seoTitle: 'Caso de sistema de diseño | UI React escalable',
     description:
@@ -675,6 +689,8 @@ const designSystemUplift: Record<Locale, CaseStudyBase> = {
   },
   ar: {
     slug: 'design-system-uplift',
+    datePublished: '2026-09-01',
+    dateModified: '2026-09-09',
     title: 'تحسين نظام التصميم',
     seoTitle: 'دراسة نظام تصميم | واجهات React قابلة للتوسع',
     description:
@@ -799,6 +815,8 @@ const designSystemUplift: Record<Locale, CaseStudyBase> = {
 const performanceModernization: Record<Locale, CaseStudyBase> = {
   en: {
     slug: 'performance-modernization',
+    datePublished: '2026-09-01',
+    dateModified: '2026-09-04',
     title: 'Performance modernization',
     seoTitle: 'Performance Modernization Case Study | Core Web Vitals',
     description:
@@ -920,6 +938,8 @@ const performanceModernization: Record<Locale, CaseStudyBase> = {
   },
   es: {
     slug: 'performance-modernization',
+    datePublished: '2026-09-01',
+    dateModified: '2026-09-04',
     title: 'Modernización de rendimiento',
     seoTitle: 'Caso de modernización de rendimiento | Core Web Vitals',
     description:
@@ -1047,6 +1067,8 @@ const performanceModernization: Record<Locale, CaseStudyBase> = {
   },
   ar: {
     slug: 'performance-modernization',
+    datePublished: '2026-09-01',
+    dateModified: '2026-09-04',
     title: 'تحديث الأداء',
     seoTitle: 'دراسة تحديث أداء | Core Web Vitals',
     description:

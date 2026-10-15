@@ -134,6 +134,8 @@ const projectLinks = (copy: OpenSourceCopy): CaseStudy['project'] => ({
 export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
   en: {
     slug: 'react-smart-copy',
+    datePublished: '2026-10-03',
+    dateModified: '2026-10-15',
     title: 'react-smart-copy',
     seoTitle: 'react-smart-copy Case Study | React Clipboard Library',
     description:
@@ -239,6 +241,8 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
   },
   es: {
     slug: 'react-smart-copy',
+    datePublished: '2026-10-03',
+    dateModified: '2026-10-15',
     title: 'react-smart-copy',
     seoTitle: 'react-smart-copy | Biblioteca de portapapeles para React',
     description:
@@ -350,6 +354,8 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
   },
   ar: {
     slug: 'react-smart-copy',
+    datePublished: '2026-10-03',
+    dateModified: '2026-10-15',
     title: 'react-smart-copy',
     seoTitle: 'react-smart-copy | مكتبة حافظة متاحة لـ React',
     description:

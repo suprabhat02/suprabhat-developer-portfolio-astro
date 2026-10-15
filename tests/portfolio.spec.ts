@@ -1343,6 +1343,56 @@ test('Person sameAs links every public profile in all locales', async ({
   }
 });
 
+test('case-study dates come from data, not the old 2026-09-06 placeholder', async () => {
+  type JsonLdNode = {
+    '@type'?: string;
+    '@graph'?: JsonLdNode[];
+    datePublished?: string;
+    dateModified?: string;
+  };
+  // git log --reverse -S: these three slugs were first committed on 2026-09-06.
+  const publishedOnPlaceholderDate = new Set([
+    'portfolio-seo-i18n-system',
+    'accessible-contact-workflow',
+    'frontend-quality-system',
+  ]);
+  const dist = new URL('../dist/', import.meta.url);
+  const datesBySlug = new Map<string, string>();
+  for (const dir of ['work', 'es/work', 'ar/work']) {
+    for (const entry of await readdir(new URL(`${dir}/`, dist), {
+      withFileTypes: true,
+    })) {
+      if (!entry.isDirectory()) continue;
+      const html = await readFile(
+        new URL(`${dir}/${entry.name}/index.html`, dist),
+        'utf-8',
+      );
+      const article = [
+        ...html.matchAll(
+          /<script type="application\/ld\+json">(.*?)<\/script>/gs,
+        ),
+      ]
+        .map(([, json]) => JSON.parse(json) as JsonLdNode | JsonLdNode[])
+        .flat()
+        .flatMap((node) => node['@graph'] ?? [node])
+        .find((node) => node['@type'] === 'TechArticle');
+      const where = `${dir}/${entry.name}`;
+      const { datePublished = '', dateModified = '' } = article ?? {};
+      expect(datePublished, where).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(dateModified, where).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(dateModified >= datePublished, where).toBe(true);
+      expect(dateModified, where).not.toBe('2026-09-06');
+      if (!publishedOnPlaceholderDate.has(entry.name)) {
+        expect(datePublished, where).not.toBe('2026-09-06');
+      }
+      const dates = `${datePublished}/${dateModified}`;
+      expect(datesBySlug.get(entry.name) ?? dates, where).toBe(dates);
+      datesBySlug.set(entry.name, dates);
+    }
+  }
+  expect(datesBySlug.size).toBe(7);
+});
+
 test('every case study shares its own built image, not the default', async () => {
   const dist = new URL('../dist/', import.meta.url);
   const pages = (
