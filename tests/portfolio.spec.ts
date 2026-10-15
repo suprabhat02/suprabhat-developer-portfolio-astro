@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-import { readFile } from 'node:fs/promises';
+import { access, readdir, readFile } from 'node:fs/promises';
 
 test('homepage renders correct structure and passes accessibility', async ({
   page,
@@ -1311,6 +1311,34 @@ test('blog index shows the newest article above the fold, before topics', async 
     await expect(
       page.locator('.article-list > article:first-child + .topic-cloud'),
     ).toHaveCount(1);
+  }
+});
+
+test('every case study shares its own built image, not the default', async () => {
+  const dist = new URL('../dist/', import.meta.url);
+  const pages = (
+    await Promise.all(
+      ['work', 'es/work', 'ar/work'].map(async (dir) =>
+        (await readdir(new URL(`${dir}/`, dist), { withFileTypes: true }))
+          .filter((entry) => entry.isDirectory())
+          .map((entry) => `${dir}/${entry.name}/index.html`),
+      ),
+    )
+  ).flat();
+  expect(pages).toHaveLength(21);
+
+  for (const path of pages) {
+    const html = await readFile(new URL(path, dist), 'utf-8');
+    const ogImage = html.match(/property="og:image" content="([^"]+)"/)?.[1];
+    expect(ogImage, path).toMatch(
+      /^https:\/\/suprabhat-dev\.com\/images\/work\/[a-z0-9-]+-og-1200x630\.png$/,
+    );
+    expect(ogImage, path).not.toContain('og-image.jpg');
+    const { pathname } = new URL(ogImage!);
+    await expect(
+      access(new URL(`.${pathname}`, dist)),
+    ).resolves.toBeUndefined();
+    expect(html, path).toContain(`"image":"${ogImage}"`);
   }
 });
 
