@@ -1272,17 +1272,27 @@ test('long page and article headings wrap instead of clipping', async ({
   }
 });
 
-test('footer back-to-top link meets the 24px target size on mobile', async ({
+test('footer back-to-top and profile links meet the 24px target size', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 360, height: 800 });
   for (const path of ['/', '/es/', '/ar/']) {
     await page.goto(path);
-    const box = await page
-      .locator('.footer-bottom > a[href$="#main-content"]')
-      .boundingBox();
-    expect(box?.width, path).toBeGreaterThanOrEqual(24);
-    expect(box?.height, path).toBeGreaterThanOrEqual(24);
+    const targets = page.locator(
+      '.footer-bottom > a[href$="#main-content"], .footer-profiles a',
+    );
+    await expect(targets).toHaveCount(4);
+    for (const box of await targets.evaluateAll((links) =>
+      links.map((link) => link.getBoundingClientRect().toJSON()),
+    )) {
+      expect(box.width, path).toBeGreaterThanOrEqual(24);
+      expect(box.height, path).toBeGreaterThanOrEqual(24);
+    }
+    expect(
+      await page
+        .locator('.footer-profiles a')
+        .evaluateAll((links) => links.map((link) => link.getAttribute('rel'))),
+    ).toEqual(['me noopener', 'me noopener', 'me noopener']);
   }
 });
 

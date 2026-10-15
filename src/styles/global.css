@@ -1707,6 +1707,25 @@ main {
   text-decoration: none;
   text-transform: capitalize;
 }
+.footer-profiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  padding: 0;
+  margin: 1rem 0 0;
+  list-style: none;
+}
+.footer-profiles a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 24px;
+  min-inline-size: 24px;
+  color: var(--text-2);
+  font-weight: 700;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 0.2em;
+}
 .footer-bottom {
   display: flex;
   justify-content: space-between;
