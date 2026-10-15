@@ -1285,3 +1285,37 @@ test('footer back-to-top link meets the 24px target size on mobile', async ({
     expect(box?.height, path).toBeGreaterThanOrEqual(24);
   }
 });
+
+test('articles show cover, reading time, share links and RSS in every locale', async ({
+  page,
+}) => {
+  const slug = 'accessibility-in-react-what-developers-skip';
+  for (const prefix of ['', '/es', '/ar']) {
+    await page.goto(`${prefix}/blog/${slug}/`);
+    const canonical = `https://suprabhat-dev.com${prefix}/blog/${slug}/`;
+
+    const cover = page.locator('.article-page header img.article-cover');
+    await expect(cover).toHaveAttribute('src', /-cover-1600x840\.png$/);
+    await expect(cover).toHaveAttribute('alt', /\S/);
+    await expect(cover).toHaveAttribute('width', '1600');
+    await expect(cover).toHaveAttribute('height', '840');
+    await expect(cover).not.toHaveAttribute('loading', 'lazy');
+
+    await expect(page.locator('.article-reading-time')).toHaveText(/\d/);
+
+    const share = page.locator('.article-share');
+    const hrefs = await share
+      .locator('a')
+      .evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+    expect(hrefs).toEqual([
+      expect.stringMatching(
+        `^https://x\\.com/intent/tweet\\?url=${encodeURIComponent(canonical)}&text=`,
+      ),
+      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(canonical)}`,
+      `${prefix}/rss.xml`,
+    ]);
+    const copy = share.locator('button[data-copy-value]');
+    await expect(copy).toBeVisible();
+    await expect(copy).toHaveAttribute('data-copy-value', canonical);
+  }
+});

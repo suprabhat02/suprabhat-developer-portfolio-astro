@@ -55,6 +55,15 @@ export const getBlogPostHref = (locale: Locale, slug: string) =>
 export const getBlogFeedHref = (locale: Locale) =>
   `${localePrefix(locale)}/rss.xml`;
 
+const WORDS_PER_MINUTE = 220;
+
+// Code blocks are skimmed rather than read, so only prose is counted.
+export const getReadingMinutes = (markdown: string) => {
+  const prose = markdown.replace(/```[\s\S]*?```/g, ' ');
+  const words = prose.match(/[\p{L}\p{N}][\p{L}\p{N}'’-]*/gu)?.length ?? 0;
+  return Math.max(1, Math.round(words / WORDS_PER_MINUTE));
+};
+
 export const slugifyBlogTag = (tag: string) => {
   const slug = tag
     .normalize('NFKD')
