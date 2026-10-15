@@ -1244,3 +1244,30 @@ test('language switcher targets translated posts and tags, never 404s', async ({
   await page.goto('/404.html');
   expect(await switcherHrefs()).toEqual(['/', '/es/', '/ar/']);
 });
+
+test('long page and article headings wrap instead of clipping', async ({
+  page,
+}) => {
+  const paths = [
+    '/blog/accessibility-in-react-what-developers-skip/',
+    '/es/blog/accessibility-in-react-what-developers-skip/',
+    '/ar/blog/accessibility-in-react-what-developers-skip/',
+    '/accessibility/',
+    '/es/work/analytics-command-center/',
+  ];
+  for (const width of [360, 390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const path of paths) {
+      await page.goto(path);
+      await page.evaluate(() => document.fonts.ready);
+      const overflowing = await page
+        .locator('h1, h2, h3')
+        .evaluateAll((headings) =>
+          headings
+            .filter((heading) => heading.scrollWidth > heading.clientWidth)
+            .map((heading) => heading.textContent?.trim()),
+        );
+      expect(overflowing, `${path} at ${width}px`).toEqual([]);
+    }
+  }
+});

@@ -665,6 +665,12 @@ main {
 .page h1,
 .article-page h1 {
   font-size: clamp(2.8rem, 7vw, 5.6rem);
+  max-width: 18ch;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+.article-page h1 {
+  font-size: clamp(2.2rem, 7vw, 5.6rem);
 }
 /* Arabic script has tall ascenders and deep descenders; the tight Latin
    display leading makes lines collide and clips text-gradient glyphs. */
