@@ -1675,6 +1675,13 @@ main {
   border-top: 1px solid var(--line);
   font-size: 0.85rem;
 }
+/* WCAG 2.5.8 target size: the small footer text alone renders under 24px tall. */
+.footer-bottom a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 24px;
+  min-inline-size: 24px;
+}
 
 @media (max-width: 1140px) {
   .site-nav a {

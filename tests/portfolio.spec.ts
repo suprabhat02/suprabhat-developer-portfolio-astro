@@ -1271,3 +1271,17 @@ test('long page and article headings wrap instead of clipping', async ({
     }
   }
 });
+
+test('footer back-to-top link meets the 24px target size on mobile', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+  for (const path of ['/', '/es/', '/ar/']) {
+    await page.goto(path);
+    const box = await page
+      .locator('.footer-bottom > a[href$="#main-content"]')
+      .boundingBox();
+    expect(box?.width, path).toBeGreaterThanOrEqual(24);
+    expect(box?.height, path).toBeGreaterThanOrEqual(24);
+  }
+});
