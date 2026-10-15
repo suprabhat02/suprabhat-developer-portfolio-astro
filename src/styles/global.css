@@ -1109,6 +1109,10 @@ main {
 .tool-closing {
   margin-top: 3rem;
 }
+.accessibility-reviewed {
+  margin-top: 2.5rem;
+  color: var(--muted);
+}
 .meta {
   color: var(--accent-strong);
   font-size: 0.85rem;

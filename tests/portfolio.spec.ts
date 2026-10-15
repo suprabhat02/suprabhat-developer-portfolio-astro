@@ -1,6 +1,12 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { access, readdir, readFile } from 'node:fs/promises';
+
+// axe-core ships its only WCAG 2.2 AA rule, target-size, disabled by default.
+const axe = (page: Page) =>
+  new AxeBuilder({ page }).options({
+    rules: { 'target-size': { enabled: true } },
+  });
 
 test('homepage renders correct structure and passes accessibility', async ({
   page,
@@ -213,7 +219,7 @@ test('homepage renders correct structure and passes accessibility', async ({
   );
   expect(hasHorizontalOverflow).toBe(false);
 
-  const results = await new AxeBuilder({ page }).analyze();
+  const results = await axe(page).analyze();
   expect(results.violations).toEqual([]);
 
   await page.goto('/about/');
@@ -888,7 +894,7 @@ test('motion layer is progressive, accessible, and honors reduced motion', async
   for (const path of ['/', '/ar/', '/work/performance-modernization/']) {
     await page.goto(path);
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-    const results = await new AxeBuilder({ page }).analyze();
+    const results = await axe(page).analyze();
     expect(results.violations, path).toEqual([]);
   }
 });
@@ -1340,6 +1346,45 @@ test('Person sameAs links every public profile in all locales', async ({
         'https://suprabhatkumar.hashnode.dev',
       ]),
     );
+  }
+});
+
+test('accessibility statement is complete, dated and axe-clean in every locale', async ({
+  page,
+}) => {
+  for (const [prefix, reviewed] of [
+    ['', '16 October 2026'],
+    ['/es', '16 de octubre de 2026'],
+    ['/ar', '16 أكتوبر 2026'],
+  ] as const) {
+    await page.goto(`${prefix}/accessibility/`);
+    await expect(page.locator('main h1')).toHaveCount(1);
+    await expect(page.locator('main h2')).toHaveCount(4);
+    await expect(
+      page.locator('main .bullets').first().locator('li'),
+    ).toHaveCount(8);
+    await expect(
+      page.locator('main .bullets').nth(1).locator('li'),
+    ).toHaveCount(2);
+    await expect(page.locator('main a[href^="mailto:"]')).toHaveCount(1);
+    await expect(
+      page.locator('.accessibility-reviewed time[datetime="2026-10-16"]'),
+    ).toHaveText(reviewed);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+      'content',
+      'index,follow',
+    );
+    const description = await page
+      .locator('meta[name="description"]')
+      .getAttribute('content');
+    expect(description?.length, prefix || '/en').toBeGreaterThanOrEqual(120);
+    expect(description?.length, prefix || '/en').toBeLessThanOrEqual(155);
+    const results = await axe(page).analyze();
+    expect(results.violations, prefix || '/en').toEqual([]);
+    const ranRules = [...results.passes, ...results.incomplete].map(
+      (rule) => rule.id,
+    );
+    expect(ranRules).toContain('target-size');
   }
 });
 

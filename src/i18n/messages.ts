@@ -265,9 +265,36 @@ const es: Messages = {
   'page.contact.eyebrow': 'Contacto',
   'page.contact.title': 'Hablemos del trabajo',
   'page.accessibility.eyebrow': 'Accesibilidad',
-  'page.accessibility.title': 'Características de accesibilidad',
-  'page.accessibility.body':
-    'Este sitio utiliza secciones semánticas, foco de teclado visible, un enlace para saltar al contenido, preferencias de movimiento reducido, títulos descriptivos y controles etiquetados.',
+  'page.accessibility.title': 'Declaración de accesibilidad',
+  'page.accessibility.commitment':
+    'Quiero que cualquier persona pueda leer este sitio y contactar conmigo, sea cual sea el dispositivo, el navegador o la tecnología de apoyo que utilice. El objetivo es el nivel AA de las WCAG 2.2.',
+  'page.accessibility.inPlaceTitle': 'Qué está implementado',
+  'page.accessibility.inPlace.landmarks':
+    'Secciones semánticas y un único encabezado de nivel 1 por página.',
+  'page.accessibility.inPlace.focus':
+    'Un enlace para saltar al contenido y un indicador de foco de teclado visible.',
+  'page.accessibility.inPlace.targets':
+    'Controles de formulario etiquetados y elementos interactivos que cumplen el tamaño mínimo de objetivo de las WCAG 2.2, de 24 × 24 píxeles.',
+  'page.accessibility.inPlace.motion':
+    'Respeto por la preferencia de movimiento reducido.',
+  'page.accessibility.inPlace.contrast':
+    'Contraste de color comprobado en los temas oscuro y claro.',
+  'page.accessibility.inPlace.rtl':
+    'Páginas en árabe maquetadas de derecha a izquierda, con el código de izquierda a derecha.',
+  'page.accessibility.inPlace.nojs':
+    'Contenido que sigue siendo legible sin JavaScript.',
+  'page.accessibility.inPlace.images':
+    'Alternativas textuales para las imágenes con significado.',
+  'page.accessibility.testedTitle': 'Cómo se prueba',
+  'page.accessibility.tested':
+    'Las comprobaciones automáticas con axe según las WCAG 2.2 AA se ejecutan en el conjunto de pruebas end-to-end en cada cambio antes de publicarlo. También se realizan auditorías de accesibilidad con Lighthouse en las páginas principales.',
+  'page.accessibility.limitationsTitle': 'Limitaciones conocidas',
+  'page.accessibility.limitations.covers':
+    'Las imágenes de portada de los artículos contienen texto en inglés en las páginas en español y en árabe; sus alternativas textuales están traducidas.',
+  'page.accessibility.limitations.quotes':
+    'Las recomendaciones se citan en su inglés original.',
+  'page.accessibility.feedbackTitle': 'Comentarios',
+  'page.accessibility.reviewed': 'Última revisión:',
   'page.accessibility.contact':
     'El contenido sigue siendo legible y navegable sin JavaScript. Si encuentras una barrera, escribe a ',
   'page.privacy.eyebrow': 'Privacidad',
@@ -694,9 +721,33 @@ const ar: Messages = {
   'page.contact.eyebrow': 'تواصل',
   'page.contact.title': 'دعنا نناقش العمل',
   'page.accessibility.eyebrow': 'إمكانية الوصول',
-  'page.accessibility.title': 'ميزات إمكانية الوصول',
-  'page.accessibility.body':
-    'يستخدم هذا الموقع عناصر دلالية ومؤشر تركيز واضحًا للوحة المفاتيح ورابطًا لتجاوز المحتوى وتفضيلات تقليل الحركة وعناوين وصفية وعناصر تحكم معنونة.',
+  'page.accessibility.title': 'بيان إمكانية الوصول',
+  'page.accessibility.commitment':
+    'أريد أن يتمكن الجميع من قراءة هذا الموقع والتواصل معي، أيًّا كان الجهاز أو المتصفح أو التقنية المساعِدة التي يستخدمونها. الهدف هو المستوى AA من معايير WCAG 2.2.',
+  'page.accessibility.inPlaceTitle': 'ما هو مطبَّق',
+  'page.accessibility.inPlace.landmarks':
+    'معالم دلالية وعنوان واحد من المستوى الأول في كل صفحة.',
+  'page.accessibility.inPlace.focus':
+    'رابط لتجاوز المحتوى ومؤشر تركيز واضح للوحة المفاتيح.',
+  'page.accessibility.inPlace.targets':
+    'عناصر تحكم معنونة في النماذج، وعناصر تفاعلية تستوفي الحد الأدنى لحجم الهدف في WCAG 2.2 وهو 24 × 24 بكسل.',
+  'page.accessibility.inPlace.motion': 'احترام تفضيل تقليل الحركة.',
+  'page.accessibility.inPlace.contrast':
+    'تباين ألوان مُتحقَّق منه في السمتين الداكنة والفاتحة.',
+  'page.accessibility.inPlace.rtl':
+    'صفحات عربية بتخطيط من اليمين إلى اليسار، مع إبقاء الشيفرة من اليسار إلى اليمين.',
+  'page.accessibility.inPlace.nojs': 'محتوى يبقى مقروءًا دون JavaScript.',
+  'page.accessibility.inPlace.images': 'بدائل نصية للصور ذات المعنى.',
+  'page.accessibility.testedTitle': 'كيف يُختبَر',
+  'page.accessibility.tested':
+    'تعمل فحوص axe الآلية وفق WCAG 2.2 AA ضمن مجموعة الاختبارات الشاملة (end-to-end) مع كل تغيير قبل نشره. كما تُجرى تدقيقات إمكانية الوصول في Lighthouse على الصفحات الرئيسية.',
+  'page.accessibility.limitationsTitle': 'قيود معروفة',
+  'page.accessibility.limitations.covers':
+    'تحتوي صور أغلفة المقالات على نص إنجليزي في الصفحات الإسبانية والعربية؛ أما بدائلها النصية فمترجمة.',
+  'page.accessibility.limitations.quotes':
+    'تُقتبَس التوصيات بلغتها الإنجليزية الأصلية.',
+  'page.accessibility.feedbackTitle': 'الملاحظات',
+  'page.accessibility.reviewed': 'آخر مراجعة:',
   'page.accessibility.contact':
     'يبقى المحتوى مقروءًا وقابلًا للتنقل دون JavaScript. إذا واجهت عائقًا، راسل ',
   'page.privacy.eyebrow': 'الخصوصية',

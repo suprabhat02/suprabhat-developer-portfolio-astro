@@ -44,6 +44,32 @@ const posts = await getBlogPosts(locale);
 const tagGroups = getBlogTagGroupsFromPosts(locale, posts);
 const dateLocale = localeMeta[locale].htmlLang;
 const tx = (key: string, fallback: string) => t(locale, key, fallback);
+const accessibilityInPlace = [
+  ['landmarks', 'Semantic landmarks and one heading level 1 per page.'],
+  ['focus', 'A skip link and a visible keyboard focus indicator.'],
+  [
+    'targets',
+    'Labeled form controls and interactive targets that meet the WCAG 2.2 minimum target size of 24 × 24 pixels.',
+  ],
+  ['motion', 'Respect for the reduced-motion preference.'],
+  ['contrast', 'Color contrast checked in both the dark and light themes.'],
+  ['rtl', 'Arabic pages laid out right to left, with code kept left to right.'],
+  ['nojs', 'Content that stays readable without JavaScript.'],
+  ['images', 'Text alternatives for meaningful images.'],
+] as const;
+const accessibilityLimitations = [
+  [
+    'covers',
+    'Article cover images contain English text on the Spanish and Arabic pages; their text alternatives are translated.',
+  ],
+  ['quotes', 'Recommendations are quoted in their original English.'],
+] as const;
+// en-GB gives "16 October 2026"; es/ar use their own long date style.
+const accessibilityReviewed = new Date('2026-10-16T00:00:00Z');
+const accessibilityReviewedLabel = accessibilityReviewed.toLocaleDateString(
+  locale === 'en' ? 'en-GB' : localeMeta[locale].htmlLang,
+  { dateStyle: 'long', timeZone: 'UTC' },
+);
 const notFoundLinks = [
   {
     href: href('/'),
@@ -495,13 +521,35 @@ const notFoundLinks = [
           <p class="eyebrow">
             {tx('page.accessibility.eyebrow', 'Accessibility')}
           </p>
-          <h1>{tx('page.accessibility.title', 'Accessibility features')}</h1>
-          <p>
+          <h1>{tx('page.accessibility.title', 'Accessibility statement')}</h1>
+          <p class="lead">
             {tx(
-              'page.accessibility.body',
-              'This site uses semantic landmarks, visible keyboard focus, a skip link, reduced-motion preferences, descriptive page titles, and labeled controls.',
+              'page.accessibility.commitment',
+              'I want everyone to be able to read this site and contact me, whatever device, browser or assistive technology they use. The target is WCAG 2.2 level AA.',
             )}
           </p>
+          <h2>{tx('page.accessibility.inPlaceTitle', 'What is in place')}</h2>
+          <ul class="bullets">
+            {accessibilityInPlace.map(([id, text]) => (
+              <li>{tx(`page.accessibility.inPlace.${id}`, text)}</li>
+            ))}
+          </ul>
+          <h2>{tx('page.accessibility.testedTitle', 'How it is tested')}</h2>
+          <p>
+            {tx(
+              'page.accessibility.tested',
+              'Automated axe checks against WCAG 2.2 AA run in the end-to-end test suite on every change before it is deployed. Lighthouse accessibility audits are also run on key pages.',
+            )}
+          </p>
+          <h2>
+            {tx('page.accessibility.limitationsTitle', 'Known limitations')}
+          </h2>
+          <ul class="bullets">
+            {accessibilityLimitations.map(([id, text]) => (
+              <li>{tx(`page.accessibility.limitations.${id}`, text)}</li>
+            ))}
+          </ul>
+          <h2>{tx('page.accessibility.feedbackTitle', 'Feedback')}</h2>
           <p>
             {tx(
               'page.accessibility.contact',
@@ -511,6 +559,10 @@ const notFoundLinks = [
               {profile.email}
             </a>
             .
+          </p>
+          <p class="accessibility-reviewed">
+            {tx('page.accessibility.reviewed', 'Last reviewed:')}{' '}
+            <time datetime="2026-10-16">{accessibilityReviewedLabel}</time>
           </p>
         </>
       </div>
