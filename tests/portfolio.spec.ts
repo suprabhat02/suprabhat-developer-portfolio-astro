@@ -1296,6 +1296,24 @@ test('footer back-to-top and profile links meet the 24px target size', async ({
   }
 });
 
+test('blog index shows the newest article above the fold, before topics', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  for (const prefix of ['', '/es', '/ar']) {
+    await page.goto(`${prefix}/blog/`);
+    await page.evaluate(() => document.fonts.ready);
+    const newest = page.locator('.article-list > article').first();
+    for (const part of [newest.locator('.meta'), newest.locator('h2')]) {
+      const box = await part.boundingBox();
+      expect(box!.y + box!.height, prefix || '/en').toBeLessThanOrEqual(900);
+    }
+    await expect(
+      page.locator('.article-list > article:first-child + .topic-cloud'),
+    ).toHaveCount(1);
+  }
+});
+
 test('articles show cover, reading time, share links and RSS in every locale', async ({
   page,
 }) => {

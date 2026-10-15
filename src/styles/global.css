@@ -1066,6 +1066,9 @@ main {
 .topic-cloud strong {
   color: var(--accent-strong);
 }
+.article-list > .topic-cloud {
+  margin-block: 0.5rem;
+}
 .tool-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
