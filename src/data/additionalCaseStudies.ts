@@ -869,7 +869,7 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
       datePublished: '2026-09-06',
       dateModified: '2026-10-15',
       title: 'مسار تواصل متاح',
-      seoTitle: 'دراسة حالة لمسار تواصل متاح',
+      seoTitle: 'دراسة حالة لمسار تواصل متاح | النماذج والخصوصية',
       description:
         'دراسة Frontend حول تصميم مسار تواصل قليل الاحتكاك مع تسميات متاحة، تحقق، مسارات بديلة، وضوح خصوصية، ومحتوى تحويل قابل للفهرسة.',
       eyebrow: 'دراسة حالة · UX للتحويل',

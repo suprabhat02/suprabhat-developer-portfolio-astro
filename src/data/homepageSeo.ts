@@ -17,7 +17,7 @@ export const getHomepageDescription = (locale: Locale) =>
   locale === 'es'
     ? 'Ingeniero frontend sénior con más de seis años creando productos SaaS rápidos y accesibles con React y TypeScript.'
     : locale === 'ar'
-      ? 'مهندس واجهات أمامية أول بخبرة تزيد على ست سنوات في بناء منتجات SaaS سريعة ومتاحة باستخدام React وTypeScript.'
+      ? 'مهندس واجهات أمامية أول بخبرة تزيد على ست سنوات في بناء منتجات SaaS سريعة ومتاحة ولوحات بيانات وأنظمة تصميم باستخدام React وTypeScript.'
       : 'Senior React frontend engineer in India with 6+ years building SaaS dashboards, design systems, accessible interfaces, and fast web products.';
 
 export const getHomepageSchema = (locale: Locale) => {
