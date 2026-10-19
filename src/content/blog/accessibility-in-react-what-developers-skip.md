@@ -2,6 +2,7 @@
 title: 'Accessibility in React: What Most Developers Skip'
 description: 'Focus management, keyboard nav, ARIA live regions, and screen reader testing — the React a11y gaps that hurt real users.'
 pubDate: 2026-10-15
+updatedDate: 2026-10-19
 heroImage: /images/blog/accessibility-in-react-what-developers-skip-cover-1600x840.png
 tags: ['Accessibility', 'Frontend', 'TypeScript', 'UI Engineering']
 draft: false
@@ -15,7 +16,7 @@ This article covers the gaps I see most often in React codebases: focus after dy
 
 ## Why most React a11y advice stops too early
 
-Automated scanners such as axe and Lighthouse are good at one thing: inspecting the document at a single moment. They find missing labels, empty buttons, invalid ARIA attributes, and low contrast. Those are real defects, and every project should block them in continuous integration.
+Automated scanners such as axe and Lighthouse are good at one thing: inspecting the document at a single moment. They find missing labels, empty buttons, invalid ARIA attributes, and low contrast. Those are [real defects](https://www.w3.org/TR/WCAG22/), and every project should block them in continuous integration.
 
 What a scanner cannot see is behavior over time. It does not know that focus disappeared into the `body` when your modal closed. It cannot tell that your custom dropdown ignores the arrow keys, or that a screen reader user heard nothing when a form saved successfully. A page can score 100 and still be unusable without a mouse.
 
@@ -33,9 +34,9 @@ When content changes and focus stays where it was, keyboard and screen reader us
 
 ### Modals
 
-A modal dialog must move focus into itself when it opens, keep focus inside while it is open, close on Escape, and return focus to the element that opened it. Building that by hand means writing a focus trap, handling `inert` on the background, and managing scroll locking.
+A [modal dialog](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/) must move focus into itself when it opens, keep focus inside while it is open, close on Escape, and return focus to the element that opened it. Building that by hand means writing a focus trap, handling `inert` on the background, and managing scroll locking.
 
-The native `<dialog>` element does most of it for you. `showModal()` makes the rest of the page inert, moves focus into the dialog, and closes it on Escape. You still own one detail: returning focus reliably and keeping React state in sync.
+The [native `<dialog>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog) does most of it for you. `showModal()` makes the rest of the page inert, moves focus into the dialog, and closes it on Escape. You still own one detail: returning focus reliably and keeping React state in sync.
 
 ```tsx
 import { useEffect, useId, useRef, type ReactNode } from 'react';
@@ -132,7 +133,7 @@ The exception is a toast that contains a required decision, such as "Undo delete
 
 Native elements come with keyboard behavior. A `<button>` responds to Enter and Space; a `<select>` responds to arrow keys and typeahead. When a team replaces them with custom components, the visual design usually survives and the keyboard contract usually does not.
 
-The WAI-ARIA Authoring Practices Guide (APG) documents the expected keyboard behavior for each composite widget. Treat it as the specification, and treat the ARIA roles as a promise: if you add `role="tablist"`, users expect tab keyboard behavior.
+The WAI-ARIA Authoring Practices Guide (APG) documents the expected keyboard behavior for each composite widget. Treat it as the specification, and treat the ARIA roles as a promise: if you add `role="tablist"`, users expect [tab keyboard behavior](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/).
 
 ### Tabs
 
@@ -270,7 +271,7 @@ export const useAnnounce = () => useContext(AnnounceContext);
 Equally important is knowing when not to use one:
 
 - **Do not use `role="alert"` for routine messages.** Assertive announcements interrupt the user mid-sentence. Reserve them for errors that need immediate attention.
-- **Do not put `aria-live` on large containers.** A live region wrapping a whole results list will read every changed row aloud.
+- **Do not put [`aria-live`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-live) on large containers.** A live region wrapping a whole results list will read every changed row aloud.
 - **Do not announce what focus already communicates.** If you move focus to a heading or an error summary, the screen reader reads it. Announcing it again duplicates the message.
 - **Do not use live regions for form errors on submit.** Move focus to an error summary at the top of the form, with links to each invalid field. That gives users a list they can navigate, not a sentence they hear once.
 

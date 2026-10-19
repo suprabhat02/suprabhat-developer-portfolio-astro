@@ -3,6 +3,7 @@ title: 'Accesibilidad en React: lo que la mayoría de desarrolladores pasa por a
 seoTitle: 'Accesibilidad en React: lo que casi todos olvidan'
 description: 'Gestión del foco, teclado, regiones ARIA live y pruebas con lectores de pantalla: los fallos de accesibilidad en React que afectan a usuarios reales.'
 pubDate: 2026-10-15
+updatedDate: 2026-10-19
 heroImage: /images/blog/accessibility-in-react-what-developers-skip-cover-1600x840.png
 tags: ['Accesibilidad', 'Frontend', 'TypeScript', 'Ingeniería UI']
 draft: false
@@ -16,7 +17,7 @@ Este artículo cubre las carencias que más veo en bases de código React: el fo
 
 ## Por qué la mayoría de los consejos de accesibilidad en React se quedan cortos
 
-Los analizadores automáticos como axe y Lighthouse hacen bien una cosa: inspeccionar el documento en un momento concreto. Encuentran etiquetas ausentes, botones vacíos, atributos ARIA no válidos y contraste insuficiente. Son defectos reales, y todo proyecto debería bloquearlos en la integración continua.
+Los analizadores automáticos como axe y Lighthouse hacen bien una cosa: inspeccionar el documento en un momento concreto. Encuentran etiquetas ausentes, botones vacíos, atributos ARIA no válidos y contraste insuficiente. Son [defectos reales](https://www.w3.org/TR/WCAG22/), y todo proyecto debería bloquearlos en la integración continua.
 
 Lo que un analizador no ve es el comportamiento a lo largo del tiempo. No sabe que el foco desapareció en el `body` al cerrar tu modal. No puede detectar que tu desplegable a medida ignora las flechas del teclado, ni que un usuario de lector de pantalla no oyó nada cuando un formulario se guardó con éxito. Una página puede sacar un 100 y seguir siendo inutilizable sin ratón.
 
@@ -34,9 +35,9 @@ Cuando el contenido cambia y el foco se queda donde estaba, los usuarios de tecl
 
 ### Modales
 
-Un diálogo modal debe mover el foco a su interior al abrirse, mantenerlo dentro mientras está abierto, cerrarse con Escape y devolver el foco al elemento que lo abrió. Hacerlo a mano implica escribir una trampa de foco, aplicar `inert` al fondo y gestionar el bloqueo del scroll.
+Un [diálogo modal](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/) debe mover el foco a su interior al abrirse, mantenerlo dentro mientras está abierto, cerrarse con Escape y devolver el foco al elemento que lo abrió. Hacerlo a mano implica escribir una trampa de foco, aplicar `inert` al fondo y gestionar el bloqueo del scroll.
 
-El elemento nativo `<dialog>` hace casi todo por ti. `showModal()` vuelve inerte el resto de la página, mueve el foco al diálogo y lo cierra con Escape. Tú sigues siendo responsable de un detalle: devolver el foco de forma fiable y mantener sincronizado el estado de React.
+El [elemento nativo `<dialog>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog) hace casi todo por ti. `showModal()` vuelve inerte el resto de la página, mueve el foco al diálogo y lo cierra con Escape. Tú sigues siendo responsable de un detalle: devolver el foco de forma fiable y mantener sincronizado el estado de React.
 
 ```tsx
 import { useEffect, useId, useRef, type ReactNode } from 'react';
@@ -133,7 +134,7 @@ La excepción es un toast que contiene una decisión necesaria, como «Deshacer 
 
 Los elementos nativos traen su comportamiento de teclado. Un `<button>` responde a Enter y a Espacio; un `<select>` responde a las flechas y a la escritura anticipada. Cuando un equipo los sustituye por componentes a medida, el diseño visual suele sobrevivir y el contrato de teclado, no.
 
-La WAI-ARIA Authoring Practices Guide (APG) documenta el comportamiento de teclado esperado para cada widget compuesto. Trátala como la especificación, y trata los roles ARIA como una promesa: si añades `role="tablist"`, los usuarios esperan el comportamiento de teclado de unas pestañas.
+La WAI-ARIA Authoring Practices Guide (APG) documenta el comportamiento de teclado esperado para cada widget compuesto. Trátala como la especificación, y trata los roles ARIA como una promesa: si añades `role="tablist"`, los usuarios esperan el [comportamiento de teclado de unas pestañas](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/).
 
 ### Pestañas
 
@@ -271,7 +272,7 @@ export const useAnnounce = () => useContext(AnnounceContext);
 Igual de importante es saber cuándo no usarla:
 
 - **No uses `role="alert"` para mensajes rutinarios.** Los anuncios asertivos interrumpen al usuario a mitad de frase. Resérvalos para errores que requieren atención inmediata.
-- **No pongas `aria-live` en contenedores grandes.** Una región live que envuelve una lista de resultados completa leerá en voz alta cada fila que cambie.
+- **No pongas [`aria-live`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-live) en contenedores grandes.** Una región live que envuelve una lista de resultados completa leerá en voz alta cada fila que cambie.
 - **No anuncies lo que el foco ya comunica.** Si mueves el foco a un encabezado o a un resumen de errores, el lector de pantalla lo lee. Anunciarlo de nuevo duplica el mensaje.
 - **No uses regiones live para los errores de un formulario al enviarlo.** Mueve el foco a un resumen de errores al principio del formulario, con enlaces a cada campo no válido. Así el usuario tiene una lista por la que puede navegar, no una frase que oye una sola vez.
 

@@ -522,7 +522,7 @@ test('share metadata, page types and sitemap dates follow the SEO contract', asy
   expect(metaValues(article, 'og:image:alt')).toEqual([articleAlt]);
   expect(metaValues(article, 'twitter:image:alt')).toEqual([articleAlt]);
   expect(metaValues(article, 'article:published_time')).toEqual(['2026-10-15']);
-  expect(metaValues(article, 'article:modified_time')).toEqual(['2026-10-15']);
+  expect(metaValues(article, 'article:modified_time')).toEqual(['2026-10-19']);
   expect(metaValues(article, 'article:author')).toEqual([
     'https://suprabhat-dev.com/about/',
   ]);
@@ -534,7 +534,24 @@ test('share metadata, page types and sitemap dates follow the SEO contract', asy
   ]);
   expect(
     graphOf(article).find((node) => node['@type'] === 'BlogPosting'),
-  ).toMatchObject({ datePublished: '2026-10-15', dateModified: '2026-10-15' });
+  ).toMatchObject({ datePublished: '2026-10-15', dateModified: '2026-10-19' });
+
+  // The accessibility article cites its sources inline in every locale.
+  for (const prefix of ['', 'es/', 'ar/']) {
+    const html = await read(
+      `${prefix}blog/accessibility-in-react-what-developers-skip/index.html`,
+    );
+    for (const href of [
+      'https://www.w3.org/TR/WCAG22/',
+      'https://www.w3.org/WAI/ARIA/apg/patterns/tabs/',
+      'https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/',
+      'https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog',
+      'https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-live',
+    ]) {
+      const links = html.match(new RegExp(`<a href="${href}"[^>]*>`, 'g'));
+      expect(links, `${prefix} ${href}`).toEqual([`<a href="${href}">`]);
+    }
+  }
 
   // Case study card and portrait card alts; no article fields off articles.
   const caseStudy = await read('work/react-smart-copy/index.html');
