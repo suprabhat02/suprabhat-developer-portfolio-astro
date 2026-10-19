@@ -118,8 +118,8 @@ textarea {
   box-shadow:
     0 10px 40px rgba(0, 0, 0, 0.35),
     0 0 0 1px color-mix(in oklch, var(--accent) 6%, transparent);
-  backdrop-filter: blur(28px) saturate(1.8) brightness(0.95);
   -webkit-backdrop-filter: blur(28px) saturate(1.8) brightness(0.95);
+  backdrop-filter: blur(28px) saturate(1.8) brightness(0.95);
   animation: header-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
   transition:
     background 180ms ease,
@@ -343,8 +343,8 @@ textarea {
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow);
-  backdrop-filter: blur(14px) saturate(1.25);
   -webkit-backdrop-filter: blur(14px) saturate(1.25);
+  backdrop-filter: blur(14px) saturate(1.25);
 }
 .language-menu a,
 .mobile-nav a {
@@ -445,8 +445,8 @@ textarea {
   border: 1px solid color-mix(in oklch, var(--text) 12%, transparent);
   border-radius: var(--radius-card);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
 }
 .hdr-dropdown.open .hdr-menu {
   display: block;
@@ -507,8 +507,8 @@ textarea {
   justify-content: center;
   gap: 6px;
   background: color-mix(in oklch, var(--bg) 94%, transparent);
-  backdrop-filter: blur(28px) saturate(1.25);
   -webkit-backdrop-filter: blur(28px) saturate(1.25);
+  backdrop-filter: blur(28px) saturate(1.25);
 }
 .mob-menu.open {
   display: flex;
@@ -1926,8 +1926,8 @@ main {
   color: var(--accent);
   box-shadow: var(--shadow-sm);
   cursor: pointer;
-  backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
   transition:
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
     border-color 160ms ease;

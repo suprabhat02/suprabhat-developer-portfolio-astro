@@ -48,9 +48,9 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      # One worker: the suite shares a single on-demand astro dev server.
+      # The suite runs against `astro preview` of this build.
       - name: Run end-to-end and accessibility tests
-        run: npm run test:e2e -- --workers=1
+        run: npm run test:e2e
 
   deploy:
     needs: verify
