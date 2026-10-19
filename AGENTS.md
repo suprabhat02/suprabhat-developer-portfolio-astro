@@ -18,7 +18,7 @@ wins** — say so instead of guessing.
    `package.json` / `node_modules/<pkg>/package.json` / the actual installed
    types before using an API. If unsure, open the file and read it — don't
    pattern-match from general training data, this repo pins exact versions
-   (Astro 7, TypeScript strict, ESLint 10, Playwright 1.62).
+   (Astro 7, TypeScript strict, ESLint 10, Playwright 1.64).
 3. **Never claim a change works without running the checks below.** "Should
    work" is not done. Run `npm run build` (or at least `npm run check` +
    `npm run lint`) before saying a task is finished.
