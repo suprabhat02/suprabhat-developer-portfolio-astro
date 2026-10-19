@@ -43,35 +43,7 @@ export function getStaticPaths() {
   );
 }
 const { locale, page } = Astro.props as { locale: Locale; page: PageName };
-const pageLabelKeys: Record<PageName, string> = {
-  about: 'nav.about',
-  skills: 'nav.skills',
-  experience: 'nav.experience',
-  tools: 'nav.tools',
-  work: 'nav.work',
-  recommendations: 'nav.recommendations',
-  services: 'nav.services',
-  faq: 'nav.faq',
-  contact: 'nav.contact',
-  accessibility: 'nav.accessibility',
-  privacy: 'nav.privacy',
-  blog: 'nav.blog',
-};
-const pageLabelFallbacks: Record<PageName, string> = {
-  about: 'About',
-  skills: 'Skills',
-  experience: 'Experience',
-  tools: 'Tools',
-  work: 'Work',
-  recommendations: 'Recommendations',
-  services: 'Services',
-  faq: 'FAQ',
-  contact: 'Contact',
-  accessibility: 'Accessibility',
-  privacy: 'Privacy',
-  blog: 'Blog',
-};
-const pageLabel = t(locale, pageLabelKeys[page], pageLabelFallbacks[page]);
+const pageLabel = t(locale, `nav.${page}`);
 const titleOverrides: Partial<
   Record<Locale, Partial<Record<PageName, string>>>
 > = {
@@ -143,7 +115,7 @@ const breadcrumbSchema = {
     {
       '@type': 'ListItem',
       position: 1,
-      name: t(locale, 'nav.home', 'Home'),
+      name: t(locale, 'nav.home'),
       item: `${SITE_URL}${localeRoot}`,
     },
     {
@@ -178,22 +150,14 @@ const schema = [
         {
           '@context': 'https://schema.org',
           '@type': 'ProfessionalService',
-          name: t(
-            locale,
-            'schema.serviceName',
-            'Suprabhat Kumar - Frontend Engineering Services',
-          ),
+          name: t(locale, 'schema.serviceName'),
           url: `${SITE_URL}${localeRoot}services/`,
           inLanguage: language,
           provider: { '@id': `${SITE_URL}/#person` },
-          areaServed: t(locale, 'schema.worldwide', 'Worldwide'),
+          areaServed: t(locale, 'schema.worldwide'),
           hasOfferCatalog: {
             '@type': 'OfferCatalog',
-            name: t(
-              locale,
-              'page.services.title',
-              'Frontend engineering services',
-            ),
+            name: t(locale, 'page.services.title'),
             itemListElement: services.map((service) => ({
               '@type': 'Offer',
               itemOffered: {

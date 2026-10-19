@@ -48,10 +48,7 @@ const roleKey = (promotion?: boolean) => (promotion ? 'senior' : 'developer');
   <div class="xp-rail" aria-hidden="true">
     <span class="xp-rail-fill"></span>
   </div>
-  <ol
-    class="xp-list"
-    aria-label={t(locale, 'home.history', 'Work history, newest first')}
-  >
+  <ol class="xp-list" aria-label={t(locale, 'home.history')}>
     {
       experience.map((job, index) => {
         const title =
@@ -135,7 +132,7 @@ const roleKey = (promotion?: boolean) => (promotion ? 'senior' : 'developer');
                         )}
                         {role.promotion && (
                           <span class="promo-badge">
-                            {t(locale, 'home.promoted', 'Promoted')}
+                            {t(locale, 'home.promoted')}
                           </span>
                         )}
                       </SubHeading>

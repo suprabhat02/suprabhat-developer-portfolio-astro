@@ -1,7 +1,7 @@
 ---
 import type { CaseStudy } from '../data/caseStudies';
 import { localePrefix, type Locale } from '../i18n/config';
-import { t } from '../i18n/messages';
+import { t, type MessageKey } from '../i18n/messages';
 import CopyButton from './fx/CopyButton.astro';
 import Icon from './fx/Icon.astro';
 
@@ -12,18 +12,18 @@ interface Props {
 
 const { caseStudy, locale } = Astro.props;
 const href = (path: string) => `${localePrefix(locale)}${path}` || '/';
-const label = (key: string, fallback: string) => t(locale, key, fallback);
+const label = (key: MessageKey) => t(locale, key);
 ---
 
 <article class="case-study page section">
   <header class="case-study-hero wrap">
     <nav
       class="case-study-breadcrumb"
-      aria-label={label('caseStudy.breadcrumb', 'Case study breadcrumb')}
+      aria-label={label('caseStudy.breadcrumb')}
     >
       <ol>
-        <li><a href={href('/')}>{label('nav.home', 'Home')}</a></li>
-        <li><a href={href('/work/')}>{label('nav.work', 'Work')}</a></li>
+        <li><a href={href('/')}>{label('nav.home')}</a></li>
+        <li><a href={href('/work/')}>{label('nav.work')}</a></li>
         <li aria-current="page">{caseStudy.title}</li>
       </ol>
     </nav>
@@ -34,7 +34,7 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
 
     <aside class="case-study-note" aria-labelledby="case-study-note-title">
       <h2 id="case-study-note-title">
-        {label('caseStudy.confidentiality', 'Confidentiality note')}
+        {label('caseStudy.confidentiality')}
       </h2>
       <p>{caseStudy.confidentialityNote}</p>
     </aside>
@@ -53,7 +53,7 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
             </code>
             <CopyButton
               value={caseStudy.project.install}
-              label={label('copy.installLabel', 'install command')}
+              label={label('copy.installLabel')}
               {locale}
             />
           </div>
@@ -75,7 +75,7 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
 
     <section class="case-study-proof" aria-labelledby="case-study-proof-title">
       <h2 id="case-study-proof-title">
-        {label('caseStudy.projectProof', 'Project proof')}
+        {label('caseStudy.projectProof')}
       </h2>
       <div class="case-study-proof-grid">
         {
@@ -97,10 +97,7 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
       </div>
     </section>
 
-    <dl
-      class="case-study-meta"
-      aria-label={label('caseStudy.snapshot', 'Project snapshot')}
-    >
+    <dl class="case-study-meta" aria-label={label('caseStudy.snapshot')}>
       {
         caseStudy.meta.map((item) => (
           <div class="fx-glow" data-glow>
@@ -123,7 +120,7 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
       data-scrollspy
     >
       <h2 id="case-study-toc-title">
-        {label('caseStudy.toc', 'On this page')}
+        {label('caseStudy.toc')}
       </h2>
       <ol>
         {
@@ -159,13 +156,13 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
 
   <section class="case-study-highlights wrap" aria-label={caseStudy.title}>
     <div class="case-study-panel fx-glow fx-reveal" data-glow>
-      <h2>{label('caseStudy.outcomes', 'Outcomes')}</h2>
+      <h2>{label('caseStudy.outcomes')}</h2>
       <ul class="bullets">
         {caseStudy.outcomes.map((outcome) => <li>{outcome}</li>)}
       </ul>
     </div>
     <div class="case-study-panel fx-glow fx-reveal" data-glow>
-      <h2>{label('caseStudy.nextSteps', 'Next steps')}</h2>
+      <h2>{label('caseStudy.nextSteps')}</h2>
       <ul class="bullets">
         {caseStudy.nextSteps.map((step) => <li>{step}</li>)}
       </ul>
@@ -174,17 +171,17 @@ const label = (key: string, fallback: string) => t(locale, key, fallback);
 
   <footer class="case-study-footer wrap">
     <div>
-      <h2>{label('caseStudy.relatedServices', 'Related services')}</h2>
+      <h2>{label('caseStudy.relatedServices')}</h2>
       <ul class="tag-list">
         {caseStudy.relatedServices.map((service) => <li>{service}</li>)}
       </ul>
     </div>
     <div class="actions">
       <a class="button" href={href('/work/')}>
-        {label('caseStudy.backToWork', 'Back to work')}
+        {label('caseStudy.backToWork')}
       </a>
       <a class="button primary" href={href('/contact/')}>
-        {label('caseStudy.contactCta', 'Discuss a similar project')}
+        {label('caseStudy.contactCta')}
       </a>
     </div>
   </footer>

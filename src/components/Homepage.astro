@@ -57,6 +57,20 @@ const heroStack = [
 ] as const;
 
 type FlipWordList = readonly [string, string, string, string];
+type ToolCategory =
+  | 'language'
+  | 'frontend'
+  | 'state'
+  | 'runtime'
+  | 'design'
+  | 'styling'
+  | 'devops'
+  | 'ai'
+  | 'testing'
+  | 'cloud'
+  | 'backend'
+  | 'database'
+  | 'tool';
 const problemTitles = conversion.problems.items.map((item) => item.title);
 const flipWords: FlipWordList | null =
   problemTitles.length >= 4
@@ -84,7 +98,7 @@ const marqueeKeywords = [
 
 const skillColumns = [
   {
-    heading: t(locale, 'skills.frontendCore', 'Frontend Core'),
+    heading: t(locale, 'skills.frontendCore'),
     items: [
       'React + Next.js',
       'TypeScript + JavaScript',
@@ -93,7 +107,7 @@ const skillColumns = [
     ],
   },
   {
-    heading: t(locale, 'skills.stateData', 'State & Data'),
+    heading: t(locale, 'skills.stateData'),
     items: [
       'Redux Toolkit + RTK Query',
       'TanStack Query',
@@ -102,11 +116,11 @@ const skillColumns = [
     ],
   },
   {
-    heading: t(locale, 'skills.uiLibraries', 'UI Libraries'),
+    heading: t(locale, 'skills.uiLibraries'),
     items: ['Ant Design', 'Chakra UI', 'Headless UI', 'Bootstrap 5'],
   },
   {
-    heading: t(locale, 'skills.backendApis', 'Back-End & APIs'),
+    heading: t(locale, 'skills.backendApis'),
     items: [
       'FastAPI (Python)',
       'PostgreSQL',
@@ -118,20 +132,16 @@ const skillColumns = [
 ] as const;
 const recruiterHighlights = [
   {
-    label: t(locale, 'home.recruiterRoleLabel', 'Role fit'),
-    value: t(locale, 'home.recruiterRoleValue', 'Senior Front-End Engineer'),
+    label: t(locale, 'home.recruiterRoleLabel'),
+    value: t(locale, 'home.recruiterRoleValue'),
   },
   {
-    label: t(locale, 'home.recruiterProofLabel', 'Proof'),
-    value: t(locale, 'home.recruiterProofValue', '6 case studies · 6+ years'),
+    label: t(locale, 'home.recruiterProofLabel'),
+    value: t(locale, 'home.recruiterProofValue'),
   },
   {
-    label: t(locale, 'home.recruiterBestForLabel', 'Best for'),
-    value: t(
-      locale,
-      'home.recruiterBestForValue',
-      'SaaS dashboards, React architecture, performance',
-    ),
+    label: t(locale, 'home.recruiterBestForLabel'),
+    value: t(locale, 'home.recruiterBestForValue'),
   },
 ] as const;
 
@@ -148,44 +158,28 @@ interface HeroProofCard {
 const heroProofCards: readonly HeroProofCard[] = [
   {
     variant: 'work',
-    eyebrow: t(locale, 'home.heroWorkEyebrow', 'Selected work'),
+    eyebrow: t(locale, 'home.heroWorkEyebrow'),
     title: featuredCaseStudy.title,
-    body: t(
-      locale,
-      'home.heroWorkBody',
-      'Confidential case studies show architecture, constraints, decisions, and outcomes without client-sensitive detail.',
-    ),
+    body: t(locale, 'home.heroWorkBody'),
     href: featuredCaseStudyHref,
-    cta: t(locale, 'caseStudy.read', 'Read case study'),
+    cta: t(locale, 'caseStudy.read'),
     tags: featuredCaseStudy.tags.slice(0, 3),
   },
   {
     variant: 'stack',
-    eyebrow: t(locale, 'home.heroStackEyebrow', 'Core stack'),
-    title: t(locale, 'home.heroStackTitle', 'React + TypeScript systems'),
-    body: t(
-      locale,
-      'home.heroStackBody',
-      'Frontend architecture, state management, APIs, accessibility, design systems, and Core Web Vitals tuned for production.',
-    ),
+    eyebrow: t(locale, 'home.heroStackEyebrow'),
+    title: t(locale, 'home.heroStackTitle'),
+    body: t(locale, 'home.heroStackBody'),
     href: '#expertise',
-    cta: t(locale, 'home.heroStackCta', 'Explore expertise'),
+    cta: t(locale, 'home.heroStackCta'),
   },
   {
     variant: 'availability',
-    eyebrow: t(locale, 'home.availability', 'Availability'),
-    title: t(
-      locale,
-      'home.availabilityLead',
-      'Remote freelance and part-time contracts',
-    ),
-    body: t(
-      locale,
-      'home.availabilityMeta',
-      '24–28 hours weekly · Available now · 2–4 hours overlap',
-    ),
+    eyebrow: t(locale, 'home.availability'),
+    title: t(locale, 'home.availabilityLead'),
+    body: t(locale, 'home.availabilityMeta'),
     href: '#contact',
-    cta: t(locale, 'action.contact', 'Get in touch'),
+    cta: t(locale, 'action.contact'),
   },
 ] as const;
 const heroProofScene: Record<HeroProofCard['variant'], SceneName> = {
@@ -200,15 +194,15 @@ const heroProofClass: Record<HeroProofCard['variant'], string> = {
 };
 
 const stats = [
-  { value: '6+', label: t(locale, 'home.statYears', 'Years experience') },
-  { value: '5', label: t(locale, 'home.statCompanies', 'Companies worked at') },
+  { value: '6+', label: t(locale, 'home.statYears') },
+  { value: '5', label: t(locale, 'home.statCompanies') },
   {
     value: '2',
-    label: t(locale, 'home.statCapabilities', 'Full-stack capabilities'),
+    label: t(locale, 'home.statCapabilities'),
   },
   {
     value: 'India',
-    label: t(locale, 'home.statRemote', 'Remote collaboration'),
+    label: t(locale, 'home.statRemote'),
   },
 ] as const;
 
@@ -237,39 +231,23 @@ const recommendationSlots = Array.from(
 const traits = [
   {
     illustration: '/assets/illustrations/about-performance.svg',
-    title: t(locale, 'trait.performance.title', 'Performance-first'),
-    body: t(
-      locale,
-      'trait.performance.body',
-      'I use performance budgets, Core Web Vitals, and measured browser evidence throughout delivery.',
-    ),
+    title: t(locale, 'trait.performance.title'),
+    body: t(locale, 'trait.performance.body'),
   },
   {
     illustration: '/assets/illustrations/about-accessibility.svg',
-    title: t(locale, 'trait.accessibility.title', 'Accessibility by default'),
-    body: t(
-      locale,
-      'trait.accessibility.body',
-      'Semantic HTML, keyboard navigation, visible focus, and manual assistive-technology review guide implementation.',
-    ),
+    title: t(locale, 'trait.accessibility.title'),
+    body: t(locale, 'trait.accessibility.body'),
   },
   {
     illustration: '/assets/illustrations/about-architecture.svg',
-    title: t(locale, 'trait.architecture.title', 'Scalable architecture'),
-    body: t(
-      locale,
-      'trait.architecture.body',
-      'Reusable component libraries, design tokens, and predictable state management that teams can own long-term.',
-    ),
+    title: t(locale, 'trait.architecture.title'),
+    body: t(locale, 'trait.architecture.body'),
   },
   {
     illustration: '/assets/illustrations/about-fullstack.svg',
-    title: t(locale, 'trait.fullstack.title', 'Full-stack capable'),
-    body: t(
-      locale,
-      'trait.fullstack.body',
-      'FastAPI and PostgreSQL support full-stack delivery when a frontend feature needs a focused API or data layer.',
-    ),
+    title: t(locale, 'trait.fullstack.title'),
+    body: t(locale, 'trait.fullstack.body'),
   },
 ] as const;
 
@@ -277,12 +255,8 @@ const expertiseCards = [
   {
     illustration: '/assets/illustrations/expertise-frontend.svg',
     icon: 'frontend',
-    title: t(locale, 'expertise.frontend.title', 'Frontend Engineering'),
-    body: t(
-      locale,
-      'expertise.frontend.body',
-      'Build SaaS portals and data-heavy dashboards with clear state ownership, resilient data states, accessible interactions, and measured rendering performance.',
-    ),
+    title: t(locale, 'expertise.frontend.title'),
+    body: t(locale, 'expertise.frontend.body'),
     tags: [
       'React',
       'Next.js',
@@ -299,12 +273,8 @@ const expertiseCards = [
   {
     illustration: '/assets/illustrations/expertise-backend.svg',
     icon: 'backend',
-    title: t(locale, 'expertise.backend.title', 'Back-End & API Integration'),
-    body: t(
-      locale,
-      'expertise.backend.body',
-      'Integrate REST and GraphQL data flows, or build focused FastAPI and PostgreSQL features when the product needs end-to-end delivery.',
-    ),
+    title: t(locale, 'expertise.backend.title'),
+    body: t(locale, 'expertise.backend.body'),
     tags: [
       'FastAPI',
       'PostgreSQL',
@@ -318,12 +288,8 @@ const expertiseCards = [
   {
     illustration: '/assets/illustrations/expertise-design-systems.svg',
     icon: 'design',
-    title: t(locale, 'expertise.design.title', 'Design Systems & Performance'),
-    body: t(
-      locale,
-      'expertise.design.body',
-      'Create component libraries, design tokens, Storybook documentation, accessibility defaults, and adoption patterns teams can extend.',
-    ),
+    title: t(locale, 'expertise.design.title'),
+    body: t(locale, 'expertise.design.body'),
     tags: [
       'Design systems',
       'Storybook',
@@ -337,32 +303,30 @@ const expertiseCards = [
 ] as const;
 
 // Category labels shown above each tool chip
-const toolCategories: Record<string, string> = {
-  HTML5: 'LANGUAGE',
-  TypeScript: 'LANGUAGE',
-  React: 'FRONTEND',
-  'Next.js': 'FRONTEND',
-  Redux: 'STATE',
-  'TanStack Query': 'STATE',
-  GraphQL: 'BACKEND',
-  'Node.js': 'RUNTIME',
-  Figma: 'DESIGN',
-  'Tailwind CSS': 'STYLING',
-  'Bootstrap 5': 'STYLING',
-  Git: 'DEVOPS',
-  Sass: 'STYLING',
-  jQuery: 'FRONTEND',
-  'Claude AI': 'AI',
-  Storybook: 'TESTING',
-  Azure: 'CLOUD',
-  FastAPI: 'BACKEND',
-  PostgreSQL: 'DATABASE',
-  MongoDB: 'DATABASE',
+const toolCategories: Record<string, ToolCategory> = {
+  HTML5: 'language',
+  TypeScript: 'language',
+  React: 'frontend',
+  'Next.js': 'frontend',
+  Redux: 'state',
+  'TanStack Query': 'state',
+  GraphQL: 'backend',
+  'Node.js': 'runtime',
+  Figma: 'design',
+  'Tailwind CSS': 'styling',
+  'Bootstrap 5': 'styling',
+  Git: 'devops',
+  Sass: 'styling',
+  jQuery: 'frontend',
+  'Claude AI': 'ai',
+  Storybook: 'testing',
+  Azure: 'cloud',
+  FastAPI: 'backend',
+  PostgreSQL: 'database',
+  MongoDB: 'database',
 };
-const toolCategoryLabel = (toolName: string) => {
-  const category = toolCategories[toolName] ?? 'TOOL';
-  return t(locale, `tool.category.${category.toLowerCase()}`, category);
-};
+const toolCategoryLabel = (toolName: string) =>
+  t(locale, `tool.category.${toolCategories[toolName] ?? 'tool'}`);
 interface ContactLink {
   href: string;
   label: string;
@@ -379,7 +343,7 @@ const socialIcons: Record<string, IconName> = {
 const contactLinks: readonly ContactLink[] = [
   {
     href: `mailto:${profile.email}`,
-    label: t(locale, 'home.email', 'Email'),
+    label: t(locale, 'home.email'),
     display: profile.email,
     icon: 'mail',
     external: false,
@@ -414,7 +378,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
           <p class="hero-eyebrow">
             <span class="hero-status">
               <span class="fx-ping" aria-hidden="true"></span>
-              {t(locale, 'home.availableNow', 'Available now')}
+              {t(locale, 'home.availableNow')}
             </span>
             <span class="hero-eyebrow-text">{conversion.hero.eyebrow}</span>
             <img
@@ -450,11 +414,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
 
           <dl
             class="hero-recruiter-list"
-            aria-label={t(
-              locale,
-              'home.recruiterSnapshotAria',
-              'Recruiter snapshot',
-            )}
+            aria-label={t(locale, 'home.recruiterSnapshotAria')}
           >
             {
               recruiterHighlights.map((item) => (
@@ -466,10 +426,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
             }
           </dl>
 
-          <ul
-            class="hero-stack-list"
-            aria-label={t(locale, 'home.stackAria', 'Technology stack')}
-          >
+          <ul class="hero-stack-list" aria-label={t(locale, 'home.stackAria')}>
             {heroStack.map((item) => <li>{item}</li>)}
           </ul>
 
@@ -536,13 +493,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
             />
           </div>
           <figcaption class="hero-portrait-cap fx-pop">
-            {
-              t(
-                locale,
-                'home.portraitCaption',
-                '6+ years · React · Next.js · TypeScript · FastAPI',
-              )
-            }
+            {t(locale, 'home.portraitCaption')}
           </figcaption>
           <span class="hero-orbit" aria-hidden="true">
             <span></span>
@@ -551,7 +502,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
 
         <div
           class="hero-bottom hero-proof-grid"
-          aria-label={t(locale, 'home.heroProofAria', 'Professional proof')}
+          aria-label={t(locale, 'home.heroProofAria')}
         >
           {
             heroProofCards.map((card) => (
@@ -577,11 +528,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
                 {card.tags && (
                   <span
                     class="hero-case-tags"
-                    aria-label={t(
-                      locale,
-                      'home.heroCaseTags',
-                      'Project focus areas',
-                    )}
+                    aria-label={t(locale, 'home.heroCaseTags')}
                   >
                     {card.tags.map((tag) => (
                       <span>{tag}</span>
@@ -614,10 +561,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
   </div>
 
   <!-- ── STATS BAND ───────────────────────────────────────── -->
-  <aside
-    class="stats-band"
-    aria-label={t(locale, 'home.statAria', 'Career highlights')}
-  >
+  <aside class="stats-band" aria-label={t(locale, 'home.statAria')}>
     <div class="wrap">
       <div class="stats-grid">
         {
@@ -647,18 +591,14 @@ const contactIndex = featured.length > 0 ? '14' : '13';
     <div class="wrap">
       <SectionHeader
         index="06"
-        eyebrow={t(locale, 'nav.blog', 'Writing')}
-        title={t(locale, 'page.blog.title', 'Featured articles')}
+        eyebrow={t(locale, 'nav.blog')}
+        title={t(locale, 'home.blogTitle')}
         titleId="blog-title"
-        lead={t(
-          locale,
-          'home.blogLead',
-          'Practical guides on performance, accessibility, and modern UI delivery.',
-        )}
+        lead={t(locale, 'home.blogLead')}
         class="section-head--split"
       >
         <a href={pageHref('/blog/')} class="btn btn-ghost section-head-cta">
-          {t(locale, 'home.allArticles', 'All articles')}
+          {t(locale, 'home.allArticles')}
           <span aria-hidden="true">→</span>
         </a>
       </SectionHeader>
@@ -696,9 +636,9 @@ const contactIndex = featured.length > 0 ? '14' : '13';
               <a
                 href={getBlogPostHref(locale, post.id)}
                 class="read-link"
-                aria-label={`${t(locale, 'home.readArticle', 'Read article')}: ${post.data.title}`}
+                aria-label={`${t(locale, 'home.readArticle')}: ${post.data.title}`}
               >
-                {t(locale, 'home.readArticle', 'Read article')}
+                {t(locale, 'home.readArticle')}
                 <svg
                   width="14"
                   height="14"
@@ -730,19 +670,15 @@ const contactIndex = featured.length > 0 ? '14' : '13';
     <div class="wrap">
       <SectionHeader
         index="07"
-        eyebrow={t(locale, 'nav.about', 'About')}
-        title={t(locale, 'home.about', 'About me')}
+        eyebrow={t(locale, 'nav.about')}
+        title={t(locale, 'home.about')}
         titleId="about-title"
       />
 
       <div class="about-split">
         <TextReveal
           class="about-statement"
-          text={t(
-            locale,
-            'home.aboutStatement',
-            'Suprabhat Kumar, also known as Shubh, is a Senior Front-End Engineer with 6+ years building SaaS portals, enterprise dashboards, design systems, and accessible websites. Based in Noida Extension, with delivery experience across teams in Denmark, China, and Australia.',
-          )}
+          text={t(locale, 'home.aboutStatement')}
         />
         <figure class="about-photo fx-reveal">
           <div class="about-photo-frame">
@@ -754,11 +690,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
               sizes="(max-width: 760px) min(78vw, 340px), (max-width: 1040px) 300px, 340px"
               width={900}
               height={1200}
-              alt={t(
-                locale,
-                'home.parkPhotoAlt',
-                'Suprabhat Kumar smiling in a navy puffer jacket on a grassy park hill, with bare winter trees and a city skyline behind him.',
-              )}
+              alt={t(locale, 'home.parkPhotoAlt')}
               loading="lazy"
               decoding="async"
               quality={72}
@@ -766,7 +698,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
           </div>
           <figcaption class="about-photo-cap">
             <span class="fx-ping fx-ping--static" aria-hidden="true"></span>
-            {t(locale, 'home.parkPhotoCaption', 'Away from the keyboard')}
+            {t(locale, 'home.parkPhotoCaption')}
           </figcaption>
         </figure>
       </div>
@@ -798,7 +730,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
 
       <p class="hero-ctas about-ctas">
         <a href="#experience" class="btn btn-outline">
-          {t(locale, 'home.experienceCta', 'Explore experience')}
+          {t(locale, 'home.experienceCta')}
           <span aria-hidden="true">→</span>
         </a>
         <a
@@ -806,7 +738,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
           class="btn btn-ghost"
           download
         >
-          {t(locale, 'action.resume', 'Download résumé')}
+          {t(locale, 'action.resume')}
         </a>
       </p>
     </div>
@@ -821,14 +753,10 @@ const contactIndex = featured.length > 0 ? '14' : '13';
     <div class="wrap">
       <SectionHeader
         index="08"
-        eyebrow={t(locale, 'home.expertise', 'Expertise')}
-        title={t(locale, 'home.expertise', 'Core expertise')}
+        eyebrow={t(locale, 'home.expertise')}
+        title={t(locale, 'home.expertiseTitle')}
         titleId="expertise-title"
-        lead={t(
-          locale,
-          'home.expertiseLead',
-          'Senior frontend support where architecture, data, accessibility, and performance meet.',
-        )}
+        lead={t(locale, 'home.expertiseLead')}
       />
 
       <div class="expertise-grid">
@@ -876,13 +804,9 @@ const contactIndex = featured.length > 0 ? '14' : '13';
       <SectionHeader
         index="09"
         eyebrow="Skills"
-        title={t(locale, 'page.skills.eyebrow', 'Skills')}
+        title={t(locale, 'page.skills.eyebrow')}
         titleId="skills-title"
-        lead={t(
-          locale,
-          'home.skillsLead',
-          'The technical stack I use to deliver scalable, performant, accessible UI systems.',
-        )}
+        lead={t(locale, 'home.skillsLead')}
       />
       <div class="skills-table fx-reveal">
         <div class="skills-row fx-hover-group" data-hover-group>
@@ -903,7 +827,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
       </div>
       <p class="section-cta">
         <a href="#contact" class="btn btn-outline">
-          {t(locale, 'home.skillsCta', 'Discuss a technical challenge')}
+          {t(locale, 'home.skillsCta')}
           <span aria-hidden="true">→</span>
         </a>
       </p>
@@ -920,8 +844,8 @@ const contactIndex = featured.length > 0 ? '14' : '13';
     <div class="wrap">
       <SectionHeader
         index="10"
-        eyebrow={t(locale, 'home.experience', 'Experience')}
-        title={t(locale, 'home.experience', 'Experience')}
+        eyebrow={t(locale, 'home.experience')}
+        title={t(locale, 'home.experience')}
         titleId="exp-title"
       />
       <ExperienceTimeline {locale} />
@@ -938,21 +862,14 @@ const contactIndex = featured.length > 0 ? '14' : '13';
     <div class="wrap">
       <SectionHeader
         index="11"
-        eyebrow={t(locale, 'home.toolbox', 'Stack')}
-        title={t(locale, 'page.tools.title', 'Tools & technologies')}
+        eyebrow={t(locale, 'home.toolbox')}
+        title={t(locale, 'home.toolsHeading')}
         titleId="tools-title"
-        lead={t(
-          locale,
-          'home.stackLead',
-          'The stack I use to ship fast, accessible, scalable products.',
-        )}
+        lead={t(locale, 'home.stackLead')}
       />
     </div>
 
-    <div
-      class="tm-wrap wrap"
-      aria-label={t(locale, 'home.stackAria', 'Technology stack')}
-    >
+    <div class="tm-wrap wrap" aria-label={t(locale, 'home.stackAria')}>
       <ul class="tm-grid" role="list">
         {
           tools.map((tool) => (
@@ -987,14 +904,10 @@ const contactIndex = featured.length > 0 ? '14' : '13';
         <div class="wrap">
           <SectionHeader
             index="12"
-            eyebrow={t(locale, 'home.recommendations', 'Recommendations')}
-            title={t(locale, 'home.recommendations', 'Recommendations')}
+            eyebrow={t(locale, 'home.recommendations')}
+            title={t(locale, 'home.recommendations')}
             titleId="recs-title"
-            lead={t(
-              locale,
-              'home.recommendationsLead',
-              'What cross-functional partners say about working together.',
-            )}
+            lead={t(locale, 'home.recommendationsLead')}
           />
         </div>
         <div
@@ -1041,11 +954,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
         <div class="wrap">
           <p class="section-cta">
             <a href={pageHref('/recommendations/')} class="btn btn-ghost">
-              {t(
-                locale,
-                'home.recommendationsCta',
-                'View verified recommendations',
-              )}{' '}
+              {t(locale, 'home.recommendationsCta')}{' '}
               <span aria-hidden="true">→</span>
             </a>
           </p>
@@ -1073,19 +982,13 @@ const contactIndex = featured.length > 0 ? '14' : '13';
             FAQ
           </span>
           <h2 id="faq-title" class="s-title">
-            {t(locale, 'page.faq.title', 'Frequently asked questions')}
+            {t(locale, 'home.faqHeading')}
           </h2>
           <p class="s-lead">
-            {
-              t(
-                locale,
-                'home.faqLead',
-                'Quick answers about services, pricing, and how we can collaborate.',
-              )
-            }
+            {t(locale, 'home.faqLead')}
           </p>
           <a href="#contact" class="btn btn-primary">
-            {t(locale, 'action.start', 'Start a project')}
+            {t(locale, 'action.start')}
           </a>
         </div>
         <div class="fx-reveal">
@@ -1124,32 +1027,20 @@ const contactIndex = featured.length > 0 ? '14' : '13';
     <div class="wrap cta-inner">
       <div class="cta-copy fx-reveal">
         <p class="cta-tag">
-          {t(locale, 'home.ctaTag', 'Ready to collaborate')}
+          {t(locale, 'home.ctaTag')}
         </p>
         <h2 id="cta-title" class="cta-title">
-          {
-            t(
-              locale,
-              'home.ctaTitle',
-              'Bring the frontend problem. Get a defined path forward.',
-            )
-          }
+          {t(locale, 'home.ctaTitle')}
         </h2>
         <p class="cta-sub">
-          {
-            t(
-              locale,
-              'home.ctaLead',
-              'Share the product context, timeline, and constraints. I will review the fit and propose the next step.',
-            )
-          }
+          {t(locale, 'home.ctaLead')}
         </p>
         <div class="cta-btns">
           <a href="#contact" class="btn btn-primary">
-            {t(locale, 'action.start', 'Start a project')}
+            {t(locale, 'action.start')}
           </a>
           <a href={pageHref('/blog/')} class="btn btn-outline">
-            {t(locale, 'nav.blog', 'Read the blog')}
+            {t(locale, 'home.readBlog')}
           </a>
         </div>
       </div>
@@ -1166,18 +1057,14 @@ const contactIndex = featured.length > 0 ? '14' : '13';
     <div class="wrap">
       <SectionHeader
         index={contactIndex}
-        eyebrow={t(locale, 'page.contact.eyebrow', 'Contact')}
-        title={t(locale, 'page.contact.eyebrow', 'Contact')}
+        eyebrow={t(locale, 'page.contact.eyebrow')}
+        title={t(locale, 'page.contact.eyebrow')}
         titleId="contact-title"
-        lead={t(
-          locale,
-          'home.contactLead',
-          'Need senior frontend support for a dashboard, architecture review, design system, audit, or website? Send the context below.',
-        )}
+        lead={t(locale, 'home.contactLead')}
       />
       <div class="contact-2col">
         <div>
-          <nav aria-label={t(locale, 'home.contactOptions', 'Contact options')}>
+          <nav aria-label={t(locale, 'home.contactOptions')}>
             <ul class="contact-links-list">
               {
                 contactLinks.map((link) => (

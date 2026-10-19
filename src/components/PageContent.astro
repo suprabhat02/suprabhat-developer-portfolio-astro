@@ -11,14 +11,13 @@ import { getSkills } from '../data/skills';
 import { getToolGroups } from '../data/tools';
 import { getCaseStudies } from '../data/caseStudies';
 import { getInternalWorkNotice, getWork } from '../data/work';
-import { engagement } from '../data/engagement';
 import {
   getBlogPosts,
   getBlogTagGroupsFromPosts,
   getBlogTagHref,
 } from '../data/blog';
 import { localePrefix, localeMeta, type Locale } from '../i18n/config';
-import { t } from '../i18n/messages';
+import { t, type MessageKey } from '../i18n/messages';
 
 interface Props {
   page: string;
@@ -43,27 +42,18 @@ const caseStudySlugs = new Set(
 const posts = await getBlogPosts(locale);
 const tagGroups = getBlogTagGroupsFromPosts(locale, posts);
 const dateLocale = localeMeta[locale].htmlLang;
-const tx = (key: string, fallback: string) => t(locale, key, fallback);
+const tx = (key: MessageKey) => t(locale, key);
 const accessibilityInPlace = [
-  ['landmarks', 'Semantic landmarks and one heading level 1 per page.'],
-  ['focus', 'A skip link and a visible keyboard focus indicator.'],
-  [
-    'targets',
-    'Labeled form controls and interactive targets that meet the WCAG 2.2 minimum target size of 24 × 24 pixels.',
-  ],
-  ['motion', 'Respect for the reduced-motion preference.'],
-  ['contrast', 'Color contrast checked in both the dark and light themes.'],
-  ['rtl', 'Arabic pages laid out right to left, with code kept left to right.'],
-  ['nojs', 'Content that stays readable without JavaScript.'],
-  ['images', 'Text alternatives for meaningful images.'],
+  'landmarks',
+  'focus',
+  'targets',
+  'motion',
+  'contrast',
+  'rtl',
+  'nojs',
+  'images',
 ] as const;
-const accessibilityLimitations = [
-  [
-    'covers',
-    'Article cover images contain English text on the Spanish and Arabic pages; their text alternatives are translated.',
-  ],
-  ['quotes', 'Recommendations are quoted in their original English.'],
-] as const;
+const accessibilityLimitations = ['covers', 'quotes'] as const;
 // en-GB gives "16 October 2026"; es/ar use their own long date style.
 const accessibilityReviewed = new Date('2026-10-16T00:00:00Z');
 const accessibilityReviewedLabel = accessibilityReviewed.toLocaleDateString(
@@ -73,41 +63,29 @@ const accessibilityReviewedLabel = accessibilityReviewed.toLocaleDateString(
 const notFoundLinks = [
   {
     href: href('/'),
-    label: tx('page.notFound.homeLabel', 'Home'),
-    body: tx(
-      'page.notFound.homeBody',
-      'Profile summary, stack, experience, and contact paths.',
-    ),
+    label: tx('page.notFound.homeLabel'),
+    body: tx('page.notFound.homeBody'),
     iconPath:
       'M4.5 11.5 12 5l7.5 6.5V20a1 1 0 0 1-1 1h-4.25v-5.25h-4.5V21H5.5a1 1 0 0 1-1-1v-8.5Z',
   },
   {
     href: href('/work/'),
-    label: tx('page.notFound.workLabel', 'Case studies'),
-    body: tx(
-      'page.notFound.workBody',
-      'Decisions, constraints, and outcomes from frontend projects.',
-    ),
+    label: tx('page.notFound.workLabel'),
+    body: tx('page.notFound.workBody'),
     iconPath:
       'M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v11A2.5 2.5 0 0 1 16.5 20h-9A2.5 2.5 0 0 1 5 17.5v-11Zm4 1.75h6M9 12h6M9 15.75h3.5',
   },
   {
     href: href('/blog/'),
-    label: tx('page.notFound.blogLabel', 'Articles'),
-    body: tx(
-      'page.notFound.blogBody',
-      'Guides on performance, accessibility, and frontend architecture.',
-    ),
+    label: tx('page.notFound.blogLabel'),
+    body: tx('page.notFound.blogBody'),
     iconPath:
       'M6.5 5h11A1.5 1.5 0 0 1 19 6.5v11A1.5 1.5 0 0 1 17.5 19h-11A1.5 1.5 0 0 1 5 17.5v-11A1.5 1.5 0 0 1 6.5 5Zm2 4h7M8.5 12h7M8.5 15h4',
   },
   {
     href: href('/contact/'),
-    label: tx('page.notFound.contactLabel', 'Contact'),
-    body: tx(
-      'page.notFound.contactBody',
-      'Send project context or use direct email.',
-    ),
+    label: tx('page.notFound.contactLabel'),
+    body: tx('page.notFound.contactBody'),
     iconPath:
       'M4.75 7.5A2.25 2.25 0 0 1 7 5.25h10a2.25 2.25 0 0 1 2.25 2.25v9A2.25 2.25 0 0 1 17 18.75H7a2.25 2.25 0 0 1-2.25-2.25v-9Zm1.75.25 5.5 4.1 5.5-4.1',
   },
@@ -121,13 +99,8 @@ const notFoundLinks = [
         <>
           <div>
             <>
-              <p class="eyebrow">{tx('page.about.eyebrow', 'About')}</p>
-              <h1>
-                {tx(
-                  'page.about.title',
-                  'Designing for clarity, speed, and access',
-                )}
-              </h1>
+              <p class="eyebrow">{tx('page.about.eyebrow')}</p>
+              <h1>{tx('page.about.title')}</h1>
             </>
           </div>
           <div>
@@ -135,7 +108,7 @@ const notFoundLinks = [
               <p>{paragraph}</p>
             ))}
             <div class="philosophy-card fx-glow" data-glow>
-              <h2>{tx('page.about.philosophy', 'Design philosophy')}</h2>
+              <h2>{tx('page.about.philosophy')}</h2>
               <p>{profile.philosophy}</p>
             </div>
             <p>
@@ -144,7 +117,7 @@ const notFoundLinks = [
                 href="/assets/suprabhat-kumar-senior-frontend-engineer-resume.pdf"
                 download
               >
-                {tx('action.resume', 'Download résumé')}
+                {tx('action.resume')}
               </a>
             </p>
           </div>
@@ -158,8 +131,8 @@ const notFoundLinks = [
     <section class="page section">
       <div class="wrap">
         <>
-          <p class="eyebrow">{tx('page.skills.eyebrow', 'Skills')}</p>
-          <h1>{tx('page.skills.title', 'Frontend engineering expertise')}</h1>
+          <p class="eyebrow">{tx('page.skills.eyebrow')}</p>
+          <h1>{tx('page.skills.title')}</h1>
           <p class="lead">{skillsLead}</p>
           <div class="grid three">
             {skillGroups.map((group, index) => (
@@ -189,10 +162,8 @@ const notFoundLinks = [
     <section class="page section">
       <div class="wrap">
         <>
-          <p class="eyebrow">{tx('page.experience.eyebrow', 'Experience')}</p>
-          <h1>
-            {tx('page.experience.title', 'Six years of interface delivery')}
-          </h1>
+          <p class="eyebrow">{tx('page.experience.eyebrow')}</p>
+          <h1>{tx('page.experience.title')}</h1>
           <ExperienceTimeline {locale} headingLevel="h2" />
         </>
       </div>
@@ -204,23 +175,13 @@ const notFoundLinks = [
     <section class="page section">
       <div class="wrap">
         <>
-          <p class="eyebrow">{tx('page.tools.eyebrow', 'Tools')}</p>
-          <h1>{tx('page.tools.title', 'A focused working stack')}</h1>
-          <p class="lead">
-            {tx(
-              'page.tools.intro',
-              'These are the tools I reach for most often in production frontend work. The list is short on purpose: I choose a tool after understanding the user task, the data flow, the failure states and the maintenance cost, not because it is new.',
-            )}
-          </p>
+          <p class="eyebrow">{tx('page.tools.eyebrow')}</p>
+          <h1>{tx('page.tools.title')}</h1>
+          <p class="lead">{tx('page.tools.intro')}</p>
           {getToolGroups().map((group) => (
             <div class="tool-group">
-              <h2>{tx(`page.tools.group.${group.id}.title`, group.heading)}</h2>
-              <p>
-                {tx(
-                  `page.tools.group.${group.id}.description`,
-                  group.description,
-                )}
-              </p>
+              <h2>{tx(`page.tools.group.${group.id}.title`)}</h2>
+              <p>{tx(`page.tools.group.${group.id}.description`)}</p>
               <ul class="tool-grid">
                 {group.tools.map((tool) => (
                   <li class="fx-glow" data-glow>
@@ -241,10 +202,7 @@ const notFoundLinks = [
           ))}
           <p class="tool-closing">
             <a class="text-link" href={href('/work/')}>
-              {tx(
-                'page.tools.closing',
-                'See how these come together in the case studies.',
-              )}
+              {tx('page.tools.closing')}
             </a>
           </p>
         </>
@@ -257,8 +215,8 @@ const notFoundLinks = [
     <section class="page section">
       <div class="wrap">
         <>
-          <p class="eyebrow">{tx('page.work.eyebrow', 'Work')}</p>
-          <h1>{tx('page.work.title', 'Selected internal product work')}</h1>
+          <p class="eyebrow">{tx('page.work.eyebrow')}</p>
+          <h1>{tx('page.work.title')}</h1>
           <p class="lead">{internalWorkNotice}</p>
           {openSourceWork && caseStudySlugs.has(openSourceWork.id) && (
             <OpenSourceSpotlight
@@ -286,7 +244,7 @@ const notFoundLinks = [
                 </ul>
                 {caseStudySlugs.has(item.id) && (
                   <a class="text-link" href={href(`/work/${item.id}/`)}>
-                    {tx('caseStudy.read', 'Read case study')}
+                    {tx('caseStudy.read')}
                   </a>
                 )}
               </article>
@@ -302,10 +260,8 @@ const notFoundLinks = [
     <section class="page section">
       <div class="wrap">
         <>
-          <p class="eyebrow">
-            {tx('page.recommendations.eyebrow', 'Recommendations')}
-          </p>
-          <h1>{tx('page.recommendations.title', 'What collaborators say')}</h1>
+          <p class="eyebrow">{tx('page.recommendations.eyebrow')}</p>
+          <h1>{tx('page.recommendations.title')}</h1>
           {recommendations.length > 0 ? (
             <div class="grid two">
               {recommendations.map((item) => (
@@ -347,14 +303,9 @@ const notFoundLinks = [
     <section class="page section">
       <div class="wrap">
         <>
-          <p class="eyebrow">{tx('page.services.eyebrow', 'Services')}</p>
-          <h1>{tx('page.services.title', 'Frontend engineering services')}</h1>
-          <p class="lead">
-            {tx(
-              'page.services.lead',
-              'Focused engagements to improve a React product, data-heavy interface, design system, or public website.',
-            )}
-          </p>
+          <p class="eyebrow">{tx('page.services.eyebrow')}</p>
+          <h1>{tx('page.services.title')}</h1>
+          <p class="lead">{tx('page.services.lead')}</p>
           <div class="grid three">
             {services.map((service, index) => (
               <article
@@ -368,27 +319,24 @@ const notFoundLinks = [
                 <p>{service.description}</p>
                 {service.fit && (
                   <p>
-                    <strong>{tx('service.fit', 'Best for')}:</strong>{' '}
-                    {service.fit}
+                    <strong>{tx('service.fit')}:</strong> {service.fit}
                   </p>
                 )}
                 {service.deliverables && (
                   <p>
-                    <strong>
-                      {tx('service.deliverables', 'Deliverables')}:
-                    </strong>{' '}
+                    <strong>{tx('service.deliverables')}:</strong>{' '}
                     {service.deliverables}
                   </p>
                 )}
                 {service.exclusions && (
                   <p>
-                    <strong>{tx('service.exclusions', 'Not included')}:</strong>{' '}
+                    <strong>{tx('service.exclusions')}:</strong>{' '}
                     {service.exclusions}
                   </p>
                 )}
                 {service.duration && (
                   <p>
-                    <strong>{tx('service.duration', 'Duration')}:</strong>{' '}
+                    <strong>{tx('service.duration')}:</strong>{' '}
                     {service.duration}
                   </p>
                 )}
@@ -405,8 +353,8 @@ const notFoundLinks = [
     <section class="page section">
       <div class="wrap narrow">
         <>
-          <p class="eyebrow">{tx('page.faq.eyebrow', 'FAQ')}</p>
-          <h1>{tx('page.faq.title', 'Working together')}</h1>
+          <p class="eyebrow">{tx('page.faq.eyebrow')}</p>
+          <h1>{tx('page.faq.title')}</h1>
           <FAQList {locale} />
         </>
       </div>
@@ -420,47 +368,16 @@ const notFoundLinks = [
         <>
           <div>
             <>
-              <p class="eyebrow">{tx('page.contact.eyebrow', 'Contact')}</p>
-              <h1>
-                {tx('page.contact.title', 'Discuss a defined frontend project')}
-              </h1>
-              <p>
-                {tx(
-                  'page.contact.projectLead',
-                  'Looking to hire me for frontend architecture, a defined React build, or a technical audit? Review the engagement parameters below and send the project context by email or through the form.',
-                )}
-              </p>
+              <p class="eyebrow">{tx('page.contact.eyebrow')}</p>
+              <h1>{tx('page.contact.title')}</h1>
+              <p>{tx('page.contact.projectLead')}</p>
               <ul class="bullets">
-                <li>
-                  {tx(
-                    'page.contact.capacity',
-                    `${engagement.weeklyCapacity} · ${engagement.availability}`,
-                  )}
-                </li>
-                <li>
-                  {tx('page.contact.responseTime', engagement.responseTime)}
-                </li>
-                <li>
-                  {tx('page.contact.discoveryCall', engagement.discoveryCall)}
-                </li>
-                <li>
-                  {tx(
-                    'page.contact.proposal',
-                    `Proposals: ${engagement.proposalTurnaround}`,
-                  )}
-                </li>
-                <li>
-                  {tx(
-                    'page.contact.budget',
-                    `Scoped project budget: ${engagement.minimumProjectBudget} or more`,
-                  )}
-                </li>
-                <li>
-                  {tx(
-                    'page.contact.overlap',
-                    `${engagement.realtimeOverlap} from ${engagement.meetingWindow}`,
-                  )}
-                </li>
+                <li>{tx('page.contact.capacity')}</li>
+                <li>{tx('page.contact.responseTime')}</li>
+                <li>{tx('page.contact.discoveryCall')}</li>
+                <li>{tx('page.contact.proposal')}</li>
+                <li>{tx('page.contact.budget')}</li>
+                <li>{tx('page.contact.overlap')}</li>
               </ul>
               <p>
                 <a class="text-link" href={`mailto:${profile.email}`} dir="ltr">
@@ -477,12 +394,8 @@ const notFoundLinks = [
                 </a>
               </p>
               <aside class="notice">
-                <strong>
-                  {tx('page.contact.recruiters', 'Corporate recruiters')}
-                </strong>
-                <p>
-                  {tx('page.contact.recruiterBody', engagement.recruiterRoute)}
-                </p>
+                <strong>{tx('page.contact.recruiters')}</strong>
+                <p>{tx('page.contact.recruiterBody')}</p>
                 {linkedin && (
                   <a
                     class="text-link"
@@ -490,7 +403,7 @@ const notFoundLinks = [
                     target="_blank"
                     rel="noreferrer"
                   >
-                    {tx('page.contact.linkedin', 'Contact on LinkedIn')}
+                    {tx('page.contact.linkedin')}
                   </a>
                 )}
               </aside>
@@ -518,50 +431,33 @@ const notFoundLinks = [
     <section class="page section">
       <div class="wrap narrow">
         <>
-          <p class="eyebrow">
-            {tx('page.accessibility.eyebrow', 'Accessibility')}
-          </p>
-          <h1>{tx('page.accessibility.title', 'Accessibility statement')}</h1>
-          <p class="lead">
-            {tx(
-              'page.accessibility.commitment',
-              'I want everyone to be able to read this site and contact me, whatever device, browser or assistive technology they use. The target is WCAG 2.2 level AA.',
-            )}
-          </p>
-          <h2>{tx('page.accessibility.inPlaceTitle', 'What is in place')}</h2>
+          <p class="eyebrow">{tx('page.accessibility.eyebrow')}</p>
+          <h1>{tx('page.accessibility.title')}</h1>
+          <p class="lead">{tx('page.accessibility.commitment')}</p>
+          <h2>{tx('page.accessibility.inPlaceTitle')}</h2>
           <ul class="bullets">
-            {accessibilityInPlace.map(([id, text]) => (
-              <li>{tx(`page.accessibility.inPlace.${id}`, text)}</li>
+            {accessibilityInPlace.map((id) => (
+              <li>{tx(`page.accessibility.inPlace.${id}`)}</li>
             ))}
           </ul>
-          <h2>{tx('page.accessibility.testedTitle', 'How it is tested')}</h2>
-          <p>
-            {tx(
-              'page.accessibility.tested',
-              'Automated axe checks against WCAG 2.2 AA run in the end-to-end test suite on every change before it is deployed. Lighthouse accessibility audits are also run on key pages.',
-            )}
-          </p>
-          <h2>
-            {tx('page.accessibility.limitationsTitle', 'Known limitations')}
-          </h2>
+          <h2>{tx('page.accessibility.testedTitle')}</h2>
+          <p>{tx('page.accessibility.tested')}</p>
+          <h2>{tx('page.accessibility.limitationsTitle')}</h2>
           <ul class="bullets">
-            {accessibilityLimitations.map(([id, text]) => (
-              <li>{tx(`page.accessibility.limitations.${id}`, text)}</li>
+            {accessibilityLimitations.map((id) => (
+              <li>{tx(`page.accessibility.limitations.${id}`)}</li>
             ))}
           </ul>
-          <h2>{tx('page.accessibility.feedbackTitle', 'Feedback')}</h2>
+          <h2>{tx('page.accessibility.feedbackTitle')}</h2>
           <p>
-            {tx(
-              'page.accessibility.contact',
-              'Content remains readable and navigable without JavaScript. If you encounter a barrier, email ',
-            )}
+            {tx('page.accessibility.contact')}
             <a href={`mailto:${profile.email}`} dir="ltr">
               {profile.email}
             </a>
             .
           </p>
           <p class="accessibility-reviewed">
-            {tx('page.accessibility.reviewed', 'Last reviewed:')}{' '}
+            {tx('page.accessibility.reviewed')}{' '}
             <time datetime="2026-10-16">{accessibilityReviewedLabel}</time>
           </p>
         </>
@@ -574,19 +470,11 @@ const notFoundLinks = [
     <section class="page section">
       <div class="wrap narrow">
         <>
-          <p class="eyebrow">{tx('page.privacy.eyebrow', 'Privacy')}</p>
-          <h1>{tx('page.privacy.title', 'Contact form privacy')}</h1>
+          <p class="eyebrow">{tx('page.privacy.eyebrow')}</p>
+          <h1>{tx('page.privacy.title')}</h1>
+          <p>{tx('page.privacy.body')}</p>
           <p>
-            {tx(
-              'page.privacy.body',
-              'This site does not install analytics. While you type, visible form fields are saved only in this browser so a refresh does not erase your draft. After you submit, the fields are sent through Web3Forms by email and the browser draft is deleted.',
-            )}
-          </p>
-          <p>
-            {tx(
-              'page.privacy.contact',
-              'Do not include sensitive personal information. You can instead email ',
-            )}
+            {tx('page.privacy.contact')}
             <a href={`mailto:${profile.email}`} dir="ltr">
               {profile.email}
             </a>
@@ -602,14 +490,9 @@ const notFoundLinks = [
   page === 'blog' && (
     <section class="page section">
       <div class="wrap narrow">
-        <p class="eyebrow">{tx('page.blog.eyebrow', 'Writing')}</p>
-        <h1>{tx('page.blog.title', 'Frontend engineering articles')}</h1>
-        <p class="lead">
-          {tx(
-            'page.blog.lead',
-            'Practical guides on accessible interfaces, performance, maintainable architecture, and professional UI delivery.',
-          )}
-        </p>
+        <p class="eyebrow">{tx('page.blog.eyebrow')}</p>
+        <h1>{tx('page.blog.title')}</h1>
+        <p class="lead">{tx('page.blog.lead')}</p>
 
         <div class="article-list">
           {posts.map((post, index) => (
@@ -639,14 +522,9 @@ const notFoundLinks = [
               {index === 0 && (
                 <nav
                   class="topic-cloud"
-                  aria-label={tx(
-                    'blog.taxonomy.allTopics',
-                    'All article topics',
-                  )}
+                  aria-label={tx('blog.taxonomy.allTopics')}
                 >
-                  <strong>
-                    {tx('blog.taxonomy.allTopics', 'All article topics')}
-                  </strong>
+                  <strong>{tx('blog.taxonomy.allTopics')}</strong>
                   <ul class="tag-list">
                     {tagGroups.map((group) => (
                       <li>
@@ -676,60 +554,37 @@ const notFoundLinks = [
       <div class="wrap not-found-shell">
         <div class="not-found-hero">
           <Meteors count={12} />
-          <p class="eyebrow">{tx('page.notFound.eyebrow', 'Error 404')}</p>
+          <p class="eyebrow">{tx('page.notFound.eyebrow')}</p>
           <div class="not-found-code" aria-hidden="true">
             <span>4</span>
             <span class="not-found-orb">0</span>
             <span>4</span>
           </div>
-          <p class="not-found-kicker">
-            {tx('page.notFound.kicker', 'Route not found')}
-          </p>
-          <h1 id="not-found-title">
-            {tx('page.notFound.title', 'That page is not here')}
-          </h1>
-          <p class="lead">
-            {tx(
-              'page.notFound.lead',
-              'This URL did not resolve, but the site is still available. Use these quick paths to return to work, writing, services, or contact.',
-            )}
-          </p>
-          <p class="not-found-body">
-            {tx(
-              'page.notFound.body',
-              'The address may have changed, or the page may no longer exist.',
-            )}
-          </p>
+          <p class="not-found-kicker">{tx('page.notFound.kicker')}</p>
+          <h1 id="not-found-title">{tx('page.notFound.title')}</h1>
+          <p class="lead">{tx('page.notFound.lead')}</p>
+          <p class="not-found-body">{tx('page.notFound.body')}</p>
           <div
             class="actions not-found-actions"
-            aria-label={tx('page.notFound.actionsAria', 'Recovery actions')}
+            aria-label={tx('page.notFound.actionsAria')}
           >
             <a class="button primary" href={href('/')}>
-              {tx('page.notFound.primaryCta', 'Back to home')}
+              {tx('page.notFound.primaryCta')}
             </a>
             <a class="button" href={href('/work/')}>
-              {tx('page.notFound.secondaryCta', 'View case studies')}
+              {tx('page.notFound.secondaryCta')}
             </a>
             <a class="button" href={href('/contact/')}>
-              {tx('page.notFound.tertiaryCta', 'Contact')}
+              {tx('page.notFound.tertiaryCta')}
             </a>
           </div>
         </div>
 
         <aside class="not-found-panel" aria-labelledby="not-found-panel-title">
-          <p class="eyebrow">
-            {tx('page.notFound.panelTitle', 'Useful routes')}
-          </p>
-          <h2 id="not-found-panel-title">
-            {tx('page.notFound.panelTitle', 'Useful routes')}
-          </h2>
-          <p>
-            {tx(
-              'page.notFound.panelLead',
-              'Every link here is static, crawlable, localized, and accessible without JavaScript.',
-            )}
-          </p>
-          <nav aria-label={tx('page.notFound.panelTitle', 'Useful routes')}>
+          <p class="eyebrow">{tx('page.notFound.panelTitle')}</p>
+          <h2 id="not-found-panel-title">{tx('page.notFound.panelTitle')}</h2>
+          <p>{tx('page.notFound.panelLead')}</p>
+          <nav aria-label={tx('page.notFound.panelTitle')}>
             <ul class="not-found-links">
               {notFoundLinks.map((item) => (
                 <li>
@@ -759,13 +614,8 @@ const notFoundLinks = [
             </ul>
           </nav>
           <div class="not-found-seo-note">
-            <strong>{tx('page.notFound.seoTitle', 'Indexing status')}</strong>
-            <p>
-              {tx(
-                'page.notFound.seoBody',
-                'This page is noindexed, excluded from the sitemap, and keeps internal links available for people and crawlers to recover useful content.',
-              )}
-            </p>
+            <strong>{tx('page.notFound.seoTitle')}</strong>
+            <p>{tx('page.notFound.seoBody')}</p>
           </div>
         </aside>
       </div>

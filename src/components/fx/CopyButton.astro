@@ -20,7 +20,7 @@ interface Props {
 }
 
 const { value, label, locale, class: className } = Astro.props;
-const copyText = t(locale, 'copy.action', 'Copy');
+const copyText = t(locale, 'copy.action');
 ---
 
 <span class:list={['copy-control', className]}>
@@ -29,16 +29,8 @@ const copyText = t(locale, 'copy.action', 'Copy');
     class="copy-btn"
     data-copy-value={value}
     data-state="idle"
-    data-announce-copied={t(
-      locale,
-      'copy.announceCopied',
-      'Copied to clipboard',
-    )}
-    data-announce-failed={t(
-      locale,
-      'copy.announceFailed',
-      'Copy failed. Select the text and copy it manually.',
-    )}
+    data-announce-copied={t(locale, 'copy.announceCopied')}
+    data-announce-failed={t(locale, 'copy.announceFailed')}
     aria-label={`${copyText} ${label}`}
     hidden
   >
@@ -62,8 +54,8 @@ const copyText = t(locale, 'copy.action', 'Copy');
     </svg>
     <span class="copy-btn-labels" aria-hidden="true">
       <span data-label="idle">{copyText}</span>
-      <span data-label="copied">{t(locale, 'copy.copied', 'Copied')}</span>
-      <span data-label="error">{t(locale, 'copy.failed', 'Retry')}</span>
+      <span data-label="copied">{t(locale, 'copy.copied')}</span>
+      <span data-label="error">{t(locale, 'copy.failed')}</span>
     </span>
   </button>
   <span class="sr-only" role="status" data-copy-status></span>
