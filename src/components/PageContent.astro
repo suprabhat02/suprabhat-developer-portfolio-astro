@@ -45,17 +45,20 @@ const dateLocale = localeMeta[locale].htmlLang;
 const tx = (key: MessageKey) => t(locale, key);
 const accessibilityInPlace = [
   'landmarks',
+  'lang',
   'focus',
   'targets',
+  'errors',
   'motion',
   'contrast',
+  'forcedColors',
   'rtl',
   'nojs',
   'images',
 ] as const;
 const accessibilityLimitations = ['covers', 'quotes'] as const;
-// en-GB gives "16 October 2026"; es/ar use their own long date style.
-const accessibilityReviewed = new Date('2026-10-16T00:00:00Z');
+// en-GB gives "19 October 2026"; es/ar use their own long date style.
+const accessibilityReviewed = new Date('2026-10-19T00:00:00Z');
 const accessibilityReviewedLabel = accessibilityReviewed.toLocaleDateString(
   locale === 'en' ? 'en-GB' : localeMeta[locale].htmlLang,
   { dateStyle: 'long', timeZone: 'UTC' },
@@ -437,6 +440,8 @@ const notFoundLinks = [
           <p class="eyebrow">{tx('page.accessibility.eyebrow')}</p>
           <h1>{tx('page.accessibility.title')}</h1>
           <p class="lead">{tx('page.accessibility.commitment')}</p>
+          <h2>{tx('page.accessibility.scopeTitle')}</h2>
+          <p>{tx('page.accessibility.scope')}</p>
           <h2>{tx('page.accessibility.inPlaceTitle')}</h2>
           <ul class="bullets">
             {accessibilityInPlace.map((id) => (
@@ -461,7 +466,7 @@ const notFoundLinks = [
           </p>
           <p class="accessibility-reviewed">
             {tx('page.accessibility.reviewed')}{' '}
-            <time datetime="2026-10-16">{accessibilityReviewedLabel}</time>
+            <time datetime="2026-10-19">{accessibilityReviewedLabel}</time>
           </p>
         </>
       </div>

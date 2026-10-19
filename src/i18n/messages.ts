@@ -228,9 +228,18 @@ const en = {
     'Content that stays readable without JavaScript.',
   'page.accessibility.inPlace.images':
     'Text alternatives for meaningful images.',
+  'page.accessibility.inPlace.errors':
+    'Form errors gathered in a summary that receives focus, with a link to each field that needs attention.',
+  'page.accessibility.inPlace.lang':
+    'Each page declares its language and text direction.',
+  'page.accessibility.inPlace.forcedColors':
+    'Gradient headings that fall back to plain system text colors in Windows high-contrast (forced colors) mode.',
+  'page.accessibility.scopeTitle': 'Scope',
+  'page.accessibility.scope':
+    'This statement covers suprabhat-dev.com in English, Spanish and Arabic, including the articles, case studies and contact form.',
   'page.accessibility.testedTitle': 'How it is tested',
   'page.accessibility.tested':
-    'Automated axe checks against WCAG 2.2 AA run in the end-to-end test suite on every change before it is deployed. Lighthouse accessibility audits are also run on key pages.',
+    'Automated axe checks against WCAG 2.2 AA run in the end-to-end test suite on every change before it is deployed, in both desktop and mobile browser profiles, including light-theme and right-to-left pages. Lighthouse accessibility audits are also run on key pages.',
   'page.accessibility.limitationsTitle': 'Known limitations',
   'page.accessibility.limitations.covers':
     'Article cover images contain English text on the Spanish and Arabic pages; their text alternatives are translated.',
@@ -664,9 +673,18 @@ const es: Translations = {
     'Contenido que sigue siendo legible sin JavaScript.',
   'page.accessibility.inPlace.images':
     'Alternativas textuales para las imágenes con significado.',
+  'page.accessibility.inPlace.errors':
+    'Errores de formulario reunidos en un resumen que recibe el foco, con un enlace a cada campo que necesita atención.',
+  'page.accessibility.inPlace.lang':
+    'Cada página declara su idioma y su dirección de texto.',
+  'page.accessibility.inPlace.forcedColors':
+    'Encabezados con degradado que recurren a los colores de texto del sistema en el modo de alto contraste de Windows (colores forzados).',
+  'page.accessibility.scopeTitle': 'Alcance',
+  'page.accessibility.scope':
+    'Esta declaración abarca suprabhat-dev.com en inglés, español y árabe, incluidos los artículos, los casos de estudio y el formulario de contacto.',
   'page.accessibility.testedTitle': 'Cómo se prueba',
   'page.accessibility.tested':
-    'Las comprobaciones automáticas con axe según las WCAG 2.2 AA se ejecutan en el conjunto de pruebas end-to-end en cada cambio antes de publicarlo. También se realizan auditorías de accesibilidad con Lighthouse en las páginas principales.',
+    'Las comprobaciones automáticas con axe según las WCAG 2.2 AA se ejecutan en el conjunto de pruebas end-to-end en cada cambio antes de publicarlo, con perfiles de navegador de escritorio y móvil, e incluyen páginas con el tema claro y de derecha a izquierda. También se realizan auditorías de accesibilidad con Lighthouse en las páginas principales.',
   'page.accessibility.limitationsTitle': 'Limitaciones conocidas',
   'page.accessibility.limitations.covers':
     'Las imágenes de portada de los artículos contienen texto en inglés en las páginas en español y en árabe; sus alternativas textuales están traducidas.',
@@ -1095,9 +1113,17 @@ const ar: Translations = {
     'صفحات عربية بتخطيط من اليمين إلى اليسار، مع إبقاء الشيفرة من اليسار إلى اليمين.',
   'page.accessibility.inPlace.nojs': 'محتوى يبقى مقروءًا دون JavaScript.',
   'page.accessibility.inPlace.images': 'بدائل نصية للصور ذات المعنى.',
+  'page.accessibility.inPlace.errors':
+    'تُجمَع أخطاء النموذج في ملخص ينتقل إليه التركيز، مع رابط إلى كل حقل يحتاج إلى تصحيح.',
+  'page.accessibility.inPlace.lang': 'تُعلن كل صفحة لغتها واتجاه نصها.',
+  'page.accessibility.inPlace.forcedColors':
+    'عناوين متدرجة الألوان تعود إلى ألوان نص النظام في وضع التباين العالي في Windows (الألوان القسرية).',
+  'page.accessibility.scopeTitle': 'النطاق',
+  'page.accessibility.scope':
+    'يشمل هذا البيان موقع suprabhat-dev.com باللغات الإنجليزية والإسبانية والعربية، بما في ذلك المقالات ودراسات الحالة ونموذج التواصل.',
   'page.accessibility.testedTitle': 'كيف يُختبَر',
   'page.accessibility.tested':
-    'تعمل فحوص axe الآلية وفق WCAG 2.2 AA ضمن مجموعة الاختبارات الشاملة (end-to-end) مع كل تغيير قبل نشره. كما تُجرى تدقيقات إمكانية الوصول في Lighthouse على الصفحات الرئيسية.',
+    'تعمل فحوص axe الآلية وفق WCAG 2.2 AA ضمن مجموعة الاختبارات الشاملة (end-to-end) مع كل تغيير قبل نشره، على ملفات تعريف متصفح لسطح المكتب والجوال، وتشمل صفحات بالسمة الفاتحة وصفحات من اليمين إلى اليسار. كما تُجرى تدقيقات إمكانية الوصول في Lighthouse على الصفحات الرئيسية.',
   'page.accessibility.limitationsTitle': 'قيود معروفة',
   'page.accessibility.limitations.covers':
     'تحتوي صور أغلفة المقالات على نص إنجليزي في الصفحات الإسبانية والعربية؛ أما بدائلها النصية فمترجمة.',

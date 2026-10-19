@@ -1353,23 +1353,34 @@ test('accessibility statement is complete, dated and axe-clean in every locale',
   page,
 }) => {
   for (const [prefix, reviewed] of [
-    ['', '16 October 2026'],
-    ['/es', '16 de octubre de 2026'],
-    ['/ar', '16 أكتوبر 2026'],
+    ['', '19 October 2026'],
+    ['/es', '19 de octubre de 2026'],
+    ['/ar', '19 أكتوبر 2026'],
   ] as const) {
     await page.goto(`${prefix}/accessibility/`);
     await expect(page.locator('main h1')).toHaveCount(1);
-    await expect(page.locator('main h2')).toHaveCount(4);
+    await expect(page.locator('main h2')).toHaveCount(5);
     await expect(
       page.locator('main .bullets').first().locator('li'),
-    ).toHaveCount(8);
+    ).toHaveCount(11);
     await expect(
       page.locator('main .bullets').nth(1).locator('li'),
     ).toHaveCount(2);
     await expect(page.locator('main a[href^="mailto:"]')).toHaveCount(1);
     await expect(
-      page.locator('.accessibility-reviewed time[datetime="2026-10-16"]'),
+      page.locator('.accessibility-reviewed time[datetime="2026-10-19"]'),
     ).toHaveText(reviewed);
+    if (prefix === '') {
+      const words = await page
+        .locator('main')
+        .evaluate(
+          (main) =>
+            (main as HTMLElement).innerText.match(
+              /[\p{L}\p{N}][\p{L}\p{N}'’.+×-]*/gu,
+            )?.length ?? 0,
+        );
+      expect(words).toBeGreaterThanOrEqual(250);
+    }
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
       'content',
       'index,follow',
