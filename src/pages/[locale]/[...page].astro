@@ -1,131 +1,33 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageContent from '../../components/PageContent.astro';
-import { localeMeta, localePrefix, type Locale } from '../../i18n/config';
+import { localeMeta, localePrefix } from '../../i18n/config';
 import { t } from '../../i18n/messages';
 import { faqs } from '../../data/faqs';
 import { getServices } from '../../data/services';
+import {
+  getSectionPageMeta,
+  sectionPages,
+  type SectionPage,
+} from '../../data/pageSeo';
 import { SITE_URL, NOINDEX_PAGES } from '../../config/site';
 
-type PageName =
-  | 'about'
-  | 'skills'
-  | 'experience'
-  | 'tools'
-  | 'work'
-  | 'recommendations'
-  | 'services'
-  | 'faq'
-  | 'contact'
-  | 'accessibility'
-  | 'privacy'
-  | 'blog';
 export function getStaticPaths() {
-  const pageNames = [
-    'about',
-    'skills',
-    'experience',
-    'tools',
-    'work',
-    'recommendations',
-    'services',
-    'faq',
-    'contact',
-    'accessibility',
-    'privacy',
-    'blog',
-  ] as const;
   return (['es', 'ar'] as const).flatMap((locale) =>
-    pageNames.map((page) => ({
+    sectionPages.map((page) => ({
       params: { locale, page },
       props: { locale, page },
     })),
   );
 }
-const { locale, page } = Astro.props as { locale: Locale; page: PageName };
+
+interface Props {
+  locale: 'es' | 'ar';
+  page: SectionPage;
+}
+const { locale, page } = Astro.props;
 const pageLabel = t(locale, `nav.${page}`);
-// Section pages follow the EN pattern: page, role keyword, then the name.
-const titleRole: Record<Exclude<Locale, 'en'>, string> = {
-  es: 'Ingeniero Frontend Sénior',
-  ar: 'مهندس واجهات أمامية أول',
-};
-const roleTitledPages: readonly PageName[] = [
-  'about',
-  'blog',
-  'contact',
-  'experience',
-  'services',
-  'tools',
-  'work',
-];
-// Long labels use the shorter role so the title stays within 60 characters.
-const shortRoleTitles: Partial<
-  Record<Locale, Partial<Record<PageName, string>>>
-> = {
-  es: {
-    recommendations: 'Recomendaciones | Ingeniero Frontend — Suprabhat Kumar',
-    faq: 'Preguntas frecuentes | Ingeniero Frontend — Suprabhat Kumar',
-  },
-  ar: {
-    recommendations: 'التوصيات | مهندس واجهات أمامية أول — Suprabhat Kumar',
-    faq: 'الأسئلة الشائعة | مهندس واجهات أمامية أول — Suprabhat Kumar',
-  },
-};
-const title =
-  shortRoleTitles[locale]?.[page] ??
-  (locale !== 'en' && roleTitledPages.includes(page)
-    ? `${pageLabel} | ${titleRole[locale]} — Suprabhat Kumar`
-    : `${pageLabel} — Suprabhat Kumar`);
-const descriptions: Record<Locale, Record<PageName, string>> = {
-  es: {
-    about:
-      'Perfil de Suprabhat Kumar, ingeniero frontend sénior especializado en interfaces SaaS rápidas, accesibles y mantenibles.',
-    skills:
-      'Competencias de ingeniería frontend de Suprabhat Kumar: React, Next.js, TypeScript, TanStack Query, GraphQL, MongoDB, sistemas de diseño y accesibilidad.',
-    experience:
-      'Seis años de ingeniería frontend en Topsoe, Cognizant, TrueBlue, MobileCoderz y Swaragh Technologies, con productos SaaS e interfaces empresariales.',
-    tools:
-      'Herramientas y tecnologías que utiliza Suprabhat Kumar para crear productos frontend rápidos y escalables, incluyendo TanStack Query, GraphQL y MongoDB.',
-    work: 'Trabajo interno de producto seleccionado por Suprabhat Kumar, centrado en rendimiento, accesibilidad y sistemas de interfaz.',
-    recommendations:
-      'Recomendaciones para Suprabhat Kumar de colegas de ingeniería de IA, control de calidad, plataforma, investigación UX, SEO y asuntos regulatorios.',
-    services:
-      'Servicios de ingeniería frontend: desarrollo SaaS, paneles de datos, React, sistemas de diseño, rendimiento y accesibilidad.',
-    faq: 'Respuestas a preguntas frecuentes sobre servicios, precios, colaboración remota y plazos de proyectos frontend.',
-    contact:
-      'Habla con Suprabhat Kumar sobre un panel React, una revisión de arquitectura, un sistema de diseño o una auditoría de rendimiento o accesibilidad.',
-    accessibility:
-      'Declaración de accesibilidad de suprabhat-dev.com: objetivo WCAG 2.2 AA, qué está implementado, cómo se prueba, limitaciones y cómo avisar de una barrera.',
-    privacy:
-      'Cómo se gestiona la información enviada mediante el formulario de contacto de Suprabhat Kumar.',
-    blog: 'Artículos de ingeniería frontend: rendimiento, accesibilidad, arquitectura y entrega profesional de interfaces.',
-  },
-  ar: {
-    about:
-      'تعرّف على مسيرة سوبرابهات كومار الممتدة ست سنوات في الواجهات الأمامية: بوابات SaaS ولوحات تحكم مؤسسية ومعمارية React وإمكانية الوصول والعمل مع فرق عالمية.',
-    skills:
-      'مهارات سوبرابهات كومار في هندسة الواجهات الأمامية: React وNext.js وTypeScript وTanStack Query وGraphQL وMongoDB وأنظمة التصميم وإمكانية الوصول.',
-    experience:
-      'ست سنوات من خبرة سوبرابهات كومار في هندسة الواجهات الأمامية لدى Topsoe وCognizant وTrueBlue وMobileCoderz وSwaragh Technologies في منتجات SaaS.',
-    tools:
-      'الأدوات والتقنيات التي يستخدمها سوبرابهات كومار لإنشاء منتجات واجهات أمامية سريعة وقابلة للتوسع، بما في ذلك TanStack Query وGraphQL وMongoDB.',
-    work: 'دراسات حالة في الواجهات الأمامية حول لوحات بيانات SaaS وأنظمة التصميم وأداء React وإمكانية الوصول وSEO في Astro والتوطين واختبارات المتصفح.',
-    recommendations:
-      'توصيات لسوبرابهات كومار من زملاء في هندسة الذكاء الاصطناعي وضمان الجودة والمنصات وأبحاث تجربة المستخدم وSEO والشؤون التنظيمية.',
-    services:
-      'خدمات سوبرابهات كومار: تدقيق أداء React، ومراجعات المعمارية، ولوحات بيانات SaaS، وأنظمة التصميم، وإمكانية الوصول، وتسليم مواقع الويب.',
-    faq: 'إجابات عن الأسئلة الشائعة حول الخدمات والأسعار والتعاون عن بُعد والجداول الزمنية وكيفية بدء مشروع واجهات أمامية مع سوبرابهات كومار.',
-    contact:
-      'ناقش مع سوبرابهات كومار لوحة بيانات React أو مراجعة معمارية أو نظام تصميم أو تدقيقًا للأداء أو لإمكانية الوصول أو مشروع موقع ويب.',
-    accessibility:
-      'بيان إمكانية الوصول لموقع suprabhat-dev.com: الهدف WCAG 2.2 AA، وما هو مطبَّق، وكيف يُختبَر، والقيود المعروفة، وكيفية الإبلاغ عن أي عائق.',
-    privacy:
-      'كيفية التعامل مع المعلومات المرسلة من خلال نموذج التواصل الخاص بسوبرابهات كومار.',
-    blog: 'أدلة عملية في React وهندسة الواجهات الأمامية حول المعمارية وإمكانية الوصول والأداء ومراجعة الشيفرة وأنظمة التصميم والواجهات القابلة للصيانة.',
-  },
-  en: {} as Record<PageName, string>,
-};
-const description = descriptions[locale][page];
+const { title, description } = getSectionPageMeta(locale, page);
 const language = localeMeta[locale].htmlLang;
 const localeRoot = `${localePrefix(locale)}/`;
 const services = getServices(locale);

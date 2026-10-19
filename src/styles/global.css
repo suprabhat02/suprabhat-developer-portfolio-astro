@@ -95,14 +95,6 @@ textarea {
 .skip-link:focus {
   transform: none;
 }
-.translation-notice {
-  padding: 0.65rem 1rem;
-  margin-top: 6rem;
-  text-align: center;
-  color: var(--text);
-  background: var(--accent-soft);
-  border-block: 1px solid color-mix(in oklch, var(--accent) 30%, transparent);
-}
 
 .site-header {
   position: fixed;
@@ -310,9 +302,7 @@ textarea {
   margin-inline-start: auto;
   z-index: 2;
 }
-.theme-toggle,
-.language-menu summary,
-.mobile-nav summary {
+.theme-toggle {
   min-width: 34px;
   min-height: 34px;
   display: grid;
@@ -323,44 +313,6 @@ textarea {
   color: var(--text);
   cursor: pointer;
   list-style: none;
-}
-.language-menu,
-.mobile-nav {
-  position: relative;
-}
-.language-menu summary::-webkit-details-marker,
-.mobile-nav summary::-webkit-details-marker {
-  display: none;
-}
-.language-menu > div,
-.mobile-nav nav {
-  position: absolute;
-  top: calc(100% + 0.6rem);
-  inset-inline-end: 0;
-  min-width: 11rem;
-  padding: 0.4rem;
-  background: color-mix(in oklch, var(--bg-card) 95%, transparent);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow);
-  -webkit-backdrop-filter: blur(14px) saturate(1.25);
-  backdrop-filter: blur(14px) saturate(1.25);
-}
-.language-menu a,
-.mobile-nav a {
-  display: block;
-  padding: 0.65rem 0.8rem;
-  border-radius: var(--radius-control);
-  text-decoration: none;
-  text-transform: capitalize;
-}
-.language-menu a:hover,
-.mobile-nav a:hover {
-  background: var(--accent-soft);
-  color: var(--accent-strong);
-}
-.mobile-nav {
-  display: none;
 }
 .hdr-dropdown {
   position: relative;
@@ -679,10 +631,6 @@ main {
 }
 :lang(ar) .section h2 {
   line-height: 1.2;
-}
-.hero-tagline {
-  color: var(--accent-strong);
-  font-weight: 650;
 }
 .lead {
   color: var(--muted);
@@ -1124,9 +1072,6 @@ main {
   gap: 1.25rem;
   margin-top: 3rem;
   padding-inline-start: 2.25rem;
-}
-.timeline > .fx-beam {
-  inset-inline-start: 0.3rem;
 }
 .timeline > article {
   position: relative;

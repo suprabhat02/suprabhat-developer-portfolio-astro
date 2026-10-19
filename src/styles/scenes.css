@@ -1002,21 +1002,13 @@
 /* ── Card layer: parallax depth ───────────────────────────────────── */
 /* `--px/--py` (−0.5…0.5) are written by the tilt handler in motion.ts. */
 
-.fx-live .lv-l,
-.fx-live .lv-lift {
-  transition: translate 700ms var(--fx-ease-out);
-}
-
 .fx-live .lv-l {
   translate: calc(var(--px, 0) * var(--d, 1) * 16px)
     calc(var(--py, 0) * var(--d, 1) * 10px);
+  transition: translate 700ms var(--fx-ease-out);
 }
 
-.fx-live .lv-lift {
-  translate: calc(var(--px, 0) * -6px) calc(var(--py, 0) * -4px);
-}
-
-.fx-live[data-tilting] :is(.lv-l, .lv-lift) {
+.fx-live[data-tilting] .lv-l {
   transition-duration: 160ms;
 }
 
@@ -1025,7 +1017,7 @@
     animation: none !important;
   }
 
-  .fx-live :is(.lv-l, .lv-lift) {
+  .fx-live .lv-l {
     translate: none;
     transition: none;
   }
