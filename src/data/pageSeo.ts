@@ -125,8 +125,8 @@ const localizedDescriptions: Record<
     experience:
       'Seis años de ingeniería frontend en Topsoe, Cognizant, TrueBlue, MobileCoderz y Swaragh Technologies, con productos SaaS e interfaces empresariales.',
     tools:
-      'Herramientas y tecnologías que utiliza Suprabhat Kumar para crear productos frontend rápidos y escalables, incluyendo TanStack Query, GraphQL y MongoDB.',
-    work: 'Trabajo interno de producto seleccionado por Suprabhat Kumar, centrado en rendimiento, accesibilidad y sistemas de interfaz.',
+      'Herramientas y tecnologías que utiliza Suprabhat Kumar para crear productos frontend rápidos y escalables, como TanStack Query, GraphQL y MongoDB.',
+    work: 'Casos de estudio de Suprabhat Kumar sobre paneles SaaS, sistemas de diseño, rendimiento en React y accesibilidad.',
     recommendations:
       'Recomendaciones para Suprabhat Kumar de colegas de ingeniería de IA, control de calidad, plataforma, investigación UX, SEO y asuntos regulatorios.',
     services:

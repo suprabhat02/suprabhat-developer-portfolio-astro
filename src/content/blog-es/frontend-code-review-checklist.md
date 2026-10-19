@@ -1,6 +1,6 @@
 ---
 title: 'Checklist de revisión de código frontend antes de desplegar'
-description: 'Un flujo práctico de revisión para detectar problemas funcionales, de accesibilidad, responsive, rendimiento y mantenibilidad antes de una release frontend.'
+description: 'Un flujo práctico de revisión para detectar problemas funcionales, de accesibilidad, responsive, rendimiento y mantenibilidad antes de cada lanzamiento.'
 pubDate: 2026-08-27
 heroImage: /images/blog/frontend-code-review-checklist-cover-1600x840.png
 tags: ['Revisión de código', 'Accesibilidad', 'Rendimiento']
