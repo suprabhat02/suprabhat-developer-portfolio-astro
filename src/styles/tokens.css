@@ -18,6 +18,10 @@
  *   --accent-2                              secondary brand color
  *   --on-accent                             text placed on an accent fill
  *   --success, --warning, --danger          semantic states
+ *   --shadow-ink                            drop-shadow ink; add alpha with
+ *                                           color-mix()
+ *   --highlight                             glint/sheen channels (R G B); use
+ *                                           as rgb(var(--highlight) / 0.2)
  * See docs/THEMING.md.
  */
 
@@ -75,6 +79,12 @@
   --shadow: 0 24px 70px oklch(0 0 0 / 0.4);
   --shadow-sm: 0 2px 12px oklch(0 0 0 / 0.35);
   --shadow-card: 0 1px 1px oklch(0 0 0 / 0.2), 0 4px 24px oklch(0 0 0 / 0.3);
+  /* Opaque ink for one-off shadows; add alpha with color-mix(). */
+  --shadow-ink: oklch(0 0 0);
+  /* Glints and sheens sit inside gradients. A color-mix() stop would switch
+     the gradient to OKLab interpolation, so this is plain sRGB channels:
+     rgb(var(--highlight) / <alpha>). White in both themes. */
+  --highlight: 255 255 255;
   --header-fill: color-mix(in oklch, var(--bg) 80%, transparent);
   color-scheme: dark;
 }
@@ -108,6 +118,7 @@
   --shadow-card:
     0 1px 1px oklch(0.3 0.05 var(--seed-neutral-h) / 0.05),
     0 4px 24px oklch(0.3 0.05 var(--seed-neutral-h) / 0.09);
+  --shadow-ink: oklch(0.3 0.05 var(--seed-neutral-h));
   --header-fill: color-mix(in oklch, var(--bg-card) 86%, transparent);
   color-scheme: light;
 }

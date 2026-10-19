@@ -9,9 +9,9 @@ grounds, text, buttons, glows, gradients, borders, focus rings, and both themes.
 
 | Seed                 | Default | Controls                                    |
 | -------------------- | ------- | ------------------------------------------- |
-| `--seed-primary-h`   | `292`   | Brand hue (electric violet)                 |
-| `--seed-secondary-h` | `200`   | Secondary hue used in gradients (cyan)      |
-| `--seed-neutral-h`   | `268`   | Hue bias of backgrounds and text (midnight) |
+| `--seed-primary-h`   | `225`   | Brand hue (ocean blue)                      |
+| `--seed-secondary-h` | `185`   | Secondary hue used in gradients (teal)      |
+| `--seed-neutral-h`   | `235`   | Hue bias of backgrounds and text (deep sea) |
 | `--seed-chroma`      | `0.2`   | Brand saturation, `0` (grey) to about `0.3` |
 | `--seed-success-h`   | `155`   | Success state                               |
 | `--seed-warning-h`   | `75`    | Warning state                               |
@@ -70,6 +70,29 @@ literal:
 ```css
 background: color-mix(in oklch, var(--info) 12%, transparent);
 ```
+
+Shadows and glints work the same way. `--shadow-ink` (black in dark mode, a
+neutral-tinted ink in light mode) is opaque; mix in the alpha where it is used:
+
+```css
+box-shadow: 0 10px 30px color-mix(in oklch, var(--shadow-ink) 20%, transparent);
+```
+
+`--highlight` is white held as sRGB channels, because glints sit inside
+gradients and a `color-mix()` stop would switch the whole gradient to OKLab
+interpolation. Use it as `rgb(var(--highlight) / 0.28)`.
+
+The only literal colors left outside `tokens.css` are mask stops (`#000` in
+`mask` or `mask-image`, where only alpha matters), the static copies listed
+under "Make it permanent", and the canvas fallbacks in `globe.ts`.
+
+## Stacking order
+
+Fixed layers use the scale in `global.css` instead of raw numbers, lowest
+first: `--z-float` (back to top), `--z-header`, `--z-menu` (mobile menu),
+`--z-toast`, `--z-overlay` (skip link) and `--z-palette` (dev-only picker).
+Small values from -2 to 2 that only order layers inside one component stay
+local.
 
 ## Effects that follow the tokens
 
