@@ -17,7 +17,7 @@ Este artículo cubre las carencias que más veo en bases de código React: el fo
 
 ## Por qué la mayoría de los consejos de accesibilidad en React se quedan cortos
 
-Los analizadores automáticos como axe y Lighthouse hacen bien una cosa: inspeccionar el documento en un momento concreto. Encuentran etiquetas ausentes, botones vacíos, atributos ARIA no válidos y contraste insuficiente. Son [defectos reales](https://www.w3.org/TR/WCAG22/), y todo proyecto debería bloquearlos en la integración continua.
+Los analizadores automáticos como axe y Lighthouse hacen bien una cosa: inspeccionar el documento en un momento concreto. Encuentran etiquetas ausentes, botones vacíos, atributos ARIA no válidos y contraste insuficiente. Son fallos reales de [WCAG](https://www.w3.org/TR/WCAG22/), y todo proyecto debería bloquearlos en la integración continua.
 
 Lo que un analizador no ve es el comportamiento a lo largo del tiempo. No sabe que el foco desapareció en el `body` al cerrar tu modal. No puede detectar que tu desplegable a medida ignora las flechas del teclado, ni que un usuario de lector de pantalla no oyó nada cuando un formulario se guardó con éxito. Una página puede sacar un 100 y seguir siendo inutilizable sin ratón.
 
