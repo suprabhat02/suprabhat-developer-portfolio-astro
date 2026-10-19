@@ -1,7 +1,6 @@
 ---
 import { SITE_URL } from '../config/site';
 import { getProfile } from '../data/profile';
-import { engagement } from '../data/engagement';
 import { localePrefix, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
 
@@ -34,76 +33,28 @@ const formClass =
       id={formId}
       action="https://api.web3forms.com/submit"
       method="POST"
-      aria-label={t(locale, 'home.contactForm', 'Project enquiry form')}
+      aria-label={t(locale, 'home.contactForm')}
       data-contact-form
-      data-error-name={t(locale, 'form.errorName', 'Enter your name.')}
-      data-error-email={t(
-        locale,
-        'form.errorEmail',
-        'Enter a valid email address.',
-      )}
-      data-error-project-type={t(
-        locale,
-        'form.errorProjectType',
-        'Select a project type.',
-      )}
-      data-error-budget={t(
-        locale,
-        'form.errorBudget',
-        'Select a budget range.',
-      )}
-      data-error-timeline={t(
-        locale,
-        'form.errorTimeline',
-        'Select a timeline.',
-      )}
-      data-error-message={t(
-        locale,
-        'form.errorMessage',
-        'Tell me about the project.',
-      )}
-      data-error-summary={t(
-        locale,
-        'form.errorSummary',
-        'Please review the highlighted fields.',
-      )}
-      data-unconfigured={t(
-        locale,
-        'form.unconfigured',
-        'The contact form is not configured yet. Please email directly.',
-      )}
-      data-send={t(locale, 'form.send', 'Send enquiry')}
-      data-sending={t(locale, 'form.sending', 'Sending...')}
-      data-success={t(
-        locale,
-        'form.success',
-        'Message sent. Thank you for sharing the project details.',
-      )}
-      data-failure={t(
-        locale,
-        'form.failure',
-        'Something went wrong. Please email directly.',
-      )}
-      data-network-error={t(
-        locale,
-        'form.networkError',
-        'Network error. Please email directly.',
-      )}
-      data-success-title={t(locale, 'form.successTitle', 'Message sent')}
-      data-failure-title={t(locale, 'form.failureTitle', 'Message not sent')}
-      data-dismiss={t(locale, 'form.dismiss', 'Dismiss notification')}
-      data-toast-region-label={t(locale, 'form.toastRegion', 'Notifications')}
+      data-error-name={t(locale, 'form.errorName')}
+      data-error-email={t(locale, 'form.errorEmail')}
+      data-error-project-type={t(locale, 'form.errorProjectType')}
+      data-error-budget={t(locale, 'form.errorBudget')}
+      data-error-timeline={t(locale, 'form.errorTimeline')}
+      data-error-message={t(locale, 'form.errorMessage')}
+      data-error-summary={t(locale, 'form.errorSummary')}
+      data-unconfigured={t(locale, 'form.unconfigured')}
+      data-send={t(locale, 'form.send')}
+      data-sending={t(locale, 'form.sending')}
+      data-success={t(locale, 'form.success')}
+      data-failure={t(locale, 'form.failure')}
+      data-network-error={t(locale, 'form.networkError')}
+      data-success-title={t(locale, 'form.successTitle')}
+      data-failure-title={t(locale, 'form.failureTitle')}
+      data-dismiss={t(locale, 'form.dismiss')}
+      data-toast-region-label={t(locale, 'form.toastRegion')}
       data-draft-key={`portfolio-contact-draft:${locale}:${variant}`}
-      data-draft-saved={t(
-        locale,
-        'form.draftSaved',
-        'Draft saved on this device',
-      )}
-      data-draft-restored={t(
-        locale,
-        'form.draftRestored',
-        'Draft restored from this device',
-      )}
+      data-draft-saved={t(locale, 'form.draftSaved')}
+      data-draft-restored={t(locale, 'form.draftRestored')}
     >
       <input type="hidden" name="access_key" value={accessKey} />
       <input type="hidden" name="subject" value="Portfolio project enquiry" />
@@ -125,42 +76,26 @@ const formClass =
         tabindex="-1"
         hidden
       >
-        <strong>
-          {t(
-            locale,
-            'form.errorSummary',
-            'Please review the highlighted fields.',
-          )}
-        </strong>
+        <strong>{t(locale, 'form.errorSummary')}</strong>
         <ul data-error-list />
       </div>
 
-      <p>
-        {t(
-          locale,
-          'form.qualificationNote',
-          `Project enquiries start at ${engagement.minimumProjectBudget}. Include your goals, technical requirements, timeline, and documented budget.`,
-        )}
-      </p>
+      <p>{t(locale, 'form.qualificationNote')}</p>
       <output class="form-draft-status" data-draft-status aria-live="polite" />
 
       <fieldset class="form-section">
-        <legend>{t(locale, 'form.aboutYou', 'About you')}</legend>
+        <legend>{t(locale, 'form.aboutYou')}</legend>
         <div class="form-row">
           <div class="f-field">
             <label class="f-label" for={fieldId('name')}>
-              {t(locale, 'form.name', 'Name')} <span aria-hidden="true">*</span>
+              {t(locale, 'form.name')} <span aria-hidden="true">*</span>
             </label>
             <input
               class="f-input"
               id={fieldId('name')}
               name="name"
               autocomplete="name"
-              placeholder={t(
-                locale,
-                'form.placeholderName',
-                'e.g. Alex Morgan',
-              )}
+              placeholder={t(locale, 'form.placeholderName')}
               required
               aria-describedby={fieldId('name-error')}
             />
@@ -168,8 +103,7 @@ const formClass =
           </div>
           <div class="f-field">
             <label class="f-label" for={fieldId('email')}>
-              {t(locale, 'form.email', 'Email')}{' '}
-              <span aria-hidden="true">*</span>
+              {t(locale, 'form.email')} <span aria-hidden="true">*</span>
             </label>
             <input
               class="f-input"
@@ -178,11 +112,7 @@ const formClass =
               name="email"
               autocomplete="email"
               inputmode="email"
-              placeholder={t(
-                locale,
-                'form.placeholderEmail',
-                'you@company.com',
-              )}
+              placeholder={t(locale, 'form.placeholderEmail')}
               required
               dir="ltr"
               aria-describedby={fieldId('email-error')}
@@ -193,31 +123,24 @@ const formClass =
 
         <div class="f-field">
           <label class="f-label" for={fieldId('company')}>
-            {t(locale, 'form.company', 'Company or team')}
-            <span class="f-optional">
-              {t(locale, 'form.optional', 'Optional')}
-            </span>
+            {t(locale, 'form.company')}
+            <span class="f-optional">{t(locale, 'form.optional')}</span>
           </label>
           <input
             class="f-input"
             id={fieldId('company')}
             name="company"
             autocomplete="organization"
-            placeholder={t(
-              locale,
-              'form.placeholderCompany',
-              'e.g. Acme Analytics',
-            )}
+            placeholder={t(locale, 'form.placeholderCompany')}
           />
         </div>
       </fieldset>
 
       <fieldset class="form-section">
-        <legend>{t(locale, 'form.projectFit', 'Project fit')}</legend>
+        <legend>{t(locale, 'form.projectFit')}</legend>
         <div class="f-field">
           <label class="f-label" for={fieldId('project-type')}>
-            {t(locale, 'form.projectType', 'Project type')}{' '}
-            <span aria-hidden="true">*</span>
+            {t(locale, 'form.projectType')} <span aria-hidden="true">*</span>
           </label>
           <select
             class="f-input"
@@ -227,42 +150,24 @@ const formClass =
             aria-describedby={fieldId('project-type-error')}
           >
             <option value="" disabled selected>
-              {t(locale, 'form.chooseProjectType', 'Choose a project type')}
+              {t(locale, 'form.chooseProjectType')}
             </option>
             <option value="product-frontend">
-              {t(
-                locale,
-                'form.projectProduct',
-                'Defined React frontend project',
-              )}
+              {t(locale, 'form.projectProduct')}
             </option>
             <option value="design-system">
-              {t(locale, 'form.projectDesignSystem', 'Design system')}
+              {t(locale, 'form.projectDesignSystem')}
             </option>
             <option value="performance-accessibility">
-              {t(
-                locale,
-                'form.projectPerformance',
-                'Performance or accessibility',
-              )}
+              {t(locale, 'form.projectPerformance')}
             </option>
             <option value="technical-consulting">
-              {t(
-                locale,
-                'form.projectConsulting',
-                'Async architecture advisory',
-              )}
+              {t(locale, 'form.projectConsulting')}
             </option>
             <option value="website-development">
-              {t(
-                locale,
-                'form.projectWebsite',
-                'Website design and development',
-              )}
+              {t(locale, 'form.projectWebsite')}
             </option>
-            <option value="other">
-              {t(locale, 'form.projectOther', 'Other')}
-            </option>
+            <option value="other">{t(locale, 'form.projectOther')}</option>
           </select>
           <span class="f-error" id={fieldId('project-type-error')} />
         </div>
@@ -270,8 +175,7 @@ const formClass =
         <div class="form-row">
           <div class="f-field">
             <label class="f-label" for={fieldId('budget')}>
-              {t(locale, 'form.budget', 'Budget range')}{' '}
-              <span aria-hidden="true">*</span>
+              {t(locale, 'form.budget')} <span aria-hidden="true">*</span>
             </label>
             <select
               class="f-input"
@@ -281,27 +185,20 @@ const formClass =
               aria-describedby={fieldId('budget-error')}
             >
               <option value="" disabled selected>
-                {t(locale, 'form.chooseBudget', 'Choose a budget range')}
+                {t(locale, 'form.chooseBudget')}
               </option>
-              <option value="5k-15k">
-                {t(locale, 'form.budget5k15k', 'USD 5,000–15,000')}
-              </option>
-              <option value="15k-30k">
-                {t(locale, 'form.budget15k30k', 'USD 15,000–30,000')}
-              </option>
+              <option value="5k-15k">{t(locale, 'form.budget5k15k')}</option>
+              <option value="15k-30k">{t(locale, 'form.budget15k30k')}</option>
               <option value="30k-plus">
-                {t(locale, 'form.budget30kPlus', 'USD 30,000+')}
+                {t(locale, 'form.budget30kPlus')}
               </option>
-              <option value="not-sure">
-                {t(locale, 'form.notSure', 'Not sure yet')}
-              </option>
+              <option value="not-sure">{t(locale, 'form.notSure')}</option>
             </select>
             <span class="f-error" id={fieldId('budget-error')} />
           </div>
           <div class="f-field">
             <label class="f-label" for={fieldId('timeline')}>
-              {t(locale, 'form.timeline', 'Desired timeline')}{' '}
-              <span aria-hidden="true">*</span>
+              {t(locale, 'form.timeline')} <span aria-hidden="true">*</span>
             </label>
             <select
               class="f-input"
@@ -311,19 +208,19 @@ const formClass =
               aria-describedby={fieldId('timeline-error')}
             >
               <option value="" disabled selected>
-                {t(locale, 'form.chooseTimeline', 'Choose a timeline')}
+                {t(locale, 'form.chooseTimeline')}
               </option>
               <option value="within-month">
-                {t(locale, 'form.timelineMonth', 'Within one month')}
+                {t(locale, 'form.timelineMonth')}
               </option>
               <option value="one-three-months">
-                {t(locale, 'form.timelineQuarter', 'One to three months')}
+                {t(locale, 'form.timelineQuarter')}
               </option>
               <option value="three-plus-months">
-                {t(locale, 'form.timelineLater', 'More than three months')}
+                {t(locale, 'form.timelineLater')}
               </option>
               <option value="exploring">
-                {t(locale, 'form.timelineExploring', 'Exploring options')}
+                {t(locale, 'form.timelineExploring')}
               </option>
             </select>
             <span class="f-error" id={fieldId('timeline-error')} />
@@ -332,11 +229,10 @@ const formClass =
       </fieldset>
 
       <fieldset class="form-section">
-        <legend>{t(locale, 'form.projectBrief', 'Project brief')}</legend>
+        <legend>{t(locale, 'form.projectBrief')}</legend>
         <div class="f-field">
           <label class="f-label" for={fieldId('message')}>
-            {t(locale, 'form.details', 'Project details')}{' '}
-            <span aria-hidden="true">*</span>
+            {t(locale, 'form.details')} <span aria-hidden="true">*</span>
           </label>
           <textarea
             class="f-input"
@@ -345,11 +241,7 @@ const formClass =
             rows="6"
             required
             aria-describedby={fieldId('message-error')}
-            placeholder={t(
-              locale,
-              'form.messagePlaceholder',
-              'Goals, current constraints, and what a successful outcome looks like.',
-            )}
+            placeholder={t(locale, 'form.messagePlaceholder')}
           />
           <span class="f-error" id={fieldId('message-error')} />
         </div>
@@ -360,23 +252,19 @@ const formClass =
           class={variant === 'homepage' ? 'btn btn-primary' : 'button primary'}
           type="submit"
         >
-          {t(locale, 'form.send', 'Send enquiry')}
+          {t(locale, 'form.send')}
         </button>
         <output data-form-status aria-live="polite" class="f-status" />
       </div>
       <p class="form-email-fallback">
-        {t(locale, 'home.preferEmail', 'Prefer email?')}{' '}
+        {t(locale, 'home.preferEmail')}{' '}
         <a href={`mailto:${email}`} dir="ltr">
           {email}
         </a>
       </p>
       {linkedin && (
         <p class="form-email-fallback">
-          {t(
-            locale,
-            'form.recruiterRoute',
-            'Corporate recruiter? Skip this project form and contact me through',
-          )}{' '}
+          {t(locale, 'form.recruiterRoute')}{' '}
           <a href={linkedin.href} target="_blank" rel="noreferrer">
             LinkedIn
           </a>
@@ -386,15 +274,9 @@ const formClass =
     </form>
   ) : (
     <div class="notice">
-      <p>
-        {t(
-          locale,
-          'form.unavailable',
-          'The contact form is unavailable in this environment.',
-        )}
-      </p>
+      <p>{t(locale, 'form.unavailable')}</p>
       <a class="button primary" href={`mailto:${email}`}>
-        {t(locale, 'form.emailSuprabhat', 'Email Suprabhat')}
+        {t(locale, 'form.emailSuprabhat')}
       </a>
     </div>
   )
@@ -444,9 +326,8 @@ const formClass =
           if (savedDraft) {
             const values = JSON.parse(savedDraft) as Record<string, string>;
             draftFields.forEach((field) => {
-              if (typeof values[field.name] === 'string') {
-                field.value = values[field.name];
-              }
+              const value = values[field.name];
+              if (typeof value === 'string') field.value = value;
             });
             if (draftStatus) {
               draftStatus.textContent = form.dataset.draftRestored ?? '';

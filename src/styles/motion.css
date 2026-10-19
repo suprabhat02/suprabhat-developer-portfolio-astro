@@ -265,31 +265,6 @@
   }
 }
 
-/* ── Gradient text (Aceternity text shimmer) ────────────────────────── */
-
-.fx-gradient-text {
-  color: var(--accent);
-  background: linear-gradient(
-    110deg,
-    var(--accent) 0%,
-    var(--accent-strong) 30%,
-    var(--accent-2) 55%,
-    var(--accent) 80%
-  );
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  /* Static on purpose: animating background-position repaints on the main
-     thread every frame, which measurably inflates Total Blocking Time. */
-}
-
-@media (forced-colors: active) {
-  .fx-gradient-text {
-    background: none;
-    -webkit-text-fill-color: currentColor;
-  }
-}
-
 /* ── Moving border (Aceternity "Moving Border") ─────────────────────── */
 /* A rotated conic layer clipped by the element: compositor-only motion. */
 
@@ -458,10 +433,6 @@
   animation-name: fx-marquee-rtl;
 }
 
-.fx-marquee--reverse .fx-marquee-track {
-  animation-direction: reverse;
-}
-
 .fx-marquee:hover .fx-marquee-track,
 .fx-marquee:focus-within .fx-marquee-track {
   animation-play-state: paused;
@@ -590,40 +561,6 @@
   transform: translateX(-50%) scaleX(var(--lamp-scale, 1));
 }
 
-/* ── Beam line (Aceternity "Timeline" tracing beam) ─────────────────── */
-
-.fx-beam {
-  position: absolute;
-  inset-block: 0;
-  width: 2px;
-  border-radius: var(--radius-pill);
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    var(--fx-grid-line) 8%,
-    var(--fx-grid-line) 92%,
-    transparent
-  );
-  overflow: hidden;
-  overflow: clip;
-}
-
-.fx-beam::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    to bottom,
-    var(--accent-2),
-    var(--accent) 45%,
-    var(--accent-strong) 90%,
-    transparent
-  );
-  transform-origin: top;
-  transform: scaleY(1);
-}
-
 /* ── Ping dot (status indicator) ────────────────────────────────────── */
 
 .fx-ping {
@@ -681,40 +618,32 @@
 }
 
 /* Hover or keyboard focus on the surrounding card replays the icon. */
-:where(.fx-glow, .fx-icon-host, a, button):is(:hover, :focus-visible)
-  .fx-icon
-  > *,
-:where(.fx-glow, .fx-icon-host):focus-within .fx-icon > * {
+:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon > *,
+:where(.fx-glow):focus-within .fx-icon > * {
   animation: fx-icon-draw 760ms var(--fx-ease-out) both;
 }
 
-:where(.fx-glow, .fx-icon-host, a, button):is(:hover, :focus-visible)
-  .fx-icon--bob {
+:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--bob {
   animation: fx-icon-bob 900ms var(--fx-ease-spring);
 }
 
-:where(.fx-glow, .fx-icon-host, a, button):is(:hover, :focus-visible)
-  .fx-icon--wave {
+:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--wave {
   animation: fx-icon-wave 900ms ease-in-out;
 }
 
-:where(.fx-glow, .fx-icon-host, a, button):is(:hover, :focus-visible)
-  .fx-icon--swing {
+:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--swing {
   animation: fx-icon-swing 900ms var(--fx-ease-spring);
 }
 
-:where(.fx-glow, .fx-icon-host, a, button):is(:hover, :focus-visible)
-  .fx-icon--pulse {
+:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--pulse {
   animation: fx-icon-pulse 700ms var(--fx-ease-spring);
 }
 
-:where(.fx-glow, .fx-icon-host, a, button):is(:hover, :focus-visible)
-  .fx-icon--nudge {
+:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--nudge {
   animation: fx-icon-nudge 600ms var(--fx-ease-spring);
 }
 
-:where(.fx-glow, .fx-icon-host, a, button):is(:hover, :focus-visible)
-  .fx-icon--spin {
+:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--spin {
   animation: fx-icon-spin 1100ms var(--fx-ease-out);
 }
 
@@ -823,17 +752,6 @@
       animation: fx-icon-draw linear both;
       animation-timeline: view();
       animation-range: entry 10% entry 90%;
-    }
-
-    /* Tracing beam fills while its section scrolls. */
-    .fx-beam::after {
-      animation: fx-beam linear both;
-      animation-timeline: --fx-beam;
-      animation-range: entry 30% exit 70%;
-    }
-
-    .fx-beam-scope {
-      view-timeline-name: --fx-beam;
     }
 
     .fx-lamp-line {
@@ -997,15 +915,6 @@
   }
   to {
     color: var(--text);
-  }
-}
-
-@keyframes fx-beam {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
   }
 }
 

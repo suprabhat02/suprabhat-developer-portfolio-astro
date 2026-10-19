@@ -12,12 +12,8 @@ export function getStaticPaths() {
 }
 
 const { locale } = Astro.props as { locale: Locale };
-const title = `${t(locale, 'page.notFound.title', 'Page not found')} — Suprabhat Kumar`;
-const description = t(
-  locale,
-  'page.notFound.lead',
-  "This URL did not resolve. Use crawlable links to return to Suprabhat Kumar's homepage, case studies, articles, or contact page.",
-);
+const title = `${t(locale, 'page.notFound.title')} — Suprabhat Kumar`;
+const description = t(locale, 'page.notFound.lead');
 ---
 
 <BaseLayout

@@ -80,16 +80,18 @@ const profileTranslations: Partial<Record<Locale, ProfileTranslation>> = {
     lead: 'Creo interfaces SaaS rápidas y accesibles, paneles de datos y sitios web modernos con React, Next.js y TypeScript.',
     eyebrow: {
       role: 'Ingeniero Frontend Sénior',
-      availability: 'Trabajo remoto',
-      from: 'India',
+      availability: '24–28 horas semanales · Contratos remotos',
+      from: 'Noida Extension, India · IST (UTC+5:30)',
     },
     about: [
-      'Ingeniero frontend sénior con más de 6 años de experiencia creando plataformas SaaS escalables, paneles empresariales y aplicaciones web de alto rendimiento.',
-      'Ayudo a los equipos a entregar sistemas de UI rápidos, accesibles y mantenibles con una arquitectura predecible, componentes reutilizables y presupuestos de rendimiento que funcionan en producción.',
-      'Especializado en paneles con muchos datos, sistemas de diseño y arquitectura frontend moderna con React, Next.js y TypeScript.',
+      'Soy Suprabhat Kumar, también conocido como Shubh, ingeniero frontend sénior y diseñador web con base en Noida Extension, India. Durante seis años he creado portales SaaS, paneles empresariales, bibliotecas de componentes y sitios web públicos con React, Next.js y TypeScript. Actualmente trabajo como Software Engineer III en Topsoe, donde desarrollo interfaces con gran volumen de datos y funcionalidades full-stack junto a equipos distribuidos en Dinamarca y China.',
+      'Mi carrera comenzó con desarrollo de UI en Swaragh Technologies y continuó con puestos frontend en MobileCoderz, TrueBlue y Cognizant. En MobileCoderz pasé a un puesto frontend sénior, fui mentor de otros desarrolladores y participé en revisiones de arquitectura. En Cognizant entregué interfaces SaaS con React y TypeScript junto a un equipo australiano de investigación y desarrollo. Esa trayectoria me enseñó a trabajar con distintas restricciones de producto, zonas horarias y bases de código en diferentes etapas de madurez.',
+      'Me especializo en las partes del trabajo frontend que se complican a medida que un producto crece: paneles con muchos datos, límites entre estado y API, sistemas de componentes reutilizables, rendimiento de renderizado e interacción accesible. Mi stack habitual incluye Redux Toolkit, RTK Query, TanStack Query, AG Grid, Storybook, FastAPI y PostgreSQL. Elijo las herramientas después de entender la tarea del usuario, el flujo de datos, los estados de error y el coste de mantenimiento, en lugar de tratar un framework como la solución.',
+      'Mi forma de trabajar es directa: aclarar qué decisión apoya una interfaz, modelar los estados de carga y error antes del camino ideal, construir el sistema mantenible más pequeño posible y verificarlo con comprobación de tipos, pruebas en navegador, revisión de accesibilidad y medición de rendimiento. Las decisiones por escrito y los avances documentados mantienen visible el trabajo remoto sin llenar el calendario de reuniones de seguimiento.',
+      'Estoy disponible para proyectos freelance remotos y contratos a tiempo parcial, con 24–28 horas semanales de capacidad y horario de tarde desde India que se solapa con equipos de América y Europa. Encajo mejor con empresas SaaS, startups o agencias digitales que necesiten apoyo frontend sénior para un desarrollo React concreto, un panel de datos, una revisión de arquitectura, un sistema de diseño, una auditoría de accesibilidad o una investigación de rendimiento.',
     ],
     philosophy:
-      'Creo que una gran UI es invisible: rápida, inclusiva y enfocada en la tarea. Construyo con presupuestos de rendimiento, listas de verificación de accesibilidad y prácticas de ingeniería limpias desde el primer día, tanto para sitios web como para aplicaciones frontend.',
+      'Una interfaz útil deja clara la siguiente decisión. Empiezo por las tareas del usuario y los estados de error, y a partir de esa evidencia doy forma a los componentes, el flujo de datos, la accesibilidad y el rendimiento. El resultado debe ser comprensible para los usuarios y mantenible para el equipo que lo gestiona.',
     portraitAlt: 'Retrato de Suprabhat Kumar, ingeniero de software frontend',
   },
   ar: {
@@ -99,16 +101,18 @@ const profileTranslations: Partial<Record<Locale, ProfileTranslation>> = {
     lead: 'أبني واجهات SaaS سريعة ومتاحة، ولوحات بيانات، ومواقع حديثة باستخدام React وNext.js وTypeScript.',
     eyebrow: {
       role: 'مهندس واجهات أمامية أول',
-      availability: 'متاح للعمل عن بعد',
-      from: 'الهند',
+      availability: '24–28 ساعة أسبوعيًا · عقود عن بُعد',
+      from: 'نويدا إكستنشن، الهند · IST (UTC+5:30)',
     },
     about: [
-      'مهندس واجهات أمامية أول بخبرة تزيد على 6 سنوات في بناء منصات SaaS قابلة للتوسع، ولوحات تحكم مؤسسية، وتطبيقات ويب عالية الأداء.',
-      'أساعد الفرق على تقديم أنظمة UI سريعة ومتاحة وقابلة للصيانة من خلال معمارية واضحة، ومكونات قابلة لإعادة الاستخدام، وميزانيات أداء تصمد في الإنتاج.',
-      'متخصص في لوحات البيانات الكثيفة، وأنظمة التصميم، ومعمارية الواجهات الأمامية الحديثة باستخدام React وNext.js وTypeScript.',
+      'أنا سوبرابهات كومار، وأُعرف أيضًا باسم Shubh، مهندس واجهات أمامية أول ومصمم مواقع مقيم في نويدا إكستنشن بالهند. على مدى ست سنوات، بنيت بوابات SaaS ولوحات تحكم مؤسسية ومكتبات مكونات ومواقع عامة باستخدام React وNext.js وTypeScript. أعمل حاليًا بمنصب Software Engineer III في Topsoe، حيث أطوّر واجهات كثيفة البيانات وميزات full-stack مع فرق موزعة في الدنمارك والصين.',
+      'بدأت مسيرتي في تطوير واجهات المستخدم لدى Swaragh Technologies، ثم انتقلت إلى أدوار في الواجهات الأمامية لدى MobileCoderz وTrueBlue وCognizant. في MobileCoderz ترقيت إلى دور أول في الواجهات الأمامية، ووجّهت مطورين آخرين، وشاركت في مراجعات المعمارية. وفي Cognizant قدّمت واجهات SaaS باستخدام React وTypeScript مع فريق بحث وتطوير في أستراليا. علّمتني هذه المسيرة العمل عبر قيود المنتجات والمناطق الزمنية وقواعد شيفرة في مراحل نضج مختلفة.',
+      'أتخصص في جوانب عمل الواجهات الأمامية التي تزداد صعوبة مع نمو المنتج: لوحات البيانات الكثيفة، والحدود بين الحالة وواجهات API، وأنظمة المكونات القابلة لإعادة الاستخدام، وأداء العرض، والتفاعل المتاح للجميع. تشمل أدواتي المعتادة Redux Toolkit وRTK Query وTanStack Query وAG Grid وStorybook وFastAPI وPostgreSQL. أختار الأدوات بعد فهم مهمة المستخدم وتدفق البيانات وحالات الخطأ وتكلفة الصيانة، بدلًا من التعامل مع إطار العمل على أنه الحل.',
+      'أسلوبي في العمل مباشر: أوضّح القرار الذي تدعمه الواجهة، وأصمم حالات التحميل والخطأ قبل المسار المثالي، وأبني أصغر نظام قابل للصيانة، ثم أتحقق منه بفحص الأنواع واختبارات المتصفح ومراجعة إمكانية الوصول وقياس الأداء. القرارات المكتوبة وتحديثات التقدم تُبقي العمل عن بُعد واضحًا دون ملء التقويم باجتماعات المتابعة.',
+      'أنا متاح لمشاريع العمل الحر عن بُعد والعقود بدوام جزئي، بسعة 24–28 ساعة أسبوعيًا، مع ساعات مسائية من الهند تتداخل مع فرق في الأمريكتين وأوروبا. أنسب ما أكون لشركة SaaS أو شركة ناشئة أو وكالة رقمية تحتاج إلى دعم أول في الواجهات الأمامية لبناء React محدد، أو لوحة بيانات، أو مراجعة معمارية، أو نظام تصميم، أو تدقيق لإمكانية الوصول، أو تحقيق في الأداء.',
     ],
     philosophy:
-      'أؤمن بأن الواجهة الممتازة تكون غير مرئية: سريعة، شاملة، ومركزة على المهمة. أبني منذ اليوم الأول بميزانيات أداء، وقوائم تحقق لإمكانية الوصول، وممارسات هندسية نظيفة للمواقع وتطبيقات الواجهات الأمامية.',
+      'الواجهة المفيدة تجعل القرار التالي واضحًا. أبدأ بمهام المستخدم وحالات الخطأ، ثم أشكّل المكونات وتدفق البيانات وإمكانية الوصول والأداء بناءً على هذه الأدلة. يجب أن تكون النتيجة مفهومة للمستخدمين وقابلة للصيانة من الفريق الذي يملكها.',
     portraitAlt: 'صورة شخصية لسوبرابهات كومار، مهندس واجهات أمامية',
   },
 };

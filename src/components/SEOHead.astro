@@ -13,9 +13,18 @@ interface Props {
   imageAlt?: string;
   localeAlternates?: string[];
   /** Root-relative or absolute; defaults to the site-wide share image. */
-  image?: string;
-  imageWidth?: number;
-  imageHeight?: number;
+  image?: string | undefined;
+  imageWidth?: number | undefined;
+  imageHeight?: number | undefined;
+  /** Open Graph article metadata; dates are YYYY-MM-DD. */
+  article?:
+    | {
+        publishedTime: string;
+        modifiedTime: string;
+        author: string;
+        tags: readonly string[];
+      }
+    | undefined;
 }
 
 const {
@@ -32,10 +41,14 @@ const {
   image: imagePath = DEFAULT_OG_IMAGE,
   imageWidth = 1200,
   imageHeight = 630,
+  article,
 } = Astro.props;
 const image = new URL(imagePath, canonical);
 const ogLocale = (code: string) =>
   code === 'ar' ? 'ar_AR' : code === 'es' ? 'es_ES' : 'en_US';
+// `<` is escaped so no string in the data can close the script element
+// (`</script>`) or open a comment; JSON parsers read `\u003c` back as `<`.
+const schemaJson = schema && JSON.stringify(schema).replaceAll('<', '\\u003c');
 ---
 
 <title>{title}</title>
@@ -58,6 +71,18 @@ const ogLocale = (code: string) =>
 <meta property="og:image:width" content={String(imageWidth)} />
 <meta property="og:image:height" content={String(imageHeight)} />
 <meta property="og:image:alt" content={imageAlt} />
+{
+  article && (
+    <>
+      <meta property="article:published_time" content={article.publishedTime} />
+      <meta property="article:modified_time" content={article.modifiedTime} />
+      <meta property="article:author" content={article.author} />
+      {article.tags.map((tag) => (
+        <meta property="article:tag" content={tag} />
+      ))}
+    </>
+  )
+}
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content="@SuprabhatKarn97" />
 <meta name="twitter:title" content={title} />
@@ -65,11 +90,7 @@ const ogLocale = (code: string) =>
 <meta name="twitter:image" content={image} />
 <meta name="twitter:image:alt" content={imageAlt} />
 {
-  schema && (
-    <script
-      is:inline
-      type="application/ld+json"
-      set:html={JSON.stringify(schema)}
-    />
+  schemaJson && (
+    <script is:inline type="application/ld+json" set:html={schemaJson} />
   )
 }

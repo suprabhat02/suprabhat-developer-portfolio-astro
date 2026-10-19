@@ -55,6 +55,36 @@ export const getBlogPostHref = (locale: Locale, slug: string) =>
 export const getBlogFeedHref = (locale: Locale) =>
   `${localePrefix(locale)}/rss.xml`;
 
+/**
+ * Frontmatter dates are calendar days (`pubDate: 2026-10-15`), parsed as UTC
+ * midnight. Publish them as the day itself, never as a UTC timestamp.
+ */
+export const toIsoDate = (date: Date) => date.toISOString().slice(0, 10);
+
+const RSS_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
+const RSS_MONTHS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+] as const;
+
+/** RFC 822 date for RSS, which needs a time: the start of that day in IST. */
+export const toRssDate = (date: Date) => {
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const weekday = RSS_DAYS[date.getUTCDay()] ?? '';
+  const month = RSS_MONTHS[date.getUTCMonth()] ?? '';
+  return `${weekday}, ${day} ${month} ${date.getUTCFullYear()} 00:00:00 +0530`;
+};
+
 const WORDS_PER_MINUTE = 220;
 
 // Code blocks are skimmed rather than read, so only prose is counted.

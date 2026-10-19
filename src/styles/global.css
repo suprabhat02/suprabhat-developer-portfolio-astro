@@ -16,6 +16,16 @@
   --r-xs: var(--radius-small);
   --font: 'Geist Mono Variable', 'Geist Mono', ui-monospace, monospace;
   --mono: var(--font);
+  /* Stacking order of fixed layers, lowest first. In-component values
+     (-2 to 2) stay local. */
+  --z-float: 55; /* back-to-top button */
+  --z-header: 60;
+  --z-menu: 70; /* mobile navigation sheet */
+  --z-toast: 90;
+  --z-overlay: 100; /* skip link: above everything once focused */
+  /* Dev-only palette picker. Near the int32 maximum, but a value the CSS
+     minifier keeps exactly (it rounds 2147483000 inside custom properties). */
+  --z-palette: 2147480000;
 }
 
 *,
@@ -82,7 +92,7 @@ textarea {
 }
 .skip-link {
   position: fixed;
-  z-index: 100;
+  z-index: var(--z-overlay);
   top: 0.75rem;
   left: 0.75rem;
   padding: 0.75rem 1rem;
@@ -95,18 +105,10 @@ textarea {
 .skip-link:focus {
   transform: none;
 }
-.translation-notice {
-  padding: 0.65rem 1rem;
-  margin-top: 6rem;
-  text-align: center;
-  color: var(--text);
-  background: var(--accent-soft);
-  border-block: 1px solid color-mix(in oklch, var(--accent) 30%, transparent);
-}
 
 .site-header {
   position: fixed;
-  z-index: 60;
+  z-index: var(--z-header);
   top: 16px;
   left: 50%;
   width: calc(100% - 40px);
@@ -116,10 +118,10 @@ textarea {
   border: 1px solid color-mix(in oklch, var(--text) 10%, transparent);
   border-radius: var(--radius-shell);
   box-shadow:
-    0 10px 40px rgba(0, 0, 0, 0.35),
+    0 10px 40px color-mix(in oklch, var(--shadow-ink) 35%, transparent),
     0 0 0 1px color-mix(in oklch, var(--accent) 6%, transparent);
-  backdrop-filter: blur(28px) saturate(1.8) brightness(0.95);
   -webkit-backdrop-filter: blur(28px) saturate(1.8) brightness(0.95);
+  backdrop-filter: blur(28px) saturate(1.8) brightness(0.95);
   animation: header-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
   transition:
     background 180ms ease,
@@ -155,7 +157,7 @@ textarea {
   transform: translate(-50%, -6px);
   border-color: color-mix(in oklch, var(--accent) 22%, transparent);
   box-shadow:
-    0 18px 50px rgba(0, 0, 0, 0.45),
+    0 18px 50px color-mix(in oklch, var(--shadow-ink) 45%, transparent),
     0 0 0 1px color-mix(in oklch, var(--accent) 10%, transparent);
   transition:
     transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -310,9 +312,7 @@ textarea {
   margin-inline-start: auto;
   z-index: 2;
 }
-.theme-toggle,
-.language-menu summary,
-.mobile-nav summary {
+.theme-toggle {
   min-width: 34px;
   min-height: 34px;
   display: grid;
@@ -323,44 +323,6 @@ textarea {
   color: var(--text);
   cursor: pointer;
   list-style: none;
-}
-.language-menu,
-.mobile-nav {
-  position: relative;
-}
-.language-menu summary::-webkit-details-marker,
-.mobile-nav summary::-webkit-details-marker {
-  display: none;
-}
-.language-menu > div,
-.mobile-nav nav {
-  position: absolute;
-  top: calc(100% + 0.6rem);
-  inset-inline-end: 0;
-  min-width: 11rem;
-  padding: 0.4rem;
-  background: color-mix(in oklch, var(--bg-card) 95%, transparent);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(14px) saturate(1.25);
-  -webkit-backdrop-filter: blur(14px) saturate(1.25);
-}
-.language-menu a,
-.mobile-nav a {
-  display: block;
-  padding: 0.65rem 0.8rem;
-  border-radius: var(--radius-control);
-  text-decoration: none;
-  text-transform: capitalize;
-}
-.language-menu a:hover,
-.mobile-nav a:hover {
-  background: var(--accent-soft);
-  color: var(--accent-strong);
-}
-.mobile-nav {
-  display: none;
 }
 .hdr-dropdown {
   position: relative;
@@ -444,9 +406,10 @@ textarea {
   background: color-mix(in oklch, var(--bg-card) 95%, transparent);
   border: 1px solid color-mix(in oklch, var(--text) 12%, transparent);
   border-radius: var(--radius-card);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(20px);
+  box-shadow: 0 16px 48px
+    color-mix(in oklch, var(--shadow-ink) 40%, transparent);
   -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
 }
 .hdr-dropdown.open .hdr-menu {
   display: block;
@@ -486,8 +449,8 @@ textarea {
 }
 .mob-btn {
   display: none;
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
@@ -500,15 +463,15 @@ textarea {
 .mob-menu {
   position: fixed;
   inset: 0;
-  z-index: 70;
+  z-index: var(--z-menu);
   display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 6px;
   background: color-mix(in oklch, var(--bg) 94%, transparent);
-  backdrop-filter: blur(28px) saturate(1.25);
   -webkit-backdrop-filter: blur(28px) saturate(1.25);
+  backdrop-filter: blur(28px) saturate(1.25);
 }
 .mob-menu.open {
   display: flex;
@@ -680,10 +643,6 @@ main {
 :lang(ar) .section h2 {
   line-height: 1.2;
 }
-.hero-tagline {
-  color: var(--accent-strong);
-  font-weight: 650;
-}
 .lead {
   color: var(--muted);
   font-size: clamp(1.1rem, 2vw, 1.35rem);
@@ -819,7 +778,8 @@ main {
 }
 .button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px
+    color-mix(in oklch, var(--shadow-ink) 20%, transparent);
 }
 .text-link {
   display: inline-block;
@@ -896,7 +856,7 @@ main {
   border: 1px solid var(--line);
   border-radius: calc(var(--radius-card) * 1.4);
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.045), transparent 34%),
+    linear-gradient(135deg, rgb(var(--highlight) / 0.0431373), transparent 34%),
     var(--surface);
   box-shadow: var(--shadow-card);
 }
@@ -944,7 +904,7 @@ main {
   background:
     radial-gradient(
       circle at 35% 25%,
-      rgba(255, 255, 255, 0.55),
+      rgb(var(--highlight) / 0.54902),
       transparent 14%
     ),
     radial-gradient(
@@ -957,7 +917,7 @@ main {
   -webkit-background-clip: border-box;
   color: var(--on-accent);
   box-shadow:
-    inset 0 0 36px rgba(255, 255, 255, 0.16),
+    inset 0 0 36px rgb(var(--highlight) / 0.160784),
     0 0 44px var(--accent-glow);
 }
 .not-found-kicker {
@@ -1006,7 +966,7 @@ main {
   min-height: 5rem;
   padding: 0.9rem;
   color: var(--text);
-  background: rgba(255, 255, 255, 0.035);
+  background: rgb(var(--highlight) / 0.0352941);
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
   text-decoration: none;
@@ -1091,6 +1051,28 @@ main {
 [data-theme='dark'] .tool-grid img.invert {
   filter: invert(1);
 }
+.tool-group {
+  margin-top: 3rem;
+}
+.tool-group h2 {
+  margin-bottom: 0.5rem;
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  line-height: 1.2;
+}
+.tool-group p {
+  max-width: 68ch;
+  color: var(--muted);
+}
+.tool-group .tool-grid {
+  margin-block: 1.25rem 0;
+}
+.tool-closing {
+  margin-top: 3rem;
+}
+.accessibility-reviewed {
+  margin-top: 2.5rem;
+  color: var(--muted);
+}
 .meta {
   color: var(--accent-strong);
   font-size: 0.85rem;
@@ -1102,9 +1084,6 @@ main {
   gap: 1.25rem;
   margin-top: 3rem;
   padding-inline-start: 2.25rem;
-}
-.timeline > .fx-beam {
-  inset-inline-start: 0.3rem;
 }
 .timeline > article {
   position: relative;
@@ -1282,7 +1261,7 @@ main {
 /* ── Toasts (src/scripts/toast.ts) ─────────────────────────────────── */
 .toast-region {
   position: fixed;
-  z-index: 90;
+  z-index: var(--z-toast);
   inset-block-end: calc(1.25rem + env(safe-area-inset-bottom, 0px));
   inset-inline-end: 1.25rem;
   display: grid;
@@ -1891,7 +1870,7 @@ main {
 /* Back to top with a scroll-linked progress ring. */
 .btt {
   position: fixed;
-  z-index: 55;
+  z-index: var(--z-float);
   inset-block-end: clamp(16px, 3vw, 28px);
   inset-inline-end: clamp(16px, 3vw, 28px);
   width: 48px;
@@ -1904,8 +1883,8 @@ main {
   color: var(--accent);
   box-shadow: var(--shadow-sm);
   cursor: pointer;
-  backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
   transition:
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
     border-color 160ms ease;
@@ -2055,7 +2034,7 @@ main {
   background: linear-gradient(
     110deg,
     transparent 30%,
-    color-mix(in oklch, #fff 28%, transparent) 50%,
+    color-mix(in oklch, rgb(var(--highlight)) 28%, transparent) 50%,
     transparent 70%
   );
   transform: translateX(-120%);

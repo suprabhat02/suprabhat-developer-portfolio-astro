@@ -44,8 +44,6 @@ src/data/services.ts         service categories
 src/data/navigation.ts       routes and nav labels
 src/data/contentVerification.ts  facts blocked pending owner confirmation
 src/i18n/messages.ts         UI labels and short localized strings
-src/content/case-studies.json    strict case-study collection (migration target)
-src/content/services.json        strict service collection (migration target)
 src/content/blog/            English articles
 src/content/blog-es/         Spanish articles
 src/content/blog-ar/         Arabic articles

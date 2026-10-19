@@ -1,12 +1,421 @@
 import type { Locale } from './config';
+import { SITE_NAME } from '../config/site';
+import { engagement } from '../data/engagement';
 
-type Messages = Record<string, string>;
+const en = {
+  skip: 'Skip to main content',
+  'nav.primary': 'Primary navigation',
+  'nav.mobile': 'Navigation menu',
+  'language.current': 'Change language, current language: {language}',
+  'language.options': 'Language options',
+  'language.switch.en': 'Switch language to English',
+  'language.switch.es': 'Switch language to Español',
+  'language.switch.ar': 'Switch language to العربية',
+  theme: 'Toggle color theme',
+  'theme.switchLight': 'Switch to light color theme',
+  'theme.switchDark': 'Switch to dark color theme',
+  'nav.openMenu': 'Open navigation menu',
+  'nav.closeMenu': 'Close navigation menu',
+  'nav.home': 'Home',
+  'nav.homeAria': 'home',
+  'nav.about': 'About',
+  'nav.skills': 'Skills',
+  'nav.experience': 'Experience',
+  'nav.work': 'Work',
+  'nav.blog': 'Writing',
+  'home.readBlog': 'Read the blog',
+  'nav.contact': 'Contact',
+  'nav.tools': 'Tools',
+  'nav.recommendations': 'Recommendations',
+  'nav.services': 'Services',
+  'nav.faq': 'FAQ',
+  'nav.accessibility': 'Accessibility',
+  'nav.privacy': 'Privacy',
+  'home.about': 'About me',
+  'home.expertise': 'Expertise',
+  'home.expertiseTitle': 'Core expertise',
+  'home.experience': 'Experience',
+  'home.toolbox': 'Stack',
+  'home.recommendations': 'Recommendations',
+  'home.availability': 'Availability',
+  'home.availableNow': 'Available now',
+  'copy.action': 'Copy',
+  'copy.copied': 'Copied',
+  'copy.failed': 'Retry',
+  'copy.announceCopied': 'Copied to clipboard',
+  'copy.announceFailed': 'Copy failed. Select the text and copy it manually.',
+  'copy.installLabel': 'install command',
+  'home.availabilityLead': 'Remote freelance and part-time contracts',
+  'home.availabilityMeta':
+    '24–28 hours weekly · Available now · 2–4 hours overlap',
+  'home.blogLead':
+    'Practical guides on performance, accessibility, and modern UI delivery.',
+  'home.allArticles': 'All articles',
+  'home.readArticle': 'Read article',
+  'home.portraitCaption': '6+ years · React · Next.js · TypeScript · FastAPI',
+  'home.heroCaseTags': 'Project focus areas',
+  'home.heroProofAria': 'Professional proof',
+  'home.heroWorkEyebrow': 'Selected work',
+  'home.heroWorkBody':
+    'Confidential case studies show architecture, constraints, decisions, and outcomes without client-sensitive detail.',
+  'home.heroStackEyebrow': 'Core stack',
+  'home.heroStackTitle': 'React + TypeScript systems',
+  'home.heroStackBody':
+    'Frontend architecture, state management, APIs, accessibility, design systems, and Core Web Vitals tuned for production.',
+  'home.heroStackCta': 'Explore expertise',
+  'home.recruiterSnapshotAria': 'Recruiter snapshot',
+  'home.recruiterRoleLabel': 'Role fit',
+  'home.recruiterRoleValue': 'Senior Front-End Engineer',
+  'home.recruiterProofLabel': 'Proof',
+  'home.recruiterProofValue': '6 case studies · 6+ years',
+  'home.recruiterBestForLabel': 'Best for',
+  'home.recruiterBestForValue':
+    'SaaS dashboards, React architecture, performance',
+  'home.statAria': 'Career highlights',
+  'home.statYears': 'Years experience',
+  'home.statCompanies': 'Companies worked at',
+  'home.statCapabilities': 'Full-stack capabilities',
+  'home.statRemote': 'Remote collaboration',
+  'home.aboutStatement':
+    'Suprabhat Kumar, also known as Shubh, is a Senior Front-End Engineer with 6+ years building SaaS portals, enterprise dashboards, design systems, and accessible websites. Based in Noida Extension, with delivery experience across teams in Denmark, China, and Australia.',
+  'home.experienceCta': 'Explore experience',
+  'home.expertiseLead':
+    'Senior frontend support where architecture, data, accessibility, and performance meet.',
+  'home.skillsLead':
+    'The technical stack I use to deliver scalable, performant, accessible UI systems.',
+  'home.skillsCta': 'Discuss a technical challenge',
+  'skills.frontendCore': 'Frontend Core',
+  'skills.stateData': 'State & Data',
+  'skills.uiLibraries': 'UI Libraries',
+  'skills.backendApis': 'Back-End & APIs',
+  'home.stackLead':
+    'The stack I use to ship fast, accessible, scalable products.',
+  'home.stackAria': 'Technology stack',
+  'home.workCta': 'View all work',
+  'home.recommendationsLead':
+    'What cross-functional partners say about working together.',
+  'home.recommendationsCta': 'View verified recommendations',
+  'home.faqLead':
+    'Quick answers about services, pricing, and how we can collaborate.',
+  'home.ctaTag': 'Ready to collaborate',
+  'home.ctaTitle': 'Bring the frontend problem. Get a defined path forward.',
+  'home.ctaLead':
+    'Share the product context, timeline, and constraints. I will review the fit and propose the next step.',
+  'home.contactLead':
+    'Need senior frontend support for a dashboard, architecture review, design system, audit, or website? Send the context below.',
+  'home.contactOptions': 'Contact options',
+  'page.contact.projectLead':
+    'Looking to hire me for frontend architecture, a defined React build, or a technical audit? Review the engagement parameters below and send the project context by email or through the form.',
+  'page.contact.capacity': `${engagement.weeklyCapacity} · ${engagement.availability}`,
+  'page.contact.responseTime': engagement.responseTime,
+  'page.contact.discoveryCall': engagement.discoveryCall,
+  'page.contact.proposal': `Proposals: ${engagement.proposalTurnaround}`,
+  'page.contact.budget': `Scoped project budget: ${engagement.minimumProjectBudget} or more`,
+  'page.contact.overlap': `${engagement.realtimeOverlap} from ${engagement.meetingWindow}`,
+  'page.contact.recruiters': 'Corporate recruiters',
+  'page.contact.recruiterBody': engagement.recruiterRoute,
+  'page.contact.linkedin': 'Contact on LinkedIn',
+  'home.contactForm': 'Project enquiry form',
+  'home.email': 'Email',
+  'home.preferEmail': 'Prefer email?',
+  'home.history': 'Work history, newest first',
+  'home.promoted': 'Promoted',
+  'trait.performance.title': 'Performance-first',
+  'trait.performance.body':
+    'I use performance budgets, Core Web Vitals, and measured browser evidence throughout delivery.',
+  'trait.accessibility.title': 'Accessibility by default',
+  'trait.accessibility.body':
+    'Semantic HTML, keyboard navigation, visible focus, and manual assistive-technology review guide implementation.',
+  'trait.architecture.title': 'Scalable architecture',
+  'trait.architecture.body':
+    'Reusable component libraries, design tokens, and predictable state management that teams can own long-term.',
+  'trait.fullstack.title': 'Full-stack capable',
+  'trait.fullstack.body':
+    'FastAPI and PostgreSQL support full-stack delivery when a frontend feature needs a focused API or data layer.',
+  'expertise.frontend.title': 'Frontend Engineering',
+  'expertise.frontend.body':
+    'Build SaaS portals and data-heavy dashboards with clear state ownership, resilient data states, accessible interactions, and measured rendering performance.',
+  'expertise.backend.title': 'Back-End & API Integration',
+  'expertise.backend.body':
+    'Integrate REST and GraphQL data flows, or build focused FastAPI and PostgreSQL features when the product needs end-to-end delivery.',
+  'expertise.design.title': 'Design Systems & Performance',
+  'expertise.design.body':
+    'Create component libraries, design tokens, Storybook documentation, accessibility defaults, and adoption patterns teams can extend.',
+  'action.contact': 'Get in touch',
+  'action.start': 'Start a project',
+  'action.top': 'Back to top',
+  'action.resume': 'Download résumé',
+  'action.resumeShort': 'Résumé',
+  'page.about.eyebrow': 'About',
+  'page.about.title': 'Designing for clarity, speed, and access',
+  'page.about.philosophy': 'Design philosophy',
+  'page.skills.eyebrow': 'Skills',
+  'page.skills.title': 'Frontend engineering expertise',
+  'page.experience.eyebrow': 'Experience',
+  'page.experience.title': 'Six years of interface delivery',
+  'page.tools.eyebrow': 'Tools',
+  'page.tools.title': 'A focused working stack',
+  'home.toolsHeading': 'Tools & technologies',
+  'page.tools.intro':
+    'These are the tools I reach for most often in production frontend work. The list is short on purpose: I choose a tool after understanding the user task, the data flow, the failure states and the maintenance cost, not because it is new.',
+  'page.tools.group.languages.title': 'Languages and frameworks',
+  'page.tools.group.languages.description':
+    'The base of every interface I ship: semantic markup, typed components, and server and client rendering.',
+  'page.tools.group.data.title': 'Data and state',
+  'page.tools.group.data.description':
+    'Predictable state, cached server data and typed API boundaries for data-heavy dashboards.',
+  'page.tools.group.styling.title': 'Styling and design systems',
+  'page.tools.group.styling.description':
+    'From design handoff to documented, reusable components.',
+  'page.tools.group.backend.title': 'Backend, data and cloud',
+  'page.tools.group.backend.description':
+    'Used for full-stack features alongside the frontend.',
+  'page.tools.group.workflow.title': 'Workflow and maintenance',
+  'page.tools.group.workflow.description':
+    'Version control, legacy codebases and AI-assisted drafting and review.',
+  'page.tools.group.languages.practice':
+    'In practice: data-intensive React and TypeScript interfaces at Topsoe, including a self-service portal built with Next.js 16 and React 19. Earlier roles used HTML, CSS, JavaScript and React for responsive, cross-browser interfaces.',
+  'page.tools.group.data.practice':
+    'In practice: Redux Toolkit for data-intensive interfaces, and TanStack Query with openapi-fetch for typed server data in the Next.js self-service portal.',
+  'page.tools.group.styling.practice':
+    'In practice: turning wireframes into responsive React and TypeScript interfaces, and building reusable UI components and component libraries.',
+  'page.tools.group.backend.practice':
+    'In practice: full-stack product features with Python, FastAPI, PostgreSQL and Azure services, plus REST and backend API integrations across several roles.',
+  'page.tools.group.workflow.practice':
+    'In practice: delivery in distributed Agile teams across India, Denmark and China, with Azure DevOps CI/CD on the self-service portal.',
+  'page.tools.closing': 'See how these come together in the case studies.',
+  'page.work.eyebrow': 'Work',
+  'page.work.title': 'Selected internal product work',
+  'page.recommendations.eyebrow': 'Recommendations',
+  'page.recommendations.title': 'What collaborators say',
+  'page.services.eyebrow': 'Services',
+  'page.services.title': 'Frontend engineering services',
+  'home.parkPhotoAlt':
+    'Suprabhat Kumar smiling in a navy puffer jacket on a grassy park hill, with bare winter trees and a city skyline behind him.',
+  'home.parkPhotoCaption': 'Away from the keyboard',
+  'globe.label':
+    'Globe showing remote collaboration from India with teams in North America, Europe, the Middle East and Asia-Pacific',
+  'globe.home': 'India',
+  'page.services.lead':
+    'Focused engagements to improve a React product, data-heavy interface, design system, or public website.',
+  'service.fit': 'Best for',
+  'service.deliverables': 'Deliverables',
+  'service.exclusions': 'Not included',
+  'service.duration': 'Duration',
+  'page.faq.eyebrow': 'FAQ',
+  'page.faq.title': 'Working together',
+  'home.faqHeading': 'Frequently asked questions',
+  'page.contact.eyebrow': 'Contact',
+  'page.contact.title': 'Discuss a defined frontend project',
+  'page.accessibility.eyebrow': 'Accessibility',
+  'page.accessibility.title': 'Accessibility statement',
+  'page.accessibility.commitment':
+    'I want everyone to be able to read this site and contact me, whatever device, browser or assistive technology they use. The target is WCAG 2.2 level AA.',
+  'page.accessibility.inPlaceTitle': 'What is in place',
+  'page.accessibility.inPlace.landmarks':
+    'Semantic landmarks and one heading level 1 per page.',
+  'page.accessibility.inPlace.focus':
+    'A skip link and a visible keyboard focus indicator.',
+  'page.accessibility.inPlace.targets':
+    'Labeled form controls and interactive targets that meet the WCAG 2.2 minimum target size of 24 × 24 pixels.',
+  'page.accessibility.inPlace.motion':
+    'Respect for the reduced-motion preference.',
+  'page.accessibility.inPlace.contrast':
+    'Color contrast checked in both the dark and light themes.',
+  'page.accessibility.inPlace.rtl':
+    'Arabic pages laid out right to left, with code kept left to right.',
+  'page.accessibility.inPlace.nojs':
+    'Content that stays readable without JavaScript.',
+  'page.accessibility.inPlace.images':
+    'Text alternatives for meaningful images.',
+  'page.accessibility.inPlace.errors':
+    'Form errors gathered in a summary that receives focus, with a link to each field that needs attention.',
+  'page.accessibility.inPlace.lang':
+    'Each page declares its language and text direction.',
+  'page.accessibility.inPlace.forcedColors':
+    'Gradient headings that fall back to plain system text colors in Windows high-contrast (forced colors) mode.',
+  'page.accessibility.scopeTitle': 'Scope',
+  'page.accessibility.scope':
+    'This statement covers suprabhat-dev.com in English, Spanish and Arabic, including the articles, case studies and contact form.',
+  'page.accessibility.testedTitle': 'How it is tested',
+  'page.accessibility.tested':
+    'Automated axe checks against WCAG 2.2 AA run in the end-to-end test suite on every change before it is deployed, in both desktop and mobile browser profiles, including light-theme and right-to-left pages. Lighthouse accessibility audits are also run on key pages.',
+  'page.accessibility.limitationsTitle': 'Known limitations',
+  'page.accessibility.limitations.covers':
+    'Article cover images contain English text on the Spanish and Arabic pages; their text alternatives are translated.',
+  'page.accessibility.limitations.quotes':
+    'Recommendations are quoted in their original English.',
+  'page.accessibility.feedbackTitle': 'Feedback',
+  'page.accessibility.reviewed': 'Last reviewed:',
+  'page.accessibility.contact':
+    'Content remains readable and navigable without JavaScript. If you encounter a barrier, email ',
+  'page.privacy.eyebrow': 'Privacy',
+  'page.privacy.title': 'Contact form privacy',
+  'page.privacy.body':
+    'This site does not install analytics. While you type, visible form fields are saved only in this browser so a refresh does not erase your draft. After you submit, the fields are sent through Web3Forms by email and the browser draft is deleted.',
+  'page.privacy.contact':
+    'Do not include sensitive personal information. You can instead email ',
+  'page.blog.eyebrow': 'Writing',
+  'page.blog.title': 'Frontend engineering articles',
+  'home.blogTitle': 'Featured articles',
+  'page.blog.lead':
+    'Practical guides on accessible interfaces, performance, maintainable architecture, and professional UI delivery.',
+  'blog.taxonomy.eyebrow': 'Topic',
+  'blog.taxonomy.title': 'Articles tagged {tag}',
+  'blog.taxonomy.description':
+    'Frontend engineering articles about {tag}, including practical guidance, implementation tradeoffs, accessibility, performance, and maintainable UI delivery.',
+  'blog.taxonomy.allTopics': 'All article topics',
+  'blog.backToAll': 'All articles',
+  'blog.relatedEyebrow': 'Read next',
+  'blog.relatedTitle': 'Related frontend articles',
+  'blog.updated': 'Updated:',
+  'blog.coverAlt': 'Article cover: {title}',
+  'seo.articleImageAlt': '{title} — article cover',
+  'seo.caseStudyImageAlt': '{title} — case study card',
+  'blog.readingTime': '{duration} read',
+  'blog.share.title': 'Share this article',
+  'blog.share.x': 'Share on X',
+  'blog.share.linkedin': 'Share on LinkedIn',
+  'blog.share.linkLabel': 'article link',
+  'blog.rss': 'Subscribe via RSS',
+  'page.notFound.title': 'That page is not here',
+  'page.notFound.body':
+    'The address may have changed, or the page may no longer exist.',
+  'page.notFound.eyebrow': 'Error 404',
+  'page.notFound.kicker': 'Route not found',
+  'page.notFound.lead':
+    'This URL did not resolve, but the site is still available. Use these quick paths to return to work, writing, services, or contact.',
+  'page.notFound.primaryCta': 'Back to home',
+  'page.notFound.secondaryCta': 'View case studies',
+  'page.notFound.tertiaryCta': 'Contact',
+  'page.notFound.actionsAria': 'Recovery actions',
+  'page.notFound.panelTitle': 'Useful routes',
+  'page.notFound.panelLead':
+    'Every link here is static, crawlable, localized, and accessible without JavaScript.',
+  'page.notFound.homeLabel': 'Home',
+  'page.notFound.homeBody':
+    'Profile summary, stack, experience, and contact paths.',
+  'page.notFound.workLabel': 'Case studies',
+  'page.notFound.workBody':
+    'Decisions, constraints, and outcomes from frontend projects.',
+  'page.notFound.blogLabel': 'Articles',
+  'page.notFound.blogBody':
+    'Guides on performance, accessibility, and frontend architecture.',
+  'page.notFound.contactLabel': 'Contact',
+  'page.notFound.contactBody': 'Send project context or use direct email.',
+  'page.notFound.seoTitle': 'Indexing status',
+  'page.notFound.seoBody':
+    'This page is noindexed, excluded from the sitemap, and keeps internal links available for people and crawlers to recover useful content.',
+  'footer.lead':
+    'Senior Front-End Engineer building fast, accessible product interfaces.',
+  'footer.navigate': 'Navigate',
+  'footer.siteLinks': 'Site links',
+  'footer.more': 'More',
+  'footer.moreLinks': 'More links',
+  'footer.legal': 'Legal',
+  'footer.legalLinks': 'Legal links',
+  'footer.rss': 'RSS feed',
+  'footer.profiles': 'Profiles elsewhere',
+  'form.name': 'Name',
+  'form.email': 'Email',
+  'form.details': 'Project details',
+  'form.company': 'Company or team',
+  'form.optional': 'Optional',
+  'form.projectType': 'Project type',
+  'form.placeholderName': 'e.g. Alex Morgan',
+  'form.placeholderEmail': 'you@company.com',
+  'form.placeholderCompany': 'e.g. Acme Analytics',
+  'form.chooseProjectType': 'Choose a project type',
+  'form.chooseBudget': 'Choose a budget range',
+  'form.chooseTimeline': 'Choose a timeline',
+  'form.successTitle': 'Message sent',
+  'form.failureTitle': 'Message not sent',
+  'form.dismiss': 'Dismiss notification',
+  'form.toastRegion': 'Notifications',
+  'form.projectProduct': 'Defined React frontend project',
+  'form.projectDesignSystem': 'Design system',
+  'form.projectPerformance': 'Performance or accessibility',
+  'form.projectConsulting': 'Async architecture advisory',
+  'form.projectOther': 'Other',
+  'form.budget': 'Budget range',
+  'form.budget5k15k': 'USD 5,000–15,000',
+  'form.budget15k30k': 'USD 15,000–30,000',
+  'form.budget30kPlus': 'USD 30,000+',
+  'form.notSure': 'Not sure yet',
+  'form.timeline': 'Desired timeline',
+  'form.timelineMonth': 'Within one month',
+  'form.timelineQuarter': 'One to three months',
+  'form.timelineLater': 'More than three months',
+  'form.timelineExploring': 'Exploring options',
+  'form.messagePlaceholder':
+    'Goals, current constraints, and what a successful outcome looks like.',
+  'form.send': 'Send enquiry',
+  'form.unavailable': 'The contact form is unavailable in this environment.',
+  'form.emailSuprabhat': 'Email Suprabhat',
+  'form.errorName': 'Enter your name.',
+  'form.errorEmail': 'Enter a valid email address.',
+  'form.errorProjectType': 'Select a project type.',
+  'form.errorBudget': 'Select a budget range.',
+  'form.aboutYou': 'About you',
+  'form.projectFit': 'Project fit',
+  'form.projectBrief': 'Project brief',
+  'form.draftSaved': 'Draft saved on this device',
+  'form.draftRestored': 'Draft restored from this device',
+  'form.projectWebsite': 'Website design and development',
+  'form.qualificationNote': `Project enquiries start at ${engagement.minimumProjectBudget}. Include your goals, technical requirements, timeline, and documented budget.`,
+  'form.recruiterRoute':
+    'Corporate recruiter? Skip this project form and contact me through',
+  'form.errorTimeline': 'Select a timeline.',
+  'form.errorMessage': 'Tell me about the project.',
+  'form.errorSummary': 'Please review the highlighted fields.',
+  'form.unconfigured':
+    'The contact form is not configured yet. Please email directly.',
+  'form.sending': 'Sending...',
+  'form.success': 'Message sent. Thank you for sharing the project details.',
+  'form.failure': 'Something went wrong. Please email directly.',
+  'form.networkError': 'Network error. Please email directly.',
+  'work.focusAreas': 'Focus areas',
+  'caseStudy.read': 'Read case study',
+  'caseStudy.projectProof': 'Project proof',
+  'caseStudy.breadcrumb': 'Case study breadcrumb',
+  'caseStudy.snapshot': 'Project snapshot',
+  'caseStudy.toc': 'On this page',
+  'caseStudy.confidentiality': 'Confidentiality note',
+  'caseStudy.outcomes': 'Outcomes',
+  'caseStudy.nextSteps': 'Next steps',
+  'caseStudy.relatedServices': 'Related services',
+  'caseStudy.backToWork': 'Back to work',
+  'caseStudy.contactCta': 'Discuss a similar project',
+  'tool.category.language': 'LANGUAGE',
+  'tool.category.frontend': 'FRONTEND',
+  'tool.category.state': 'STATE',
+  'tool.category.runtime': 'RUNTIME',
+  'tool.category.design': 'DESIGN',
+  'tool.category.styling': 'STYLING',
+  'tool.category.devops': 'DEVOPS',
+  'tool.category.ai': 'AI',
+  'tool.category.testing': 'TESTING',
+  'tool.category.cloud': 'CLOUD',
+  'tool.category.backend': 'BACKEND',
+  'tool.category.database': 'DATABASE',
+  'tool.category.tool': 'TOOL',
+  'schema.serviceName': `${SITE_NAME} - Frontend Engineering Services`,
+  'schema.serviceDescription':
+    'Frontend performance audits, React and TypeScript architecture reviews, SaaS dashboard development, design systems, accessibility audits, and website delivery.',
+  'schema.worldwide': 'Worldwide',
+} as const satisfies Record<string, string>;
 
-const es: Messages = {
+export type MessageKey = keyof typeof en;
+/** English for these lives in faqs.ts and experience.ts, so callers pass it in. */
+export type DataMessageKey = `faq.${string}` | `experience.${string}`;
+type Translations = Record<MessageKey, string> & {
+  [key: DataMessageKey]: string;
+};
+
+const es: Translations = {
   skip: 'Saltar al contenido principal',
   'nav.primary': 'Navegación principal',
   'nav.mobile': 'Navegación móvil',
-  language: 'Cambiar idioma',
   'language.current': 'Cambiar idioma, idioma actual: {language}',
   'language.options': 'Opciones de idioma',
   'language.switch.en': 'Cambiar idioma a inglés',
@@ -15,15 +424,16 @@ const es: Messages = {
   theme: 'Cambiar tema de color',
   'theme.switchLight': 'Cambiar a tema claro',
   'theme.switchDark': 'Cambiar a tema oscuro',
-  menu: 'Menú',
   'nav.openMenu': 'Abrir menú de navegación',
   'nav.closeMenu': 'Cerrar menú de navegación',
   'nav.home': 'Inicio',
+  'nav.homeAria': 'Inicio',
   'nav.about': 'Sobre mí',
   'nav.skills': 'Habilidades',
   'nav.experience': 'Experiencia',
   'nav.work': 'Proyectos',
   'nav.blog': 'Artículos',
+  'home.readBlog': 'Artículos',
   'nav.contact': 'Contacto',
   'nav.tools': 'Herramientas',
   'nav.recommendations': 'Recomendaciones',
@@ -31,30 +441,12 @@ const es: Messages = {
   'nav.faq': 'Preguntas frecuentes',
   'nav.accessibility': 'Accesibilidad',
   'nav.privacy': 'Privacidad',
-  'home.eyebrow': 'Ingeniero frontend sénior · India',
-  'home.tagline':
-    'Rendimiento SaaS | React/Next.js | Core Web Vitals | Accesibilidad',
-  'home.lead':
-    'Creo interfaces SaaS rápidas y accesibles, paneles de datos y sitios web modernos con React, Next.js y TypeScript.',
   'home.about': 'Sobre mí',
-  'home.aboutTitle': 'Ingeniería de interfaces útiles',
-  'home.aboutBody':
-    'Ayudo a los equipos a crear sistemas de UI rápidos, accesibles y mantenibles, con una arquitectura predecible, componentes reutilizables y presupuestos de rendimiento que funcionan en producción.',
   'home.expertise': 'Especialización',
-  'home.skillsTitle': 'Sistemas frontend que perduran',
+  'home.expertiseTitle': 'Especialización',
   'home.experience': 'Experiencia',
-  'home.experienceTitle': 'Roles recientes',
   'home.toolbox': 'Herramientas',
-  'home.toolsTitle': 'Stack de trabajo diario',
-  'home.work': 'Proyectos seleccionados',
-  'home.workTitle': 'Trabajo interno de producto',
   'home.recommendations': 'Recomendaciones',
-  'home.recommendationsTitle': 'Palabras de colaboradores',
-  'home.faq': 'Preguntas frecuentes',
-  'home.faqTitle': 'Antes de comenzar',
-  'home.contact': 'Iniciar una conversación',
-  'home.contactTitle': '¿Tienes una interfaz de producto que mejorar?',
-  'home.writing': 'Artículos destacados',
   'home.availability': 'Disponibilidad',
   'home.availableNow': 'Disponible ahora',
   'copy.action': 'Copiar',
@@ -73,7 +465,6 @@ const es: Messages = {
   'home.readArticle': 'Leer artículo',
   'home.portraitCaption':
     'Más de 6 años · React · Next.js · TypeScript · FastAPI',
-  'home.heroCaseEyebrow': 'Caso de estudio destacado',
   'home.heroCaseTags': 'Áreas de enfoque del proyecto',
   'home.heroProofAria': 'Pruebas profesionales',
   'home.heroWorkEyebrow': 'Trabajo seleccionado',
@@ -111,10 +502,6 @@ const es: Messages = {
   'home.stackLead':
     'El stack que uso para crear productos rápidos, accesibles y escalables.',
   'home.stackAria': 'Stack tecnológico',
-  'home.workLead':
-    'Una muestra de trabajo interno de producto centrado en rendimiento, accesibilidad y sistemas de UI escalables.',
-  'home.workNote':
-    'Trabajo interno, descrito sin nombres de clientes, capturas ni información confidencial.',
   'home.workCta': 'Ver todo el trabajo interno',
   'home.recommendationsLead':
     'Lo que dicen los colaboradores de distintas disciplinas sobre trabajar juntos.',
@@ -145,13 +532,7 @@ const es: Messages = {
   'page.contact.linkedin': 'Contactar por LinkedIn',
   'home.contactForm': 'Formulario de contacto',
   'home.email': 'Correo electrónico',
-  'home.message': 'Mensaje',
   'home.preferEmail': '¿Prefieres correo?',
-  'home.copyright': 'Todos los derechos reservados.',
-  'home.appearance': 'Apariencia',
-  'home.dark': 'Oscuro',
-  'home.light': 'Claro',
-  'home.auto': 'Automático',
   'home.history': 'Historial laboral, más reciente primero',
   'home.promoted': 'Ascendido',
   'trait.performance.title': 'Rendimiento primero',
@@ -207,14 +588,11 @@ const es: Messages = {
     'Creé interfaces adaptables con HTML, CSS y JavaScript.',
   'experience.swaragh.b2':
     'Construí interacciones con jQuery cuando era necesario.',
-  'action.work': 'Ver proyectos seleccionados',
   'action.contact': 'Contactar',
-  'action.moreAbout': 'Más sobre mi enfoque',
-  'action.experience': 'Ver experiencia completa',
-  'action.tools': 'Ver todas las herramientas',
   'action.start': 'Contactar con Suprabhat',
   'action.top': 'Volver arriba',
   'action.resume': 'Descargar currículum',
+  'action.resumeShort': 'Descargar currículum',
   'page.about.eyebrow': 'Sobre mí',
   'page.about.title': 'Diseñar con claridad, velocidad y acceso',
   'page.about.philosophy': 'Filosofía de diseño',
@@ -224,6 +602,35 @@ const es: Messages = {
   'page.experience.title': 'Seis años entregando interfaces',
   'page.tools.eyebrow': 'Herramientas',
   'page.tools.title': 'Un stack de trabajo enfocado',
+  'home.toolsHeading': 'Un stack de trabajo enfocado',
+  'page.tools.intro':
+    'Estas son las herramientas que más utilizo en el trabajo frontend en producción. La lista es corta a propósito: elijo una herramienta después de entender la tarea del usuario, el flujo de datos, los estados de error y el coste de mantenimiento, no porque sea nueva.',
+  'page.tools.group.languages.title': 'Lenguajes y frameworks',
+  'page.tools.group.languages.description':
+    'La base de cada interfaz que entrego: marcado semántico, componentes tipados y renderizado en servidor y en cliente.',
+  'page.tools.group.data.title': 'Datos y estado',
+  'page.tools.group.data.description':
+    'Estado predecible, datos del servidor en caché y límites de API tipados para paneles con muchos datos.',
+  'page.tools.group.styling.title': 'Estilos y sistemas de diseño',
+  'page.tools.group.styling.description':
+    'Desde la entrega del diseño hasta componentes documentados y reutilizables.',
+  'page.tools.group.backend.title': 'Backend, datos y nube',
+  'page.tools.group.backend.description':
+    'Para funcionalidades full-stack junto al frontend.',
+  'page.tools.group.workflow.title': 'Flujo de trabajo y mantenimiento',
+  'page.tools.group.workflow.description':
+    'Control de versiones, bases de código heredadas y redacción y revisión asistidas por IA.',
+  'page.tools.group.languages.practice':
+    'En la práctica: interfaces React y TypeScript con gran volumen de datos en Topsoe, incluido un portal de autoservicio creado con Next.js 16 y React 19. En puestos anteriores usé HTML, CSS, JavaScript y React para interfaces adaptables y compatibles con distintos navegadores.',
+  'page.tools.group.data.practice':
+    'En la práctica: Redux Toolkit para interfaces con gran volumen de datos, y TanStack Query con openapi-fetch para datos del servidor tipados en el portal de autoservicio con Next.js.',
+  'page.tools.group.styling.practice':
+    'En la práctica: convertir wireframes en interfaces React y TypeScript adaptables, y crear componentes de UI y bibliotecas de componentes reutilizables.',
+  'page.tools.group.backend.practice':
+    'En la práctica: funcionalidades full-stack con Python, FastAPI, PostgreSQL y servicios de Azure, además de integraciones con API REST y de backend en varios puestos.',
+  'page.tools.group.workflow.practice':
+    'En la práctica: entrega en equipos Agile distribuidos entre India, Dinamarca y China, con CI/CD en Azure DevOps para el portal de autoservicio.',
+  'page.tools.closing': 'Mira cómo se combinan en los casos de estudio.',
   'page.work.eyebrow': 'Proyectos',
   'page.work.title': 'Trabajo interno de producto seleccionado',
   'page.recommendations.eyebrow': 'Recomendaciones',
@@ -244,12 +651,49 @@ const es: Messages = {
   'service.duration': 'Duración',
   'page.faq.eyebrow': 'Preguntas frecuentes',
   'page.faq.title': 'Trabajar juntos',
+  'home.faqHeading': 'Trabajar juntos',
   'page.contact.eyebrow': 'Contacto',
   'page.contact.title': 'Hablemos del trabajo',
   'page.accessibility.eyebrow': 'Accesibilidad',
-  'page.accessibility.title': 'Características de accesibilidad',
-  'page.accessibility.body':
-    'Este sitio utiliza secciones semánticas, foco de teclado visible, un enlace para saltar al contenido, preferencias de movimiento reducido, títulos descriptivos y controles etiquetados.',
+  'page.accessibility.title': 'Declaración de accesibilidad',
+  'page.accessibility.commitment':
+    'Quiero que cualquier persona pueda leer este sitio y contactar conmigo, sea cual sea el dispositivo, el navegador o la tecnología de apoyo que utilice. El objetivo es el nivel AA de las WCAG 2.2.',
+  'page.accessibility.inPlaceTitle': 'Qué está implementado',
+  'page.accessibility.inPlace.landmarks':
+    'Secciones semánticas y un único encabezado de nivel 1 por página.',
+  'page.accessibility.inPlace.focus':
+    'Un enlace para saltar al contenido y un indicador de foco de teclado visible.',
+  'page.accessibility.inPlace.targets':
+    'Controles de formulario etiquetados y elementos interactivos que cumplen el tamaño mínimo de objetivo de las WCAG 2.2, de 24 × 24 píxeles.',
+  'page.accessibility.inPlace.motion':
+    'Respeto por la preferencia de movimiento reducido.',
+  'page.accessibility.inPlace.contrast':
+    'Contraste de color comprobado en los temas oscuro y claro.',
+  'page.accessibility.inPlace.rtl':
+    'Páginas en árabe maquetadas de derecha a izquierda, con el código de izquierda a derecha.',
+  'page.accessibility.inPlace.nojs':
+    'Contenido que sigue siendo legible sin JavaScript.',
+  'page.accessibility.inPlace.images':
+    'Alternativas textuales para las imágenes con significado.',
+  'page.accessibility.inPlace.errors':
+    'Errores de formulario reunidos en un resumen que recibe el foco, con un enlace a cada campo que necesita atención.',
+  'page.accessibility.inPlace.lang':
+    'Cada página declara su idioma y su dirección de texto.',
+  'page.accessibility.inPlace.forcedColors':
+    'Encabezados con degradado que recurren a los colores de texto del sistema en el modo de alto contraste de Windows (colores forzados).',
+  'page.accessibility.scopeTitle': 'Alcance',
+  'page.accessibility.scope':
+    'Esta declaración abarca suprabhat-dev.com en inglés, español y árabe, incluidos los artículos, los casos de estudio y el formulario de contacto.',
+  'page.accessibility.testedTitle': 'Cómo se prueba',
+  'page.accessibility.tested':
+    'Las comprobaciones automáticas con axe según las WCAG 2.2 AA se ejecutan en el conjunto de pruebas end-to-end en cada cambio antes de publicarlo, con perfiles de navegador de escritorio y móvil, e incluyen páginas con el tema claro y de derecha a izquierda. También se realizan auditorías de accesibilidad con Lighthouse en las páginas principales.',
+  'page.accessibility.limitationsTitle': 'Limitaciones conocidas',
+  'page.accessibility.limitations.covers':
+    'Las imágenes de portada de los artículos contienen texto en inglés en las páginas en español y en árabe; sus alternativas textuales están traducidas.',
+  'page.accessibility.limitations.quotes':
+    'Las recomendaciones se citan en su inglés original.',
+  'page.accessibility.feedbackTitle': 'Comentarios',
+  'page.accessibility.reviewed': 'Última revisión:',
   'page.accessibility.contact':
     'El contenido sigue siendo legible y navegable sin JavaScript. Si encuentras una barrera, escribe a ',
   'page.privacy.eyebrow': 'Privacidad',
@@ -260,6 +704,7 @@ const es: Messages = {
     'No incluyas información personal sensible. También puedes escribir a ',
   'page.blog.eyebrow': 'Artículos',
   'page.blog.title': 'Artículos de ingeniería frontend',
+  'home.blogTitle': 'Artículos de ingeniería frontend',
   'page.blog.lead':
     'Guías prácticas sobre interfaces accesibles, rendimiento, arquitectura mantenible y entrega profesional de UI.',
   'blog.taxonomy.eyebrow': 'Tema',
@@ -272,6 +717,8 @@ const es: Messages = {
   'blog.relatedTitle': 'Artículos frontend relacionados',
   'blog.updated': 'Actualizado:',
   'blog.coverAlt': 'Portada del artículo: {title}',
+  'seo.articleImageAlt': '{title} — portada del artículo',
+  'seo.caseStudyImageAlt': '{title} — tarjeta del caso de estudio',
   'blog.readingTime': '{duration} de lectura',
   'blog.share.title': 'Comparte este artículo',
   'blog.share.x': 'Compartir en X',
@@ -339,7 +786,6 @@ const es: Messages = {
   'form.projectConsulting': 'Asesoría de arquitectura asíncrona',
   'form.projectOther': 'Otro',
   'form.budget': 'Rango de presupuesto',
-  'form.budgetUnder5k': 'Menos de 5.000 USD',
   'form.budget5k15k': '5.000–15.000 USD',
   'form.budget15k30k': '15.000–30.000 USD',
   'form.budget30kPlus': 'Más de 30.000 USD',
@@ -349,7 +795,6 @@ const es: Messages = {
   'form.timelineQuarter': 'De uno a tres meses',
   'form.timelineLater': 'Más de tres meses',
   'form.timelineExploring': 'Explorando opciones',
-  'form.namePlaceholder': 'Tu nombre completo',
   'form.messagePlaceholder': 'Describe tu proyecto o pregunta…',
   'form.send': 'Enviar consulta',
   'form.unavailable':
@@ -423,31 +868,30 @@ const es: Messages = {
   'schema.serviceDescription':
     'Desarrollo frontend SaaS, ingeniería de UI para paneles, optimización de rendimiento, sistemas de diseño, implementación React/Next.js, integración backend FastAPI y UI centrada en accesibilidad.',
   'schema.worldwide': 'Todo el mundo',
-  'schema.countryIndia': 'India',
 };
 
-const ar: Messages = {
+const ar: Translations = {
   skip: 'انتقل إلى المحتوى الرئيسي',
   'nav.primary': 'التنقل الرئيسي',
   'nav.mobile': 'تنقل الجوال',
-  'language.options': 'خيارات اللغة',
-  language: 'تغيير اللغة',
   'language.current': 'تغيير اللغة، اللغة الحالية: {language}',
+  'language.options': 'خيارات اللغة',
   'language.switch.en': 'تغيير اللغة إلى الإنجليزية',
   'language.switch.es': 'تغيير اللغة إلى الإسبانية',
   'language.switch.ar': 'تغيير اللغة إلى العربية',
   theme: 'تبديل سمة الألوان',
   'theme.switchLight': 'التبديل إلى السمة الفاتحة',
   'theme.switchDark': 'التبديل إلى السمة الداكنة',
-  menu: 'القائمة',
   'nav.openMenu': 'فتح قائمة التنقل',
   'nav.closeMenu': 'إغلاق قائمة التنقل',
   'nav.home': 'الرئيسية',
+  'nav.homeAria': 'الرئيسية',
   'nav.about': 'نبذة عني',
   'nav.skills': 'المهارات',
   'nav.experience': 'الخبرة',
   'nav.work': 'الأعمال',
   'nav.blog': 'المقالات',
+  'home.readBlog': 'المقالات',
   'nav.contact': 'تواصل',
   'nav.tools': 'الأدوات',
   'nav.recommendations': 'التوصيات',
@@ -455,30 +899,12 @@ const ar: Messages = {
   'nav.faq': 'الأسئلة الشائعة',
   'nav.accessibility': 'إمكانية الوصول',
   'nav.privacy': 'الخصوصية',
-  'home.eyebrow': 'مهندس واجهات أمامية أول · الهند',
-  'home.tagline':
-    'أداء SaaS | React/Next.js | Core Web Vitals | إمكانية الوصول',
-  'home.lead':
-    'أبني واجهات SaaS سريعة ومتاحة ولوحات بيانات ومواقع حديثة باستخدام React وNext.js وTypeScript.',
   'home.about': 'نبذة عني',
-  'home.aboutTitle': 'هندسة واجهات مفيدة',
-  'home.aboutBody':
-    'أساعد الفرق على تقديم أنظمة واجهات سريعة ومتاحة وقابلة للصيانة عبر معمارية واضحة ومكونات قابلة لإعادة الاستخدام وميزانيات أداء تصمد في الإنتاج.',
   'home.expertise': 'الخبرات',
-  'home.skillsTitle': 'أنظمة واجهات أمامية متينة',
+  'home.expertiseTitle': 'الخبرات',
   'home.experience': 'الخبرة',
-  'home.experienceTitle': 'الأدوار الحديثة',
   'home.toolbox': 'الأدوات',
-  'home.toolsTitle': 'مجموعة العمل اليومية',
-  'home.work': 'أعمال مختارة',
-  'home.workTitle': 'عمل داخلي على المنتج',
   'home.recommendations': 'التوصيات',
-  'home.recommendationsTitle': 'كلمات من المتعاونين',
-  'home.faq': 'الأسئلة الشائعة',
-  'home.faqTitle': 'قبل أن نبدأ',
-  'home.contact': 'ابدأ محادثة',
-  'home.contactTitle': 'هل لديك واجهة منتج تحتاج إلى تحسين؟',
-  'home.writing': 'مقالات مختارة',
   'home.availability': 'التوافر',
   'home.availableNow': 'متاح الآن',
   'copy.action': 'نسخ',
@@ -494,7 +920,6 @@ const ar: Messages = {
   'home.readArticle': 'قراءة المقال',
   'home.portraitCaption':
     'أكثر من 6 سنوات · React · Next.js · TypeScript · FastAPI',
-  'home.heroCaseEyebrow': 'دراسة حالة مختارة',
   'home.heroCaseTags': 'مجالات تركيز المشروع',
   'home.heroProofAria': 'إثبات مهني',
   'home.heroWorkEyebrow': 'عمل مختار',
@@ -532,10 +957,6 @@ const ar: Messages = {
   'home.stackLead':
     'المجموعة التقنية التي أستخدمها لشحن منتجات سريعة ومتاحة وقابلة للتوسع.',
   'home.stackAria': 'المجموعة التقنية',
-  'home.workLead':
-    'لمحة عن أعمال داخلية على المنتج تركز على الأداء وإمكانية الوصول وأنظمة واجهات قابلة للتوسع.',
-  'home.workNote':
-    'عمل داخلي، موصوف من دون أسماء عملاء أو لقطات شاشة أو تفاصيل سرية.',
   'home.workCta': 'عرض كل الأعمال الداخلية',
   'home.recommendationsLead':
     'ما يقوله شركاء العمل من مختلف التخصصات عن التعاون معًا.',
@@ -562,13 +983,7 @@ const ar: Messages = {
   'page.contact.linkedin': 'التواصل عبر LinkedIn',
   'home.contactForm': 'نموذج التواصل',
   'home.email': 'البريد الإلكتروني',
-  'home.message': 'الرسالة',
   'home.preferEmail': 'تفضل البريد الإلكتروني؟',
-  'home.copyright': 'جميع الحقوق محفوظة.',
-  'home.appearance': 'المظهر',
-  'home.dark': 'داكن',
-  'home.light': 'فاتح',
-  'home.auto': 'تلقائي',
   'home.history': 'السجل المهني، الأحدث أولًا',
   'home.promoted': 'ترقية',
   'trait.performance.title': 'الأداء أولًا',
@@ -618,14 +1033,11 @@ const ar: Messages = {
   'experience.swaragh.b1':
     'أنشأت واجهات متجاوبة باستخدام HTML وCSS وJavaScript.',
   'experience.swaragh.b2': 'أنشأت تفاعلات باستخدام jQuery عند الحاجة.',
-  'action.work': 'عرض الأعمال المختارة',
   'action.contact': 'تواصل',
-  'action.moreAbout': 'المزيد عن منهجي',
-  'action.experience': 'عرض الخبرة الكاملة',
-  'action.tools': 'عرض كل الأدوات',
   'action.start': 'تواصل مع سوبراهات',
   'action.top': 'العودة للأعلى',
   'action.resume': 'تنزيل السيرة الذاتية',
+  'action.resumeShort': 'تنزيل السيرة الذاتية',
   'page.about.eyebrow': 'نبذة عني',
   'page.about.title': 'التصميم من أجل الوضوح والسرعة والإتاحة',
   'page.about.philosophy': 'فلسفة التصميم',
@@ -635,6 +1047,35 @@ const ar: Messages = {
   'page.experience.title': 'ست سنوات في تقديم الواجهات',
   'page.tools.eyebrow': 'الأدوات',
   'page.tools.title': 'مجموعة عمل مركزة',
+  'home.toolsHeading': 'مجموعة عمل مركزة',
+  'page.tools.intro':
+    'هذه هي الأدوات التي أستخدمها أكثر من غيرها في عمل الواجهات الأمامية في بيئات الإنتاج. القائمة قصيرة عن قصد: أختار الأداة بعد فهم مهمة المستخدم وتدفق البيانات وحالات الخطأ وتكلفة الصيانة، لا لأنها جديدة.',
+  'page.tools.group.languages.title': 'اللغات وأُطر العمل',
+  'page.tools.group.languages.description':
+    'أساس كل واجهة أقدّمها: ترميز دلالي، ومكونات محددة الأنواع، وعرض على الخادم والعميل.',
+  'page.tools.group.data.title': 'البيانات والحالة',
+  'page.tools.group.data.description':
+    'حالة يمكن التنبؤ بها، وبيانات خادم مخزنة مؤقتًا، وحدود API محددة الأنواع للوحات البيانات الكثيفة.',
+  'page.tools.group.styling.title': 'التنسيق وأنظمة التصميم',
+  'page.tools.group.styling.description':
+    'من تسليم التصميم إلى مكونات موثقة قابلة لإعادة الاستخدام.',
+  'page.tools.group.backend.title': 'الخلفية والبيانات والسحابة',
+  'page.tools.group.backend.description':
+    'لميزات full-stack إلى جانب الواجهة الأمامية.',
+  'page.tools.group.workflow.title': 'سير العمل والصيانة',
+  'page.tools.group.workflow.description':
+    'التحكم في الإصدارات، وقواعد الشيفرة القديمة، والصياغة والمراجعة بمساعدة الذكاء الاصطناعي.',
+  'page.tools.group.languages.practice':
+    'في الممارسة: واجهات React وTypeScript كثيفة البيانات في Topsoe، منها بوابة خدمة ذاتية مبنية باستخدام Next.js 16 وReact 19. وفي أدوار سابقة استخدمت HTML وCSS وJavaScript وReact لبناء واجهات متجاوبة تعمل عبر المتصفحات.',
+  'page.tools.group.data.practice':
+    'في الممارسة: Redux Toolkit للواجهات كثيفة البيانات، وTanStack Query مع openapi-fetch لبيانات الخادم محددة الأنواع في بوابة الخدمة الذاتية المبنية بـ Next.js.',
+  'page.tools.group.styling.practice':
+    'في الممارسة: تحويل المخططات الأولية (wireframes) إلى واجهات React وTypeScript متجاوبة، وبناء مكونات واجهة ومكتبات مكونات قابلة لإعادة الاستخدام.',
+  'page.tools.group.backend.practice':
+    'في الممارسة: ميزات full-stack باستخدام Python وFastAPI وPostgreSQL وخدمات Azure، إضافة إلى تكاملات REST وواجهات API الخلفية في عدة أدوار.',
+  'page.tools.group.workflow.practice':
+    'في الممارسة: العمل ضمن فرق Agile موزعة بين الهند والدنمارك والصين، مع CI/CD عبر Azure DevOps لبوابة الخدمة الذاتية.',
+  'page.tools.closing': 'شاهد كيف تجتمع هذه الأدوات في دراسات الحالة.',
   'page.work.eyebrow': 'الأعمال',
   'page.work.title': 'أعمال داخلية مختارة للمنتج',
   'page.recommendations.eyebrow': 'التوصيات',
@@ -655,12 +1096,45 @@ const ar: Messages = {
   'service.duration': 'المدة',
   'page.faq.eyebrow': 'الأسئلة الشائعة',
   'page.faq.title': 'العمل معًا',
+  'home.faqHeading': 'العمل معًا',
   'page.contact.eyebrow': 'تواصل',
   'page.contact.title': 'دعنا نناقش العمل',
   'page.accessibility.eyebrow': 'إمكانية الوصول',
-  'page.accessibility.title': 'ميزات إمكانية الوصول',
-  'page.accessibility.body':
-    'يستخدم هذا الموقع عناصر دلالية ومؤشر تركيز واضحًا للوحة المفاتيح ورابطًا لتجاوز المحتوى وتفضيلات تقليل الحركة وعناوين وصفية وعناصر تحكم معنونة.',
+  'page.accessibility.title': 'بيان إمكانية الوصول',
+  'page.accessibility.commitment':
+    'أريد أن يتمكن الجميع من قراءة هذا الموقع والتواصل معي، أيًّا كان الجهاز أو المتصفح أو التقنية المساعِدة التي يستخدمونها. الهدف هو المستوى AA من معايير WCAG 2.2.',
+  'page.accessibility.inPlaceTitle': 'ما هو مطبَّق',
+  'page.accessibility.inPlace.landmarks':
+    'معالم دلالية وعنوان واحد من المستوى الأول في كل صفحة.',
+  'page.accessibility.inPlace.focus':
+    'رابط لتجاوز المحتوى ومؤشر تركيز واضح للوحة المفاتيح.',
+  'page.accessibility.inPlace.targets':
+    'عناصر تحكم معنونة في النماذج، وعناصر تفاعلية تستوفي الحد الأدنى لحجم الهدف في WCAG 2.2 وهو 24 × 24 بكسل.',
+  'page.accessibility.inPlace.motion': 'احترام تفضيل تقليل الحركة.',
+  'page.accessibility.inPlace.contrast':
+    'تباين ألوان مُتحقَّق منه في السمتين الداكنة والفاتحة.',
+  'page.accessibility.inPlace.rtl':
+    'صفحات عربية بتخطيط من اليمين إلى اليسار، مع إبقاء الشيفرة من اليسار إلى اليمين.',
+  'page.accessibility.inPlace.nojs': 'محتوى يبقى مقروءًا دون JavaScript.',
+  'page.accessibility.inPlace.images': 'بدائل نصية للصور ذات المعنى.',
+  'page.accessibility.inPlace.errors':
+    'تُجمَع أخطاء النموذج في ملخص ينتقل إليه التركيز، مع رابط إلى كل حقل يحتاج إلى تصحيح.',
+  'page.accessibility.inPlace.lang': 'تُعلن كل صفحة لغتها واتجاه نصها.',
+  'page.accessibility.inPlace.forcedColors':
+    'عناوين متدرجة الألوان تعود إلى ألوان نص النظام في وضع التباين العالي في Windows (الألوان القسرية).',
+  'page.accessibility.scopeTitle': 'النطاق',
+  'page.accessibility.scope':
+    'يشمل هذا البيان موقع suprabhat-dev.com باللغات الإنجليزية والإسبانية والعربية، بما في ذلك المقالات ودراسات الحالة ونموذج التواصل.',
+  'page.accessibility.testedTitle': 'كيف يُختبَر',
+  'page.accessibility.tested':
+    'تعمل فحوص axe الآلية وفق WCAG 2.2 AA ضمن مجموعة الاختبارات الشاملة (end-to-end) مع كل تغيير قبل نشره، على ملفات تعريف متصفح لسطح المكتب والجوال، وتشمل صفحات بالسمة الفاتحة وصفحات من اليمين إلى اليسار. كما تُجرى تدقيقات إمكانية الوصول في Lighthouse على الصفحات الرئيسية.',
+  'page.accessibility.limitationsTitle': 'قيود معروفة',
+  'page.accessibility.limitations.covers':
+    'تحتوي صور أغلفة المقالات على نص إنجليزي في الصفحات الإسبانية والعربية؛ أما بدائلها النصية فمترجمة.',
+  'page.accessibility.limitations.quotes':
+    'تُقتبَس التوصيات بلغتها الإنجليزية الأصلية.',
+  'page.accessibility.feedbackTitle': 'الملاحظات',
+  'page.accessibility.reviewed': 'آخر مراجعة:',
   'page.accessibility.contact':
     'يبقى المحتوى مقروءًا وقابلًا للتنقل دون JavaScript. إذا واجهت عائقًا، راسل ',
   'page.privacy.eyebrow': 'الخصوصية',
@@ -670,6 +1144,7 @@ const ar: Messages = {
   'page.privacy.contact': 'لا تُدرج معلومات شخصية حساسة. يمكنك أيضًا مراسلة ',
   'page.blog.eyebrow': 'المقالات',
   'page.blog.title': 'مقالات هندسة الواجهات الأمامية',
+  'home.blogTitle': 'مقالات هندسة الواجهات الأمامية',
   'page.blog.lead':
     'أدلة عملية حول الواجهات المتاحة والأداء والمعمارية القابلة للصيانة وتقديم واجهات احترافية.',
   'blog.taxonomy.eyebrow': 'موضوع',
@@ -682,6 +1157,8 @@ const ar: Messages = {
   'blog.relatedTitle': 'مقالات واجهات أمامية ذات صلة',
   'blog.updated': 'آخر تحديث:',
   'blog.coverAlt': 'صورة غلاف المقال: {title}',
+  'seo.articleImageAlt': '{title} — صورة غلاف المقال',
+  'seo.caseStudyImageAlt': '{title} — بطاقة دراسة الحالة',
   'blog.readingTime': 'مدة القراءة: {duration}',
   'blog.share.title': 'شارك هذا المقال',
   'blog.share.x': 'شارك على X',
@@ -745,7 +1222,6 @@ const ar: Messages = {
   'form.projectConsulting': 'استشارة معمارية غير متزامنة',
   'form.projectOther': 'أخرى',
   'form.budget': 'نطاق الميزانية',
-  'form.budgetUnder5k': 'أقل من 5,000 دولار أمريكي',
   'form.budget5k15k': '5,000–15,000 دولار أمريكي',
   'form.budget15k30k': '15,000–30,000 دولار أمريكي',
   'form.budget30kPlus': 'أكثر من 30,000 دولار أمريكي',
@@ -755,7 +1231,6 @@ const ar: Messages = {
   'form.timelineQuarter': 'من شهر إلى ثلاثة أشهر',
   'form.timelineLater': 'أكثر من ثلاثة أشهر',
   'form.timelineExploring': 'استكشاف الخيارات',
-  'form.namePlaceholder': 'اسمك الكامل',
   'form.messagePlaceholder': 'صف مشروعك أو سؤالك…',
   'form.send': 'إرسال الاستفسار',
   'form.unavailable': 'نموذج الاتصال غير متاح في هذه البيئة.',
@@ -827,10 +1302,19 @@ const ar: Messages = {
   'schema.serviceDescription':
     'تطوير واجهات SaaS، وهندسة واجهات لوحات البيانات، وتحسين الأداء، وأنظمة التصميم، وتنفيذ React/Next.js، وتكامل FastAPI، وواجهات تركّز على إمكانية الوصول.',
   'schema.worldwide': 'عالميًا',
-  'schema.countryIndia': 'الهند',
 };
 
-const messages: Partial<Record<Locale, Messages>> = { es, ar };
+const translations: Record<Exclude<Locale, 'en'>, Translations> = { es, ar };
 
-export const t = (locale: Locale, key: string, fallback: string) =>
-  messages[locale]?.[key] ?? fallback;
+const isMessageKey = (key: string): key is MessageKey => Object.hasOwn(en, key);
+
+export function t(locale: Locale, key: MessageKey): string;
+export function t(locale: Locale, key: DataMessageKey, english: string): string;
+export function t(
+  locale: Locale,
+  key: MessageKey | DataMessageKey,
+  english = '',
+): string {
+  if (locale === 'en') return isMessageKey(key) ? en[key] : english;
+  return translations[locale][key] ?? english;
+}

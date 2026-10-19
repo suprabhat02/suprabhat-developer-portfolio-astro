@@ -3,77 +3,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageContent from '../components/PageContent.astro';
 import { faqs } from '../data/faqs';
 import { services } from '../data/services';
+import {
+  getSectionPageMeta,
+  sectionPages,
+  type SectionPage,
+} from '../data/pageSeo';
 import { SITE_URL, NOINDEX_PAGES } from '../config/site';
 
-const pages = {
-  about: [
-    'About Suprabhat Kumar | Senior React Frontend Engineer',
-    'Follow Suprabhat Kumar’s six-year frontend career across SaaS portals, enterprise dashboards, React architecture, accessibility, and global teams.',
-  ],
-  skills: [
-    'Frontend Engineering Skills | Suprabhat Kumar',
-    'React, Next.js, TypeScript, HTML5, Bootstrap 5, TanStack Query, GraphQL, MongoDB, design systems and data UI expertise.',
-  ],
-  experience: [
-    'Frontend Engineering Experience | Suprabhat Kumar',
-    'Six years of frontend engineering experience across SaaS products and enterprise interfaces.',
-  ],
-  tools: [
-    'Frontend Tools and Stack | Suprabhat Kumar',
-    'The tools used to design, build and maintain production frontend systems, including HTML5, TanStack Query, GraphQL, Bootstrap 5 and MongoDB.',
-  ],
-  work: [
-    'React Frontend Engineering Case Studies | Suprabhat Kumar',
-    'Read frontend case studies on SaaS dashboards, design systems, React performance, accessibility, Astro SEO, localization, and browser testing.',
-  ],
-  recommendations: [
-    'Recommendations | Suprabhat Kumar',
-    'Recommendations for Suprabhat Kumar from colleagues in AI engineering, quality assurance, platform, UX research, SEO and regulatory affairs.',
-  ],
-  services: [
-    'React Frontend Engineering Services | Suprabhat Kumar',
-    'Hire Suprabhat Kumar for React performance audits, architecture reviews, SaaS dashboards, design systems, accessibility, and website delivery.',
-  ],
-  faq: [
-    'Frequently Asked Questions | Suprabhat Kumar',
-    'Answers about services, pricing, remote collaboration, timelines and getting started.',
-  ],
-  contact: [
-    'Hire Suprabhat Kumar | Senior React Frontend Engineer',
-    'Discuss a React dashboard, architecture review, design system, performance audit, accessibility audit, or website project with Suprabhat Kumar.',
-  ],
-  accessibility: [
-    'Accessibility Features | Suprabhat Kumar',
-    'Accessibility on suprabhat-dev.com: semantic landmarks, visible keyboard focus, a skip link, reduced motion, labeled controls, and no-JavaScript reading.',
-  ],
-  privacy: [
-    'Contact Form Privacy | Suprabhat Kumar',
-    'How the suprabhat-dev.com contact form handles your data: no analytics, drafts saved only in your browser, and submissions emailed through Web3Forms.',
-  ],
-  blog: [
-    'React and Frontend Engineering Articles | Suprabhat Kumar',
-    'Practical React and frontend engineering guides on architecture, accessibility, performance, code review, design systems, and maintainable UI.',
-  ],
-} as const;
-
 export function getStaticPaths() {
-  return [
-    'about',
-    'skills',
-    'experience',
-    'tools',
-    'work',
-    'recommendations',
-    'services',
-    'faq',
-    'contact',
-    'accessibility',
-    'privacy',
-    'blog',
-  ].map((page) => ({ params: { page }, props: { page } }));
+  return sectionPages.map((page) => ({ params: { page }, props: { page } }));
 }
-const { page } = Astro.props as { page: keyof typeof pages };
-const [title, description] = pages[page];
+
+interface Props {
+  page: SectionPage;
+}
+const { page } = Astro.props;
+const { title, description } = getSectionPageMeta('en', page);
 const language = 'en';
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
@@ -152,6 +97,7 @@ const schema = [
   {title}
   {description}
   page={page}
+  pageType={page === 'about' ? 'ProfilePage' : 'WebPage'}
   schema={schema}
   noindex={(NOINDEX_PAGES as readonly string[]).includes(page)}
   ><PageContent {page} locale="en" /></BaseLayout

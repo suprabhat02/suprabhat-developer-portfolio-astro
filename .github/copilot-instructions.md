@@ -18,7 +18,7 @@ wins** — say so instead of guessing.
    `package.json` / `node_modules/<pkg>/package.json` / the actual installed
    types before using an API. If unsure, open the file and read it — don't
    pattern-match from general training data, this repo pins exact versions
-   (Astro 7, TypeScript strict, ESLint 10, Playwright 1.62).
+   (Astro 7, TypeScript strict, ESLint 10, Playwright 1.64).
 3. **Never claim a change works without running the checks below.** "Should
    work" is not done. Run `npm run build` (or at least `npm run check` +
    `npm run lint`) before saying a task is finished.
@@ -109,7 +109,9 @@ docs/DEPLOYMENT.md                 release workflow, dashboards
 docs/TODO.md                       open items — don't fill with invented content
 docs/LIGHTHOUSE-EVIDENCE.md        performance evidence/history
 
-tests/portfolio.spec.ts            Playwright + axe-core e2e suite
+tests/*.spec.ts                    Playwright + axe-core e2e suite: seo, a11y,
+                                    i18n, blog and ui specs
+tests/helpers.ts                   shared test helpers (axe with target-size)
 .github/workflows/deploy-pages.yml CI: on push to main → build → GitHub Pages
 ```
 

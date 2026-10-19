@@ -1,5 +1,4 @@
-import { SITE_NAME, SITE_URL } from '../config/site';
-import { faqs } from './faqs';
+import { SITE_URL } from '../config/site';
 import { getServices } from './services';
 import { getHomepageConversionContent } from './homepageConversion';
 import { getReactSmartCopySchema } from './openSource';
@@ -17,7 +16,7 @@ export const getHomepageDescription = (locale: Locale) =>
   locale === 'es'
     ? 'Ingeniero frontend sénior con más de seis años creando productos SaaS rápidos y accesibles con React y TypeScript.'
     : locale === 'ar'
-      ? 'مهندس واجهات أمامية أول بخبرة تزيد على ست سنوات في بناء منتجات SaaS سريعة ومتاحة باستخدام React وTypeScript.'
+      ? 'مهندس واجهات أمامية أول بخبرة تزيد على ست سنوات في بناء منتجات SaaS سريعة ومتاحة ولوحات بيانات وأنظمة تصميم باستخدام React وTypeScript.'
       : 'Senior React frontend engineer in India with 6+ years building SaaS dashboards, design systems, accessible interfaces, and fast web products.';
 
 export const getHomepageSchema = (locale: Locale) => {
@@ -30,24 +29,16 @@ export const getHomepageSchema = (locale: Locale) => {
     {
       '@type': 'ProfessionalService',
       '@id': `${SITE_URL}/#service`,
-      name: t(
-        locale,
-        'schema.serviceName',
-        `${SITE_NAME} - Frontend Engineering Services`,
-      ),
-      description: t(
-        locale,
-        'schema.serviceDescription',
-        'Frontend performance audits, React and TypeScript architecture reviews, SaaS dashboard development, design systems, accessibility audits, and website delivery.',
-      ),
+      name: t(locale, 'schema.serviceName'),
+      description: t(locale, 'schema.serviceDescription'),
       url: pageUrl,
       inLanguage: language,
-      areaServed: t(locale, 'schema.worldwide', 'Worldwide'),
+      areaServed: t(locale, 'schema.worldwide'),
       provider: { '@id': `${SITE_URL}/#person` },
       serviceType: services.map((service) => service.name),
       hasOfferCatalog: {
         '@type': 'OfferCatalog',
-        name: t(locale, 'page.services.title', 'Frontend engineering services'),
+        name: t(locale, 'page.services.title'),
         itemListElement: services.map((service) => ({
           '@type': 'Offer',
           itemOffered: {
@@ -55,14 +46,12 @@ export const getHomepageSchema = (locale: Locale) => {
             name: service.name,
             description: [
               service.description,
-              service.fit
-                ? `${t(locale, 'service.fit', 'Best for')}: ${service.fit}.`
-                : '',
+              service.fit ? `${t(locale, 'service.fit')}: ${service.fit}.` : '',
               service.deliverables
-                ? `${t(locale, 'service.deliverables', 'Deliverables')}: ${service.deliverables}.`
+                ? `${t(locale, 'service.deliverables')}: ${service.deliverables}.`
                 : '',
               service.duration
-                ? `${t(locale, 'service.duration', 'Duration')}: ${service.duration}.`
+                ? `${t(locale, 'service.duration')}: ${service.duration}.`
                 : '',
             ]
               .filter(Boolean)
@@ -86,18 +75,6 @@ export const getHomepageSchema = (locale: Locale) => {
         position: index + 1,
         name: item.title,
         description: `${item.body} ${problems.outcomeLabel}: ${item.outcome}`,
-      })),
-    },
-    {
-      '@type': 'FAQPage',
-      inLanguage: language,
-      mainEntity: faqs.map((faq) => ({
-        '@type': 'Question',
-        name: t(locale, `faq.${faq.id}.q`, faq.question),
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: t(locale, `faq.${faq.id}.a`, faq.answer),
-        },
       })),
     },
   ];

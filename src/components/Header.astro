@@ -9,7 +9,7 @@ interface Props {
   locale: Locale;
   page: string;
   path?: string;
-  localeHrefs?: Partial<Record<Locale, string>>;
+  localeHrefs?: Partial<Record<Locale, string>> | undefined;
 }
 
 const { locale, page, path, localeHrefs } = Astro.props;
@@ -29,78 +29,62 @@ const languageCode = locale.toUpperCase();
 // WCAG 2.5.3 (Label in Name): the accessible name starts with the visible
 // code so voice-control users can say "click AR".
 const currentLanguageAria = `${languageCode}: ${formatLabel(
-  t(
-    locale,
-    'language.current',
-    'Change language, current language: {language}',
-  ),
+  t(locale, 'language.current'),
   { language: localeMeta[locale].label },
 )}`;
 const languageSwitchAria = (next: Locale) =>
-  t(
-    locale,
-    `language.switch.${next}`,
-    `Switch language to ${localeMeta[next].label}`,
-  );
-const switchToLightTheme = t(
-  locale,
-  'theme.switchLight',
-  'Switch to light color theme',
-);
-const switchToDarkTheme = t(
-  locale,
-  'theme.switchDark',
-  'Switch to dark color theme',
-);
+  t(locale, `language.switch.${next}`);
+const switchToLightTheme = t(locale, 'theme.switchLight');
+const switchToDarkTheme = t(locale, 'theme.switchDark');
 const headerNav = [
   {
     key: 'home',
     pageKey: 'home',
     href: '/',
     section: '#home',
-    label: t(locale, 'nav.home', 'Home'),
+    label: t(locale, 'nav.home'),
   },
   {
     key: 'about',
     pageKey: 'about',
     href: '/about/',
     section: '#about',
-    label: t(locale, 'nav.about', 'About'),
+    label: t(locale, 'nav.about'),
   },
   {
     key: 'expertise',
     pageKey: 'skills',
     href: '/skills/',
     section: '#expertise',
-    label: t(locale, 'home.expertise', 'Expertise'),
+    label: t(locale, 'home.expertise'),
   },
   {
     key: 'experience',
     pageKey: 'experience',
     href: '/experience/',
     section: '#experience',
-    label: t(locale, 'nav.experience', 'Experience'),
+    label: t(locale, 'nav.experience'),
   },
   {
     key: 'work',
     pageKey: 'work',
     href: '/work/',
     section: '#work',
-    label: t(locale, 'nav.work', 'Work'),
+    label: t(locale, 'nav.work'),
   },
   {
     key: 'blog',
     pageKey: 'blog',
     href: '/blog/',
     section: '#blog',
-    label: t(locale, 'nav.blog', 'Writing'),
+    label: t(locale, 'nav.blog'),
   },
   {
     key: 'contact',
     pageKey: 'contact',
     href: '/contact/',
     section: '#contact',
-    label: t(locale, 'nav.contact', 'Contact'),
+    label: t(locale, 'nav.contact'),
   },
 ] as const;
 const navHref = (item: (typeof headerNav)[number]) =>
@@ -109,15 +93,13 @@ const isActive = (item: (typeof headerNav)[number]) =>
   page === item.pageKey || (page === 'home' && item.key === 'home');
 ---
 
-<a class="skip-link" href="#main-content"
-  >{t(locale, 'skip', 'Skip to main content')}</a
->
+<a class="skip-link" href="#main-content">{t(locale, 'skip')}</a>
 <header class="site-header" role="banner">
   <div class="wrap header-inner">
     <a
       class="brand logo"
       href={localHref('/')}
-      aria-label={`${displayName}, ${t(locale, 'nav.home', 'home')}`}
+      aria-label={`${displayName}, ${t(locale, 'nav.homeAria')}`}
     >
       {
         locale === 'ar' ? (
@@ -131,10 +113,7 @@ const isActive = (item: (typeof headerNav)[number]) =>
       }
     </a>
 
-    <nav
-      class="desktop-nav site-nav"
-      aria-label={t(locale, 'nav.primary', 'Primary navigation')}
-    >
+    <nav class="desktop-nav site-nav" aria-label={t(locale, 'nav.primary')}>
       <span class="nav-pill" aria-hidden="true"></span>
       <ul>
         {
@@ -203,7 +182,7 @@ const isActive = (item: (typeof headerNav)[number]) =>
         <div
           class="hdr-menu"
           role="menu"
-          aria-label={t(locale, 'language.options', 'Language options')}
+          aria-label={t(locale, 'language.options')}
         >
           {
             locales.map((item) => (
@@ -227,8 +206,8 @@ const isActive = (item: (typeof headerNav)[number]) =>
         class="hdr-dropdown-btn theme-toggle"
         type="button"
         aria-pressed="false"
-        aria-label={t(locale, 'theme', 'Toggle color theme')}
-        title={t(locale, 'theme', 'Toggle color theme')}
+        aria-label={t(locale, 'theme')}
+        title={t(locale, 'theme')}
         data-label-light={switchToLightTheme}
         data-label-dark={switchToDarkTheme}
       >
@@ -265,7 +244,7 @@ const isActive = (item: (typeof headerNav)[number]) =>
         id="mob-btn"
         aria-expanded="false"
         aria-controls="mob-menu"
-        aria-label={t(locale, 'nav.openMenu', 'Open navigation menu')}
+        aria-label={t(locale, 'nav.openMenu')}
       >
         <svg
           width="20"
@@ -293,13 +272,13 @@ const isActive = (item: (typeof headerNav)[number]) =>
   id="mob-menu"
   role="dialog"
   aria-modal="true"
-  aria-label={t(locale, 'nav.mobile', 'Navigation menu')}
+  aria-label={t(locale, 'nav.mobile')}
 >
   <button
     type="button"
     class="mob-close"
     id="mob-close"
-    aria-label={t(locale, 'nav.closeMenu', 'Close navigation menu')}
+    aria-label={t(locale, 'nav.closeMenu')}
   >
     <svg
       width="20"
@@ -326,11 +305,7 @@ const isActive = (item: (typeof headerNav)[number]) =>
       </a>
     ))
   }
-  <div
-    class="mob-lang"
-    role="group"
-    aria-label={t(locale, 'language.options', 'Language options')}
-  >
+  <div class="mob-lang" role="group" aria-label={t(locale, 'language.options')}>
     {
       locales.map((item) => (
         <a

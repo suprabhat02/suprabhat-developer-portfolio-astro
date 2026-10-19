@@ -34,7 +34,7 @@ src/components/fx/
 | Flip Words               | `FlipWords.astro`                                           | Hero                                     |
 | Infinite Moving Cards    | `.fx-marquee` + `.fx-marquee-track`                         | Keyword strip, recommendations           |
 | Bento Grid               | `.bento-grid` with CSS mini-visuals                         | Problems section                         |
-| Timeline / Tracing Beam  | `.fx-beam` inside `.fx-beam-scope`                          | Experience (homepage and `/experience/`) |
+| Timeline / Tracing Beam  | `ExperienceTimeline.astro` (`.xp-rail` + `.xp-rail-fill`)   | Experience (homepage and `/experience/`) |
 | Text Reveal              | `TextReveal.astro`                                          | About statement                          |
 | Focus Cards              | `.fx-focus-group` + `.fx-focus-item`                        | Featured articles                        |
 | Lamp                     | `.fx-lamp` + `.fx-lamp-line`                                | Homepage CTA band                        |

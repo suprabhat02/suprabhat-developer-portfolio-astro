@@ -37,8 +37,9 @@ const MONTHS: Record<string, string> = {
 };
 /** "May 2025" → "2025-05" for <time datetime>. */
 const toISO = (value: string) => {
-  const [month, year] = value.split(' ');
-  return year && MONTHS[month] ? `${year}-${MONTHS[month]}` : '';
+  const [month = '', year] = value.split(' ');
+  const monthNumber = MONTHS[month];
+  return year && monthNumber ? `${year}-${monthNumber}` : '';
 };
 const yearOf = (value: string) => value.split(' ')[1] ?? value;
 const roleKey = (promotion?: boolean) => (promotion ? 'senior' : 'developer');
@@ -48,10 +49,7 @@ const roleKey = (promotion?: boolean) => (promotion ? 'senior' : 'developer');
   <div class="xp-rail" aria-hidden="true">
     <span class="xp-rail-fill"></span>
   </div>
-  <ol
-    class="xp-list"
-    aria-label={t(locale, 'home.history', 'Work history, newest first')}
-  >
+  <ol class="xp-list" aria-label={t(locale, 'home.history')}>
     {
       experience.map((job, index) => {
         const title =
@@ -135,7 +133,7 @@ const roleKey = (promotion?: boolean) => (promotion ? 'senior' : 'developer');
                         )}
                         {role.promotion && (
                           <span class="promo-badge">
-                            {t(locale, 'home.promoted', 'Promoted')}
+                            {t(locale, 'home.promoted')}
                           </span>
                         )}
                       </SubHeading>

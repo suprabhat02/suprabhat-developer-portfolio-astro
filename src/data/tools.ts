@@ -33,3 +33,45 @@ export const tools: readonly Tool[] = [
   { name: 'PostgreSQL', icon: '/assets/techicons/postgresql.svg', alt: '' },
   { name: 'MongoDB', icon: '/assets/techicons/mongodb.svg', alt: '' },
 ] as const;
+
+export type ToolGroupId =
+  'languages' | 'data' | 'styling' | 'backend' | 'workflow';
+
+export interface ToolGroup {
+  id: ToolGroupId;
+  tools: readonly string[];
+}
+
+/** Headings and descriptions live in messages.ts under page.tools.group.<id>.*. */
+export const toolGroups: readonly ToolGroup[] = [
+  { id: 'languages', tools: ['HTML5', 'TypeScript', 'React', 'Next.js'] },
+  { id: 'data', tools: ['Redux', 'TanStack Query', 'GraphQL'] },
+  {
+    id: 'styling',
+    tools: ['Figma', 'Tailwind CSS', 'Bootstrap 5', 'Sass', 'Storybook'],
+  },
+  {
+    id: 'backend',
+    tools: ['Node.js', 'FastAPI', 'PostgreSQL', 'MongoDB', 'Azure'],
+  },
+  { id: 'workflow', tools: ['Git', 'jQuery', 'Claude AI'] },
+];
+
+const toolsByName = new Map(tools.map((tool) => [tool.name, tool]));
+
+/** Groups with resolved tools; fails the build if a tool is missing or grouped twice. */
+export const getToolGroups = () => {
+  const grouped = toolGroups.flatMap((group) => group.tools);
+  const unique = new Set(grouped);
+  if (unique.size !== grouped.length || unique.size !== tools.length) {
+    throw new Error('Every tool must appear in exactly one tool group.');
+  }
+  return toolGroups.map((group) => ({
+    ...group,
+    tools: group.tools.map((name) => {
+      const tool = toolsByName.get(name);
+      if (!tool) throw new Error(`Unknown tool in group ${group.id}: ${name}`);
+      return tool;
+    }),
+  }));
+};

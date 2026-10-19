@@ -22,13 +22,9 @@ const { locale, class: className } = Astro.props;
 <div
   class:list={['fx-globe', className]}
   role="img"
-  aria-label={t(
-    locale,
-    'globe.label',
-    'Globe showing remote collaboration from India with teams in North America, Europe, the Middle East and Asia-Pacific',
-  )}
+  aria-label={t(locale, 'globe.label')}
   data-globe
-  data-home-label={t(locale, 'globe.home', 'India')}
+  data-home-label={t(locale, 'globe.home')}
 >
   <canvas aria-hidden="true"></canvas>
 </div>

@@ -1,5 +1,10 @@
 ---
-import { footerLegalNav, moreNav, primaryNav } from '../data/navigation';
+import {
+  footerLegalNav,
+  moreNav,
+  primaryNav,
+  type NavKey,
+} from '../data/navigation';
 import { getBlogFeedHref } from '../data/blog';
 import { localePrefix, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
@@ -18,8 +23,7 @@ const displayName = getProfile(locale).name;
 const prefix = localePrefix(locale);
 const href = (path: string) => `${prefix}${path}` || '/';
 const rssHref = getBlogFeedHref(locale);
-const navLabel = (key: string) =>
-  t(locale, `nav.${key}`, key[0].toUpperCase() + key.slice(1));
+const navLabel = (key: NavKey) => t(locale, `nav.${key}`);
 const profiles = [
   { label: 'X', href: X_PROFILE_URL },
   { label: 'DEV', href: DEV_PROFILE_URL },
@@ -31,18 +35,9 @@ const profiles = [
   <div class="wrap footer-grid">
     <div>
       <a class="footer-name" href={href('/')}>{displayName}</a><p>
-        {
-          t(
-            locale,
-            'footer.lead',
-            'Senior Front-End Engineer building fast, accessible product interfaces.',
-          )
-        }
+        {t(locale, 'footer.lead')}
       </p>
-      <ul
-        class="footer-profiles"
-        aria-label={t(locale, 'footer.profiles', 'Profiles elsewhere')}
-      >
+      <ul class="footer-profiles" aria-label={t(locale, 'footer.profiles')}>
         {
           profiles.map((profile) => (
             <li>
@@ -54,30 +49,29 @@ const profiles = [
         }
       </ul>
     </div>
-    <nav aria-label={t(locale, 'footer.siteLinks', 'Site links')}>
-      <strong>{t(locale, 'footer.navigate', 'Navigate')}</strong>{
+    <nav aria-label={t(locale, 'footer.siteLinks')}>
+      <strong>{t(locale, 'footer.navigate')}</strong>{
         primaryNav
           .slice(1)
           .map((item) => <a href={href(item.href)}>{navLabel(item.key)}</a>)
       }
     </nav>
-    <nav aria-label={t(locale, 'footer.moreLinks', 'More links')}>
-      <strong>{t(locale, 'footer.more', 'More')}</strong>{
+    <nav aria-label={t(locale, 'footer.moreLinks')}>
+      <strong>{t(locale, 'footer.more')}</strong>{
         moreNav.map((item) => (
           <a href={href(item.href)}>{navLabel(item.key)}</a>
         ))
       }
     </nav>
-    <nav aria-label={t(locale, 'footer.legalLinks', 'Legal links')}>
-      <strong>{t(locale, 'footer.legal', 'Legal')}</strong>{
+    <nav aria-label={t(locale, 'footer.legalLinks')}>
+      <strong>{t(locale, 'footer.legal')}</strong>{
         footerLegalNav.map((item) => (
           <a href={href(item.href)}>{navLabel(item.key)}</a>
         ))
-      }<a href={rssHref} aria-label={t(locale, 'footer.rss', 'RSS feed')}>RSS</a
-      >
+      }<a href={rssHref} aria-label={t(locale, 'footer.rss')}>RSS</a>
       <a
         href="/assets/suprabhat-kumar-senior-frontend-engineer-resume.pdf"
-        download>{t(locale, 'action.resume', 'Résumé')}</a
+        download>{t(locale, 'action.resumeShort')}</a
       >
     </nav>
   </div>
@@ -92,7 +86,7 @@ const profiles = [
   </div>
   <div class="wrap footer-bottom">
     <span>© {new Date().getFullYear()} {displayName}</span><a
-      href="#main-content">{t(locale, 'action.top', 'Back to top')}</a
+      href="#main-content">{t(locale, 'action.top')}</a
     >
   </div>
 </footer>

@@ -102,5 +102,6 @@ export const getRecommendations = (locale: Locale): readonly Recommendation[] =>
     .map((recommendation) => ({
       ...recommendation,
       role: localizedRoles[locale]?.[recommendation.id] ?? recommendation.role,
-      quoteLang: locale === 'en' ? undefined : 'en',
+      // Quotes are kept in English, so mark them on translated pages.
+      ...(locale === 'en' ? {} : { quoteLang: 'en' }),
     }));
