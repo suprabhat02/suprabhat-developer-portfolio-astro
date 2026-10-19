@@ -33,10 +33,10 @@ interface Props {
   hideCanonical?: boolean;
   ogType?: string;
   schema?: Record<string, unknown> | Record<string, unknown>[];
-  localeHrefs?: Partial<Record<Locale, string>>;
-  image?: string;
-  imageWidth?: number;
-  imageHeight?: number;
+  localeHrefs?: Partial<Record<Locale, string>> | undefined;
+  image?: string | undefined;
+  imageWidth?: number | undefined;
+  imageHeight?: number | undefined;
   /** Locales this page exists in; limits hreflang and translation links. */
   alternateLocales?: readonly Locale[];
 }

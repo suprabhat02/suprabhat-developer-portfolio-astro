@@ -37,8 +37,9 @@ const MONTHS: Record<string, string> = {
 };
 /** "May 2025" → "2025-05" for <time datetime>. */
 const toISO = (value: string) => {
-  const [month, year] = value.split(' ');
-  return year && MONTHS[month] ? `${year}-${MONTHS[month]}` : '';
+  const [month = '', year] = value.split(' ');
+  const monthNumber = MONTHS[month];
+  return year && monthNumber ? `${year}-${monthNumber}` : '';
 };
 const yearOf = (value: string) => value.split(' ')[1] ?? value;
 const roleKey = (promotion?: boolean) => (promotion ? 'senior' : 'developer');

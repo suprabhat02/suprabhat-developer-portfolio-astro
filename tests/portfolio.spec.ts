@@ -1048,7 +1048,7 @@ test('CTA globe loads lazily, is described, and marks India', async ({
         const pixels = context.getImageData(0, 0, width, height).data;
         let opaque = 0;
         for (let index = 3; index < pixels.length; index += 4 * 97) {
-          if (pixels[index] > 0) opaque++;
+          if ((pixels[index] ?? 0) > 0) opaque++;
         }
         return opaque;
       }),
@@ -1462,7 +1462,9 @@ test('case-study dates come from data, not the old 2026-09-06 placeholder', asyn
           /<script type="application\/ld\+json">(.*?)<\/script>/gs,
         ),
       ]
-        .map(([, json]) => JSON.parse(json) as JsonLdNode | JsonLdNode[])
+        .flatMap(([, json]) =>
+          json ? [JSON.parse(json) as JsonLdNode | JsonLdNode[]] : [],
+        )
         .flat()
         .flatMap((node) => node['@graph'] ?? [node])
         .find((node) => node['@type'] === 'TechArticle');
@@ -1509,6 +1511,29 @@ test('every case study shares its own built image, not the default', async () =>
     ).resolves.toBeUndefined();
     expect(html, path).toContain(`"image":"${ogImage}"`);
   }
+});
+
+test('structured data never contains a raw "<" that could close its script', async () => {
+  const dist = new URL('../dist/', import.meta.url);
+  const htmlFiles = (await readdir(dist, { recursive: true })).filter((file) =>
+    file.endsWith('.html'),
+  );
+  expect(htmlFiles.length).toBeGreaterThan(100);
+  let blocks = 0;
+  for (const file of htmlFiles) {
+    const html = await readFile(
+      new URL(file.replaceAll('\\', '/'), dist),
+      'utf-8',
+    );
+    for (const [, json = ''] of html.matchAll(
+      /<script type="application\/ld\+json">(.*?)<\/script>/gs,
+    )) {
+      blocks++;
+      expect(json, file).not.toContain('<');
+      expect(() => JSON.parse(json), file).not.toThrow();
+    }
+  }
+  expect(blocks).toBeGreaterThan(100);
 });
 
 test('articles show cover, reading time, share links and RSS in every locale', async ({

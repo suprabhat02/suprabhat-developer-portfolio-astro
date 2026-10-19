@@ -84,7 +84,7 @@ function buildDots(): { points: Float32Array; india: Uint8Array } {
     const stride = Math.max(1, Math.round(1 / Math.cos(lat * DEG)));
     for (let col = 0; col < cols; col++) {
       const index = row * cols + col;
-      if (!(bytes[index >> 3] & (1 << (index & 7)))) continue;
+      if (!((bytes[index >> 3] ?? 0) & (1 << (index & 7)))) continue;
       const isIndia = indiaCells.has(index);
       if (col % stride && !isIndia) continue;
       const [x, y, z] = toVec({ lat, lng: -180 + (col + 0.5) * step });
@@ -161,8 +161,10 @@ export function mountGlobe(host: HTMLElement): () => void {
   const rtl = document.documentElement.dir === 'rtl';
   const { points, india } = buildDots();
   const home = toVec(HOME);
-  const hubs = HUBS.map(toVec);
-  const arcs = hubs.map((hub) => buildArc(home, hub));
+  const routes = HUBS.map(toVec).map((hub) => ({
+    hub,
+    arc: buildArc(home, hub),
+  }));
   const projected = new Float32Array(points.length);
 
   let palette = readPalette(host);
@@ -191,6 +193,24 @@ export function mountGlobe(host: HTMLElement): () => void {
     const z1 = x * sinYaw + z * cosYaw;
     return [x1, y * cosPitch - z1 * sinPitch, y * sinPitch + z1 * cosPitch];
   };
+  /** Rotates the xyz triple stored at `offset` in a flat coordinate array. */
+  const rotateAt = (
+    coords: Float32Array,
+    offset: number,
+    sinYaw: number,
+    cosYaw: number,
+    sinPitch: number,
+    cosPitch: number,
+  ) =>
+    rotate(
+      coords[offset] ?? 0,
+      coords[offset + 1] ?? 0,
+      coords[offset + 2] ?? 0,
+      sinYaw,
+      cosYaw,
+      sinPitch,
+      cosPitch,
+    );
 
   const draw = (now: number) => {
     if (!width) return;
@@ -253,15 +273,7 @@ export function mountGlobe(host: HTMLElement): () => void {
     // Land dots, batched into depth bands to limit state changes.
     const dot = Math.max(1.1, radius * 0.0105);
     for (let i = 0; i < points.length; i += 3) {
-      const [x, y, z] = rotate(
-        points[i],
-        points[i + 1],
-        points[i + 2],
-        sinYaw,
-        cosYaw,
-        sinPitch,
-        cosPitch,
-      );
+      const [x, y, z] = rotateAt(points, i, sinYaw, cosYaw, sinPitch, cosPitch);
       projected[i] = cx + x * radius;
       projected[i + 1] = cy - y * radius;
       projected[i + 2] = z;
@@ -276,9 +288,11 @@ export function mountGlobe(host: HTMLElement): () => void {
       ctx.fillStyle = palette.land;
       ctx.beginPath();
       for (let i = 0, d = 0; i < projected.length; i += 3, d++) {
-        const z = projected[i + 2];
+        const z = projected[i + 2] ?? 0;
         if (india[d] || z < low || z >= high) continue;
-        ctx.rect(projected[i] - dot / 2, projected[i + 1] - dot / 2, dot, dot);
+        const px = projected[i] ?? 0;
+        const py = projected[i + 1] ?? 0;
+        ctx.rect(px - dot / 2, py - dot / 2, dot, dot);
       }
       ctx.fill();
     }
@@ -286,10 +300,10 @@ export function mountGlobe(host: HTMLElement): () => void {
     ctx.fillStyle = palette.home;
     ctx.beginPath();
     for (let i = 0, d = 0; i < projected.length; i += 3, d++) {
-      if (!india[d] || projected[i + 2] < 0) continue;
+      if (!india[d] || (projected[i + 2] ?? 0) < 0) continue;
       ctx.rect(
-        projected[i] - dot * 0.6,
-        projected[i + 1] - dot * 0.6,
+        (projected[i] ?? 0) - dot * 0.6,
+        (projected[i + 1] ?? 0) - dot * 0.6,
         dot * 1.2,
         dot * 1.2,
       );
@@ -298,9 +312,9 @@ export function mountGlobe(host: HTMLElement): () => void {
 
     // Arcs: a faint trail plus a travelling comet per hub.
     ctx.lineCap = 'round';
-    arcs.forEach((arc, arcIndex) => {
+    routes.forEach(({ arc, hub }, arcIndex) => {
       const phase =
-        ((elapsed + arcIndex * (ARC_PERIOD_MS / arcs.length) * 1.7) %
+        ((elapsed + arcIndex * (ARC_PERIOD_MS / routes.length) * 1.7) %
           (ARC_PERIOD_MS * 1.4)) /
         ARC_PERIOD_MS;
       const head = reducedMotion.matches ? 1 : Math.min(1, phase);
@@ -308,10 +322,9 @@ export function mountGlobe(host: HTMLElement): () => void {
       let previous: [number, number, boolean] | null = null;
 
       for (let s = 0; s <= ARC_SAMPLES; s++) {
-        const [x, y, z] = rotate(
-          arc[s * 3],
-          arc[s * 3 + 1],
-          arc[s * 3 + 2],
+        const [x, y, z] = rotateAt(
+          arc,
+          s * 3,
           sinYaw,
           cosYaw,
           sinPitch,
@@ -342,9 +355,9 @@ export function mountGlobe(host: HTMLElement): () => void {
 
       // Hub marker, with a ring when the comet lands.
       const [hx, hy, hz] = rotate(
-        hubs[arcIndex][0],
-        hubs[arcIndex][1],
-        hubs[arcIndex][2],
+        hub[0],
+        hub[1],
+        hub[2],
         sinYaw,
         cosYaw,
         sinPitch,
@@ -445,6 +458,7 @@ export function mountGlobe(host: HTMLElement): () => void {
   };
 
   const resize = new ResizeObserver(([entry]) => {
+    if (!entry) return;
     const box = entry.contentRect;
     width = box.width;
     height = box.height;
@@ -456,6 +470,7 @@ export function mountGlobe(host: HTMLElement): () => void {
   resize.observe(canvas);
 
   const io = new IntersectionObserver(([entry]) => {
+    if (!entry) return;
     visible = entry.isIntersecting;
     if (visible) schedule();
   });

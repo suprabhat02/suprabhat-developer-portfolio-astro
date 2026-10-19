@@ -30,7 +30,11 @@ const openSourceItem = work.find((item) => item.kind === 'open-source');
  * publishes the same six problems in the same order, so index is stable.
  */
 type ProblemVisual = 'tree' | 'gauge' | 'bars' | 'focus' | 'tokens' | 'layers';
-const problemVisuals: readonly ProblemVisual[] = [
+type NonEmpty<T> = readonly [T, ...T[]];
+/** Picks the item for `index`, wrapping around a non-empty list. */
+const cycle = <T,>(items: NonEmpty<T>, index: number): T =>
+  items[index % items.length] ?? items[0];
+const problemVisuals: NonEmpty<ProblemVisual> = [
   'tree',
   'gauge',
   'bars',
@@ -39,10 +43,10 @@ const problemVisuals: readonly ProblemVisual[] = [
   'layers',
 ];
 const visualFor = (index: number): ProblemVisual =>
-  problemVisuals[index % problemVisuals.length];
+  cycle(problemVisuals, index);
 /** Icons follow item order, which is identical in every locale. */
-const approachIcons: readonly IconName[] = ['search', 'layers', 'badge-check'];
-const collaborationIcons: readonly IconName[] = [
+const approachIcons: NonEmpty<IconName> = ['search', 'layers', 'badge-check'];
+const collaborationIcons: NonEmpty<IconName> = [
   'message',
   'flag',
   'git-pull-request',
@@ -303,10 +307,7 @@ const pad = (value: number) => String(value).padStart(2, '0');
               <span class="step-num" aria-hidden="true">
                 0{index + 1}
               </span>
-              <Icon
-                name={approachIcons[index % approachIcons.length]}
-                size={22}
-              />
+              <Icon name={cycle(approachIcons, index)} size={22} />
             </span>
             <LiveScene scene={item.visual} />
             <h3>{item.title}</h3>
@@ -343,10 +344,7 @@ const pad = (value: number) => String(value).padStart(2, '0');
             <LiveScene scene={item.visual} />
             <div class="collab-head">
               <span class="collab-icon">
-                <Icon
-                  name={collaborationIcons[index % collaborationIcons.length]}
-                  size={20}
-                />
+                <Icon name={cycle(collaborationIcons, index)} size={20} />
               </span>
               <h3>{item.title}</h3>
             </div>

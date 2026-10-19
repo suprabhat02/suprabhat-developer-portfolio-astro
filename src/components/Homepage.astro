@@ -43,6 +43,9 @@ const featuredCaseStudy =
   caseStudies.find(
     (caseStudy) => caseStudy.slug === 'performance-modernization',
   ) ?? caseStudies[0];
+if (!featuredCaseStudy) {
+  throw new Error(`No case studies are published for locale "${locale}".`);
+}
 const caseStudySlugs = new Set(caseStudies.map((caseStudy) => caseStudy.slug));
 const recommendations = getRecommendations(locale);
 const pageHref = (path: string) => `${localePrefix(locale)}${path}` || '/';
@@ -72,9 +75,13 @@ type ToolCategory =
   | 'database'
   | 'tool';
 const problemTitles = conversion.problems.items.map((item) => item.title);
+const [flipFirst, flipSecond, flipThird, flipFourth] = problemTitles;
 const flipWords: FlipWordList | null =
-  problemTitles.length >= 4
-    ? [problemTitles[0], problemTitles[1], problemTitles[2], problemTitles[3]]
+  flipFirst !== undefined &&
+  flipSecond !== undefined &&
+  flipThird !== undefined &&
+  flipFourth !== undefined
+    ? [flipFirst, flipSecond, flipThird, flipFourth]
     : null;
 const flipLabel = `${conversion.problems.eyebrow}: ${problemTitles.join(', ')}.`;
 
@@ -222,11 +229,11 @@ const featured = recommendations.filter((r) =>
 const marqueeSetSize = Math.max(featured.length * 2, 6);
 const recommendationSlots = Array.from(
   { length: featured.length ? marqueeSetSize * 2 : 0 },
-  (_, index) => ({
-    item: featured[index % featured.length],
-    clone: index >= featured.length,
-  }),
-);
+  (_, index) => index,
+).flatMap((index) => {
+  const item = featured[index % featured.length];
+  return item ? [{ item, clone: index >= featured.length }] : [];
+});
 
 const traits = [
   {

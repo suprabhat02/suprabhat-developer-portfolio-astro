@@ -299,10 +299,12 @@ export const getExperience = (locale: Locale): readonly Position[] => {
     return {
       ...job,
       ...jobTranslation,
-      roles: job.roles?.map((role, index) => ({
-        ...role,
-        ...roles?.[index],
-      })),
+      ...(job.roles && {
+        roles: job.roles.map((role, index) => ({
+          ...role,
+          ...roles?.[index],
+        })),
+      }),
     };
   });
 };

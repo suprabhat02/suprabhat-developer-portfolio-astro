@@ -9,7 +9,7 @@ interface Props {
   locale: Locale;
   page: string;
   path?: string;
-  localeHrefs?: Partial<Record<Locale, string>>;
+  localeHrefs?: Partial<Record<Locale, string>> | undefined;
 }
 
 const { locale, page, path, localeHrefs } = Astro.props;

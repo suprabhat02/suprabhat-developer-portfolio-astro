@@ -25,11 +25,12 @@ import { getProfile } from '../data/profile';
 
 interface Props {
   title: string;
-  seoTitle?: string;
+  /** Optional in the content schema, so absent entries arrive as undefined. */
+  seoTitle?: string | undefined;
   description: string;
   pubDate: Date;
-  updatedDate?: Date;
-  heroImage?: string;
+  updatedDate?: Date | undefined;
+  heroImage?: string | undefined;
   tags: string[];
   slug: string;
   locale?: Locale;

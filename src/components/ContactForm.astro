@@ -326,9 +326,8 @@ const formClass =
           if (savedDraft) {
             const values = JSON.parse(savedDraft) as Record<string, string>;
             draftFields.forEach((field) => {
-              if (typeof values[field.name] === 'string') {
-                field.value = values[field.name];
-              }
+              const value = values[field.name];
+              if (typeof value === 'string') field.value = value;
             });
             if (draftStatus) {
               draftStatus.textContent = form.dataset.draftRestored ?? '';

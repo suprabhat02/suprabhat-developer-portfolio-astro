@@ -1,5 +1,9 @@
 import type { Locale } from '../i18n/config';
-import type { CaseStudy, CaseStudyProof } from './caseStudies';
+import type {
+  CaseStudy,
+  CaseStudyProject,
+  CaseStudyProof,
+} from './caseStudies';
 
 /**
  * Open-source work. Facts are taken from the published npm package and its
@@ -120,7 +124,7 @@ export const getOpenSourceCopy = (locale: Locale): OpenSourceCopy =>
 
 type CaseStudyBase = Omit<CaseStudy, 'proof'>;
 
-const projectLinks = (copy: OpenSourceCopy): CaseStudy['project'] => ({
+const projectLinks = (copy: OpenSourceCopy): CaseStudyProject => ({
   install: reactSmartCopy.install,
   installLabel: copy.installLabel,
   linksLabel: copy.linksLabel,
