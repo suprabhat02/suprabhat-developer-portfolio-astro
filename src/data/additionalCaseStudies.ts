@@ -139,7 +139,7 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     {
       slug: 'accessible-contact-workflow',
       datePublished: '2026-09-06',
-      dateModified: '2026-10-15',
+      dateModified: '2026-10-19',
       title: 'Accessible contact workflow',
       seoTitle: 'Accessible Contact Workflow Case Study | Forms & Privacy',
       description:
@@ -503,7 +503,7 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     {
       slug: 'accessible-contact-workflow',
       datePublished: '2026-09-06',
-      dateModified: '2026-10-15',
+      dateModified: '2026-10-19',
       title: 'Flujo de contacto accesible',
       seoTitle: 'Caso de estudio de flujo de contacto accesible',
       description:
@@ -867,7 +867,7 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
     {
       slug: 'accessible-contact-workflow',
       datePublished: '2026-09-06',
-      dateModified: '2026-10-15',
+      dateModified: '2026-10-19',
       title: 'مسار تواصل متاح',
       seoTitle: 'دراسة حالة لمسار تواصل متاح | النماذج والخصوصية',
       description:
