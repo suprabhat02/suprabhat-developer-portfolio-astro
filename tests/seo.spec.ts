@@ -206,41 +206,6 @@ test('production SEO signals and internal links are crawlable', async ({
   expect(sitemap).not.toContain('404');
   expect(sitemap).toContain('/recommendations/');
 
-  const hostingerRootFallback = await readFile(
-    new URL('../dist/.htaccess', import.meta.url),
-    'utf-8',
-  );
-  expect(hostingerRootFallback).toContain('ErrorDocument 404 /404.html');
-  expect(hostingerRootFallback).toContain(
-    'Cache-Control "public, max-age=31536000, immutable"',
-  );
-  expect(hostingerRootFallback).toContain('BROTLI_COMPRESS');
-
-  const hostingerSpanishFallback = await readFile(
-    new URL('../dist/es/.htaccess', import.meta.url),
-    'utf-8',
-  );
-  expect(hostingerSpanishFallback).toContain('ErrorDocument 404 /es/404/');
-
-  const hostingerArabicFallback = await readFile(
-    new URL('../dist/ar/.htaccess', import.meta.url),
-    'utf-8',
-  );
-  expect(hostingerArabicFallback).toContain('ErrorDocument 404 /ar/404/');
-
-  const netlifyConfig = await readFile(
-    new URL('../netlify.toml', import.meta.url),
-    'utf-8',
-  );
-  expect(netlifyConfig).toContain('Content-Security-Policy-Report-Only');
-  expect(netlifyConfig).toContain(
-    'Cache-Control = "public, max-age=31536000, immutable"',
-  );
-  expect(netlifyConfig).toContain('X-Frame-Options = "DENY"');
-  expect(netlifyConfig).not.toContain(
-    'Strict-Transport-Security = "max-age=31536000; includeSubDomains"',
-  );
-
   const llms = await page.request.get('/llms.txt');
   expect(llms.status()).toBe(200);
   expect(await llms.text()).toContain(

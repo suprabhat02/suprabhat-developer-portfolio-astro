@@ -36,10 +36,10 @@ wins** — say so instead of guessing.
    (`.github/workflows/deploy-pages.yml` → GitHub Pages →
    `https://suprabhat-dev.com`) — that is a real, visible, hard-to-undo
    action, not a local one.
-7. **Don't touch DNS/Netlify config.** Netlify is NOT the live deploy target
-   (GitHub Pages is — see §4). Hostinger DNS records point to GitHub Pages.
-   Don't "fix" or "simplify" `netlify.toml` or DNS-adjacent config as a side
-   effect of an unrelated task.
+7. **Don't touch DNS.** The site is hosted only on GitHub Pages (see §4);
+   Hostinger holds only the DNS records that point the domain at it. Don't
+   "fix" or "simplify" DNS records or DNS-adjacent config as a side effect of
+   an unrelated task.
 8. **If you're not sure where something lives, search first, then say what
    you found — don't describe code from memory.** Use the file map in §2.
 
@@ -142,11 +142,12 @@ Before saying a task is done, run at minimum `npm run build` and
 - Production: `https://suprabhat-dev.com`, served by **GitHub Pages**,
   deployed by `.github/workflows/deploy-pages.yml`, which triggers **only on
   push to `main`** (or manual `workflow_dispatch`). Nothing else deploys.
-- Hostinger manages DNS pointing the custom domain at GitHub Pages — this is
+- Hosting is GitHub Pages only. Hostinger holds only the DNS records (four
+  apex `A` records pointing to GitHub Pages and a `www` CNAME) — this is
   external to the repo; don't "fix" it speculatively.
-- Netlify config (`netlify.toml`) exists in the repo but is **not** the
-  active deploy path. Don't treat it as the source of truth for build/deploy
-  behavior.
+- There is no server configuration in the repo. GitHub Pages cannot apply
+  custom headers, redirects or cache rules, so don't add files expecting them
+  to take effect.
 - `PUBLIC_WEB3FORMS_KEY` is injected as a CI secret at build time — never put
   a real key in code, `.env`, or a commit.
 
@@ -172,8 +173,8 @@ Before saying a task is done, run at minimum `npm run build` and
 3. Did you check all three locales if you touched any user-facing copy or
    layout?
 4. Did you avoid adding/removing dependencies unless the task needed it?
-5. Did you leave DNS, Netlify config, and deploy workflow untouched unless
-   the task was specifically about them?
+5. Did you leave DNS and the deploy workflow untouched unless the task was
+   specifically about them?
 6. Is the commit authored as `suprabhat02` with no AI co-author trailer, and
    did you leave pushing to `main` / opening a PR to the human unless told
    otherwise?
