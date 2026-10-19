@@ -1078,37 +1078,6 @@ main {
   font-size: 0.85rem;
   font-weight: 650;
 }
-.timeline {
-  position: relative;
-  display: grid;
-  gap: 1.25rem;
-  margin-top: 3rem;
-  padding-inline-start: 2.25rem;
-}
-.timeline > article {
-  position: relative;
-  padding: clamp(1.25rem, 3vw, 1.85rem);
-}
-.timeline > article::before {
-  content: '';
-  position: absolute;
-  inset-inline-start: calc(-2.25rem + 0.3rem - 0.32rem);
-  top: 2rem;
-  box-shadow:
-    0 0 0 4px var(--bg),
-    0 0 18px var(--accent-glow);
-  width: 0.75rem;
-  aspect-ratio: 1;
-  border-radius: var(--radius-circle);
-  background: var(--accent);
-}
-.timeline h2 {
-  margin-bottom: 0.5rem;
-  font-size: 2rem;
-}
-.timeline h3 {
-  color: var(--muted);
-}
 .role {
   padding-block-start: 1rem;
   padding-inline-start: 1.25rem;
@@ -1960,7 +1929,6 @@ main {
 .grid article,
 .quote,
 .article-list article,
-.timeline > article,
 .tool-grid li,
 .topic-cloud,
 .contact-form {
@@ -1989,7 +1957,6 @@ main {
 .grid article:hover,
 .quote:hover,
 .article-list article:hover,
-.timeline > article:hover,
 .tool-grid li:hover {
   transform: translateY(-4px);
   border-color: var(--accent-border);
@@ -2231,7 +2198,6 @@ main {
   .grid article,
   .quote,
   .article-list article,
-  .timeline > article,
   .tool-grid li,
   .tool-grid li img,
   .button,
@@ -2242,7 +2208,6 @@ main {
   .grid article:hover,
   .quote:hover,
   .article-list article:hover,
-  .timeline > article:hover,
   .tool-grid li:hover,
   .tool-grid li:hover img {
     transform: none;
