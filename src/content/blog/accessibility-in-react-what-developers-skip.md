@@ -16,7 +16,7 @@ This article covers the gaps I see most often in React codebases: focus after dy
 
 ## Why most React a11y advice stops too early
 
-Automated scanners such as axe and Lighthouse are good at one thing: inspecting the document at a single moment. They find missing labels, empty buttons, invalid ARIA attributes, and low contrast. Those are [real defects](https://www.w3.org/TR/WCAG22/), and every project should block them in continuous integration.
+Automated scanners such as axe and Lighthouse are good at one thing: inspecting the document at a single moment. They find missing labels, empty buttons, invalid ARIA attributes, and low contrast. Those are real [WCAG](https://www.w3.org/TR/WCAG22/) failures, and every project should block them in continuous integration.
 
 What a scanner cannot see is behavior over time. It does not know that focus disappeared into the `body` when your modal closed. It cannot tell that your custom dropdown ignores the arrow keys, or that a screen reader user heard nothing when a form saved successfully. A page can score 100 and still be unusable without a mouse.
 

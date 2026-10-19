@@ -2,20 +2,22 @@
 
 ## Current architecture
 
-The production site is a static Astro build hosted by GitHub Pages. Hostinger
-manages the DNS zone for `suprabhat-dev.com`; it does not receive the `dist`
-folder. A push to `main` starts `.github/workflows/deploy-pages.yml`, which
-installs dependencies, builds the site, uploads `dist`, and deploys it through
-GitHub Pages.
+- **Hosting: GitHub Pages.** A push to `main` starts
+  `.github/workflows/deploy-pages.yml`, which installs dependencies, builds the
+  site, uploads `dist`, and deploys it through GitHub Pages. Nothing else
+  deploys the site.
+- **DNS: Hostinger.** The Hostinger zone for `suprabhat-dev.com` holds only the
+  DNS records: four apex `A` records pointing to GitHub Pages and a `www`
+  CNAME. Hostinger does not receive the `dist` folder or serve any files.
 
-The checked-in `netlify.toml` is an inactive reference configuration. Netlify is
-not part of the current deployment.
+There is no server configuration in the repository. GitHub Pages serves
+`404.html` for unknown paths and sets its own caching headers.
 
 ## Where to verify each setting
 
 1. GitHub repository > **Settings > Pages**: confirm the source is **GitHub
-   Actions**, the custom domain is `suprabhat-dev.com`, and **Enforce HTTPS** is
-   enabled.
+   Actions**, the custom domain is `suprabhat-dev.com`, the DNS check is
+   successful, and **Enforce HTTPS** is enabled.
 2. GitHub repository > **Actions**: open **Deploy to GitHub Pages** to inspect
    each production deployment and its public URL.
 3. Hostinger hPanel > **Domains > DNS / Nameservers**: confirm the apex `A`
@@ -56,6 +58,7 @@ plus a direct email fallback.
 5. If the form reports that it is unconfigured, confirm the GitHub Actions secret
    name and rerun the workflow.
 
-GitHub Pages does not apply the response headers in `netlify.toml`. If custom
-security headers, redirects, or edge caching become necessary later, evaluate a
-Cloudflare proxy or a deliberate hosting migration as a separate project.
+GitHub Pages does not support custom response headers or server-side
+redirects. If security headers, redirects, or edge caching become necessary
+later, evaluate a Cloudflare proxy or a deliberate hosting migration as a
+separate project.
