@@ -97,6 +97,7 @@ const schema = [
   {title}
   {description}
   page={page}
+  pageType={page === 'about' ? 'ProfilePage' : 'WebPage'}
   schema={schema}
   noindex={(NOINDEX_PAGES as readonly string[]).includes(page)}
   ><PageContent {page} locale="en" /></BaseLayout

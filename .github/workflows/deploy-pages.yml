@@ -25,6 +25,9 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          # Full history: sitemap lastmod for static pages comes from git log.
+          fetch-depth: 0
 
       - name: Keep agent instruction files identical
         run: cmp CLAUDE.md AGENTS.md && cmp CLAUDE.md .github/copilot-instructions.md

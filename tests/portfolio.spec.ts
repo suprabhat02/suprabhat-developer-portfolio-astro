@@ -589,13 +589,33 @@ test('case studies expose localized proof and outcomes', async ({ page }) => {
       const structuredData = await page
         .locator('script[type="application/ld+json"]')
         .textContent();
-      expect(structuredData).toContain('TechArticle');
-      expect(structuredData).toContain('articleBody');
-      expect(structuredData).toContain('hasPart');
-      expect(structuredData).toContain(localeCheck.role);
-      expect(structuredData).toContain(localeCheck.constraints);
-      expect(structuredData).toContain(localeCheck.decisions);
-      expect(structuredData).toContain(localeCheck.outcomes);
+      const graph = (
+        JSON.parse(structuredData ?? '{}') as {
+          '@graph'?: Array<Record<string, unknown>>;
+        }
+      )['@graph'];
+      const articles = (graph ?? []).filter(
+        (node) => node['@type'] === 'TechArticle',
+      );
+      expect(articles).toHaveLength(1);
+      expect(Object.keys(articles[0] ?? {}).sort()).toEqual(
+        [
+          '@type',
+          'about',
+          'author',
+          'dateModified',
+          'datePublished',
+          'description',
+          'headline',
+          'image',
+          'inLanguage',
+          'mainEntityOfPage',
+          'url',
+        ].sort(),
+      );
+      expect(structuredData).not.toMatch(
+        /hasPart|articleBody|"@type":"(?:CreativeWork|Thing)"/,
+      );
     }
   }
 });
@@ -810,8 +830,19 @@ test('production SEO signals and internal links are crawlable', async ({
     const response = await page.request.get(feedPath);
     expect(response.status(), `Expected ${feedPath} to resolve`).toBe(200);
     const body = await response.text();
-    expect(body).toContain('<rss version="2.0">');
+    expect(body).toContain(
+      '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
+    );
+    expect(body).toContain(
+      `<atom:link href="https://suprabhat-dev.com${feedPath}" rel="self" type="application/rss+xml"/>`,
+    );
+    // One channel-level <language>; RSS items have no such element.
+    expect(body.match(/<language>/g)).toHaveLength(1);
     expect(body).toContain(`<language>${language}</language>`);
+    expect(body).toMatch(
+      /<pubDate>\w{3}, \d{2} \w{3} \d{4} 00:00:00 \+0530<\/pubDate>/,
+    );
+    expect(body).not.toContain('GMT</pubDate>');
     expect(body).toContain(`https://suprabhat-dev.com${blogPath}`);
   }
 
@@ -1534,6 +1565,108 @@ test('structured data never contains a raw "<" that could close its script', asy
     }
   }
   expect(blocks).toBeGreaterThan(100);
+});
+
+test('share metadata, page types and sitemap dates follow the SEO contract', async () => {
+  const dist = new URL('../dist/', import.meta.url);
+  const read = (path: string) => readFile(new URL(path, dist), 'utf-8');
+  const metaValues = (html: string, property: string) =>
+    [
+      ...html.matchAll(
+        new RegExp(
+          `<meta (?:property|name)="${property}" content="([^"]*)"`,
+          'g',
+        ),
+      ),
+    ].map(([, value]) => value);
+  const graphOf = (html: string) =>
+    [
+      ...html.matchAll(
+        /<script type="application\/ld\+json">(.*?)<\/script>/gs,
+      ),
+    ].flatMap(([, json]) => {
+      const data = JSON.parse(json ?? '{}') as {
+        '@graph'?: Array<Record<string, unknown>>;
+      };
+      return data['@graph'] ?? [];
+    });
+
+  // Article: cover alt, Open Graph article fields, date-only everywhere.
+  const article = await read(
+    'blog/accessibility-in-react-what-developers-skip/index.html',
+  );
+  const articleAlt =
+    'Accessibility in React: What Most Developers Skip — article cover';
+  expect(metaValues(article, 'og:image:alt')).toEqual([articleAlt]);
+  expect(metaValues(article, 'twitter:image:alt')).toEqual([articleAlt]);
+  expect(metaValues(article, 'article:published_time')).toEqual(['2026-10-15']);
+  expect(metaValues(article, 'article:modified_time')).toEqual(['2026-10-15']);
+  expect(metaValues(article, 'article:author')).toEqual([
+    'https://suprabhat-dev.com/about/',
+  ]);
+  expect(metaValues(article, 'article:tag')).toEqual([
+    'Accessibility',
+    'Frontend',
+    'TypeScript',
+    'UI Engineering',
+  ]);
+  expect(
+    graphOf(article).find((node) => node['@type'] === 'BlogPosting'),
+  ).toMatchObject({ datePublished: '2026-10-15', dateModified: '2026-10-15' });
+
+  // Case study card and portrait card alts; no article fields off articles.
+  const caseStudy = await read('work/react-smart-copy/index.html');
+  expect(metaValues(caseStudy, 'og:image:alt')).toEqual([
+    'react-smart-copy — case study card',
+  ]);
+  expect(metaValues(caseStudy, 'article:published_time')).toEqual([]);
+  const home = await read('index.html');
+  expect(metaValues(home, 'og:image:alt')[0]).toMatch(/^Suprabhat Kumar, /);
+
+  // About is a ProfilePage about the Person; FAQPage lives only on /faq/.
+  for (const prefix of ['', 'es/', 'ar/']) {
+    const about = graphOf(await read(`${prefix}about/index.html`));
+    expect(
+      about.find((node) => String(node['@id']).endsWith('/about/#webpage')),
+    ).toMatchObject({
+      '@type': 'ProfilePage',
+      mainEntity: { '@id': 'https://suprabhat-dev.com/#person' },
+    });
+    const homeGraph = graphOf(await read(`${prefix}index.html`));
+    expect(homeGraph.some((node) => node['@type'] === 'FAQPage')).toBe(false);
+    const faq = graphOf(await read(`${prefix}faq/index.html`));
+    expect(faq.some((node) => node['@type'] === 'FAQPage')).toBe(true);
+  }
+
+  // No midnight-UTC timestamps anywhere in pages, feeds or sitemaps.
+  const files = (await readdir(dist, { recursive: true })).filter((file) =>
+    /\.(?:html|xml)$/.test(file),
+  );
+  for (const file of files) {
+    expect(await read(file.replaceAll('\\', '/')), file).not.toMatch(
+      /\d{4}-\d{2}-\d{2}T00:00:00(?:\.000)?Z/,
+    );
+  }
+
+  // Lastmod is always date-only. Posts and case studies always have one;
+  // static pages have one when the build had full git history (CI does).
+  const sitemap = await read('sitemap-0.xml');
+  const entries = [
+    ...sitemap.matchAll(
+      /<url><loc>([^<]+)<\/loc>(?:<lastmod>([^<]+)<\/lastmod>)?/g,
+    ),
+  ];
+  expect(entries.length).toBeGreaterThan(70);
+  for (const [, loc = '', lastmod] of entries) {
+    if (/\/(?:blog|work)\/[^/]+\/$/.test(loc))
+      expect(lastmod, loc).toBeDefined();
+    if (lastmod !== undefined) {
+      expect(lastmod, loc).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    }
+  }
+  expect(sitemap).toContain(
+    '<loc>https://suprabhat-dev.com/work/performance-modernization/</loc><lastmod>2026-09-04</lastmod>',
+  );
 });
 
 test('articles show cover, reading time, share links and RSS in every locale', async ({

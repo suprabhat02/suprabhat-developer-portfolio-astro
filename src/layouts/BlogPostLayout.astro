@@ -19,6 +19,7 @@ import {
   getBlogPosts,
   getBlogTagHref,
   getReadingMinutes,
+  toIsoDate,
   type BlogPostSummary,
 } from '../data/blog';
 import { getProfile } from '../data/profile';
@@ -58,8 +59,9 @@ const localizedRoot = `${SITE_URL}${localePrefix(locale)}`;
 const authorName = 'Suprabhat Kumar';
 const authorHref = `${localePrefix(locale)}/about/`;
 const authorBio = getProfile(locale).lead;
-const isoDay = (date: Date) => date.toISOString().slice(0, 10);
-const showUpdated = updatedDate && isoDay(updatedDate) !== isoDay(pubDate);
+const published = toIsoDate(pubDate);
+const modified = toIsoDate(updatedDate ?? pubDate);
+const showUpdated = updatedDate && modified !== published;
 const imageUrl = new URL(heroImage ?? DEFAULT_OG_IMAGE, SITE_URL).href;
 // Declare the real share-image size; only local files under public/ can be measured.
 const heroSize = heroImage?.startsWith('/')
@@ -148,8 +150,8 @@ const schema = [
     keywords: tags.join(', '),
     articleSection: tags,
     isAccessibleForFree: true,
-    datePublished: pubDate.toISOString(),
-    dateModified: (updatedDate ?? pubDate).toISOString(),
+    datePublished: published,
+    dateModified: modified,
     author: {
       '@type': 'Person',
       '@id': `${SITE_URL}/#person`,
@@ -185,6 +187,13 @@ const pageTitle =
   image={imageUrl}
   imageWidth={heroSize?.width}
   imageHeight={heroSize?.height}
+  imageAlt={t(locale, 'seo.articleImageAlt').replace('{title}', title)}
+  article={{
+    publishedTime: published,
+    modifiedTime: modified,
+    author: `${localizedRoot}/about/`,
+    tags,
+  }}
   alternateLocales={translatedLocales}
   {localeHrefs}
   schema={schema}
@@ -199,7 +208,7 @@ const pageTitle =
         <a href={authorHref} rel="author">{authorName}</a>
         <span>{authorBio}</span>
       </p><p class="meta">
-        <time datetime={pubDate.toISOString()}
+        <time datetime={published}
           >{pubDate.toLocaleDateString(dateLocale, { dateStyle: 'long' })}</time
         >
         <span class="article-reading-time">{readingTime}</span>
@@ -207,7 +216,7 @@ const pageTitle =
           showUpdated && updatedDate && (
             <span class="article-updated">
               {t(locale, 'blog.updated')}{' '}
-              <time datetime={updatedDate.toISOString()}>
+              <time datetime={modified}>
                 {updatedDate.toLocaleDateString(dateLocale, {
                   dateStyle: 'long',
                 })}
@@ -286,7 +295,7 @@ const pageTitle =
             {relatedPosts.map((post) => (
               <article class="fx-glow fx-card-gradient" data-glow>
                 <p class="meta">
-                  <time datetime={post.pubDate.toISOString()}>
+                  <time datetime={toIsoDate(post.pubDate)}>
                     {post.pubDate.toLocaleDateString(dateLocale, {
                       dateStyle: 'long',
                     })}

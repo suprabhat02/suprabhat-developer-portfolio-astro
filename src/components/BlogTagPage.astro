@@ -7,6 +7,7 @@ import {
   getBlogTagHref,
   getBlogTagGroupsFromPosts,
   getBlogTagLocaleHrefs,
+  toIsoDate,
   type LocalizedBlogPost,
 } from '../data/blog';
 import { localeMeta, localePrefix, type Locale } from '../i18n/config';
@@ -119,7 +120,7 @@ const schema = [
           group.posts.map((post) => (
             <article class="fx-glow fx-card-gradient fx-reveal" data-glow>
               <p class="meta">
-                <time datetime={post.data.pubDate.toISOString()}>
+                <time datetime={toIsoDate(post.data.pubDate)}>
                   {post.data.pubDate.toLocaleDateString(dateLocale, {
                     dateStyle: 'long',
                   })}

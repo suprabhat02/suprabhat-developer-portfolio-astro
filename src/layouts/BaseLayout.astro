@@ -1,4 +1,5 @@
 ---
+import type { ComponentProps } from 'astro/types';
 import geistMonoLatinFont from '@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -37,6 +38,11 @@ interface Props {
   image?: string | undefined;
   imageWidth?: number | undefined;
   imageHeight?: number | undefined;
+  /** Describes `image`; the default describes the portrait share card. */
+  imageAlt?: string | undefined;
+  article?: ComponentProps<typeof SEOHead>['article'];
+  /** ProfilePage makes the Person the page's main entity (About). */
+  pageType?: 'WebPage' | 'ProfilePage';
   /** Locales this page exists in; limits hreflang and translation links. */
   alternateLocales?: readonly Locale[];
 }
@@ -55,6 +61,9 @@ const {
   image,
   imageWidth,
   imageHeight,
+  imageAlt,
+  article,
+  pageType = 'WebPage',
   alternateLocales = locales,
 } = Astro.props;
 const noindex = requestedNoindex || import.meta.env.ROBOTS === 'noindex';
@@ -107,7 +116,7 @@ const personKnowsAbout = [
   'Performance Optimization',
 ] as const;
 const pageSchema = {
-  '@type': 'WebPage',
+  '@type': pageType,
   '@id': `${canonical.href}#webpage`,
   url: canonical.href,
   name: title,
@@ -115,6 +124,9 @@ const pageSchema = {
   inLanguage: meta.htmlLang,
   isPartOf: { '@id': `${SITE_URL}/#website` },
   about: { '@id': `${SITE_URL}/#person` },
+  ...(pageType === 'ProfilePage'
+    ? { mainEntity: { '@id': `${SITE_URL}/#person` } }
+    : {}),
 };
 const pageSchemaWithAlternates = !showAlternates
   ? pageSchema
@@ -281,10 +293,11 @@ const combinedSchema = {
             .filter((item) => item !== locale)
             .map((item) => localeMeta[item].htmlLang)
         : []}
-      imageAlt={`${profile.name}, ${profile.title}`}
+      imageAlt={imageAlt ?? `${profile.name}, ${profile.title}`}
       {image}
       {imageWidth}
       {imageHeight}
+      {article}
       schema={combinedSchema}
     />
   </head>

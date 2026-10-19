@@ -1,5 +1,4 @@
 import { SITE_URL } from '../config/site';
-import { faqs } from './faqs';
 import { getServices } from './services';
 import { getHomepageConversionContent } from './homepageConversion';
 import { getReactSmartCopySchema } from './openSource';
@@ -76,18 +75,6 @@ export const getHomepageSchema = (locale: Locale) => {
         position: index + 1,
         name: item.title,
         description: `${item.body} ${problems.outcomeLabel}: ${item.outcome}`,
-      })),
-    },
-    {
-      '@type': 'FAQPage',
-      inLanguage: language,
-      mainEntity: faqs.map((faq) => ({
-        '@type': 'Question',
-        name: t(locale, `faq.${faq.id}.q`, faq.question),
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: t(locale, `faq.${faq.id}.a`, faq.answer),
-        },
       })),
     },
   ];

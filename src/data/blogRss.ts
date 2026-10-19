@@ -1,8 +1,14 @@
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
 import { SITE_URL } from '../config/site';
-import { localeMeta, localePrefix, type Locale } from '../i18n/config';
-import { getBlogFeedMeta, getBlogPostHref, getBlogPosts } from './blog';
+import { localePrefix, type Locale } from '../i18n/config';
+import {
+  getBlogFeedHref,
+  getBlogFeedMeta,
+  getBlogPostHref,
+  getBlogPosts,
+  toRssDate,
+} from './blog';
 
 export const createLocalizedBlogRss = async (
   context: APIContext,
@@ -12,23 +18,26 @@ export const createLocalizedBlogRss = async (
   const feedMeta = getBlogFeedMeta(locale);
   const posts = await getBlogPosts(locale);
   const blogUrl = new URL(`${localePrefix(locale)}/blog/`, site).href;
+  const feedUrl = new URL(getBlogFeedHref(locale), site).href;
 
   return rss({
     title: feedMeta.title,
     description: feedMeta.description,
     site,
+    xmlns: { atom: 'http://www.w3.org/2005/Atom' },
     customData: [
       `<language>${feedMeta.language}</language>`,
       `<link>${blogUrl}</link>`,
+      `<atom:link href="${feedUrl}" rel="self" type="application/rss+xml"/>`,
     ].join(''),
     items: posts.map((post) => ({
       title: post.data.title,
       description: post.data.description,
-      pubDate: post.data.pubDate,
       link: getBlogPostHref(locale, post.id),
       categories: post.data.tags,
       author: 'Suprabhat Kumar',
-      customData: `<language>${localeMeta[locale].htmlLang}</language>`,
+      // Written here: @astrojs/rss would print a midnight-UTC timestamp.
+      customData: `<pubDate>${toRssDate(post.data.pubDate)}</pubDate>`,
     })),
   });
 };

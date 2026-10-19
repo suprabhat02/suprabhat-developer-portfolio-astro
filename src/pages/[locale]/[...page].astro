@@ -105,6 +105,7 @@ const schema = [
       {description}
       {locale}
       {page}
+      pageType={page === 'about' ? 'ProfilePage' : 'WebPage'}
       {schema}
       noindex={(NOINDEX_PAGES as readonly string[]).includes(page)}
     >
