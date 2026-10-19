@@ -319,6 +319,13 @@ test('production SEO signals and internal links are crawlable', async ({
       /<pubDate>\w{3}, \d{2} \w{3} \d{4} 00:00:00 \+0530<\/pubDate>/,
     );
     expect(body).not.toContain('GMT</pubDate>');
+    const authors = body.match(/<author>[^<]*<\/author>/g) ?? [];
+    expect(authors.length).toBe(body.match(/<item>/g)?.length);
+    expect(new Set(authors)).toEqual(
+      new Set([
+        '<author>suprabhatkumar02@gmail.com (Suprabhat Kumar)</author>',
+      ]),
+    );
     expect(body).toContain(`https://suprabhat-dev.com${blogPath}`);
   }
 
