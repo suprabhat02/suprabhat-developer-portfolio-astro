@@ -109,7 +109,9 @@ docs/DEPLOYMENT.md                 release workflow, dashboards
 docs/TODO.md                       open items — don't fill with invented content
 docs/LIGHTHOUSE-EVIDENCE.md        performance evidence/history
 
-tests/portfolio.spec.ts            Playwright + axe-core e2e suite
+tests/*.spec.ts                    Playwright + axe-core e2e suite: seo, a11y,
+                                    i18n, blog and ui specs
+tests/helpers.ts                   shared test helpers (axe with target-size)
 .github/workflows/deploy-pages.yml CI: on push to main → build → GitHub Pages
 ```
 
