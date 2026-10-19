@@ -188,10 +188,10 @@ const analyticsCommandCenter: Record<Locale, CaseStudyBase> = {
     datePublished: '2026-09-01',
     dateModified: '2026-10-15',
     title: 'Centro de control analítico',
-    seoTitle: 'Caso de centro analítico | Dashboard React accesible',
+    seoTitle: 'Centro de analítica: caso de estudio | Dashboard React',
     description:
-      'Caso frontend anonimizado de un dashboard analítico por roles con gráficos accesibles, estados resilientes, rendimiento y arquitectura UI en React.',
-    eyebrow: 'Caso de estudio · Trabajo interno de producto',
+      'Caso de estudio anonimizado: un dashboard analítico por roles en React con gráficos accesibles, estados de datos resilientes y buen rendimiento.',
+    eyebrow: 'Caso de estudio · Proyecto interno de producto',
     summary:
       'Un dashboard analítico basado en roles, diseñado para que equipos de producto y operaciones revisen señales críticas, comparen tendencias y tomen decisiones con mayor rapidez sin depender de exportaciones frágiles ni pantallas de reporting sobrecargadas.',
     confidentialityNote:
@@ -314,14 +314,14 @@ const analyticsCommandCenter: Record<Locale, CaseStudyBase> = {
     datePublished: '2026-09-01',
     dateModified: '2026-10-15',
     title: 'مركز تحكم للتحليلات',
-    seoTitle: 'دراسة حالة لمركز تحكم تحليلي | هندسة واجهات لوحات React',
+    seoTitle: 'دراسة حالة: مركز تحكم للتحليلات | لوحات React',
     description:
-      'دراسة حالة Frontend مجهولة للوحة تحليلات قائمة على الأدوار، مع رسوم متاحة، حالات بيانات مرنة، أداء قوي، ومعمارية UI باستخدام React.',
+      'دراسة حالة مُجهَّلة الهوية للوحة تحليلات قائمة على الأدوار في React، مع رسوم بيانية تراعي إمكانية الوصول، وحالات بيانات مرنة، وأداء قوي.',
     eyebrow: 'دراسة حالة · عمل داخلي على المنتج',
     summary:
       'لوحة تحليلات قائمة على الأدوار صُممت لمساعدة فرق المنتج والعمليات على مراجعة الإشارات المهمة، ومقارنة الاتجاهات، واتخاذ قرارات أسرع دون الاعتماد على تصديرات هشة أو شاشات تقارير مزدحمة.',
     confidentialityNote:
-      'دراسة الحالة هذه مجهولة. تُستبعد عمدًا أسماء العملاء، ولقطات الشاشة، وسير العمل الخاص، ومجموعات البيانات الخاصة، والمقاييس التجارية الدقيقة.',
+      'دراسة الحالة هذه مُجهَّلة الهوية. تُستبعد عمدًا أسماء العملاء، ولقطات الشاشة، وسير العمل الخاص، ومجموعات البيانات الخاصة، والمقاييس التجارية الدقيقة.',
     meta: [
       { label: 'نوع المشروع', value: 'لوحة SaaS كثيفة البيانات' },
       { label: 'الدور', value: 'معمارية Frontend وهندسة UI' },
@@ -563,10 +563,10 @@ const designSystemUplift: Record<Locale, CaseStudyBase> = {
     datePublished: '2026-09-01',
     dateModified: '2026-09-09',
     title: 'Mejora del sistema de diseño',
-    seoTitle: 'Caso de sistema de diseño | UI React escalable',
+    seoTitle: 'Sistema de diseño: caso de estudio | UI React escalable',
     description:
-      'Caso frontend anonimizado sobre mejora de un sistema de diseño con componentes React reutilizables, tokens claros, accesibilidad y gobierno UI.',
-    eyebrow: 'Caso de estudio · Trabajo interno de producto',
+      'Caso de estudio anonimizado sobre la mejora de un sistema de diseño: componentes React reutilizables, tokens más claros, accesibilidad y gobernanza de la UI.',
+    eyebrow: 'Caso de estudio · Proyecto interno de producto',
     summary:
       'Una mejora del sistema de diseño enfocada en reducir divergencias de UI, facilitar la adopción de componentes compartidos y dar a los equipos una base más fiable para construir interfaces consistentes.',
     confidentialityNote:
@@ -692,14 +692,14 @@ const designSystemUplift: Record<Locale, CaseStudyBase> = {
     datePublished: '2026-09-01',
     dateModified: '2026-09-09',
     title: 'تحسين نظام التصميم',
-    seoTitle: 'دراسة نظام تصميم | واجهات React قابلة للتوسع',
+    seoTitle: 'دراسة حالة: نظام تصميم | واجهات React قابلة للتوسع',
     description:
-      'دراسة حالة Frontend مجهولة حول تحسين نظام تصميم بمكونات React قابلة لإعادة الاستخدام، وتوكنات أوضح، وإتاحة، وحوكمة UI.',
+      'دراسة حالة مُجهَّلة الهوية حول تحسين نظام تصميم بمكونات React قابلة لإعادة الاستخدام، ورموز تصميم أوضح، وإمكانية الوصول، وحوكمة الواجهة.',
     eyebrow: 'دراسة حالة · عمل داخلي على المنتج',
     summary:
       'جهد لتحسين نظام التصميم بهدف تقليل تباين الواجهات، وتسهيل اعتماد المكونات المشتركة، ومنح الفرق أساسًا أكثر موثوقية لبناء واجهات منتج متسقة.',
     confidentialityNote:
-      'دراسة الحالة هذه مجهولة. تُستبعد أسماء العملاء، ولقطات الشاشة، وسير العمل الخاص، وواجهات المكونات الخاصة، وبيانات الاعتماد الداخلية عمدًا.',
+      'دراسة الحالة هذه مُجهَّلة الهوية. تُستبعد أسماء العملاء، ولقطات الشاشة، وسير العمل الخاص، وواجهات المكونات الخاصة، وبيانات الاعتماد الداخلية عمدًا.',
     meta: [
       { label: 'نوع المشروع', value: 'تحديث نظام تصميم' },
       { label: 'الدور', value: 'معمارية مكونات Frontend' },
@@ -941,10 +941,10 @@ const performanceModernization: Record<Locale, CaseStudyBase> = {
     datePublished: '2026-09-01',
     dateModified: '2026-09-04',
     title: 'Modernización de rendimiento',
-    seoTitle: 'Caso de modernización de rendimiento | Core Web Vitals',
+    seoTitle: 'Modernización del rendimiento | Core Web Vitals',
     description:
-      'Caso frontend anonimizado sobre velocidad percibida, estabilidad de render, entrega de activos y Core Web Vitals en una UI de producto compleja.',
-    eyebrow: 'Caso de estudio · Trabajo interno de producto',
+      'Caso de estudio anonimizado sobre velocidad percibida, estabilidad del renderizado, carga de recursos y Core Web Vitals en una interfaz de producto compleja.',
+    eyebrow: 'Caso de estudio · Proyecto interno de producto',
     summary:
       'Una modernización frontend enfocada en hacer que una interfaz de producto compleja se sintiera más rápida, cargara de forma más predecible y permaneciera estable al navegar por pantallas intensivas en datos.',
     confidentialityNote:
@@ -1070,14 +1070,14 @@ const performanceModernization: Record<Locale, CaseStudyBase> = {
     datePublished: '2026-09-01',
     dateModified: '2026-09-04',
     title: 'تحديث الأداء',
-    seoTitle: 'دراسة تحديث أداء | Core Web Vitals',
+    seoTitle: 'دراسة حالة: تحسين الأداء | Core Web Vitals',
     description:
-      'دراسة حالة Frontend مجهولة حول تحسين السرعة المحسوسة، وثبات العرض، وتسليم الأصول، وCore Web Vitals لواجهة منتج معقدة.',
+      'دراسة حالة مُجهَّلة الهوية حول تحسين السرعة المحسوسة، وثبات العرض، وتحميل الموارد، وCore Web Vitals لواجهة منتج معقدة.',
     eyebrow: 'دراسة حالة · عمل داخلي على المنتج',
     summary:
       'جهد تحديث Frontend ركز على جعل واجهة منتج معقدة تبدو أسرع، وتحمّل بشكل أكثر توقعًا، وتبقى مستقرة أثناء تنقل المستخدمين عبر شاشات كثيفة البيانات.',
     confidentialityNote:
-      'دراسة الحالة هذه مجهولة. تُستبعد أسماء العملاء، ولقطات الشاشة، والمسارات الخاصة، والقياسات المملوكة، ومقاييس الأداء الدقيقة عمدًا.',
+      'دراسة الحالة هذه مُجهَّلة الهوية. تُستبعد أسماء العملاء، ولقطات الشاشة، والمسارات الخاصة، والقياسات المملوكة، ومقاييس الأداء الدقيقة عمدًا.',
     meta: [
       { label: 'نوع المشروع', value: 'تحديث أداء Frontend' },
       { label: 'الدور', value: 'هندسة UI مركزة على الأداء' },

@@ -159,7 +159,7 @@ const localizedWork: Partial<Record<Locale, readonly WorkItem[]>> = {
     },
     {
       id: 'portfolio-seo-i18n-system',
-      title: 'نظام SEO وتدويل المحفظة',
+      title: 'نظام SEO وتدويل معرض الأعمال',
       summary:
         'صممت نظام Astro ثابتًا بمحتوى محلي وhreflang وبيانات منظمة ومسارات دراسات حالة قابلة للفهرسة.',
       tags: ['Astro', 'SEO تقني', 'i18n', 'بيانات منظمة'],

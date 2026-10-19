@@ -507,7 +507,7 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
       title: 'Flujo de contacto accesible',
       seoTitle: 'Caso de estudio de flujo de contacto accesible',
       description:
-        'Caso frontend sobre un flujo de contacto con etiquetas accesibles, validación, vías alternativas, privacidad clara y contenido de conversión rastreable.',
+        'Caso frontend sobre un flujo de contacto con etiquetas accesibles, validación, vías alternativas, privacidad clara y contenido indexable que convierte.',
       eyebrow: 'Caso de estudio · UX de conversión',
       summary:
         'Un flujo de contacto y calificación de leads diseñado para que el siguiente paso sea obvio para clientes, manteniendo el formulario accesible, ligero, claro sobre privacidad y fiable cuando JavaScript o el proveedor externo no están disponibles.',
@@ -738,14 +738,14 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
       datePublished: '2026-09-06',
       dateModified: '2026-10-15',
       title: 'نظام SEO وتدويل لمحفظة الأعمال',
-      seoTitle: 'دراسة حالة لنظام SEO وتدويل المحفظة | Astro',
+      seoTitle: 'دراسة حالة: SEO وتدويل معرض الأعمال | Astro',
       description:
-        'دراسة حالة في معمارية الواجهة توضح كيف أصبح موقع Astro ثابتًا ومحليًا وقابلًا للفهرسة ومتاحًا ومركزًا على الأداء دون الاعتماد على محتوى عميل ثقيل.',
-      eyebrow: 'دراسة حالة · معمارية المحفظة',
+        'دراسة حالة في معمارية الواجهة توضح كيف أصبح موقع Astro ثابتًا ومترجمًا وقابلًا للفهرسة، ويراعي إمكانية الوصول والأداء، دون محتوى ثقيل يُعرض في المتصفح.',
+      eyebrow: 'دراسة حالة · معمارية معرض الأعمال',
       summary:
         'معمارية محفظة أعمال مصممة للمسؤولين عن التوظيف ومحركات البحث وتقنيات المساعدة وزواحف الذكاء الاصطناعي. جمع العمل الصفحات المحلية ودراسات الحالة وschema والتنقل واكتشاف المحتوى في نظام ثابت واحد.',
       confidentialityNote:
-        'هذه دراسة عامة عن نظام المحفظة. لا تتضمن ملاحظات تنفيذ خاصة أو تحليلات غير منشورة أو بيانات اعتماد أو تفاصيل خدمات خارجية.',
+        'هذه دراسة عامة عن نظام معرض الأعمال. لا تتضمن ملاحظات تنفيذ خاصة أو تحليلات غير منشورة أو بيانات اعتماد أو تفاصيل خدمات خارجية.',
       meta: [
         { label: 'نوع المشروع', value: 'محفظة Astro ونظام SEO' },
         { label: 'الدور', value: 'معماري واجهات وكاتب تقني' },
@@ -869,9 +869,9 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
       datePublished: '2026-09-06',
       dateModified: '2026-10-19',
       title: 'مسار تواصل متاح',
-      seoTitle: 'دراسة حالة لمسار تواصل متاح | النماذج والخصوصية',
+      seoTitle: 'دراسة حالة: مسار تواصل سهل الوصول | النماذج والخصوصية',
       description:
-        'دراسة Frontend حول تصميم مسار تواصل قليل الاحتكاك مع تسميات متاحة، تحقق، مسارات بديلة، وضوح خصوصية، ومحتوى تحويل قابل للفهرسة.',
+        'دراسة حالة للواجهة الأمامية حول تصميم مسار تواصل سلس، مع تسميات تراعي إمكانية الوصول، وتحقق من المدخلات، ومسارات بديلة، وخصوصية واضحة، ومحتوى قابل للفهرسة.',
       eyebrow: 'دراسة حالة · UX للتحويل',
       summary:
         'مسار تواصل وتأهيل عملاء محتملين يجعل الخطوة التالية واضحة للعملاء، مع إبقاء النموذج متاحًا وخفيفًا وواضحًا حول الخصوصية وموثوقًا عند غياب JavaScript أو مزود النموذج الخارجي.',
@@ -896,7 +896,7 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
           id: 'context',
           heading: 'السياق',
           body: [
-            'مسار التواصل في المحفظة هو سطح منتج. يجب أن يساعد شخصًا حقيقيًا على قرار بدء محادثة، ويوضح المعلومات المفيدة، ويوفر بديلًا عندما لا يعمل إرسال النموذج المدمج.',
+            'مسار التواصل في معرض الأعمال جزء من المنتج نفسه. يجب أن يساعد شخصًا حقيقيًا على قرار بدء محادثة، ويوضح المعلومات المفيدة، ويوفر بديلًا عندما لا يعمل إرسال النموذج المدمج.',
             'كان الهدف إنشاء مسار خفيف يدعم رسائل مسؤولي التوظيف واستفسارات العمل الحر وطلبات التعاون التقني دون تحويل صفحة التواصل إلى تطبيق معقد.',
           ],
         },
@@ -980,12 +980,12 @@ export const additionalCaseStudies: Record<Locale, readonly CaseStudyBase[]> = {
       datePublished: '2026-09-06',
       dateModified: '2026-10-15',
       title: 'نظام جودة Frontend',
-      seoTitle: 'دراسة حالة لنظام جودة Frontend | Playwright',
+      seoTitle: 'دراسة حالة: نظام جودة للواجهة الأمامية | Playwright',
       description:
-        'دراسة هندسية لنظام جودة يجمع المحتوى typed وفحوص الإتاحة والمسارات القابلة للفهرسة والتحقق responsive وثقة build ثابت.',
+        'دراسة حالة هندسية لنظام جودة يجمع بين محتوى محدد الأنواع، وفحوص إمكانية الوصول، ومسارات قابلة للفهرسة، واختبار التجاوب، وبناء ثابت موثوق.',
       eyebrow: 'دراسة حالة · جودة هندسية',
       summary:
-        'نظام جودة عملي يحمي مصداقية المحفظة: بيانات محتوى typed، توليد مسارات ثابت، اختبارات إتاحة، فحوص اتساق بصري، تغطية روابط داخلية، وتغذية راجعة من build قبل الإنتاج.',
+        'نظام جودة عملي يحمي مصداقية معرض الأعمال: بيانات محتوى محددة الأنواع، وتوليد ثابت للمسارات، واختبارات لإمكانية الوصول، وفحوص للاتساق البصري، وتغطية للروابط الداخلية، وتغذية راجعة من عملية البناء قبل النشر.',
       confidentialityNote:
         'تركز هذه الدراسة على أنماط هندسية عامة. لا تتضمن إعدادات CI خاصة أو بيانات اعتماد أو أسرار نشر أو تفاصيل مراقبة غير منشورة.',
       meta: [
@@ -1344,7 +1344,7 @@ export const additionalCaseStudyProof: Record<
         id: 'constraints',
         heading: 'القيود',
         items: [
-          'احتاجت المحفظة إلى ثقة دون أن تتحول إلى تطبيق ثقيل مع hydration غير ضروري.',
+          'احتاج معرض الأعمال إلى بناء الثقة دون أن يتحول إلى تطبيق ثقيل يعتمد على hydration غير ضروري.',
           'كان يجب أن تلتقط الاختبارات انحدارات مهمة مع أن تبقى قابلة للصيانة لموقع ثابت صغير.',
           'احتاجت تخطيطات العربية والجوال إلى حماية صريحة من overflow بسبب السلاسل المحلية الطويلة.',
         ],

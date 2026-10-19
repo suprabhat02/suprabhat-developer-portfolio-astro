@@ -607,19 +607,19 @@ const es: Translations = {
     'Estas son las herramientas que más utilizo en el trabajo frontend en producción. La lista es corta a propósito: elijo una herramienta después de entender la tarea del usuario, el flujo de datos, los estados de error y el coste de mantenimiento, no porque sea nueva.',
   'page.tools.group.languages.title': 'Lenguajes y frameworks',
   'page.tools.group.languages.description':
-    'La base de cada interfaz que entrego: marcado semántico, componentes tipados y renderizado en servidor y en cliente.',
+    'La base de cada interfaz que desarrollo: marcado semántico, componentes tipados y renderizado en el servidor y en el cliente.',
   'page.tools.group.data.title': 'Datos y estado',
   'page.tools.group.data.description':
-    'Estado predecible, datos del servidor en caché y límites de API tipados para paneles con muchos datos.',
+    'Estado predecible, datos del servidor en caché y contratos de API tipados para paneles con muchos datos.',
   'page.tools.group.styling.title': 'Estilos y sistemas de diseño',
   'page.tools.group.styling.description':
-    'Desde la entrega del diseño hasta componentes documentados y reutilizables.',
+    'Del traspaso del diseño al código: componentes documentados y reutilizables.',
   'page.tools.group.backend.title': 'Backend, datos y nube',
   'page.tools.group.backend.description':
-    'Para funcionalidades full-stack junto al frontend.',
+    'Para desarrollar funcionalidades full-stack además del frontend.',
   'page.tools.group.workflow.title': 'Flujo de trabajo y mantenimiento',
   'page.tools.group.workflow.description':
-    'Control de versiones, bases de código heredadas y redacción y revisión asistidas por IA.',
+    'Control de versiones, mantenimiento de código heredado y redacción y revisión asistidas por IA.',
   'page.tools.group.languages.practice':
     'En la práctica: interfaces React y TypeScript con gran volumen de datos en Topsoe, incluido un portal de autoservicio creado con Next.js 16 y React 19. En puestos anteriores usé HTML, CSS, JavaScript y React para interfaces adaptables y compatibles con distintos navegadores.',
   'page.tools.group.data.practice':
@@ -629,10 +629,10 @@ const es: Translations = {
   'page.tools.group.backend.practice':
     'En la práctica: funcionalidades full-stack con Python, FastAPI, PostgreSQL y servicios de Azure, además de integraciones con API REST y de backend en varios puestos.',
   'page.tools.group.workflow.practice':
-    'En la práctica: entrega en equipos Agile distribuidos entre India, Dinamarca y China, con CI/CD en Azure DevOps para el portal de autoservicio.',
-  'page.tools.closing': 'Mira cómo se combinan en los casos de estudio.',
+    'En la práctica: trabajo en equipos ágiles distribuidos entre India, Dinamarca y China, con CI/CD en Azure DevOps para el portal de autoservicio.',
+  'page.tools.closing': 'Descubre cómo se combinan en los casos de estudio.',
   'page.work.eyebrow': 'Proyectos',
-  'page.work.title': 'Trabajo interno de producto seleccionado',
+  'page.work.title': 'Proyectos internos de producto seleccionados',
   'page.recommendations.eyebrow': 'Recomendaciones',
   'page.recommendations.title': 'Lo que dicen los colaboradores',
   'page.services.eyebrow': 'Servicios',
@@ -657,20 +657,20 @@ const es: Translations = {
   'page.accessibility.eyebrow': 'Accesibilidad',
   'page.accessibility.title': 'Declaración de accesibilidad',
   'page.accessibility.commitment':
-    'Quiero que cualquier persona pueda leer este sitio y contactar conmigo, sea cual sea el dispositivo, el navegador o la tecnología de apoyo que utilice. El objetivo es el nivel AA de las WCAG 2.2.',
+    'Quiero que cualquier persona pueda leer este sitio y ponerse en contacto conmigo, sea cual sea el dispositivo, el navegador o la tecnología de apoyo que utilice. El objetivo es el nivel AA de las WCAG 2.2.',
   'page.accessibility.inPlaceTitle': 'Qué está implementado',
   'page.accessibility.inPlace.landmarks':
-    'Secciones semánticas y un único encabezado de nivel 1 por página.',
+    'Regiones semánticas (landmarks) y un único encabezado de nivel 1 por página.',
   'page.accessibility.inPlace.focus':
     'Un enlace para saltar al contenido y un indicador de foco de teclado visible.',
   'page.accessibility.inPlace.targets':
     'Controles de formulario etiquetados y elementos interactivos que cumplen el tamaño mínimo de objetivo de las WCAG 2.2, de 24 × 24 píxeles.',
   'page.accessibility.inPlace.motion':
-    'Respeto por la preferencia de movimiento reducido.',
+    'Respeto a la preferencia de movimiento reducido.',
   'page.accessibility.inPlace.contrast':
     'Contraste de color comprobado en los temas oscuro y claro.',
   'page.accessibility.inPlace.rtl':
-    'Páginas en árabe maquetadas de derecha a izquierda, con el código de izquierda a derecha.',
+    'Páginas en árabe con diseño de derecha a izquierda, manteniendo el código de izquierda a derecha.',
   'page.accessibility.inPlace.nojs':
     'Contenido que sigue siendo legible sin JavaScript.',
   'page.accessibility.inPlace.images':
@@ -680,18 +680,18 @@ const es: Translations = {
   'page.accessibility.inPlace.lang':
     'Cada página declara su idioma y su dirección de texto.',
   'page.accessibility.inPlace.forcedColors':
-    'Encabezados con degradado que recurren a los colores de texto del sistema en el modo de alto contraste de Windows (colores forzados).',
+    'Encabezados con degradado que pasan a usar los colores de texto del sistema en el modo de alto contraste de Windows (colores forzados).',
   'page.accessibility.scopeTitle': 'Alcance',
   'page.accessibility.scope':
     'Esta declaración abarca suprabhat-dev.com en inglés, español y árabe, incluidos los artículos, los casos de estudio y el formulario de contacto.',
   'page.accessibility.testedTitle': 'Cómo se prueba',
   'page.accessibility.tested':
-    'Las comprobaciones automáticas con axe según las WCAG 2.2 AA se ejecutan en el conjunto de pruebas end-to-end en cada cambio antes de publicarlo, con perfiles de navegador de escritorio y móvil, e incluyen páginas con el tema claro y de derecha a izquierda. También se realizan auditorías de accesibilidad con Lighthouse en las páginas principales.',
+    'En cada cambio, antes de publicarlo, la suite de pruebas end-to-end ejecuta comprobaciones automáticas con axe según las WCAG 2.2 AA en perfiles de navegador de escritorio y móvil, incluidas páginas con el tema claro y páginas de derecha a izquierda. Además, se realizan auditorías de accesibilidad con Lighthouse en las páginas principales.',
   'page.accessibility.limitationsTitle': 'Limitaciones conocidas',
   'page.accessibility.limitations.covers':
     'Las imágenes de portada de los artículos contienen texto en inglés en las páginas en español y en árabe; sus alternativas textuales están traducidas.',
   'page.accessibility.limitations.quotes':
-    'Las recomendaciones se citan en su inglés original.',
+    'Las recomendaciones se citan en su idioma original, el inglés.',
   'page.accessibility.feedbackTitle': 'Comentarios',
   'page.accessibility.reviewed': 'Última revisión:',
   'page.accessibility.contact':
@@ -901,7 +901,7 @@ const ar: Translations = {
   'nav.privacy': 'الخصوصية',
   'home.about': 'نبذة عني',
   'home.expertise': 'الخبرات',
-  'home.expertiseTitle': 'الخبرات',
+  'home.expertiseTitle': 'التخصصات',
   'home.experience': 'الخبرة',
   'home.toolbox': 'الأدوات',
   'home.recommendations': 'التوصيات',
@@ -1042,42 +1042,42 @@ const ar: Translations = {
   'page.about.title': 'التصميم من أجل الوضوح والسرعة والإتاحة',
   'page.about.philosophy': 'فلسفة التصميم',
   'page.skills.eyebrow': 'المهارات',
-  'page.skills.title': 'خبرة هندسة الواجهات الأمامية',
+  'page.skills.title': 'التخصص في هندسة الواجهات الأمامية',
   'page.experience.eyebrow': 'الخبرة',
-  'page.experience.title': 'ست سنوات في تقديم الواجهات',
+  'page.experience.title': 'ست سنوات في بناء الواجهات',
   'page.tools.eyebrow': 'الأدوات',
-  'page.tools.title': 'مجموعة عمل مركزة',
-  'home.toolsHeading': 'مجموعة عمل مركزة',
+  'page.tools.title': 'أدوات العمل الأساسية',
+  'home.toolsHeading': 'أدوات العمل الأساسية',
   'page.tools.intro':
     'هذه هي الأدوات التي أستخدمها أكثر من غيرها في عمل الواجهات الأمامية في بيئات الإنتاج. القائمة قصيرة عن قصد: أختار الأداة بعد فهم مهمة المستخدم وتدفق البيانات وحالات الخطأ وتكلفة الصيانة، لا لأنها جديدة.',
   'page.tools.group.languages.title': 'اللغات وأُطر العمل',
   'page.tools.group.languages.description':
-    'أساس كل واجهة أقدّمها: ترميز دلالي، ومكونات محددة الأنواع، وعرض على الخادم والعميل.',
+    'أساس كل واجهة أبنيها: ترميز دلالي، ومكونات محددة الأنواع، وعرض على جانب الخادم والعميل.',
   'page.tools.group.data.title': 'البيانات والحالة',
   'page.tools.group.data.description':
-    'حالة يمكن التنبؤ بها، وبيانات خادم مخزنة مؤقتًا، وحدود API محددة الأنواع للوحات البيانات الكثيفة.',
+    'حالة يمكن التنبؤ بها، وبيانات خادم مخزنة مؤقتًا، وعقود API محددة الأنواع للوحات البيانات الكثيفة.',
   'page.tools.group.styling.title': 'التنسيق وأنظمة التصميم',
   'page.tools.group.styling.description':
     'من تسليم التصميم إلى مكونات موثقة قابلة لإعادة الاستخدام.',
   'page.tools.group.backend.title': 'الخلفية والبيانات والسحابة',
   'page.tools.group.backend.description':
-    'لميزات full-stack إلى جانب الواجهة الأمامية.',
+    'لبناء ميزات full-stack إلى جانب الواجهة الأمامية.',
   'page.tools.group.workflow.title': 'سير العمل والصيانة',
   'page.tools.group.workflow.description':
     'التحكم في الإصدارات، وقواعد الشيفرة القديمة، والصياغة والمراجعة بمساعدة الذكاء الاصطناعي.',
   'page.tools.group.languages.practice':
-    'في الممارسة: واجهات React وTypeScript كثيفة البيانات في Topsoe، منها بوابة خدمة ذاتية مبنية باستخدام Next.js 16 وReact 19. وفي أدوار سابقة استخدمت HTML وCSS وJavaScript وReact لبناء واجهات متجاوبة تعمل عبر المتصفحات.',
+    'عمليًا: واجهات React وTypeScript كثيفة البيانات في Topsoe، منها بوابة خدمة ذاتية مبنية باستخدام Next.js 16 وReact 19. وفي أدوار سابقة استخدمت HTML وCSS وJavaScript وReact لبناء واجهات متجاوبة تعمل عبر المتصفحات.',
   'page.tools.group.data.practice':
-    'في الممارسة: Redux Toolkit للواجهات كثيفة البيانات، وTanStack Query مع openapi-fetch لبيانات الخادم محددة الأنواع في بوابة الخدمة الذاتية المبنية بـ Next.js.',
+    'عمليًا: Redux Toolkit للواجهات كثيفة البيانات، وTanStack Query مع openapi-fetch لبيانات الخادم محددة الأنواع في بوابة الخدمة الذاتية المبنية بـ Next.js.',
   'page.tools.group.styling.practice':
-    'في الممارسة: تحويل المخططات الأولية (wireframes) إلى واجهات React وTypeScript متجاوبة، وبناء مكونات واجهة ومكتبات مكونات قابلة لإعادة الاستخدام.',
+    'عمليًا: تحويل المخططات الأولية (wireframes) إلى واجهات React وTypeScript متجاوبة، وبناء مكونات واجهة ومكتبات مكونات قابلة لإعادة الاستخدام.',
   'page.tools.group.backend.practice':
-    'في الممارسة: ميزات full-stack باستخدام Python وFastAPI وPostgreSQL وخدمات Azure، إضافة إلى تكاملات REST وواجهات API الخلفية في عدة أدوار.',
+    'عمليًا: ميزات full-stack باستخدام Python وFastAPI وPostgreSQL وخدمات Azure، إضافة إلى تكاملات REST وواجهات API الخلفية في عدة أدوار.',
   'page.tools.group.workflow.practice':
-    'في الممارسة: العمل ضمن فرق Agile موزعة بين الهند والدنمارك والصين، مع CI/CD عبر Azure DevOps لبوابة الخدمة الذاتية.',
-  'page.tools.closing': 'شاهد كيف تجتمع هذه الأدوات في دراسات الحالة.',
+    'عمليًا: العمل ضمن فرق Agile موزعة بين الهند والدنمارك والصين، مع CI/CD عبر Azure DevOps لبوابة الخدمة الذاتية.',
+  'page.tools.closing': 'اطّلع على كيفية توظيف هذه الأدوات في دراسات الحالة.',
   'page.work.eyebrow': 'الأعمال',
-  'page.work.title': 'أعمال داخلية مختارة للمنتج',
+  'page.work.title': 'مختارات من أعمال المنتجات الداخلية',
   'page.recommendations.eyebrow': 'التوصيات',
   'page.recommendations.title': 'ما يقوله المتعاونون',
   'page.services.eyebrow': 'الخدمات',
@@ -1107,12 +1107,12 @@ const ar: Translations = {
   'page.accessibility.inPlace.landmarks':
     'معالم دلالية وعنوان واحد من المستوى الأول في كل صفحة.',
   'page.accessibility.inPlace.focus':
-    'رابط لتجاوز المحتوى ومؤشر تركيز واضح للوحة المفاتيح.',
+    'رابط للانتقال مباشرة إلى المحتوى الرئيسي، ومؤشر تركيز واضح عند التنقل بلوحة المفاتيح.',
   'page.accessibility.inPlace.targets':
     'عناصر تحكم معنونة في النماذج، وعناصر تفاعلية تستوفي الحد الأدنى لحجم الهدف في WCAG 2.2 وهو 24 × 24 بكسل.',
   'page.accessibility.inPlace.motion': 'احترام تفضيل تقليل الحركة.',
   'page.accessibility.inPlace.contrast':
-    'تباين ألوان مُتحقَّق منه في السمتين الداكنة والفاتحة.',
+    'تباين ألوان مُتحقَّق منه في الوضعين الداكن والفاتح.',
   'page.accessibility.inPlace.rtl':
     'صفحات عربية بتخطيط من اليمين إلى اليسار، مع إبقاء الشيفرة من اليسار إلى اليمين.',
   'page.accessibility.inPlace.nojs': 'محتوى يبقى مقروءًا دون JavaScript.',
@@ -1121,13 +1121,13 @@ const ar: Translations = {
     'تُجمَع أخطاء النموذج في ملخص ينتقل إليه التركيز، مع رابط إلى كل حقل يحتاج إلى تصحيح.',
   'page.accessibility.inPlace.lang': 'تُعلن كل صفحة لغتها واتجاه نصها.',
   'page.accessibility.inPlace.forcedColors':
-    'عناوين متدرجة الألوان تعود إلى ألوان نص النظام في وضع التباين العالي في Windows (الألوان القسرية).',
+    'عناوين متدرجة الألوان تعود إلى ألوان نص النظام في وضع التباين العالي في Windows (وضع الألوان المفروضة).',
   'page.accessibility.scopeTitle': 'النطاق',
   'page.accessibility.scope':
     'يشمل هذا البيان موقع suprabhat-dev.com باللغات الإنجليزية والإسبانية والعربية، بما في ذلك المقالات ودراسات الحالة ونموذج التواصل.',
-  'page.accessibility.testedTitle': 'كيف يُختبَر',
+  'page.accessibility.testedTitle': 'آلية الاختبار',
   'page.accessibility.tested':
-    'تعمل فحوص axe الآلية وفق WCAG 2.2 AA ضمن مجموعة الاختبارات الشاملة (end-to-end) مع كل تغيير قبل نشره، على ملفات تعريف متصفح لسطح المكتب والجوال، وتشمل صفحات بالسمة الفاتحة وصفحات من اليمين إلى اليسار. كما تُجرى تدقيقات إمكانية الوصول في Lighthouse على الصفحات الرئيسية.',
+    'تعمل فحوص axe الآلية وفق WCAG 2.2 AA ضمن مجموعة الاختبارات الشاملة (end-to-end) مع كل تغيير قبل نشره، على ملفات تعريف متصفح لسطح المكتب والجوال، وتشمل صفحات بالوضع الفاتح وصفحات من اليمين إلى اليسار. كما تُجرى تدقيقات إمكانية الوصول في Lighthouse على الصفحات الرئيسية.',
   'page.accessibility.limitationsTitle': 'قيود معروفة',
   'page.accessibility.limitations.covers':
     'تحتوي صور أغلفة المقالات على نص إنجليزي في الصفحات الإسبانية والعربية؛ أما بدائلها النصية فمترجمة.',
