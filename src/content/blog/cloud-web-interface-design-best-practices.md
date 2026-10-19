@@ -4,8 +4,7 @@ seoTitle: 'Cloud Web Interface Design: Best Practices'
 description: 'Cloud web interface design best practices: component boundaries, explicit state contracts, accessibility at scale, and performance budgets.'
 pubDate: 2026-10-14
 heroImage: /images/blog/cloud-web-interface-design-best-practices-cover-1600x840.png
-tags:
-  ['Frontend Architecture', 'Accessibility', 'Performance', 'UI Engineering']
+tags: ['Frontend Architecture', 'Accessibility', 'Performance']
 draft: false
 ---
 

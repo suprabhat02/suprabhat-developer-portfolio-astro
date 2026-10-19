@@ -5,7 +5,7 @@ description: 'Gestión del foco, teclado, regiones ARIA live y pruebas con lecto
 pubDate: 2026-10-15
 updatedDate: 2026-10-19
 heroImage: /images/blog/accessibility-in-react-what-developers-skip-cover-1600x840.png
-tags: ['Accesibilidad', 'Frontend', 'TypeScript', 'Ingeniería UI']
+tags: ['Accesibilidad', 'Ingeniería UI']
 draft: false
 ---
 

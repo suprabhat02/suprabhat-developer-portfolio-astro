@@ -4,7 +4,7 @@ seoTitle: 'Contratar a un ingeniero frontend sénior: qué buscar'
 description: 'Qué distingue a un ingeniero frontend sénior de uno de nivel medio: arquitectura, accesibilidad, i18n, rendimiento y preguntas para la entrevista.'
 pubDate: 2026-10-14
 heroImage: /images/blog/hiring-senior-frontend-engineer-cover-1600x840.png
-tags: ['Frontend', 'Revisión de código', 'Accesibilidad', 'Rendimiento']
+tags: ['Frontend', 'Accesibilidad', 'Rendimiento']
 draft: false
 ---
 

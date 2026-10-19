@@ -4,7 +4,7 @@ seoTitle: 'Hiring a Senior Frontend Engineer: What to Look For'
 description: 'What separates a senior frontend engineer from a mid-level one: architecture, accessibility, i18n, performance ownership, and interview questions to ask.'
 pubDate: 2026-10-14
 heroImage: /images/blog/hiring-senior-frontend-engineer-cover-1600x840.png
-tags: ['Frontend', 'Code Review', 'Accessibility', 'Performance']
+tags: ['Frontend', 'Accessibility', 'Performance']
 draft: false
 ---
 

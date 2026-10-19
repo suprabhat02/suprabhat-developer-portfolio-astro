@@ -3,8 +3,7 @@ title: 'Buenas prácticas de frontend para una UI limpia y escalable'
 description: 'Arquitectura frontend, accesibilidad, rendimiento y sistemas de diseño prácticos para construir interfaces sostenibles a medida que el producto crece.'
 pubDate: 2026-08-27
 heroImage: /images/blog/frontend-best-practices-clean-ui-cover-1600x840.png
-tags:
-  ['Arquitectura frontend', 'Sistemas de diseño', 'TypeScript', 'Ingeniería UI']
+tags: ['Arquitectura frontend', 'Sistemas de diseño']
 draft: false
 ---
 

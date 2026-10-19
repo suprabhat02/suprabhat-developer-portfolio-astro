@@ -4,7 +4,7 @@ description: 'Focus management, keyboard nav, ARIA live regions, and screen read
 pubDate: 2026-10-15
 updatedDate: 2026-10-19
 heroImage: /images/blog/accessibility-in-react-what-developers-skip-cover-1600x840.png
-tags: ['Accessibility', 'Frontend', 'TypeScript', 'UI Engineering']
+tags: ['Accessibility', 'UI Engineering']
 draft: false
 ---
 

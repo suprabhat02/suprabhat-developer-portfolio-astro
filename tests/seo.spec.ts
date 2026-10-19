@@ -528,8 +528,6 @@ test('share metadata, page types and sitemap dates follow the SEO contract', asy
   ]);
   expect(metaValues(article, 'article:tag')).toEqual([
     'Accessibility',
-    'Frontend',
-    'TypeScript',
     'UI Engineering',
   ]);
   expect(
