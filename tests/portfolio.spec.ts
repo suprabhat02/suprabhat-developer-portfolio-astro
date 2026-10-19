@@ -1396,6 +1396,18 @@ test('tools page groups every tool exactly once in every locale', async ({
     await expect(page.locator('main h1')).toHaveCount(1);
     await expect(page.locator('main .lead')).toHaveText(/\S{20,}|\S+ \S+/);
     await expect(page.locator('.tool-group h2')).toHaveCount(5);
+    await expect(page.locator('.tool-practice')).toHaveCount(5);
+    if (prefix === '') {
+      const words = await page
+        .locator('main')
+        .evaluate(
+          (main) =>
+            (main as HTMLElement).innerText.match(
+              /[\p{L}\p{N}][\p{L}\p{N}'’.+-]*/gu,
+            )?.length ?? 0,
+        );
+      expect(words).toBeGreaterThanOrEqual(250);
+    }
     const names = await page.locator('.tool-grid li span').allTextContents();
     expect(names, prefix || '/en').toHaveLength(20);
     expect(new Set(names).size, prefix || '/en').toBe(20);

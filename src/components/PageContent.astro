@@ -182,6 +182,9 @@ const notFoundLinks = [
             <div class="tool-group">
               <h2>{tx(`page.tools.group.${group.id}.title`)}</h2>
               <p>{tx(`page.tools.group.${group.id}.description`)}</p>
+              <p class="tool-practice">
+                {tx(`page.tools.group.${group.id}.practice`)}
+              </p>
               <ul class="tool-grid">
                 {group.tools.map((tool) => (
                   <li class="fx-glow" data-glow>

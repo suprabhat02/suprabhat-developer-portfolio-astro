@@ -173,6 +173,16 @@ const en = {
   'page.tools.group.workflow.title': 'Workflow and maintenance',
   'page.tools.group.workflow.description':
     'Version control, legacy codebases and AI-assisted drafting and review.',
+  'page.tools.group.languages.practice':
+    'In practice: data-intensive React and TypeScript interfaces at Topsoe, including a self-service portal built with Next.js 16 and React 19. Earlier roles used HTML, CSS, JavaScript and React for responsive, cross-browser interfaces.',
+  'page.tools.group.data.practice':
+    'In practice: Redux Toolkit for data-intensive interfaces, and TanStack Query with openapi-fetch for typed server data in the Next.js self-service portal.',
+  'page.tools.group.styling.practice':
+    'In practice: turning wireframes into responsive React and TypeScript interfaces, and building reusable UI components and component libraries.',
+  'page.tools.group.backend.practice':
+    'In practice: full-stack product features with Python, FastAPI, PostgreSQL and Azure services, plus REST and backend API integrations across several roles.',
+  'page.tools.group.workflow.practice':
+    'In practice: delivery in distributed Agile teams across India, Denmark and China, with Azure DevOps CI/CD on the self-service portal.',
   'page.tools.closing': 'See how these come together in the case studies.',
   'page.work.eyebrow': 'Work',
   'page.work.title': 'Selected internal product work',
@@ -599,6 +609,16 @@ const es: Translations = {
   'page.tools.group.workflow.title': 'Flujo de trabajo y mantenimiento',
   'page.tools.group.workflow.description':
     'Control de versiones, bases de código heredadas y redacción y revisión asistidas por IA.',
+  'page.tools.group.languages.practice':
+    'En la práctica: interfaces React y TypeScript con gran volumen de datos en Topsoe, incluido un portal de autoservicio creado con Next.js 16 y React 19. En puestos anteriores usé HTML, CSS, JavaScript y React para interfaces adaptables y compatibles con distintos navegadores.',
+  'page.tools.group.data.practice':
+    'En la práctica: Redux Toolkit para interfaces con gran volumen de datos, y TanStack Query con openapi-fetch para datos del servidor tipados en el portal de autoservicio con Next.js.',
+  'page.tools.group.styling.practice':
+    'En la práctica: convertir wireframes en interfaces React y TypeScript adaptables, y crear componentes de UI y bibliotecas de componentes reutilizables.',
+  'page.tools.group.backend.practice':
+    'En la práctica: funcionalidades full-stack con Python, FastAPI, PostgreSQL y servicios de Azure, además de integraciones con API REST y de backend en varios puestos.',
+  'page.tools.group.workflow.practice':
+    'En la práctica: entrega en equipos Agile distribuidos entre India, Dinamarca y China, con CI/CD en Azure DevOps para el portal de autoservicio.',
   'page.tools.closing': 'Mira cómo se combinan en los casos de estudio.',
   'page.work.eyebrow': 'Proyectos',
   'page.work.title': 'Trabajo interno de producto seleccionado',
@@ -1023,6 +1043,16 @@ const ar: Translations = {
   'page.tools.group.workflow.title': 'سير العمل والصيانة',
   'page.tools.group.workflow.description':
     'التحكم في الإصدارات، وقواعد الشيفرة القديمة، والصياغة والمراجعة بمساعدة الذكاء الاصطناعي.',
+  'page.tools.group.languages.practice':
+    'في الممارسة: واجهات React وTypeScript كثيفة البيانات في Topsoe، منها بوابة خدمة ذاتية مبنية باستخدام Next.js 16 وReact 19. وفي أدوار سابقة استخدمت HTML وCSS وJavaScript وReact لبناء واجهات متجاوبة تعمل عبر المتصفحات.',
+  'page.tools.group.data.practice':
+    'في الممارسة: Redux Toolkit للواجهات كثيفة البيانات، وTanStack Query مع openapi-fetch لبيانات الخادم محددة الأنواع في بوابة الخدمة الذاتية المبنية بـ Next.js.',
+  'page.tools.group.styling.practice':
+    'في الممارسة: تحويل المخططات الأولية (wireframes) إلى واجهات React وTypeScript متجاوبة، وبناء مكونات واجهة ومكتبات مكونات قابلة لإعادة الاستخدام.',
+  'page.tools.group.backend.practice':
+    'في الممارسة: ميزات full-stack باستخدام Python وFastAPI وPostgreSQL وخدمات Azure، إضافة إلى تكاملات REST وواجهات API الخلفية في عدة أدوار.',
+  'page.tools.group.workflow.practice':
+    'في الممارسة: العمل ضمن فرق Agile موزعة بين الهند والدنمارك والصين، مع CI/CD عبر Azure DevOps لبوابة الخدمة الذاتية.',
   'page.tools.closing': 'شاهد كيف تجتمع هذه الأدوات في دراسات الحالة.',
   'page.work.eyebrow': 'الأعمال',
   'page.work.title': 'أعمال داخلية مختارة للمنتج',
