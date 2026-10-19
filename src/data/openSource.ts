@@ -7,7 +7,7 @@ import type {
 
 /**
  * Open-source work. Facts are taken from the published npm package and its
- * README (react-smart-copy 1.1.0); update them when a release changes them.
+ * README (react-smart-copy 1.14.0); update them when a release changes them.
  */
 
 export interface OpenSourceLinks {
@@ -139,7 +139,7 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
   en: {
     slug: 'react-smart-copy',
     datePublished: '2026-10-03',
-    dateModified: '2026-10-15',
+    dateModified: '2026-10-19',
     title: 'react-smart-copy',
     seoTitle: 'react-smart-copy Case Study | React Clipboard Library',
     description:
@@ -221,7 +221,7 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
         heading: 'Errors, SSR, and footprint',
         body: [
           'Every failure is a typed, classified error such as unsupported, insecure-context, permission-denied, not-focused, unsupported-format, or too-large, and each one states whether a retry can help. Nothing fails silently.',
-          'The React entry ships with "use client" and never touches window during render, so server and first client render match in Next.js. The package has zero runtime dependencies, and the README reports about 3.2 kB for useCopy and 5.4 kB for all copy features, minified and compressed with Brotli.',
+          'The React entry ships with "use client" and never touches window during render, so server and first client render match in Next.js. The package has zero runtime dependencies, and the README reports about 3.5 kB for useCopy and 5.6 kB for all copy features, minified and compressed with Brotli.',
         ],
       },
     ],
@@ -246,7 +246,7 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
   es: {
     slug: 'react-smart-copy',
     datePublished: '2026-10-03',
-    dateModified: '2026-10-15',
+    dateModified: '2026-10-19',
     title: 'react-smart-copy',
     seoTitle: 'react-smart-copy | Biblioteca de portapapeles para React',
     description:
@@ -334,7 +334,7 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
         heading: 'Errores, SSR y tamaño',
         body: [
           'Cada fallo es un error tipado y clasificado, como unsupported, insecure-context, permission-denied, not-focused, unsupported-format o too-large, e indica si un reintento puede ayudar. Nada falla en silencio.',
-          'La entrada de React incluye "use client" y nunca accede a window durante el render, así que el servidor y el primer render del cliente coinciden en Next.js. El paquete no tiene dependencias en tiempo de ejecución, y el README indica unos 3,2 kB para useCopy y 5,4 kB para todas las funciones de copia, minificados y comprimidos con Brotli.',
+          'La entrada de React incluye "use client" y nunca accede a window durante el render, así que el servidor y el primer render del cliente coinciden en Next.js. El paquete no tiene dependencias en tiempo de ejecución, y el README indica unos 3,5 kB para useCopy y 5,6 kB para todas las funciones de copia, minificados y comprimidos con Brotli.',
         ],
       },
     ],
@@ -359,7 +359,7 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
   ar: {
     slug: 'react-smart-copy',
     datePublished: '2026-10-03',
-    dateModified: '2026-10-15',
+    dateModified: '2026-10-19',
     title: 'react-smart-copy',
     seoTitle: 'react-smart-copy | مكتبة حافظة متاحة لـ React',
     description:
@@ -444,7 +444,7 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
         heading: 'الأخطاء وSSR والحجم',
         body: [
           'كل فشل خطأ مصنف ومضبوط النوع مثل unsupported وinsecure-context وpermission-denied وnot-focused وunsupported-format وtoo-large، ويوضح كل منها هل تفيد إعادة المحاولة. لا شيء يفشل بصمت.',
-          'تأتي نقطة دخول React مع "use client" ولا تصل إلى window أثناء العرض، فيتطابق عرض الخادم وأول عرض للعميل في Next.js. لا تملك الحزمة اعتماديات وقت تشغيل، ويذكر README نحو 3.2 كيلوبايت لـ useCopy و5.4 كيلوبايت لكل ميزات النسخ بعد التصغير والضغط بـ Brotli.',
+          'تأتي نقطة دخول React مع "use client" ولا تصل إلى window أثناء العرض، فيتطابق عرض الخادم وأول عرض للعميل في Next.js. لا تملك الحزمة اعتماديات وقت تشغيل، ويذكر README نحو 3.5 كيلوبايت لـ useCopy و5.6 كيلوبايت لكل ميزات النسخ بعد التصغير والضغط بـ Brotli.',
         ],
       },
     ],

@@ -9,6 +9,7 @@ import {
   getBlogPosts,
   toRssDate,
 } from './blog';
+import { profile } from './profile';
 
 export const createLocalizedBlogRss = async (
   context: APIContext,
@@ -35,7 +36,8 @@ export const createLocalizedBlogRss = async (
       description: post.data.description,
       link: getBlogPostHref(locale, post.id),
       categories: post.data.tags,
-      author: 'Suprabhat Kumar',
+      // RSS 2.0 wants an email address here, with the name in parentheses.
+      author: `${profile.email} (${profile.name})`,
       // Written here: @astrojs/rss would print a midnight-UTC timestamp.
       customData: `<pubDate>${toRssDate(post.data.pubDate)}</pubDate>`,
     })),

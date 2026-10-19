@@ -3,8 +3,7 @@ title: 'How to Build Scalable React UI Without Overengineering'
 description: 'Learn how semantic HTML, behavior-led components, accessible states, performance budgets, and design systems keep React interfaces maintainable.'
 pubDate: 2026-08-27
 heroImage: /images/blog/frontend-best-practices-clean-ui-cover-1600x840.png
-tags:
-  ['Frontend Architecture', 'Design Systems', 'TypeScript', 'UI Engineering']
+tags: ['Frontend Architecture', 'Design Systems']
 draft: false
 ---
 
