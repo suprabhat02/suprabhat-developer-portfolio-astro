@@ -22,24 +22,24 @@ src/components/fx/
 
 ## Aceternity mapping
 
-| Aceternity component     | Native implementation                                       | Used on                                  |
-| ------------------------ | ----------------------------------------------------------- | ---------------------------------------- |
-| Spotlight                | `Backdrop spotlight` (`.fx-spotlight`)                      | Homepage hero, every inner page header   |
-| Grid and Dot Backgrounds | `Backdrop pattern="grid" \| "dots"`                         | Hero, inner pages, alternate sections    |
-| Aurora Background        | `Backdrop aurora` (`.fx-aurora`)                            | Hero, inner pages                        |
-| Moving Border            | `.fx-moving-border`                                         | Secondary CTAs, hero portrait frame      |
-| Card Spotlight / Glowing | `.fx-glow` + `data-glow`                                    | Cards site-wide                          |
-| 3D Card Effect           | `.fx-tilt` + `data-tilt`, `.fx-pop` children                | Hero portrait, work and expertise cards  |
-| Card Hover Effect        | `.fx-hover-group` + `.fx-hover-pill` + `data-hover-group`   | Engagements, skills table                |
-| Flip Words               | `FlipWords.astro`                                           | Hero                                     |
-| Infinite Moving Cards    | `.fx-marquee` + `.fx-marquee-track`                         | Keyword strip, recommendations           |
-| Bento Grid               | `.bento-grid` with CSS mini-visuals                         | Problems section                         |
-| Timeline / Tracing Beam  | `ExperienceTimeline.astro` (`.xp-rail` + `.xp-rail-fill`)   | Experience (homepage and `/experience/`) |
-| Text Reveal              | `TextReveal.astro`                                          | About statement                          |
-| Focus Cards              | `.fx-focus-group` + `.fx-focus-item`                        | Featured articles                        |
-| Lamp                     | `.fx-lamp` + `.fx-lamp-line`                                | Homepage CTA band                        |
-| Meteors                  | `Meteors.astro`                                             | CTA band, collaboration, 404             |
-| Floating Navbar          | `.site-header[data-scrolled]`, `.nav-pill`, scroll progress | Global header                            |
+| Aceternity component     | Native implementation                                     | Used on                                  |
+| ------------------------ | --------------------------------------------------------- | ---------------------------------------- |
+| Spotlight                | `Backdrop spotlight` (`.fx-spotlight`)                    | Homepage hero, every inner page header   |
+| Grid and Dot Backgrounds | `Backdrop pattern="grid" \| "dots"`                       | Hero, inner pages, alternate sections    |
+| Aurora Background        | `Backdrop aurora` (`.fx-aurora`)                          | Hero, inner pages                        |
+| Moving Border            | `.fx-moving-border`                                       | Secondary CTAs, hero portrait frame      |
+| Card Spotlight / Glowing | `.fx-glow` + `data-glow`                                  | Cards site-wide                          |
+| 3D Card Effect           | `.fx-tilt` + `data-tilt`, `.fx-pop` children              | Hero portrait, work and expertise cards  |
+| Card Hover Effect        | `.fx-hover-group` + `.fx-hover-pill` + `data-hover-group` | Engagements, skills table                |
+| Flip Words               | `FlipWords.astro`                                         | Hero                                     |
+| Infinite Moving Cards    | `.fx-marquee` + `.fx-marquee-track`                       | Keyword strip, recommendations           |
+| Bento Grid               | `.bento-grid` with CSS mini-visuals                       | Problems section                         |
+| Timeline / Tracing Beam  | `ExperienceTimeline.astro` (`.xp-rail` + `.xp-rail-fill`) | Experience (homepage and `/experience/`) |
+| Text Reveal              | `TextReveal.astro`                                        | About statement                          |
+| Focus Cards              | `.fx-focus-group` + `.fx-focus-item`                      | Featured articles                        |
+| Lamp                     | `.fx-lamp` + `.fx-lamp-line`                              | Homepage CTA band                        |
+| Meteors                  | `Meteors.astro`                                           | CTA band, collaboration, 404             |
+| Floating Navbar          | `.site-header[data-scrolled]`, `.nav-pill`                | Global header                            |
 
 ## Rules that keep Lighthouse and axe at 100
 
@@ -55,8 +55,8 @@ src/components/fx/
    portrait paint immediately; only decorative layers animate in.
 5. **Scroll-linked effects are progressive.** They use CSS
    `animation-timeline` inside `@supports`; unsupported browsers show the final
-   state (the header progress bar and back-to-top ring fall back to the
-   scroll handler in `motion.ts`). Always write them as longhands
+   state (the back-to-top ring falls back to the scroll handler in
+   `motion.ts`). Always write them as longhands
    (`animation-name`, `animation-timing-function`, `animation-fill-mode`,
    `animation-timeline`): the CSS minifier folds a timeline into an `animation`
    shorthand, which browsers reject, so the effect silently disappears from
@@ -81,17 +81,16 @@ These were found by profiling idle main-thread time over CDP (5 s at 4× CPU
 throttling) and by tracing `layout-shift` entries. Each one regressed a
 Lighthouse metric while looking harmless.
 
-| Pattern                                                                  | Cost                                                                                                | Rule                                                                                                                                                                                                                                                                             |
-| ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Infinite animation inside a `content-visibility: auto` section           | ~3 s of main-thread work per 5 s idle                                                               | Use `.fx-ping--static` (or no animation) inside `.cv-auto` / `.conversion-section`                                                                                                                                                                                               |
-| Animating `background-position` (gradient text shimmer)                  | ~3 s per 5 s idle; repaints the LCP heading every frame                                             | Gradient text stays static                                                                                                                                                                                                                                                       |
-| Offscreen infinite animations (meteors, marquees)                        | ~300 ms per 5 s idle                                                                                | Wrap them in `[data-motion-scope]`; `motion.ts` pauses scopes marked `data-offscreen`                                                                                                                                                                                            |
-| Layout reads at boot (`getBoundingClientRect` for the nav pill)          | Forced reflow inside a long task on Arabic pages                                                    | Measure only inside user-initiated pointer or focus events                                                                                                                                                                                                                       |
-| Animated transforms inside an `overflow: hidden` wrapper                 | Layout shift on RTL pages (scroll-origin re-anchoring)                                              | Clip with `overflow: clip` (keep `hidden` as the fallback line before it)                                                                                                                                                                                                        |
-| Decorative layers positioned with `%` of a content-sized host            | Layout shift when the host grows on font swap                                                       | Offset backdrops with fixed units (`rem`), never a percentage of the host height                                                                                                                                                                                                 |
-| Scrollbar appearing after first paint                                    | Viewport narrows; right-anchored layers shift                                                       | `html { scrollbar-gutter: stable; }`                                                                                                                                                                                                                                             |
-| `content-visibility: auto` placeholders that don't match the real height | The page grew up to 2x on phones during the first scroll, so the header progress bar slid backwards | Keep `contain-intrinsic-size: auto <size>` (the `auto` matters); `motion.ts` (`initRememberedSizes`) renders each skipped section once in idle time after load so its real size is remembered. Removing `content-visibility` instead cost 1–2 Lighthouse points (TBT 120–160 ms) |
-| ~160 view-timeline reveals (transform + blur) site-wide                  | Mobile Speed Index 1.3 s → 2.5–4 s (Lighthouse 98–99)                                               | Keep reveals opt-in (`data-scroll-reveals`)                                                                                                                                                                                                                                      |
+| Pattern                                                         | Cost                                                    | Rule                                                                                  |
+| --------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Infinite animation inside a `content-visibility: auto` section  | ~3 s of main-thread work per 5 s idle                   | Use `.fx-ping--static` (or no animation) inside `.cv-auto` / `.conversion-section`    |
+| Animating `background-position` (gradient text shimmer)         | ~3 s per 5 s idle; repaints the LCP heading every frame | Gradient text stays static                                                            |
+| Offscreen infinite animations (meteors, marquees)               | ~300 ms per 5 s idle                                    | Wrap them in `[data-motion-scope]`; `motion.ts` pauses scopes marked `data-offscreen` |
+| Layout reads at boot (`getBoundingClientRect` for the nav pill) | Forced reflow inside a long task on Arabic pages        | Measure only inside user-initiated pointer or focus events                            |
+| Animated transforms inside an `overflow: hidden` wrapper        | Layout shift on RTL pages (scroll-origin re-anchoring)  | Clip with `overflow: clip` (keep `hidden` as the fallback line before it)             |
+| Decorative layers positioned with `%` of a content-sized host   | Layout shift when the host grows on font swap           | Offset backdrops with fixed units (`rem`), never a percentage of the host height      |
+| Scrollbar appearing after first paint                           | Viewport narrows; right-anchored layers shift           | `html { scrollbar-gutter: stable; }`                                                  |
+| ~160 view-timeline reveals (transform + blur) site-wide         | Mobile Speed Index 1.3 s → 2.5–4 s (Lighthouse 98–99)   | Keep reveals opt-in (`data-scroll-reveals`)                                           |
 
 After the fixes, homepage idle main-thread time is ~17 ms per 5 s (4 ms with
 every animation disabled), and no layout shift is recorded in repeated

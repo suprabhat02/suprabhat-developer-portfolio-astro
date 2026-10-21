@@ -382,79 +382,24 @@ test('long page and article headings wrap instead of clipping', async ({
   }
 });
 
-test('page height settles after load, so the progress bar never runs backwards', async ({
-  page,
-}) => {
-  test.slow();
-  await page.goto('/');
-  // Skipped sections record their real size in idle time after load. Wait
-  // until the height holds still across two one-second polls.
-  let previous = -1;
-  await expect
-    .poll(
-      async () => {
-        const height = await page.evaluate(
-          () => document.documentElement.scrollHeight,
-        );
-        const settled = height === previous;
-        previous = height;
-        return settled;
-      },
-      { intervals: [1000], timeout: 30_000 },
-    )
-    .toBe(true);
-
-  // A first scroll to the bottom must not grow the page: if it did, the
-  // scroll range would grow too and the progress bar would slide back.
-  const heights = await page.evaluate(async () => {
-    const root = document.documentElement;
-    const seen = new Set<number>();
-    const settle = () =>
-      new Promise((resolve) =>
-        requestAnimationFrame(() => requestAnimationFrame(resolve)),
-      );
-    for (let top = 0; top < root.scrollHeight; top += innerHeight / 2) {
-      window.scrollTo({ top, behavior: 'instant' });
-      await settle();
-      seen.add(root.scrollHeight);
-    }
-    return [...seen];
-  });
-  expect(heights).toHaveLength(1);
-});
-
-test('scroll-linked progress indicators run in the production build', async ({
+test('scroll-linked back-to-top ring runs in the production build', async ({
   page,
 }) => {
   await page.goto('/about/');
-  const bar = page.locator('.site-header .hdr-progress');
-  const timelines = await page.evaluate(() =>
-    ['.hdr-progress', '.btt-ring'].map((selector) => {
-      const style = getComputedStyle(document.querySelector(selector)!);
-      return [style.animationName, style.animationTimeline];
+  await expect(page.locator('.btt-ring')).toHaveCSS(
+    'animation-name',
+    'fx-ring',
+  );
+  await expect(page.locator('.btt-ring')).toHaveCSS(
+    'animation-timeline',
+    /^scroll\(root/,
+  );
+  await page.evaluate(() =>
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: 'instant',
     }),
   );
-  expect(timelines).toEqual([
-    ['fx-grow-x', expect.stringMatching(/^scroll\(root/)],
-    ['fx-ring', expect.stringMatching(/^scroll\(root/)],
-  ]);
-  const scaleX = () =>
-    bar.evaluate(
-      (element) => new DOMMatrix(getComputedStyle(element).transform).a,
-    );
-  expect(await scaleX()).toBeLessThan(0.05);
-  // Re-scroll on each poll: lazily rendered sections can still settle height.
-  await expect
-    .poll(async () => {
-      await page.evaluate(() =>
-        window.scrollTo({
-          top: document.documentElement.scrollHeight,
-          behavior: 'instant',
-        }),
-      );
-      return scaleX();
-    })
-    .toBeGreaterThan(0.95);
   await expect(page.locator('[data-btt]')).toBeVisible();
 
   await page.goto('/experience/');

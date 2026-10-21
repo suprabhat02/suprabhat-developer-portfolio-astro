@@ -169,20 +169,6 @@ textarea {
 [data-theme='light'] .site-header[data-scrolled] {
   box-shadow: var(--shadow);
 }
-.hdr-progress {
-  position: absolute;
-  inset-inline: 22px;
-  inset-block-end: -1px;
-  height: 2px;
-  border-radius: var(--radius-pill);
-  background: linear-gradient(
-    90deg,
-    var(--accent),
-    var(--accent-strong) 55%,
-    var(--accent-2)
-  );
-  pointer-events: none;
-}
 /* The header pill sets its own width; its row must always fill it, so the
    page-gutter `.wrap` widths (which shrink on phones) never apply here.
    Otherwise the slack lands at the inline end and, in RTL, the controls
@@ -1632,7 +1618,7 @@ main {
   background: var(--surface);
   /* Always below the fold: skip its rendering until scrolled near. The
      placeholder matches the rendered height per layout, so the page (and the
-     scroll progress bar) does not jump when the footer first renders. */
+     back-to-top ring) does not jump when the footer first renders. */
   content-visibility: auto;
   contain-intrinsic-size: auto 39rem;
 }
