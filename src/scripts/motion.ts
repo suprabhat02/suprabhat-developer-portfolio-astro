@@ -424,6 +424,98 @@ function initToasts(): Cleanup {
   return () => document.removeEventListener('portfolio:toast', onToast);
 }
 
+/* ── Remembered sizes for `content-visibility: auto` sections ──────── */
+/*
+ * Skipped sections are laid out at their `contain-intrinsic-size`
+ * placeholder until first rendered. One placeholder cannot match every
+ * section at every width, so the document grew as each section rendered
+ * during the first scroll down (up to 2x on phones). The scroll range grew
+ * with it, which made the header progress bar slide backwards while the
+ * reader scrolled forwards.
+ *
+ * After load, render each skipped section for one frame, one per idle
+ * period, so the browser records its real size (`contain-intrinsic-size:
+ * auto ...`) while the reader is still near the top. The sections keep
+ * skipping rendering when off screen afterwards, and each step lays out a
+ * single section, well under the 50 ms long-task threshold.
+ */
+
+function initRememberedSizes(): Cleanup {
+  if (!CSS.supports('contain-intrinsic-size', 'auto 1px')) {
+    return () => undefined;
+  }
+
+  const idle = (callback: () => void): (() => void) => {
+    // Safari has no requestIdleCallback; a short timeout is close enough.
+    if (typeof window.requestIdleCallback === 'function') {
+      const handle = window.requestIdleCallback(callback, { timeout: 2000 });
+      return () => window.cancelIdleCallback(handle);
+    }
+    const handle = globalThis.setTimeout(callback, 60);
+    return () => globalThis.clearTimeout(handle);
+  };
+  const nextFrames = (callback: () => void): (() => void) => {
+    let second = 0;
+    const first = window.requestAnimationFrame(() => {
+      second = window.requestAnimationFrame(callback);
+    });
+    return () => {
+      window.cancelAnimationFrame(first);
+      window.cancelAnimationFrame(second);
+    };
+  };
+
+  let cancelPending: () => void = () => undefined;
+  let measuredWidth = 0;
+
+  const run = () => {
+    cancelPending();
+    measuredWidth = window.innerWidth;
+    // Candidates only (sections, the footer and the phone proof row), so
+    // the style reads stay cheap; the filter keeps whichever use `auto`.
+    const queue = Array.from(
+      document.querySelectorAll<HTMLElement>(
+        'main section, .site-footer, .hero-bottom',
+      ),
+    ).filter(
+      (element) => getComputedStyle(element).contentVisibility === 'auto',
+    );
+
+    const step = () => {
+      const element = queue.shift();
+      if (!element) return;
+      element.style.setProperty('content-visibility', 'visible');
+      // Two frames: the size is recorded during the rendering update.
+      cancelPending = nextFrames(() => {
+        element.style.removeProperty('content-visibility');
+        cancelPending = idle(step);
+      });
+    };
+    cancelPending = idle(step);
+  };
+
+  let resizeTimer = 0;
+  const onResize = () => {
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(() => {
+      // Heights depend on width only; ignore mobile toolbar height changes.
+      if (window.innerWidth !== measuredWidth) run();
+    }, 400);
+  };
+
+  const start = () => run();
+  if (document.readyState === 'complete') start();
+  else window.addEventListener('load', start, { once: true });
+  window.addEventListener('resize', onResize, { passive: true });
+
+  return () => {
+    cancelPending();
+    window.clearTimeout(resizeTimer);
+    window.removeEventListener('load', start);
+    window.removeEventListener('resize', onResize);
+  };
+}
+
 /* ── Boot ──────────────────────────────────────────────────────────── */
 
 const initializers: ReadonlyArray<() => Cleanup> = [
@@ -437,6 +529,7 @@ const initializers: ReadonlyArray<() => Cleanup> = [
   initLiveScenes,
   initLazyGlobes,
   initToasts,
+  initRememberedSizes,
 ];
 
 const boot = () => {
