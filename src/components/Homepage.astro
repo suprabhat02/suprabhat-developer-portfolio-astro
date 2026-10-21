@@ -214,11 +214,7 @@ const stats = [
 ] as const;
 
 const posts = await getBlogPosts(locale);
-const articleIllustrations = [
-  '/assets/illustrations/article-performance.svg',
-  '/assets/illustrations/article-accessibility.svg',
-  '/assets/illustrations/article-ui-engineering.svg',
-] as const;
+const articleScenes = ['perf', 'a11y', 'components'] as const satisfies readonly SceneName[];
 const featured = recommendations.filter((r) =>
   featuredRecommendationIds.includes(
     r.id as (typeof featuredRecommendationIds)[number],
@@ -237,22 +233,22 @@ const recommendationSlots = Array.from(
 
 const traits = [
   {
-    illustration: '/assets/illustrations/about-performance.svg',
+    visual: 'perf' as SceneName,
     title: t(locale, 'trait.performance.title'),
     body: t(locale, 'trait.performance.body'),
   },
   {
-    illustration: '/assets/illustrations/about-accessibility.svg',
+    visual: 'a11y' as SceneName,
     title: t(locale, 'trait.accessibility.title'),
     body: t(locale, 'trait.accessibility.body'),
   },
   {
-    illustration: '/assets/illustrations/about-architecture.svg',
+    visual: 'stack' as SceneName,
     title: t(locale, 'trait.architecture.title'),
     body: t(locale, 'trait.architecture.body'),
   },
   {
-    illustration: '/assets/illustrations/about-fullstack.svg',
+    visual: 'orbit' as SceneName,
     title: t(locale, 'trait.fullstack.title'),
     body: t(locale, 'trait.fullstack.body'),
   },
@@ -260,7 +256,7 @@ const traits = [
 
 const expertiseCards = [
   {
-    illustration: '/assets/illustrations/expertise-frontend.svg',
+    visual: 'components' as SceneName,
     icon: 'frontend',
     title: t(locale, 'expertise.frontend.title'),
     body: t(locale, 'expertise.frontend.body'),
@@ -278,7 +274,7 @@ const expertiseCards = [
     ],
   },
   {
-    illustration: '/assets/illustrations/expertise-backend.svg',
+    visual: 'server' as SceneName,
     icon: 'backend',
     title: t(locale, 'expertise.backend.title'),
     body: t(locale, 'expertise.backend.body'),
@@ -293,7 +289,7 @@ const expertiseCards = [
     ],
   },
   {
-    illustration: '/assets/illustrations/expertise-design-systems.svg',
+    visual: 'tokens' as SceneName,
     icon: 'design',
     title: t(locale, 'expertise.design.title'),
     body: t(locale, 'expertise.design.body'),
@@ -614,21 +610,11 @@ const contactIndex = featured.length > 0 ? '14' : '13';
         {
           posts.slice(0, 3).map((post, i) => (
             <article
-              class="article-card article-card--visual fx-focus-item fx-glow fx-reveal"
+              class="article-card fx-live fx-focus-item fx-glow fx-tilt fx-card-gradient fx-reveal"
               data-glow
+              data-tilt
             >
-              <div class="article-media">
-                <img
-                  class="card-illustration"
-                  src={articleIllustrations[i]}
-                  alt=""
-                  aria-hidden="true"
-                  width="512"
-                  height="320"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
+              <LiveScene scene={articleScenes[i]} />
               {post.data.tags[0] && (
                 <a
                   class="article-kicker"
@@ -714,19 +700,11 @@ const contactIndex = featured.length > 0 ? '14' : '13';
         {
           traits.map((trait, index) => (
             <div
-              class="trait-card trait-card--visual fx-glow fx-reveal"
+              class="trait-card fx-live fx-glow fx-tilt fx-card-gradient fx-reveal"
               data-glow
+              data-tilt
             >
-              <img
-                class="card-illustration"
-                src={trait.illustration}
-                alt=""
-                aria-hidden="true"
-                width="512"
-                height="320"
-                loading="lazy"
-                decoding="async"
-              />
+              <LiveScene scene={trait.visual} />
               <span class="trait-num">0{index + 1}</span>
               <h3>{trait.title}</h3>
               <p>{trait.body}</p>
@@ -770,20 +748,11 @@ const contactIndex = featured.length > 0 ? '14' : '13';
         {
           expertiseCards.map((card) => (
             <div
-              class="expertise-card expertise-card--visual fx-glow fx-tilt fx-reveal-scale"
+              class="expertise-card fx-live fx-glow fx-tilt fx-card-gradient fx-reveal-scale"
               data-glow
               data-tilt
             >
-              <img
-                class="card-illustration"
-                src={card.illustration}
-                alt=""
-                aria-hidden="true"
-                width="512"
-                height="320"
-                loading="lazy"
-                decoding="async"
-              />
+              <LiveScene scene={card.visual} />
               <div class="expertise-icon fx-pop">
                 <Icon name={expertiseIcons[card.icon]} size={24} />
               </div>

@@ -1,56 +1,50 @@
-# Card Illustrations
+# Card illustrations
 
-Place downloaded unDraw SVG files in `public/assets/illustrations/`. Do not put
-card art in `src/`, `uploads/`, or a new top-level image folder.
+Featured articles, About me, and Core expertise no longer use static image
+files. They render the same animated `LiveScene` SVG engine used everywhere
+else on the homepage (services, engagements, approach, collaboration — see
+`docs/MOTION.md`).
 
-Use these exact filenames when the card imagery is added:
+Each scene is a hand-authored SVG defined in `src/components/fx/LiveScene.astro`
+and registered by name in `src/components/fx/scenes.ts`. Colors come only
+from design tokens (`src/styles/tokens.css` via the `--sc-*` vars in
+`src/styles/scenes.css`), so a scene automatically follows light/dark theme
+and any palette change — nothing is a baked-in color or a downloaded asset.
 
-| Section           | Card                           | File                           |
-| ----------------- | ------------------------------ | ------------------------------ |
-| Featured articles | Performance article            | `article-performance.svg`      |
-| Featured articles | Accessibility article          | `article-accessibility.svg`    |
-| Featured articles | UI engineering article         | `article-ui-engineering.svg`   |
-| About me          | Performance-first              | `about-performance.svg`        |
-| About me          | Accessibility by default       | `about-accessibility.svg`      |
-| About me          | Scalable architecture          | `about-architecture.svg`       |
-| About me          | Full-stack capable             | `about-fullstack.svg`          |
-| Core expertise    | Front-end engineering          | `expertise-frontend.svg`       |
-| Core expertise    | Back-end and API integration   | `expertise-backend.svg`        |
-| Core expertise    | Design systems and performance | `expertise-design-systems.svg` |
+| Section            | Card                            | Scene         |
+| ------------------- | -------------------------------- | ------------- |
+| Featured articles   | Performance article              | `perf`        |
+| Featured articles   | Accessibility article            | `a11y`        |
+| Featured articles   | UI engineering article           | `components`  |
+| About me            | Performance-first                | `perf`        |
+| About me            | Accessibility by default         | `a11y`        |
+| About me            | Scalable architecture            | `stack`       |
+| About me            | Full-stack capable               | `orbit`       |
+| Core expertise      | Front-end engineering            | `components`  |
+| Core expertise      | Back-end and API integration     | `server`      |
+| Core expertise      | Design systems and performance   | `tokens`      |
 
-## Choosing and preparing illustrations
+Reusing a scene across two topically-related cards (e.g. `perf` for both the
+performance article and the "Performance-first" trait) is intentional —
+same icon language for the same concept, zero extra weight, nothing to keep
+in sync between a Figma file and the code.
 
-- Download the original SVG from unDraw, not a screenshot or a raster export.
-- Choose images with generous empty space and a single clear subject. Good
-  search terms: `performance`, `accessibility`, `design system`, `developer`,
-  `server`, `dashboard`, and `collaboration`.
-- Set unDraw's accent color to `#f07e1c` before downloading so illustrations
-  match the existing orange accent without runtime recoloring.
-- Do not inline SVG markup in the homepage. Files in `public/assets/illustrations/`
-  can be cached independently and keep the HTML lean.
-- Optimize each SVG with SVGO before committing. Remove `<title>`, `<desc>`,
-  editor metadata, and unused definitions. Keep each illustration below 20 KB
-  where practical.
+## Adding a new scene
 
-## Implementation standard
+1. Add the name to `sceneNames` in `src/components/fx/scenes.ts` with a
+   one-line JSDoc description of the story it tells.
+2. Add a `scene === 'your-name' && (...)` block to `LiveScene.astro`. Reuse
+   the existing paint classes (`.ln`, `.t`, `.fa`/`.fb`/`.fok`/`.ftx`,
+   `.sa`/`.sb`/`.ok`) and animation triggers (`k k-draw`, `k k-rise`,
+   `k k-pop`, `k k-packet`, `k k-tick`, etc. — see `scenes.css`) before
+   inventing a new keyframe.
+3. If the story needs a new keyframe, add it under "Animation engine" in
+   `scenes.css`, with its `0%` frame matching the element's resting state
+   (scenes must look complete and static until engaged).
+4. Reference the scene from content with `<LiveScene scene="your-name" />`
+   inside a card carrying the `fx-live fx-card-gradient` classes (plus
+   `fx-glow`/`data-glow`, and `fx-tilt`/`data-tilt` if the card tilts).
 
-Each illustration should be rendered as a decorative `<img>` within its card:
-
-```astro
-<img
-  class="card-illustration"
-  src="/assets/illustrations/expertise-frontend.svg"
-  alt=""
-  aria-hidden="true"
-  loading="lazy"
-  decoding="async"
-/>
-```
-
-Use the existing card fade/overlay above the illustration. The image must never
-carry essential information, so an empty `alt` prevents duplicate screen-reader
-announcements and keeps SEO focused on the card's actual heading and text.
-
-Do not preload these files: all target cards are below the fold. Native lazy
-loading, immutable filename caching, optimized SVGs, and no third-party CDN
-requests give the best performance without changing search indexing.
+Do not add raster images, external SVG downloads, or any other static
+illustration format for on-page cards — it breaks theme-reactivity, adds
+asset weight, and cannot be hover/tap-gated the way this engine is.
