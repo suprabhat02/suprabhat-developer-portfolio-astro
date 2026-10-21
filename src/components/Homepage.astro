@@ -214,7 +214,7 @@ const stats = [
 ] as const;
 
 const posts = await getBlogPosts(locale);
-const articleScenes = ['perf', 'a11y', 'components'] as const satisfies readonly SceneName[];
+const articleScenes = ['race', 'voice', 'components'] as const satisfies readonly SceneName[];
 const featured = recommendations.filter((r) =>
   featuredRecommendationIds.includes(
     r.id as (typeof featuredRecommendationIds)[number],
@@ -233,22 +233,22 @@ const recommendationSlots = Array.from(
 
 const traits = [
   {
-    visual: 'perf' as SceneName,
+    visual: 'vitals' as SceneName,
     title: t(locale, 'trait.performance.title'),
     body: t(locale, 'trait.performance.body'),
   },
   {
-    visual: 'a11y' as SceneName,
+    visual: 'keys' as SceneName,
     title: t(locale, 'trait.accessibility.title'),
     body: t(locale, 'trait.accessibility.body'),
   },
   {
-    visual: 'stack' as SceneName,
+    visual: 'branch' as SceneName,
     title: t(locale, 'trait.architecture.title'),
     body: t(locale, 'trait.architecture.body'),
   },
   {
-    visual: 'orbit' as SceneName,
+    visual: 'bridge' as SceneName,
     title: t(locale, 'trait.fullstack.title'),
     body: t(locale, 'trait.fullstack.body'),
   },
@@ -256,7 +256,7 @@ const traits = [
 
 const expertiseCards = [
   {
-    visual: 'components' as SceneName,
+    visual: 'canvas' as SceneName,
     icon: 'frontend',
     title: t(locale, 'expertise.frontend.title'),
     body: t(locale, 'expertise.frontend.body'),
@@ -289,7 +289,7 @@ const expertiseCards = [
     ],
   },
   {
-    visual: 'tokens' as SceneName,
+    visual: 'swatches' as SceneName,
     icon: 'design',
     title: t(locale, 'expertise.design.title'),
     body: t(locale, 'expertise.design.body'),
@@ -614,7 +614,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
               data-glow
               data-tilt
             >
-              <LiveScene scene={articleScenes[i] ?? 'perf'} />
+              <LiveScene scene={articleScenes[i] ?? 'race'} />
               {post.data.tags[0] && (
                 <a
                   class="article-kicker"

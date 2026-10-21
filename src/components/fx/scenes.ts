@@ -42,6 +42,22 @@ export const sceneNames = [
   'components',
   /** Request/response packets travelling from a server rack to endpoints. */
   'server',
+  /** A marker sprints down a track trailing speed streaks to a finish line. */
+  'race',
+  /** A speaker's sound waves highlight each caption line as it is read. */
+  'voice',
+  /** Three vitals rings fill to green one after another. */
+  'vitals',
+  /** Focus hops key to key across a keyboard row to an activated key. */
+  'keys',
+  /** A root node branches into children, which branch again. */
+  'branch',
+  /** A pulse travels the connector between a UI layer and a data layer. */
+  'bridge',
+  /** Outlines draw in a canvas, then fill solid one by one. */
+  'canvas',
+  /** Loose color swatches settle into a spaced, ruled grid. */
+  'swatches',
 ] as const;
 
 export type SceneName = (typeof sceneNames)[number];

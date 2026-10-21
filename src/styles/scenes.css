@@ -541,6 +541,32 @@
 .lv-scene--server {
   --lv-step: 260ms;
 }
+.lv-scene--race {
+  --lv-step: 70ms;
+}
+.lv-scene--voice {
+  --lv-step: 280ms;
+}
+.lv-scene--vitals {
+  --lv-dur: 3.2s;
+  --lv-step: 260ms;
+}
+.lv-scene--keys {
+  --lv-step: 90ms;
+}
+.lv-scene--branch {
+  --lv-step: 160ms;
+}
+.lv-scene--bridge {
+  --lv-dur: 2.4s;
+  --lv-step: 500ms;
+}
+.lv-scene--canvas {
+  --lv-step: 180ms;
+}
+.lv-scene--swatches {
+  --lv-step: 110ms;
+}
 
 /* ── Keyframes (0% is always the resting frame) ───────────────────── */
 
