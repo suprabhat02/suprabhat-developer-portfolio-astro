@@ -35,7 +35,7 @@ const englishMeta: Record<SectionPage, { title: string; description: string }> =
     experience: {
       title: 'Frontend Engineering Experience | Suprabhat Kumar',
       description:
-        'Six years of frontend engineering experience across SaaS products and enterprise interfaces.',
+        'Six years of frontend engineering at Topsoe, Cognizant, TrueBlue, MobileCoderz and Swaragh Technologies, building SaaS products and enterprise interfaces.',
     },
     tools: {
       title: 'Frontend Tools and Stack | Suprabhat Kumar',
@@ -60,7 +60,7 @@ const englishMeta: Record<SectionPage, { title: string; description: string }> =
     faq: {
       title: 'Frequently Asked Questions | Suprabhat Kumar',
       description:
-        'Answers about services, pricing, remote collaboration, timelines and getting started.',
+        'Answers on Suprabhat Kumar’s frontend services, project pricing, remote and international work, typical timelines, and how to start a collaboration.',
     },
     contact: {
       title: 'Hire Suprabhat Kumar | Senior React Frontend Engineer',
