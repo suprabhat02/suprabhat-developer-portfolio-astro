@@ -1,0 +1,890 @@
+/*
+ * Section pages (About, Skills, Experience, Work, Writing, Contact and the
+ * secondary pages rendered by PageContent.astro): shared hero, content
+ * blocks and the related-links + call-to-action outro. Colors come only from
+ * role tokens (tokens.css); direction-sensitive values use logical
+ * properties so Arabic mirrors without overrides.
+ */
+
+.page.ip {
+  padding-top: clamp(7.5rem, 11vw, 9rem);
+}
+
+.ip-stack {
+  display: grid;
+  gap: clamp(3.5rem, 8vw, 6rem);
+}
+
+/* ── Hero ───────────────────────────────────────────────────────────── */
+
+.ph {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem clamp(2rem, 5vw, 4.5rem);
+  align-items: end;
+}
+
+.ph--narrow .ph-copy {
+  max-width: 52rem;
+}
+
+.ph-crumbs {
+  grid-column: 1 / -1;
+}
+
+.ph-crumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.5rem;
+  margin: 0;
+  padding: 0;
+  color: var(--text-3);
+  font-size: 0.8rem;
+  list-style: none;
+}
+
+.ph-crumbs li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ph-crumbs li + li::before {
+  content: '/';
+  color: var(--text-3);
+}
+
+.ph-crumbs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  color: var(--text-2);
+  text-decoration: none;
+}
+
+.ph-crumbs a:hover {
+  color: var(--accent-strong);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ph-crumbs [aria-current='page'] {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.ph-copy {
+  min-width: 0;
+}
+
+.ph-copy .eyebrow {
+  margin-block-end: 1.1rem;
+}
+
+/* Only an unbreakable word may wrap mid-word, never a word that fits. */
+.page .ph-title {
+  max-width: 20ch;
+  margin: 0 0 1.25rem;
+  font-size: clamp(2.35rem, 5.4vw, 4.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  overflow-wrap: break-word;
+  hyphens: manual;
+  text-wrap: balance;
+}
+
+:lang(ar) .page .ph-title {
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+.ph-lead {
+  max-width: 62ch;
+  margin: 0;
+  line-height: 1.65;
+}
+
+.ph-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.9rem;
+}
+
+.ph-aside {
+  min-width: 0;
+}
+
+@media (min-width: 1041px) {
+  .ph--aside {
+    grid-template-columns: minmax(0, 1.35fr) minmax(17rem, 0.65fr);
+  }
+}
+
+/* ── Section blocks ─────────────────────────────────────────────────── */
+
+.ip-section {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.ip-section-head {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 62ch;
+}
+
+.ip .ip-section-head h2 {
+  margin: 0;
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+.ip-section-head p {
+  margin: 0;
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+.ip-block {
+  display: grid;
+  gap: 1rem;
+}
+
+/* Small section label led by a short brand rule (no boxed panels). */
+.ip .ip-label {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0;
+  color: var(--accent-ink);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ip .ip-label::before {
+  content: '';
+  flex: none;
+  width: 1.75rem;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--gradient-brand);
+}
+
+.card-index {
+  display: inline-block;
+  margin-block-end: 0.75rem;
+  color: var(--accent-ink);
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+
+:lang(ar) :is(.ip .ip-label, .ip-facts dt, .po-label) {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:lang(ar) .ip .ip-section-head h2 {
+  line-height: 1.35;
+}
+
+/* Single-column reading pages (FAQ, accessibility, privacy). */
+.ip .ip-narrow {
+  width: 100%;
+  max-width: 760px;
+}
+
+.ip .ip-narrow > h2 {
+  margin: 2.5rem 0 0.85rem;
+  font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+  line-height: 1.2;
+}
+
+.ip .ip-narrow > h2:first-child {
+  margin-top: 0;
+}
+
+.ip .ip-narrow > p,
+.ip .ip-narrow li {
+  color: var(--text-2);
+  line-height: 1.8;
+}
+
+/* ── Stats (Experience) ─────────────────────────────────────────────── */
+
+.ip-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  border-block: 1px solid var(--divider);
+  list-style: none;
+}
+
+.ip-stats li {
+  display: grid;
+  align-content: start;
+  gap: 0.4rem;
+  padding: 1.2rem 0;
+}
+
+.ip-stats li:nth-child(odd) {
+  padding-inline-end: 1.25rem;
+  border-inline-end: 1px solid var(--divider);
+}
+
+.ip-stats li:nth-child(even) {
+  padding-inline-start: 1.5rem;
+}
+
+.ip-stats li:nth-child(n + 3) {
+  border-block-start: 1px solid var(--divider);
+}
+
+.ip-stats strong {
+  color: var(--accent-strong);
+  font-size: clamp(1.9rem, 3.4vw, 2.5rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.ip-stats span {
+  color: var(--text-2);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+/* ── About ──────────────────────────────────────────────────────────── */
+
+.ip-portrait {
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 23rem);
+  margin: 0;
+  justify-self: end;
+}
+
+.ip-portrait::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset-block: 7% -5%;
+  inset-inline: 9% -5%;
+  border-radius: var(--radius-card);
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklch, var(--accent) 22%, transparent),
+    color-mix(in oklch, var(--accent-2) 22%, transparent)
+  );
+}
+
+.ip-portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: top;
+  border: var(--card-border-width) solid var(--border-strong);
+  border-radius: var(--radius-card);
+}
+
+.ip-about {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(17rem, 22rem);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: start;
+}
+
+.ip-prose p {
+  max-width: 68ch;
+  margin: 0 0 1.35rem;
+  color: var(--text-2);
+  line-height: 1.85;
+}
+
+.ip-prose p:first-child {
+  color: var(--text);
+  font-size: clamp(1.08rem, 1.6vw, 1.22rem);
+  line-height: 1.75;
+}
+
+.ip-prose p:last-child {
+  margin-block-end: 0;
+}
+
+.ip-about-side {
+  position: sticky;
+  top: 7.5rem;
+  display: grid;
+  gap: 2.5rem;
+}
+
+.ip-quote {
+  display: grid;
+  gap: 1rem;
+}
+
+.ip-quote p {
+  position: relative;
+  margin: 0;
+  padding-top: 2.4rem;
+  color: var(--text);
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.ip-quote p::before {
+  content: '\201C';
+  position: absolute;
+  inset-block-start: -0.35rem;
+  inset-inline-start: 0;
+  color: var(--accent);
+  font-size: 4.25rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.ip-facts {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+}
+
+.ip-facts div {
+  display: grid;
+  gap: 0.2rem;
+  padding-block-end: 0.85rem;
+  border-block-end: 1px solid var(--divider);
+}
+
+.ip-facts div:last-child {
+  padding-block-end: 0;
+  border-block-end: 0;
+}
+
+.ip-facts dt {
+  color: var(--text-3);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ip-facts dd {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* ── Expertise areas (Skills) ───────────────────────────────────────── */
+
+.ip-areas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem clamp(1.5rem, 3vw, 2.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Open columns under a hairline with a short brand accent, not boxes. */
+.ip-area {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 0.9rem;
+  height: 100%;
+  padding-top: 1.5rem;
+  border-block-start: 2px solid var(--border-strong);
+}
+
+.ip-area::before {
+  content: '';
+  position: absolute;
+  inset-block-start: -2px;
+  inset-inline-start: 0;
+  width: 3rem;
+  height: 2px;
+  background: var(--gradient-brand);
+}
+
+.ip-area-icon,
+.po-icon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-control);
+  background: var(--accent-subtle);
+  color: var(--accent-strong);
+}
+
+.ip .ip-area h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.3;
+}
+
+.ip-area p {
+  margin: 0;
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+.ip .grid {
+  margin-top: 0;
+}
+
+.ip .grid article h3 {
+  margin-block-end: 1rem;
+}
+
+/* Stack list: logo tile + name rows split by hairlines. */
+.ip-tech {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ip-tech li {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding-block: 0.7rem;
+  border-block-start: 1px solid var(--divider);
+  color: var(--text-2);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.ip-tech li:first-child {
+  padding-top: 0;
+  border-block-start: 0;
+}
+
+.ip-tech-logos {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  width: 3.4rem;
+  height: 2.25rem;
+  border-radius: var(--radius-control);
+  background: color-mix(in oklch, var(--text) 6%, transparent);
+  color: var(--accent-strong);
+}
+
+.ip-tech-logos img {
+  width: 20px;
+  height: 20px;
+}
+
+[data-theme='dark'] .ip-tech-logos img.invert {
+  filter: invert(1);
+}
+
+/* ── Work ───────────────────────────────────────────────────────────── */
+
+.ip .work-tile {
+  position: relative;
+  gap: 0.25rem;
+}
+
+.ip .work-tile h2 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* The title link covers the whole card. */
+.ip .work-tile h2 a::after,
+.ip-post h2 a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.ip .work-tile:has(h2 a:hover) h2 a,
+.ip-post:has(h2 a:hover) h2 a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.ip .work-tile .tag-list {
+  margin-block: 1rem 0;
+}
+
+.ip-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: auto;
+  padding-top: 1.1rem;
+  color: var(--accent-strong);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+[dir='rtl'] .ip-more svg,
+[dir='rtl'] .po-arrow {
+  scale: -1 1;
+}
+
+/* ── Writing ────────────────────────────────────────────────────────── */
+
+.ip .article-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 0;
+}
+
+.ip .article-list > :is(.ip-post--featured, .topic-cloud) {
+  grid-column: 1 / -1;
+}
+
+.ip .article-list > .topic-cloud {
+  margin-block: 0;
+  padding-inline: 0;
+  border: 0;
+  background: none;
+}
+
+.ip-post {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.ip-post .meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.ip-post h2 {
+  margin: 0;
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
+  line-height: 1.3;
+}
+
+.ip-post--featured h2 {
+  max-width: 32ch;
+  font-size: clamp(1.45rem, 3vw, 2.1rem);
+  line-height: 1.2;
+}
+
+.ip-post h2 a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.ip-post > p:not(.meta) {
+  margin: 0;
+  max-width: 68ch;
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+.ip-post .tag-list {
+  position: relative;
+  z-index: 1;
+  margin: auto 0 0;
+  padding-top: 0.4rem;
+}
+
+.ip-badge {
+  padding: 0.12rem 0.6rem;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+/* ── Contact ────────────────────────────────────────────────────────── */
+
+.ip-contact {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: start;
+}
+
+.ip-contact-info {
+  display: grid;
+  gap: 2.5rem;
+  min-width: 0;
+}
+
+.ip-channels,
+.ip-terms {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ip-channel {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-height: 3.6rem;
+  padding-block: 0.7rem;
+  border-block-end: 1px solid var(--divider);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.ip-channels li:last-child .ip-channel {
+  border-block-end: 0;
+}
+
+.ip-channel:hover .ip-channel-value {
+  color: var(--accent-strong);
+}
+
+.ip-channel-icon,
+.ip-note-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-control);
+  background: var(--accent-subtle);
+  color: var(--accent-strong);
+}
+
+.ip-channel-text {
+  display: grid;
+  min-width: 0;
+}
+
+.ip-channel-label {
+  color: var(--text-3);
+  font-size: 0.75rem;
+}
+
+.ip-channel-value {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.ip-terms {
+  gap: 0.75rem;
+}
+
+.ip-terms li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+.ip-terms li > :first-child {
+  flex: none;
+  margin-top: 0.2em;
+  color: var(--success);
+}
+
+/* Soft tinted note (no side bar). */
+.ip-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 1.15rem 1.25rem;
+  border-radius: var(--radius-card);
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklch, var(--accent) 11%, transparent),
+    color-mix(in oklch, var(--accent-2) 8%, transparent)
+  );
+}
+
+.ip-note p {
+  margin-block: 0.35rem 0;
+  color: var(--text-2);
+  line-height: 1.65;
+}
+
+.ip-note .text-link {
+  margin-top: 0.6rem;
+}
+
+/* ── Outro: related pages + call to action ──────────────────────────── */
+
+.po {
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 4rem);
+}
+
+.ip .po-heading {
+  margin: 0 0 1.1rem;
+  font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+  line-height: 1.2;
+}
+
+.po-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 clamp(1.5rem, 3vw, 2.5rem);
+  margin: 0;
+  padding: 0;
+  border-block: 1px solid var(--divider);
+  list-style: none;
+}
+
+.po-link {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.9rem;
+  height: 100%;
+  padding-block: 1.25rem;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.po-link:hover .po-title {
+  color: var(--accent-strong);
+}
+
+.po-link:hover .po-arrow {
+  color: var(--accent-strong);
+}
+
+.po-text {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.po-label {
+  color: var(--accent-ink);
+  font-size: 0.74rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.po-title {
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.po-arrow {
+  display: inline-flex;
+  color: var(--text-3);
+}
+
+.po-cta {
+  position: relative;
+  overflow: hidden;
+  overflow: clip;
+  display: grid;
+  justify-items: start;
+  gap: 1rem;
+  padding: clamp(1.75rem, 5vw, 3.25rem);
+  border: var(--card-border-width) solid var(--accent-border);
+  border-radius: calc(var(--radius-card) + 4px);
+  background:
+    radial-gradient(
+      90% 120% at 100% 0%,
+      color-mix(in oklch, var(--accent-2) 16%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      90% 120% at 0% 100%,
+      color-mix(in oklch, var(--accent) 16%, transparent),
+      transparent 60%
+    ),
+    var(--surface-strong);
+}
+
+.po-cta .eyebrow {
+  margin: 0;
+}
+
+.ip .po-cta-title {
+  max-width: 24ch;
+  margin: 0;
+  font-size: clamp(1.6rem, 3.6vw, 2.6rem);
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+:lang(ar) .ip .po-cta-title {
+  line-height: 1.35;
+}
+
+.po-cta-lead {
+  max-width: 58ch;
+  margin: 0;
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+.po-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .po-link,
+  .po-link:hover {
+    transition: none;
+  }
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────── */
+
+@media (max-width: 1040px) {
+  .ip-portrait {
+    justify-self: start;
+    width: min(100%, 20rem);
+  }
+
+  .ip-about,
+  .ip-contact {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ip-about-side {
+    position: static;
+  }
+
+  .ip-areas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .po-links {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .po-links li + li .po-link {
+    border-block-start: 1px solid var(--divider);
+  }
+}
+
+@media (max-width: 760px) {
+  .ip-areas,
+  .ip .article-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

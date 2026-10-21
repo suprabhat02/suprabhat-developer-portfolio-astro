@@ -94,6 +94,8 @@ src/styles/tokens.css              design tokens (colors) — single source of
                                     truth, see docs/THEMING.md
 src/styles/global.css              base typography, header, buttons
 src/styles/homepage.css            homepage-specific layout/spacing
+src/styles/pages.css               section pages (PageContent + PageHero/
+                                    PageOutro): hero, breadcrumb, outro
 src/styles/motion.css              motion primitives + reduced-motion rules
 src/styles/scenes.css              LiveScene SVG/canvas scene animations
 src/scripts/motion.ts              pointer/scroll/tap enhancements, loaded by

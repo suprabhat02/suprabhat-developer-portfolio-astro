@@ -9,9 +9,9 @@ grounds, text, buttons, glows, gradients, borders, focus rings, and both themes.
 
 | Seed                 | Default | Controls                                    |
 | -------------------- | ------- | ------------------------------------------- |
-| `--seed-primary-h`   | `225`   | Brand hue (ocean blue)                      |
-| `--seed-secondary-h` | `185`   | Secondary hue used in gradients (teal)      |
-| `--seed-neutral-h`   | `235`   | Hue bias of backgrounds and text (deep sea) |
+| `--seed-primary-h`   | `158`   | Brand hue (emerald)                         |
+| `--seed-secondary-h` | `335`   | Secondary hue used in gradients (magenta)   |
+| `--seed-neutral-h`   | `250`   | Hue bias of backgrounds and text (ink blue) |
 | `--seed-chroma`      | `0.2`   | Brand saturation, `0` (grey) to about `0.3` |
 | `--seed-success-h`   | `155`   | Success state                               |
 | `--seed-warning-h`   | `75`    | Warning state                               |
@@ -50,9 +50,12 @@ static copies that browsers and social platforms read outside CSS:
 ## Why contrast survives a hue change
 
 OKLCH separates lightness from hue. Each role keeps a fixed lightness (for
-example `--text-3` is `0.71` in dark mode and `0.5` in light mode), so any hue
+example `--text-3` is `0.71` in dark mode and `0.48` in light mode), so any hue
 keeps roughly the same contrast. The defaults measure at least 4.5:1 for every
-text role on every surface in both themes. After a large change, such as raising
+text role on every surface in both themes. Light-theme accents scale
+`--seed-chroma` down (for example `* 0.55`), because dark text-safe greens and
+blues have little sRGB chroma; an out-of-gamut value is clipped by the browser,
+which shifts its hue and contrast. After a large change, such as raising
 `--seed-chroma` above `0.25` or changing a role's lightness, run
 `npm run test:e2e`; it includes axe checks for both themes and RTL.
 

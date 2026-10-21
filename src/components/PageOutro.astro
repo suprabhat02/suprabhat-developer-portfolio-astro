@@ -1,0 +1,82 @@
+---
+/**
+ * Closing block for section pages: three related pages (crawlable internal
+ * links with descriptive text) and a contact call to action.
+ */
+import Icon, { type IconName } from './fx/Icon.astro';
+import { localePrefix, type Locale } from '../i18n/config';
+import { t, type MessageKey } from '../i18n/messages';
+
+type RelatedId = 'about' | 'skills' | 'experience' | 'work' | 'blog' | 'tools';
+
+interface Props {
+  locale: Locale;
+  related: readonly [RelatedId, RelatedId, RelatedId];
+}
+
+const { locale, related } = Astro.props;
+const prefix = localePrefix(locale);
+const pages: Record<
+  RelatedId,
+  { nav: MessageKey; title: MessageKey; icon: IconName }
+> = {
+  about: { nav: 'nav.about', title: 'page.about.title', icon: 'badge-check' },
+  skills: { nav: 'nav.skills', title: 'page.skills.title', icon: 'layers' },
+  experience: {
+    nav: 'nav.experience',
+    title: 'page.experience.title',
+    icon: 'flag',
+  },
+  work: { nav: 'nav.work', title: 'page.work.title', icon: 'package' },
+  blog: { nav: 'nav.blog', title: 'page.blog.title', icon: 'book-open' },
+  tools: { nav: 'nav.tools', title: 'page.tools.title', icon: 'terminal' },
+};
+---
+
+<div class="po">
+  <nav class="po-related" aria-labelledby="po-related-title">
+    <h2 id="po-related-title" class="po-heading">
+      {t(locale, 'page.related')}
+    </h2>
+    <ul class="po-links">
+      {
+        related.map((id) => (
+          <li>
+            <a class="po-link fx-glow" data-glow href={`${prefix}/${id}/`}>
+              <span class="po-icon">
+                <Icon name={pages[id].icon} size={20} />
+              </span>
+              <span class="po-text">
+                <span class="po-label">{t(locale, pages[id].nav)}</span>
+                <span class="po-title">{t(locale, pages[id].title)}</span>
+              </span>
+              <span class="po-arrow">
+                <Icon name="arrow-up-right" size={18} />
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <section class="po-cta" aria-labelledby="po-cta-title">
+    <p class="eyebrow">{t(locale, 'home.ctaTag')}</p>
+    <h2 id="po-cta-title" class="po-cta-title">
+      {t(locale, 'home.ctaTitle')}
+    </h2>
+    <p class="po-cta-lead">{t(locale, 'home.ctaLead')}</p>
+    <div class="po-actions">
+      <a class="button primary" href={`${prefix}/contact/`}>
+        {t(locale, 'action.start')}
+      </a>
+      <a
+        class="button"
+        href="/assets/suprabhat-kumar-senior-frontend-engineer-resume.pdf"
+        download
+      >
+        {t(locale, 'action.resume')}
+      </a>
+    </div>
+  </section>
+</div>

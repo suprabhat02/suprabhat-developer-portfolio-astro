@@ -1,0 +1,57 @@
+---
+/**
+ * Shared header for section pages: a visible breadcrumb that mirrors the
+ * BreadcrumbList JSON-LD, the page's single h1 and lead, optional actions,
+ * and an optional aside (facts, portrait) that sits beside the copy on wide
+ * screens and below it on phones.
+ */
+import { localePrefix, type Locale } from '../i18n/config';
+import { t } from '../i18n/messages';
+
+interface Props {
+  locale: Locale;
+  eyebrow: string;
+  title: string;
+  lead?: string | undefined;
+  /** Breadcrumb label for the current page (defaults to the eyebrow). */
+  crumb?: string | undefined;
+  /** Narrow pages (FAQ, legal) keep the copy in a single readable column. */
+  narrow?: boolean;
+}
+
+const { locale, eyebrow, title, lead, crumb = eyebrow, narrow } = Astro.props;
+const hasAside = Astro.slots.has('aside');
+---
+
+<header
+  class:list={[
+    'ph',
+    { 'ph--aside': hasAside, 'ph--narrow': narrow && !hasAside },
+  ]}
+>
+  <nav class="ph-crumbs" aria-label={t(locale, 'nav.breadcrumb')}>
+    <ol>
+      <li><a href={`${localePrefix(locale)}/`}>{t(locale, 'nav.home')}</a></li>
+      <li><span aria-current="page">{crumb}</span></li>
+    </ol>
+  </nav>
+  <div class="ph-copy">
+    <p class="eyebrow">{eyebrow}</p>
+    <h1 class="ph-title">{title}</h1>
+    {lead && <p class="lead ph-lead">{lead}</p>}
+    {
+      Astro.slots.has('actions') && (
+        <div class="ph-actions">
+          <slot name="actions" />
+        </div>
+      )
+    }
+  </div>
+  {
+    hasAside && (
+      <div class="ph-aside">
+        <slot name="aside" />
+      </div>
+    )
+  }
+</header>

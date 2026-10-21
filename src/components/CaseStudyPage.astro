@@ -232,7 +232,7 @@ const label = (key: MessageKey) => t(locale, key);
   .case-study-body section,
   .case-study-toc {
     background: color-mix(in srgb, var(--surface-strong) 86%, transparent);
-    border: 1px solid var(--line);
+    border: var(--card-border-width) solid var(--line);
     border-radius: var(--radius-card);
     box-shadow: var(--shadow);
   }
@@ -273,7 +273,7 @@ const label = (key: MessageKey) => t(locale, key);
     justify-content: space-between;
     gap: 1rem;
     padding: 1rem 1.15rem;
-    border: 1px solid var(--accent-border);
+    border: var(--card-border-width) solid var(--accent-border);
     border-radius: var(--radius-card);
     background: var(--surface-strong);
   }

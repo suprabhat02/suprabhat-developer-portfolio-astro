@@ -55,14 +55,25 @@ const titleId = `oss-${reactSmartCopy.id}-title`;
   </div>
 
   <div class="oss-side">
-    <div class="oss-terminal" role="group" aria-label={copy.installLabel}>
+    <div
+      class="oss-terminal"
+      role="group"
+      aria-label={copy.installLabel}
+      dir="ltr"
+    >
       <div class="oss-terminal-bar" aria-hidden="true">
-        <span></span><span></span><span></span>
+        <span class="oss-light oss-light--close"></span>
+        <span class="oss-light oss-light--min"></span>
+        <span class="oss-light oss-light--max"></span>
+        <span class="oss-terminal-title">react-smart-copy — zsh</span>
       </div>
       <div class="oss-terminal-body">
-        <code dir="ltr"
-          ><span class="oss-prompt" aria-hidden="true">$</span>
-          {reactSmartCopy.install}</code
+        <code
+          ><span class="oss-path" aria-hidden="true">~</span><span
+            class="oss-prompt"
+            aria-hidden="true">%</span
+          >{reactSmartCopy.install}<span class="oss-cursor" aria-hidden="true"
+          ></span></code
         >
         <CopyButton
           value={reactSmartCopy.install}

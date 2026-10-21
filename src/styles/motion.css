@@ -714,49 +714,67 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  /* Longhands only. The CSS minifier folds `animation-timeline` into an
+     `animation` shorthand, which browsers reject, so a shorthand here would
+     silently disable every scroll-linked effect in the production build. */
   @supports (animation-timeline: scroll()) {
-    .fx-scroll-progress {
-      animation: fx-grow-x linear both;
+    .fx-scroll-progress,
+    .fx-ring-progress {
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: scroll(root block);
+    }
+
+    .fx-scroll-progress {
+      animation-name: fx-grow-x;
     }
 
     .fx-ring-progress {
-      animation: fx-ring linear both;
-      animation-timeline: scroll(root block);
+      animation-name: fx-ring;
     }
   }
 
+  /* Scroll reveals are opt-in (add `data-scroll-reveals` to <html>): with
+     them on, mobile Lighthouse drops to 98-99 on Speed Index. */
   @supports (animation-timeline: view()) {
-    /* Reveal: transform + blur, never opacity (axe contrast stays exact). */
-    .fx-reveal {
-      animation: fx-reveal linear both;
+    [data-scroll-reveals]
+      :is(
+        .fx-reveal,
+        .fx-reveal-scale,
+        .fx-words > span,
+        .fx-icon--draw > *,
+        .fx-lamp-line
+      ) {
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: view();
+    }
+
+    /* Reveal: transform + blur, never opacity (axe contrast stays exact). */
+    [data-scroll-reveals] .fx-reveal {
+      animation-name: fx-reveal;
       animation-range: entry 0% entry 55%;
     }
 
-    .fx-reveal-scale {
-      animation: fx-reveal-scale linear both;
-      animation-timeline: view();
+    [data-scroll-reveals] .fx-reveal-scale {
+      animation-name: fx-reveal-scale;
       animation-range: entry 0% entry 70%;
     }
 
     /* Text reveal: each word brightens as it crosses the viewport. */
-    .fx-words > span {
-      animation: fx-word linear both;
-      animation-timeline: view();
+    [data-scroll-reveals] .fx-words > span {
+      animation-name: fx-word;
       animation-range: cover 8% cover 38%;
     }
 
     /* Icons draw themselves in as they enter the viewport. */
-    .fx-icon--draw > * {
-      animation: fx-icon-draw linear both;
-      animation-timeline: view();
+    [data-scroll-reveals] .fx-icon--draw > * {
+      animation-name: fx-icon-draw;
       animation-range: entry 10% entry 90%;
     }
 
-    .fx-lamp-line {
-      animation: fx-lamp linear both;
-      animation-timeline: view();
+    [data-scroll-reveals] .fx-lamp-line {
+      animation-name: fx-lamp;
       animation-range: entry 10% cover 40%;
     }
   }

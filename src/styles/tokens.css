@@ -27,9 +27,9 @@
 
 :root {
   /* ── Seeds ───────────────────────────────────────────────────────── */
-  --seed-primary-h: 225; /* ocean blue */
-  --seed-secondary-h: 185; /* teal */
-  --seed-neutral-h: 235; /* hue bias of the neutrals (deep sea) */
+  --seed-primary-h: 158; /* emerald */
+  --seed-secondary-h: 335; /* magenta */
+  --seed-neutral-h: 250; /* hue bias of the neutrals (ink blue) */
   --seed-chroma: 0.2; /* brand saturation, 0–0.3 */
   --seed-success-h: 155;
   --seed-warning-h: 75;
@@ -70,6 +70,7 @@
   --muted: var(--text-2);
   --divider: color-mix(in oklch, var(--text) 8%, transparent);
   --border: color-mix(in oklch, var(--text) 7%, transparent);
+  --border-strong: color-mix(in oklch, var(--text) 10%, transparent);
   --line: var(--divider);
   --gradient-brand: linear-gradient(
     120deg,
@@ -86,32 +87,44 @@
      rgb(var(--highlight) / <alpha>). White in both themes. */
   --highlight: 255 255 255;
   --header-fill: color-mix(in oklch, var(--bg) 80%, transparent);
+  /* macOS window controls (decorative, same in both themes). */
+  --window-close: oklch(0.7 0.19 25);
+  --window-minimize: oklch(0.83 0.16 80);
+  --window-zoom: oklch(0.76 0.18 145);
   color-scheme: dark;
 }
 
 [data-theme='light'] {
   --bg: oklch(0.985 0.006 var(--seed-neutral-h));
-  --bg-2: oklch(0.965 0.012 var(--seed-neutral-h));
-  --bg-3: oklch(0.93 0.018 var(--seed-neutral-h));
-  --bg-deep: oklch(0.93 0.02 var(--seed-neutral-h));
+  --bg-2: oklch(0.966 0.014 var(--seed-neutral-h));
+  --bg-3: oklch(0.935 0.02 var(--seed-neutral-h));
+  --bg-deep: oklch(0.94 0.022 var(--seed-neutral-h));
   --bg-card: oklch(1 0 var(--seed-neutral-h));
-  --bg-card-hover: oklch(0.975 0.01 var(--seed-neutral-h));
+  --bg-card-hover: oklch(0.977 0.01 var(--seed-neutral-h));
   --surface: oklch(1 0 var(--seed-neutral-h));
-  --surface-strong: oklch(0.965 0.012 var(--seed-neutral-h));
-  --text: oklch(0.22 0.04 var(--seed-neutral-h));
-  --text-2: oklch(0.4 0.045 var(--seed-neutral-h));
-  --text-3: oklch(0.5 0.045 var(--seed-neutral-h));
-  --accent: oklch(0.5 var(--seed-chroma) var(--seed-primary-h));
-  --accent-strong: oklch(0.45 var(--seed-chroma) var(--seed-primary-h));
-  --accent-vivid: oklch(0.44 var(--seed-chroma) var(--seed-primary-h));
-  --accent-dim: oklch(0.42 var(--seed-chroma) var(--seed-primary-h));
+  --surface-strong: oklch(0.97 0.012 var(--seed-neutral-h));
+  --text: oklch(0.2 0.04 var(--seed-neutral-h));
+  --text-2: oklch(0.38 0.045 var(--seed-neutral-h));
+  --text-3: oklch(0.48 0.045 var(--seed-neutral-h));
+  /* Lighter grounds leave less sRGB room for chroma, so light accents scale
+     the seed down to stay in gamut (a clipped color shifts hue and contrast). */
+  --accent: oklch(0.48 calc(var(--seed-chroma) * 0.55) var(--seed-primary-h));
+  --accent-strong: oklch(
+    0.43 calc(var(--seed-chroma) * 0.5) var(--seed-primary-h)
+  );
+  --accent-vivid: oklch(
+    0.5 calc(var(--seed-chroma) * 0.58) var(--seed-primary-h)
+  );
+  --accent-dim: oklch(
+    0.4 calc(var(--seed-chroma) * 0.45) var(--seed-primary-h)
+  );
   --accent-2: oklch(
-    0.48 calc(var(--seed-chroma) * 0.6) var(--seed-secondary-h)
+    0.5 calc(var(--seed-chroma) * 0.85) var(--seed-secondary-h)
   );
   --on-accent: oklch(1 0 var(--seed-neutral-h));
-  --success: oklch(0.48 0.13 var(--seed-success-h));
-  --warning: oklch(0.55 0.13 var(--seed-warning-h));
-  --danger: oklch(0.52 0.19 var(--seed-danger-h));
+  --success: oklch(0.47 0.11 var(--seed-success-h));
+  --warning: oklch(0.5 0.1 var(--seed-warning-h));
+  --danger: oklch(0.5 0.19 var(--seed-danger-h));
 
   --shadow: 0 24px 70px oklch(0.3 0.05 var(--seed-neutral-h) / 0.12);
   --shadow-sm: 0 2px 12px oklch(0.3 0.05 var(--seed-neutral-h) / 0.08);
@@ -126,48 +139,48 @@
 /* Browsers without OKLCH get the default palette as static values. */
 @supports not (color: oklch(0 0 0)) {
   :root {
-    --bg: #000d18;
-    --bg-2: #001421;
-    --bg-3: #03202f;
-    --bg-deep: #00070f;
-    --bg-card: #011925;
-    --bg-card-hover: #03202f;
-    --surface: #01141f;
-    --surface-strong: #031d2b;
-    --text: #eef7fc;
-    --text-2: #afc8d8;
-    --text-3: #8aa6b7;
-    --accent: #00baff;
-    --accent-strong: #3ad3ff;
-    --accent-vivid: #00ceff;
-    --accent-dim: #0099df;
-    --accent-2: #41dfcf;
-    --on-accent: #000b14;
+    --bg: #020c19;
+    --bg-2: #031222;
+    --bg-3: #0b1e31;
+    --bg-deep: #010610;
+    --bg-card: #071727;
+    --bg-card-hover: #0b1e31;
+    --surface: #041221;
+    --surface-strong: #0a1c2d;
+    --text: #eff6fd;
+    --text-2: #b4c6db;
+    --text-3: #8fa4ba;
+    --accent: #00c872;
+    --accent-strong: #66dc9e;
+    --accent-vivid: #00dc84;
+    --accent-dim: #00a754;
+    --accent-2: #f8a3e5;
+    --on-accent: #020a15;
     --success: #4ed589;
     --warning: #fcb442;
     --danger: #fa6863;
   }
 
   [data-theme='light'] {
-    --bg: #f6fbfe;
-    --bg-2: #ecf5fb;
-    --bg-3: #ddeaf2;
-    --bg-deep: #dceaf4;
+    --bg: #f7fafe;
+    --bg-2: #edf5fd;
+    --bg-3: #e0ebf7;
+    --bg-deep: #e1edfa;
     --bg-card: #ffffff;
-    --bg-card-hover: #f1f8fd;
+    --bg-card-hover: #f3f8fe;
     --surface: #ffffff;
-    --surface-strong: #ecf5fb;
-    --text: #041d2a;
-    --text-2: #2f4c5d;
-    --text-3: #4a6879;
-    --accent: #0073b7;
-    --accent-strong: #0063a6;
-    --accent-vivid: #0060a3;
-    --accent-dim: #005a9d;
-    --accent-2: #007266;
+    --surface-strong: #eff6fd;
+    --text: #071727;
+    --text-2: #30445a;
+    --text-3: #4a6076;
+    --accent: #077045;
+    --accent-strong: #01603a;
+    --accent-vivid: #037649;
+    --accent-dim: #085634;
+    --accent-2: #9a3289;
     --on-accent: #ffffff;
-    --success: #00723b;
-    --warning: #9d6400;
-    --danger: #be222a;
+    --success: #106c3e;
+    --warning: #845a0f;
+    --danger: #b71824;
   }
 }

@@ -69,8 +69,8 @@ const two: Palette[] = [
 const compare: Palette[] = [
   {
     id: 'current',
-    label: 'Current (Ocean blue + teal)',
-    seeds: [225, 185, 235, 0.2],
+    label: 'Current (Tropic emerald + magenta)',
+    seeds: [158, 335, 250, 0.2],
   },
 ];
 
@@ -144,7 +144,7 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
       </label>
 
       <output class="pp__readout" data-palette-readout>
-        primary 225 · secondary 185 · neutral 235 · chroma 0.20
+        primary 158 · secondary 335 · neutral 250 · chroma 0.20
       </output>
     </div>
   </details>
@@ -159,7 +159,7 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
     const chromaValue = document.querySelector('[data-chroma-value]');
     const buttons = Array.from(document.querySelectorAll('.pp__btn'));
 
-    let current = [225, 185, 235, 0.2];
+    let current = [158, 335, 250, 0.2];
 
     const render = (id) => {
       const [p, s, n, c] = current;

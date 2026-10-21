@@ -7,7 +7,7 @@
  * fully drawn timeline where scroll timelines are unsupported.
  */
 import { getExperience } from '../data/experience';
-import type { Locale } from '../i18n/config';
+import { localeMeta, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
 
 interface Props {
@@ -43,6 +43,8 @@ const toISO = (value: string) => {
 };
 const yearOf = (value: string) => value.split(' ')[1] ?? value;
 const roleKey = (promotion?: boolean) => (promotion ? 'senior' : 'developer');
+// Role progressions read oldest to newest, so the arrow follows the script.
+const progressionArrow = localeMeta[locale].dir === 'rtl' ? ' ← ' : ' → ';
 ---
 
 <div class="xp-timeline">
@@ -55,7 +57,8 @@ const roleKey = (promotion?: boolean) => (promotion ? 'senior' : 'developer');
         const title =
           job.title !== undefined
             ? t(locale, `experience.${job.id}.title`, job.title)
-            : (job.roles ?? [])
+            : [...(job.roles ?? [])]
+                .reverse()
                 .map((role) =>
                   t(
                     locale,
@@ -63,7 +66,7 @@ const roleKey = (promotion?: boolean) => (promotion ? 'senior' : 'developer');
                     role.title,
                   ),
                 )
-                .join(' → ');
+                .join(progressionArrow);
         const details = [
           job.mode && (job.modeLabel ?? job.mode),
           job.location && (job.locationLabel ?? job.location),
@@ -95,10 +98,16 @@ const roleKey = (promotion?: boolean) => (promotion ? 'senior' : 'developer');
               </p>
             </div>
             <div class="xp-card fx-glow" data-glow>
-              <Heading class="xp-title">{title}</Heading>
-              {details.length > 0 && (
-                <p class="xp-meta">{details.join(' · ')}</p>
-              )}
+              <div class="xp-card-head">
+                <Heading class="xp-title">{title}</Heading>
+                {details.length > 0 && (
+                  <ul class="xp-chips">
+                    {details.map((detail) => (
+                      <li>{detail}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
               {job.bullets && (
                 <ul class="xp-bullets">
                   {job.bullets.map((bullet, bulletIndex) => (
@@ -113,30 +122,51 @@ const roleKey = (promotion?: boolean) => (promotion ? 'senior' : 'developer');
                 </ul>
               )}
               {job.roles && (
-                <div class="xp-roles">
+                <ol class="xp-roles">
                   {job.roles.map((role) => (
-                    <div class="xp-role">
-                      <p class="xp-role-dates">
-                        <time datetime={toISO(role.start)}>
-                          {role.startLabel ?? role.start}
-                        </time>
-                        {' — '}
-                        <time datetime={toISO(role.end)}>
-                          {role.endLabel ?? role.end}
-                        </time>
-                      </p>
-                      <SubHeading class="xp-role-title">
-                        {t(
-                          locale,
-                          `experience.${job.id}.${roleKey(role.promotion)}`,
-                          role.title,
-                        )}
+                    <li
+                      class:list={[
+                        'xp-role',
+                        { 'xp-role--promoted': role.promotion },
+                      ]}
+                    >
+                      <div class="xp-role-head">
+                        <SubHeading class="xp-role-title">
+                          {t(
+                            locale,
+                            `experience.${job.id}.${roleKey(role.promotion)}`,
+                            role.title,
+                          )}
+                        </SubHeading>
                         {role.promotion && (
                           <span class="promo-badge">
+                            <svg
+                              viewBox="0 0 12 12"
+                              width="12"
+                              height="12"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.8"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              aria-hidden="true"
+                              focusable="false"
+                            >
+                              <path d="M6 10V2M2.5 5.5 6 2l3.5 3.5" />
+                            </svg>
                             {t(locale, 'home.promoted')}
                           </span>
                         )}
-                      </SubHeading>
+                        <p class="xp-role-dates">
+                          <time datetime={toISO(role.start)}>
+                            {role.startLabel ?? role.start}
+                          </time>
+                          {' — '}
+                          <time datetime={toISO(role.end)}>
+                            {role.endLabel ?? role.end}
+                          </time>
+                        </p>
+                      </div>
                       <ul class="xp-bullets">
                         {role.bullets.map((bullet, bulletIndex) => (
                           <li>
@@ -148,9 +178,9 @@ const roleKey = (promotion?: boolean) => (promotion ? 'senior' : 'developer');
                           </li>
                         ))}
                       </ul>
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ol>
               )}
             </div>
           </li>

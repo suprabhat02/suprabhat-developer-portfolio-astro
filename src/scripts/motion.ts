@@ -177,11 +177,25 @@ function initHoverGroups(): Cleanup {
 function initScrollState(): Cleanup {
   const header = document.querySelector<HTMLElement>('.site-header');
   const backToTop = document.querySelector<HTMLButtonElement>('[data-btt]');
+  const progressBar = header?.querySelector<HTMLElement>('.fx-scroll-progress');
+  const progressRing =
+    backToTop?.querySelector<HTMLElement>('.fx-ring-progress');
+  // Where scroll timelines are unsupported, drive the two indicators from
+  // this handler instead (transform and a registered property: no layout).
+  const scriptProgress =
+    !CSS.supports('animation-timeline', 'scroll()') &&
+    !media.reducedMotion.matches;
 
   const sync = rafThrottle(() => {
     const y = window.scrollY;
     header?.toggleAttribute('data-scrolled', y > 24);
     if (backToTop) backToTop.hidden = y < 600;
+    if (scriptProgress) {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
+      progressBar?.style.setProperty('transform', `scaleX(${progress})`);
+      progressRing?.style.setProperty('--fx-angle', `${progress * 360}deg`);
+    }
   });
 
   const onTopClick = () =>

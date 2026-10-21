@@ -22,7 +22,6 @@
 }
 
 .homepage-shell {
-  --border-strong: color-mix(in oklch, var(--text) 10%, transparent);
   --card-fill:
     linear-gradient(
       160deg,
@@ -302,9 +301,13 @@
 .c-link,
 .contact-aside,
 .skills-table {
-  border: 1px solid var(--border-strong);
+  border: var(--card-border-width) solid var(--border-strong);
   border-radius: var(--radius-card);
   background: var(--card-fill);
+}
+
+.tm-chip {
+  border-width: 1px;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -603,7 +606,7 @@
   gap: 0.6rem;
   min-width: 0;
   padding: 1.35rem;
-  border: 1px solid var(--border-strong);
+  border: var(--card-border-width) solid var(--border-strong);
   border-radius: var(--radius-card);
   background: var(--card-fill);
   color: var(--text);

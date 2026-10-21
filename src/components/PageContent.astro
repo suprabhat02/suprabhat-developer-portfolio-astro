@@ -1,7 +1,15 @@
 ---
+import { Picture } from 'astro:assets';
 import ContactForm from './ContactForm.astro';
 import FAQList from './FAQList.astro';
+import PageHero from './PageHero.astro';
+import PageOutro from './PageOutro.astro';
+import Icon, { type IconName } from './fx/Icon.astro';
 import { getProfile } from '../data/profile';
+import { getCareerStats } from '../data/careerStats';
+import { heroPortraitQuality, heroPortraitWidths } from '../data/images';
+import portraitImage from '../../public/assets/images/portrait-1100.webp';
+import '../styles/pages.css';
 import { getRecommendations } from '../data/recommendations';
 import Meteors from './fx/Meteors.astro';
 import OpenSourceSpotlight from './OpenSourceSpotlight.astro';
@@ -12,6 +20,7 @@ import { getToolGroups } from '../data/tools';
 import { getCaseStudies } from '../data/caseStudies';
 import { getInternalWorkNotice, getWork } from '../data/work';
 import {
+  getBlogFeedHref,
   getBlogPosts,
   getBlogTagGroupsFromPosts,
   getBlogTagHref,
@@ -44,6 +53,107 @@ const posts = await getBlogPosts(locale);
 const tagGroups = getBlogTagGroupsFromPosts(locale, posts);
 const dateLocale = localeMeta[locale].htmlLang;
 const tx = (key: MessageKey) => t(locale, key);
+const resumeHref =
+  '/assets/suprabhat-kumar-senior-frontend-engineer-resume.pdf';
+const careerStats = getCareerStats(locale);
+const aboutFacts = [
+  {
+    label: tx('home.recruiterRoleLabel'),
+    value: tx('home.recruiterRoleValue'),
+  },
+  { label: tx('page.about.basedIn'), value: profile.eyebrow.from },
+  { label: tx('home.availability'), value: profile.eyebrow.availability },
+  {
+    label: tx('home.recruiterProofLabel'),
+    value: tx('home.recruiterProofValue'),
+  },
+  {
+    label: tx('home.recruiterBestForLabel'),
+    value: tx('home.recruiterBestForValue'),
+  },
+] as const;
+const expertiseAreas: readonly {
+  icon: IconName;
+  title: MessageKey;
+  body: MessageKey;
+}[] = [
+  {
+    icon: 'code',
+    title: 'expertise.frontend.title',
+    body: 'expertise.frontend.body',
+  },
+  {
+    icon: 'database',
+    title: 'expertise.backend.title',
+    body: 'expertise.backend.body',
+  },
+  {
+    icon: 'layers',
+    title: 'expertise.design.title',
+    body: 'expertise.design.body',
+  },
+];
+const socialIcons: Record<string, IconName> = {
+  LinkedIn: 'linkedin',
+  GitHub: 'github',
+  npm: 'package',
+};
+// Local technology logos for the stack list; ordered by where they appear.
+const techLogos: readonly [RegExp, string, boolean?][] = [
+  [/\bReact\b(?! Bootstrap)/, 'react'],
+  [/Next\.js/, 'nextjs', true],
+  [/TypeScript/, 'typescript'],
+  [/HTML5/, 'html5'],
+  [/Sass/, 'sass'],
+  [/Tailwind/, 'tailwindcss'],
+  [/Bootstrap/, 'bootstrap5'],
+  [/\bGit\b/, 'git'],
+  [/Redux/, 'redux'],
+  [/TanStack/, 'tanstack'],
+  [/GraphQL/, 'graphql'],
+  [/MongoDB/, 'mongodb'],
+];
+const logosFor = (item: string) =>
+  techLogos
+    .map(([pattern, name, invert]) => ({
+      index: item.search(pattern),
+      src: `/assets/techicons/${name}.svg`,
+      invert: invert === true,
+    }))
+    .filter((logo) => logo.index >= 0)
+    .sort((a, b) => a.index - b.index)
+    .slice(0, 2);
+const contactChannels = [
+  {
+    href: `mailto:${profile.email}`,
+    label: tx('home.email'),
+    value: profile.email,
+    icon: 'mail' as IconName,
+    external: false,
+  },
+  {
+    href: `tel:${profile.phone.replace(/\s/g, '')}`,
+    label: tx('page.contact.phone'),
+    value: profile.phone,
+    icon: 'message' as IconName,
+    external: false,
+  },
+  ...profile.social.map((item) => ({
+    href: item.href,
+    label: item.label,
+    value: item.href.replace('https://', '').replace(/\/$/, ''),
+    icon: socialIcons[item.label] ?? ('arrow-up-right' as IconName),
+    external: item.external,
+  })),
+];
+const contactTerms = [
+  'capacity',
+  'responseTime',
+  'discoveryCall',
+  'proposal',
+  'budget',
+  'overlap',
+] as const;
 const accessibilityInPlace = [
   'landmarks',
   'lang',
@@ -98,46 +208,102 @@ const notFoundLinks = [
 
 {
   page === 'about' && (
-    <section class="page section">
-      <div class="wrap split">
-        <>
-          <div>
-            <>
-              <p class="eyebrow">{tx('page.about.eyebrow')}</p>
-              <h1>{tx('page.about.title')}</h1>
-            </>
-          </div>
-          <div>
+    <section class="page section ip">
+      <div class="wrap ip-stack">
+        <PageHero
+          {locale}
+          eyebrow={tx('page.about.eyebrow')}
+          title={tx('page.about.title')}
+          lead={profile.lead}
+        >
+          <Fragment slot="actions">
+            <a class="button primary" href={resumeHref} download>
+              {tx('action.resume')}
+            </a>
+            <a class="button" href={href('/contact/')}>
+              {tx('action.contact')}
+            </a>
+          </Fragment>
+          <figure slot="aside" class="ip-portrait">
+            <Picture
+              src={portraitImage}
+              formats={['avif', 'webp']}
+              fallbackFormat="webp"
+              widths={heroPortraitWidths}
+              sizes="(max-width: 1040px) min(320px, calc(100vw - 40px)), 368px"
+              width={800}
+              height={1067}
+              alt={profile.portrait.alt}
+              loading="eager"
+              decoding="async"
+              quality={heroPortraitQuality}
+            />
+          </figure>
+        </PageHero>
+        <div class="ip-about">
+          <div class="ip-prose">
             {profile.about.map((paragraph) => (
               <p>{paragraph}</p>
             ))}
-            <div class="philosophy-card fx-glow" data-glow>
-              <h2>{tx('page.about.philosophy')}</h2>
+          </div>
+          <aside class="ip-about-side" aria-labelledby="about-glance-title">
+            <div class="ip-block">
+              <h2 id="about-glance-title" class="ip-label">
+                {tx('page.about.glance')}
+              </h2>
+              <dl class="ip-facts">
+                {aboutFacts.map((fact) => (
+                  <div>
+                    <dt>{fact.label}</dt>
+                    <dd>{fact.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+            <div class="ip-quote">
+              <h2 class="ip-label">{tx('page.about.philosophy')}</h2>
               <p>{profile.philosophy}</p>
             </div>
-            <p>
-              <a
-                class="button primary"
-                href="/assets/suprabhat-kumar-senior-frontend-engineer-resume.pdf"
-                download
-              >
-                {tx('action.resume')}
-              </a>
-            </p>
-          </div>
-        </>
+          </aside>
+        </div>
+        <PageOutro {locale} related={['experience', 'work', 'blog']} />
       </div>
     </section>
   )
 }
 {
   page === 'skills' && (
-    <section class="page section">
-      <div class="wrap">
-        <>
-          <p class="eyebrow">{tx('page.skills.eyebrow')}</p>
-          <h1>{tx('page.skills.title')}</h1>
-          <p class="lead">{skillsLead}</p>
+    <section class="page section ip">
+      <div class="wrap ip-stack">
+        <PageHero
+          {locale}
+          eyebrow={tx('page.skills.eyebrow')}
+          title={tx('page.skills.title')}
+          lead={skillsLead}
+        />
+        <section class="ip-section" aria-labelledby="skills-areas-title">
+          <div class="ip-section-head">
+            <h2 id="skills-areas-title">{tx('home.expertiseTitle')}</h2>
+            <p>{tx('home.expertiseLead')}</p>
+          </div>
+          <ul class="ip-areas">
+            {expertiseAreas.map((area) => (
+              <li>
+                <article class="ip-area fx-glow" data-glow>
+                  <span class="ip-area-icon">
+                    <Icon name={area.icon} size={22} />
+                  </span>
+                  <h3>{tx(area.title)}</h3>
+                  <p>{tx(area.body)}</p>
+                </article>
+              </li>
+            ))}
+          </ul>
+        </section>
+        <section class="ip-section" aria-labelledby="skills-stack-title">
+          <div class="ip-section-head">
+            <h2 id="skills-stack-title">{tx('home.toolsHeading')}</h2>
+          </div>
           <div class="grid three">
             {skillGroups.map((group, index) => (
               <article
@@ -147,41 +313,86 @@ const notFoundLinks = [
                 <span class="card-index" aria-hidden="true">
                   {pad(index + 1)}
                 </span>
-                <h2>{group.heading}</h2>
-                <ul class="tag-list">
-                  {group.items.map((item) => (
-                    <li>{item}</li>
-                  ))}
+                <h3>{group.heading}</h3>
+                <ul class="ip-tech">
+                  {group.items.map((item) => {
+                    const logos = logosFor(item);
+                    return (
+                      <li>
+                        <span class="ip-tech-logos">
+                          {logos.length > 0 ? (
+                            logos.map((logo) => (
+                              <img
+                                src={logo.src}
+                                alt=""
+                                width="22"
+                                height="22"
+                                loading="lazy"
+                                decoding="async"
+                                class:list={{ invert: logo.invert }}
+                              />
+                            ))
+                          ) : (
+                            <Icon name="layers" size={18} />
+                          )}
+                        </span>
+                        <span>{item}</span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </article>
             ))}
           </div>
-        </>
+        </section>
+        <PageOutro {locale} related={['tools', 'work', 'experience']} />
       </div>
     </section>
   )
 }
 {
   page === 'experience' && (
-    <section class="page section">
-      <div class="wrap">
-        <>
-          <p class="eyebrow">{tx('page.experience.eyebrow')}</p>
-          <h1>{tx('page.experience.title')}</h1>
-          <ExperienceTimeline {locale} headingLevel="h2" />
-        </>
+    <section class="page section ip">
+      <div class="wrap ip-stack">
+        <PageHero
+          {locale}
+          eyebrow={tx('page.experience.eyebrow')}
+          title={tx('page.experience.title')}
+        >
+          <Fragment slot="actions">
+            <a class="button primary" href={resumeHref} download>
+              {tx('action.resume')}
+            </a>
+            <a class="button" href={href('/work/')}>
+              {tx('page.notFound.secondaryCta')}
+            </a>
+          </Fragment>
+          <ul slot="aside" class="ip-stats" aria-label={tx('home.statAria')}>
+            {careerStats.map((stat) => (
+              <li>
+                <strong>{stat.value}</strong>
+                <span>{stat.label}</span>
+              </li>
+            ))}
+          </ul>
+        </PageHero>
+        <ExperienceTimeline {locale} headingLevel="h2" />
+        <PageOutro {locale} related={['work', 'skills', 'about']} />
       </div>
     </section>
   )
 }
 {
   page === 'tools' && (
-    <section class="page section">
-      <div class="wrap">
-        <>
-          <p class="eyebrow">{tx('page.tools.eyebrow')}</p>
-          <h1>{tx('page.tools.title')}</h1>
-          <p class="lead">{tx('page.tools.intro')}</p>
+    <section class="page section ip">
+      <div class="wrap ip-stack">
+        <PageHero
+          {locale}
+          eyebrow={tx('page.tools.eyebrow')}
+          title={tx('page.tools.title')}
+          lead={tx('page.tools.intro')}
+        />
+        <div>
           {getToolGroups().map((group) => (
             <div class="tool-group">
               <h2>{tx(`page.tools.group.${group.id}.title`)}</h2>
@@ -212,19 +423,23 @@ const notFoundLinks = [
               {tx('page.tools.closing')}
             </a>
           </p>
-        </>
+        </div>
+        <PageOutro {locale} related={['work', 'skills', 'experience']} />
       </div>
     </section>
   )
 }
 {
   page === 'work' && (
-    <section class="page section">
-      <div class="wrap">
-        <>
-          <p class="eyebrow">{tx('page.work.eyebrow')}</p>
-          <h1>{tx('page.work.title')}</h1>
-          <p class="lead">{internalWorkNotice}</p>
+    <section class="page section ip">
+      <div class="wrap ip-stack">
+        <PageHero
+          {locale}
+          eyebrow={tx('page.work.eyebrow')}
+          title={tx('page.work.title')}
+          lead={internalWorkNotice}
+        />
+        <div>
           {openSourceWork && caseStudySlugs.has(openSourceWork.id) && (
             <OpenSourceSpotlight
               {locale}
@@ -235,14 +450,19 @@ const notFoundLinks = [
           <div class="grid three">
             {clientWork.map((item, index) => (
               <article
-                class="work-tile fx-glow fx-tilt fx-reveal-scale"
+                class="work-tile fx-glow fx-card-gradient fx-reveal-scale"
                 data-glow
-                data-tilt
               >
                 <span class="card-index" aria-hidden="true">
                   {pad(index + 1)}
                 </span>
-                <h2 class="fx-pop">{item.title}</h2>
+                <h2 class="fx-pop">
+                  {caseStudySlugs.has(item.id) ? (
+                    <a href={href(`/work/${item.id}/`)}>{item.title}</a>
+                  ) : (
+                    item.title
+                  )}
+                </h2>
                 <p>{item.summary}</p>
                 <ul class="tag-list">
                   {item.tags.map((tag) => (
@@ -250,157 +470,191 @@ const notFoundLinks = [
                   ))}
                 </ul>
                 {caseStudySlugs.has(item.id) && (
-                  <a class="text-link" href={href(`/work/${item.id}/`)}>
+                  <span class="ip-more" aria-hidden="true">
                     {tx('caseStudy.read')}
-                  </a>
+                    <Icon name="arrow-up-right" size={16} />
+                  </span>
                 )}
               </article>
             ))}
           </div>
-        </>
+        </div>
+        <PageOutro {locale} related={['blog', 'experience', 'skills']} />
       </div>
     </section>
   )
 }
 {
   page === 'recommendations' && (
-    <section class="page section">
-      <div class="wrap">
-        <>
-          <p class="eyebrow">{tx('page.recommendations.eyebrow')}</p>
-          <h1>{tx('page.recommendations.title')}</h1>
-          {recommendations.length > 0 ? (
-            <div class="grid two">
-              {recommendations.map((item) => (
-                <figure
-                  class="quote fx-glow fx-card-gradient fx-reveal"
-                  data-glow
+    <section class="page section ip">
+      <div class="wrap ip-stack">
+        <PageHero
+          {locale}
+          eyebrow={tx('page.recommendations.eyebrow')}
+          title={tx('page.recommendations.title')}
+        />
+        {recommendations.length > 0 ? (
+          <div class="grid two">
+            {recommendations.map((item) => (
+              <figure
+                class="quote fx-glow fx-card-gradient fx-reveal"
+                data-glow
+              >
+                <blockquote
+                  lang={item.quoteLang}
+                  dir={item.quoteLang === 'en' ? 'ltr' : undefined}
                 >
-                  <blockquote
-                    lang={item.quoteLang}
-                    dir={item.quoteLang === 'en' ? 'ltr' : undefined}
-                  >
-                    “{item.quote}”
-                  </blockquote>
-                  <figcaption>
-                    <img
-                      src={item.avatar}
-                      alt={item.name}
-                      width="48"
-                      height="48"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    {item.name}
-                    <span>{item.role}</span>
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
-          ) : (
-            <p class="lead">No recommendations are available for this view.</p>
-          )}
-        </>
+                  “{item.quote}”
+                </blockquote>
+                <figcaption>
+                  <img
+                    src={item.avatar}
+                    alt={item.name}
+                    width="48"
+                    height="48"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  {item.name}
+                  <span>{item.role}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        ) : (
+          <p class="lead">No recommendations are available for this view.</p>
+        )}
+        <PageOutro {locale} related={['work', 'about', 'experience']} />
       </div>
     </section>
   )
 }
 {
   page === 'services' && (
-    <section class="page section">
-      <div class="wrap">
-        <>
-          <p class="eyebrow">{tx('page.services.eyebrow')}</p>
-          <h1>{tx('page.services.title')}</h1>
-          <p class="lead">{tx('page.services.lead')}</p>
-          <div class="grid three">
-            {services.map((service, index) => (
-              <article
-                class="fx-glow fx-card-gradient fx-card-grid fx-reveal"
-                data-glow
-              >
-                <span class="card-index" aria-hidden="true">
-                  {pad(index + 1)}
-                </span>
-                <h2>{service.name}</h2>
-                <p>{service.description}</p>
-                {service.fit && (
-                  <p>
-                    <strong>{tx('service.fit')}:</strong> {service.fit}
-                  </p>
-                )}
-                {service.deliverables && (
-                  <p>
-                    <strong>{tx('service.deliverables')}:</strong>{' '}
-                    {service.deliverables}
-                  </p>
-                )}
-                {service.exclusions && (
-                  <p>
-                    <strong>{tx('service.exclusions')}:</strong>{' '}
-                    {service.exclusions}
-                  </p>
-                )}
-                {service.duration && (
-                  <p>
-                    <strong>{tx('service.duration')}:</strong>{' '}
-                    {service.duration}
-                  </p>
-                )}
-              </article>
-            ))}
-          </div>
-        </>
+    <section class="page section ip">
+      <div class="wrap ip-stack">
+        <PageHero
+          {locale}
+          eyebrow={tx('page.services.eyebrow')}
+          title={tx('page.services.title')}
+          lead={tx('page.services.lead')}
+        />
+        <div class="grid three">
+          {services.map((service, index) => (
+            <article
+              class="fx-glow fx-card-gradient fx-card-grid fx-reveal"
+              data-glow
+            >
+              <span class="card-index" aria-hidden="true">
+                {pad(index + 1)}
+              </span>
+              <h2>{service.name}</h2>
+              <p>{service.description}</p>
+              {service.fit && (
+                <p>
+                  <strong>{tx('service.fit')}:</strong> {service.fit}
+                </p>
+              )}
+              {service.deliverables && (
+                <p>
+                  <strong>{tx('service.deliverables')}:</strong>{' '}
+                  {service.deliverables}
+                </p>
+              )}
+              {service.exclusions && (
+                <p>
+                  <strong>{tx('service.exclusions')}:</strong>{' '}
+                  {service.exclusions}
+                </p>
+              )}
+              {service.duration && (
+                <p>
+                  <strong>{tx('service.duration')}:</strong> {service.duration}
+                </p>
+              )}
+            </article>
+          ))}
+        </div>
+        <PageOutro {locale} related={['work', 'skills', 'about']} />
       </div>
     </section>
   )
 }
 {
   page === 'faq' && (
-    <section class="page section">
-      <div class="wrap narrow">
-        <>
-          <p class="eyebrow">{tx('page.faq.eyebrow')}</p>
-          <h1>{tx('page.faq.title')}</h1>
+    <section class="page section ip">
+      <div class="wrap ip-stack">
+        <PageHero
+          {locale}
+          eyebrow={tx('page.faq.eyebrow')}
+          title={tx('page.faq.title')}
+          narrow
+        />
+        <div class="narrow ip-narrow">
           <FAQList {locale} />
-        </>
+        </div>
+        <PageOutro {locale} related={['work', 'about', 'experience']} />
       </div>
     </section>
   )
 }
 {
   page === 'contact' && (
-    <section class="page section">
-      <div class="wrap split">
-        <>
-          <div>
-            <>
-              <p class="eyebrow">{tx('page.contact.eyebrow')}</p>
-              <h1>{tx('page.contact.title')}</h1>
-              <p>{tx('page.contact.projectLead')}</p>
-              <ul class="bullets">
-                <li>{tx('page.contact.capacity')}</li>
-                <li>{tx('page.contact.responseTime')}</li>
-                <li>{tx('page.contact.discoveryCall')}</li>
-                <li>{tx('page.contact.proposal')}</li>
-                <li>{tx('page.contact.budget')}</li>
-                <li>{tx('page.contact.overlap')}</li>
+    <section class="page section ip">
+      <div class="wrap ip-stack">
+        <PageHero
+          {locale}
+          eyebrow={tx('page.contact.eyebrow')}
+          title={tx('page.contact.title')}
+          lead={tx('page.contact.projectLead')}
+        />
+        <div class="ip-contact">
+          <div class="ip-contact-info">
+            <section class="ip-block" aria-labelledby="contact-direct-title">
+              <h2 id="contact-direct-title" class="ip-label">
+                {tx('page.contact.directTitle')}
+              </h2>
+              <ul class="ip-channels">
+                {contactChannels.map((channel) => (
+                  <li>
+                    <a
+                      class="ip-channel"
+                      href={channel.href}
+                      target={channel.external ? '_blank' : undefined}
+                      rel={channel.external ? 'noreferrer' : undefined}
+                    >
+                      <span class="ip-channel-icon">
+                        <Icon name={channel.icon} size={18} />
+                      </span>
+                      <span class="ip-channel-text">
+                        <span class="ip-channel-label">{channel.label}</span>
+                        <span class="ip-channel-value" dir="ltr">
+                          {channel.value}
+                        </span>
+                      </span>
+                    </a>
+                  </li>
+                ))}
               </ul>
-              <p>
-                <a class="text-link" href={`mailto:${profile.email}`} dir="ltr">
-                  {profile.email}
-                </a>
-              </p>
-              <p>
-                <a
-                  dir="ltr"
-                  class="text-link"
-                  href={`tel:${profile.phone.replace(/\s/g, '')}`}
-                >
-                  {profile.phone}
-                </a>
-              </p>
-              <aside class="notice">
+            </section>
+            <section class="ip-block" aria-labelledby="contact-terms-title">
+              <h2 id="contact-terms-title" class="ip-label">
+                {tx('page.contact.termsTitle')}
+              </h2>
+              <ul class="ip-terms">
+                {contactTerms.map((id) => (
+                  <li>
+                    <Icon name="check" size={16} />
+                    <span>{tx(`page.contact.${id}`)}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+            <aside class="ip-note">
+              <span class="ip-note-icon">
+                <Icon name="badge-check" size={18} />
+              </span>
+              <div>
                 <strong>{tx('page.contact.recruiters')}</strong>
                 <p>{tx('page.contact.recruiterBody')}</p>
                 {linkedin && (
@@ -413,34 +667,27 @@ const notFoundLinks = [
                     {tx('page.contact.linkedin')}
                   </a>
                 )}
-              </aside>
-              <div class="socials">
-                {profile.social.map((item) => (
-                  <a
-                    href={item.href}
-                    target={item.external ? '_blank' : undefined}
-                    rel={item.external ? 'noreferrer' : undefined}
-                  >
-                    {item.label}
-                  </a>
-                ))}
               </div>
-            </>
+            </aside>
           </div>
           <ContactForm {locale} />
-        </>
+        </div>
       </div>
     </section>
   )
 }
 {
   page === 'accessibility' && (
-    <section class="page section">
-      <div class="wrap narrow">
-        <>
-          <p class="eyebrow">{tx('page.accessibility.eyebrow')}</p>
-          <h1>{tx('page.accessibility.title')}</h1>
-          <p class="lead">{tx('page.accessibility.commitment')}</p>
+    <section class="page section ip">
+      <div class="wrap ip-stack">
+        <PageHero
+          {locale}
+          eyebrow={tx('page.accessibility.eyebrow')}
+          title={tx('page.accessibility.title')}
+          lead={tx('page.accessibility.commitment')}
+          narrow
+        />
+        <div class="narrow ip-narrow">
           <h2>{tx('page.accessibility.scopeTitle')}</h2>
           <p>{tx('page.accessibility.scope')}</p>
           <h2>{tx('page.accessibility.inPlaceTitle')}</h2>
@@ -469,18 +716,22 @@ const notFoundLinks = [
             {tx('page.accessibility.reviewed')}{' '}
             <time datetime="2026-10-19">{accessibilityReviewedLabel}</time>
           </p>
-        </>
+        </div>
       </div>
     </section>
   )
 }
 {
   page === 'privacy' && (
-    <section class="page section">
-      <div class="wrap narrow">
-        <>
-          <p class="eyebrow">{tx('page.privacy.eyebrow')}</p>
-          <h1>{tx('page.privacy.title')}</h1>
+    <section class="page section ip">
+      <div class="wrap ip-stack">
+        <PageHero
+          {locale}
+          eyebrow={tx('page.privacy.eyebrow')}
+          title={tx('page.privacy.title')}
+          narrow
+        />
+        <div class="narrow ip-narrow">
           <p>{tx('page.privacy.body')}</p>
           <p>
             {tx('page.privacy.contact')}
@@ -489,7 +740,7 @@ const notFoundLinks = [
             </a>
             .
           </p>
-        </>
+        </div>
       </div>
     </section>
   )
@@ -497,17 +748,34 @@ const notFoundLinks = [
 
 {
   page === 'blog' && (
-    <section class="page section">
-      <div class="wrap narrow">
-        <p class="eyebrow">{tx('page.blog.eyebrow')}</p>
-        <h1>{tx('page.blog.title')}</h1>
-        <p class="lead">{tx('page.blog.lead')}</p>
-
+    <section class="page section ip">
+      <div class="wrap ip-stack">
+        <PageHero
+          {locale}
+          eyebrow={tx('page.blog.eyebrow')}
+          title={tx('page.blog.title')}
+          lead={tx('page.blog.lead')}
+        >
+          <Fragment slot="actions">
+            <a class="button" href={getBlogFeedHref(locale)}>
+              {tx('blog.rss')}
+            </a>
+          </Fragment>
+        </PageHero>
         <div class="article-list">
           {posts.map((post, index) => (
             <>
-              <article class="fx-glow fx-card-gradient fx-reveal" data-glow>
+              <article
+                class:list={[
+                  'ip-post fx-glow fx-card-gradient',
+                  index === 0 ? 'ip-post--featured' : 'fx-reveal',
+                ]}
+                data-glow
+              >
                 <p class="meta">
+                  {index === 0 && (
+                    <span class="ip-badge">{tx('page.blog.latest')}</span>
+                  )}
                   <time datetime={toIsoDate(post.data.pubDate)}>
                     {post.data.pubDate.toLocaleDateString(dateLocale, {
                       dateStyle: 'long',
@@ -549,6 +817,7 @@ const notFoundLinks = [
             </>
           ))}
         </div>
+        <PageOutro {locale} related={['work', 'about', 'skills']} />
       </div>
     </section>
   )

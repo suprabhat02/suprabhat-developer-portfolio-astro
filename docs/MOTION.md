@@ -55,7 +55,14 @@ src/components/fx/
    portrait paint immediately; only decorative layers animate in.
 5. **Scroll-linked effects are progressive.** They use CSS
    `animation-timeline` inside `@supports`; unsupported browsers show the final
-   state.
+   state (the header progress bar and back-to-top ring fall back to the
+   scroll handler in `motion.ts`). Always write them as longhands
+   (`animation-name`, `animation-timing-function`, `animation-fill-mode`,
+   `animation-timeline`): the CSS minifier folds a timeline into an `animation`
+   shorthand, which browsers reject, so the effect silently disappears from
+   the production build. Scroll reveals (`.fx-reveal`, `.fx-words`, icon
+   draw-in) are opt-in through `data-scroll-reveals` on `<html>`, because they
+   cost mobile Speed Index.
 6. **Reduced motion is honored everywhere.** `prefers-reduced-motion: reduce`
    stops every animation, removes tilt and glide transitions, and turns
    marquees into static wrapped lists without their decorative clones.
@@ -83,6 +90,7 @@ Lighthouse metric while looking harmless.
 | Animated transforms inside an `overflow: hidden` wrapper        | Layout shift on RTL pages (scroll-origin re-anchoring)  | Clip with `overflow: clip` (keep `hidden` as the fallback line before it)             |
 | Decorative layers positioned with `%` of a content-sized host   | Layout shift when the host grows on font swap           | Offset backdrops with fixed units (`rem`), never a percentage of the host height      |
 | Scrollbar appearing after first paint                           | Viewport narrows; right-anchored layers shift           | `html { scrollbar-gutter: stable; }`                                                  |
+| ~160 view-timeline reveals (transform + blur) site-wide         | Mobile Speed Index 1.3 s → 2.5–4 s (Lighthouse 98–99)   | Keep reveals opt-in (`data-scroll-reveals`)                                           |
 
 After the fixes, homepage idle main-thread time is ~17 ms per 5 s (4 ms with
 every animation disabled), and no layout shift is recorded in repeated

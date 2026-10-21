@@ -9,8 +9,8 @@ everything is flat, and every file is converted to outlines (no font dependency)
 
 Colors (from `src/styles/tokens.css` fallbacks):
 
-- Dark: ink `#eef7fc`, accent `#00baff`, ground `#000d18`
-- Light: ink `#041d2a`, accent `#0073b7`
+- Dark: ink `#eff6fd`, accent `#00c872`, ground `#020c19`
+- Light: ink `#071727`, accent `#077045`
 
 ## Files
 

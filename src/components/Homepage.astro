@@ -25,6 +25,7 @@ import LiveScene from './fx/LiveScene.astro';
 import Globe from './fx/Globe.astro';
 import type { SceneName } from './fx/scenes';
 import { getHomepageConversionContent } from '../data/homepageConversion';
+import { getCareerStats } from '../data/careerStats';
 import {
   heroPortraitQuality,
   heroPortraitSizes,
@@ -200,18 +201,7 @@ const heroProofClass: Record<HeroProofCard['variant'], string> = {
   availability: 'hero-proof-card--availability avail-card',
 };
 
-const stats = [
-  { value: '6+', label: t(locale, 'home.statYears') },
-  { value: '5', label: t(locale, 'home.statCompanies') },
-  {
-    value: '2',
-    label: t(locale, 'home.statCapabilities'),
-  },
-  {
-    value: 'India',
-    label: t(locale, 'home.statRemote'),
-  },
-] as const;
+const stats = getCareerStats(locale);
 
 const posts = await getBlogPosts(locale);
 const articleScenes = [

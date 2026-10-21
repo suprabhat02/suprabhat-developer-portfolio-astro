@@ -381,3 +381,44 @@ test('long page and article headings wrap instead of clipping', async ({
     }
   }
 });
+
+test('scroll-linked progress indicators run in the production build', async ({
+  page,
+}) => {
+  await page.goto('/about/');
+  const bar = page.locator('.site-header .hdr-progress');
+  const timelines = await page.evaluate(() =>
+    ['.hdr-progress', '.btt-ring'].map((selector) => {
+      const style = getComputedStyle(document.querySelector(selector)!);
+      return [style.animationName, style.animationTimeline];
+    }),
+  );
+  expect(timelines).toEqual([
+    ['fx-grow-x', expect.stringMatching(/^scroll\(root/)],
+    ['fx-ring', expect.stringMatching(/^scroll\(root/)],
+  ]);
+  const scaleX = () =>
+    bar.evaluate(
+      (element) => new DOMMatrix(getComputedStyle(element).transform).a,
+    );
+  expect(await scaleX()).toBeLessThan(0.05);
+  // Re-scroll on each poll: lazily rendered sections can still settle height.
+  await expect
+    .poll(async () => {
+      await page.evaluate(() =>
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: 'instant',
+        }),
+      );
+      return scaleX();
+    })
+    .toBeGreaterThan(0.95);
+  await expect(page.locator('[data-btt]')).toBeVisible();
+
+  await page.goto('/experience/');
+  await expect(page.locator('.xp-rail-fill')).toHaveCSS(
+    'animation-timeline',
+    '--xp-timeline',
+  );
+});

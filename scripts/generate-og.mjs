@@ -14,26 +14,26 @@ const copy = Buffer.from(`
   <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
-        <path d="M48 0H0V48" fill="none" stroke="#00baff" stroke-opacity="0.1"/>
+        <path d="M48 0H0V48" fill="none" stroke="#00c872" stroke-opacity="0.1"/>
       </pattern>
       <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0" stop-color="#00baff"/>
-        <stop offset="1" stop-color="#41dfcf"/>
+        <stop offset="0" stop-color="#00c872"/>
+        <stop offset="1" stop-color="#f8a3e5"/>
       </linearGradient>
     </defs>
-    <rect width="1200" height="630" fill="#000d18"/>
+    <rect width="1200" height="630" fill="#020c19"/>
     <rect width="730" height="630" fill="url(#grid)"/>
     <rect x="64" y="78" width="10" height="10" fill="url(#brand)"/>
-    <text x="92" y="90" fill="#afc8d8" font-family="Arial, sans-serif" font-size="21" font-weight="600">SENIOR FRONTEND ENGINEER</text>
-    <text x="64" y="245" fill="#eef7fc" font-family="Arial, sans-serif" font-size="78" font-weight="700">SUPRABHAT</text>
+    <text x="92" y="90" fill="#b4c6db" font-family="Arial, sans-serif" font-size="21" font-weight="600">SENIOR FRONTEND ENGINEER</text>
+    <text x="64" y="245" fill="#eff6fd" font-family="Arial, sans-serif" font-size="78" font-weight="700">SUPRABHAT</text>
     <text x="64" y="330" fill="url(#brand)" font-family="Arial, sans-serif" font-size="78" font-weight="700">KUMAR</text>
-    <text x="64" y="420" fill="#afc8d8" font-family="Arial, sans-serif" font-size="26">React · Next.js · TypeScript · FastAPI</text>
-    <text x="64" y="525" fill="#eef7fc" font-family="Arial, sans-serif" font-size="23">Fast, accessible SaaS frontends and data dashboards</text>
+    <text x="64" y="420" fill="#b4c6db" font-family="Arial, sans-serif" font-size="26">React · Next.js · TypeScript · FastAPI</text>
+    <text x="64" y="525" fill="#eff6fd" font-family="Arial, sans-serif" font-size="23">Fast, accessible SaaS frontends and data dashboards</text>
     <rect x="730" width="6" height="630" fill="url(#brand)"/>
   </svg>`);
 
 await sharp({
-  create: { width, height, channels: 3, background: '#000d18' },
+  create: { width, height, channels: 3, background: '#020c19' },
 })
   .composite([
     { input: copy, left: 0, top: 0 },
@@ -82,24 +82,24 @@ const caseStudyCard = ({ title, tags }) => `<!doctype html>
         width: ${width}px;
         height: ${height}px;
         overflow: hidden;
-        background: #000d18;
-        color: #eef7fc;
+        background: #020c19;
+        color: #eff6fd;
         font-family: 'Geist Mono', monospace;
       }
-      .bar { position: absolute; inset: 0 auto 0 0; width: 10px; background: #00baff; }
+      .bar { position: absolute; inset: 0 auto 0 0; width: 10px; background: #00c872; }
       .mark { position: absolute; top: 68px; left: 98px; width: 50px; height: 44px; }
       .copy { position: absolute; top: 180px; left: 98px; right: 98px; }
-      .eyebrow { color: #00baff; font-size: 22px; font-weight: 600; letter-spacing: 0.14em; }
+      .eyebrow { color: #00c872; font-size: 22px; font-weight: 600; letter-spacing: 0.14em; }
       h1 { margin-top: 22px; font-size: 64px; font-weight: 700; line-height: 1.12; }
-      .tags { margin-top: 26px; color: #afc8d8; font-size: 25px; line-height: 1.5; }
-      .domain { position: absolute; left: 98px; bottom: 64px; color: #00baff; font-size: 24px; }
+      .tags { margin-top: 26px; color: #b4c6db; font-size: 25px; line-height: 1.5; }
+      .domain { position: absolute; left: 98px; bottom: 64px; color: #00c872; font-size: 24px; }
     </style>
   </head>
   <body>
     <div class="bar"></div>
     <svg class="mark" viewBox="0 0 25.1 22" aria-hidden="true">
-      <path fill="#eef7fc" d="M16.6 0H6.99A6.99 6.25 0 0 0 6.99 12.5H11.27A2.73 2.75 0 0 1 11.27 18H1V22H11.27A7.53 6.75 0 0 0 11.27 8.5H6.99A2.19 2.25 0 0 1 6.99 4H16.6Z"/>
-      <rect fill="#00baff" x="21.1" y="18" width="4" height="4"/>
+      <path fill="#eff6fd" d="M16.6 0H6.99A6.99 6.25 0 0 0 6.99 12.5H11.27A2.73 2.75 0 0 1 11.27 18H1V22H11.27A7.53 6.75 0 0 0 11.27 8.5H6.99A2.19 2.25 0 0 1 6.99 4H16.6Z"/>
+      <rect fill="#00c872" x="21.1" y="18" width="4" height="4"/>
     </svg>
     <div class="copy">
       <p class="eyebrow">CASE STUDY</p>
