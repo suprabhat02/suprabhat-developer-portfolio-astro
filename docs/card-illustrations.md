@@ -11,18 +11,18 @@ from design tokens (`src/styles/tokens.css` via the `--sc-*` vars in
 `src/styles/scenes.css`), so a scene automatically follows light/dark theme
 and any palette change — nothing is a baked-in color or a downloaded asset.
 
-| Section            | Card                            | Scene         |
-| ------------------- | -------------------------------- | ------------- |
-| Featured articles   | Performance article              | `perf`        |
-| Featured articles   | Accessibility article            | `a11y`        |
-| Featured articles   | UI engineering article           | `components`  |
-| About me            | Performance-first                | `perf`        |
-| About me            | Accessibility by default         | `a11y`        |
-| About me            | Scalable architecture            | `stack`       |
-| About me            | Full-stack capable               | `orbit`       |
-| Core expertise      | Front-end engineering            | `components`  |
-| Core expertise      | Back-end and API integration     | `server`      |
-| Core expertise      | Design systems and performance   | `tokens`      |
+| Section           | Card                           | Scene        |
+| ----------------- | ------------------------------ | ------------ |
+| Featured articles | Performance article            | `perf`       |
+| Featured articles | Accessibility article          | `a11y`       |
+| Featured articles | UI engineering article         | `components` |
+| About me          | Performance-first              | `perf`       |
+| About me          | Accessibility by default       | `a11y`       |
+| About me          | Scalable architecture          | `stack`      |
+| About me          | Full-stack capable             | `orbit`      |
+| Core expertise    | Front-end engineering          | `components` |
+| Core expertise    | Back-end and API integration   | `server`     |
+| Core expertise    | Design systems and performance | `tokens`     |
 
 Reusing a scene across two topically-related cards (e.g. `perf` for both the
 performance article and the "Performance-first" trait) is intentional —

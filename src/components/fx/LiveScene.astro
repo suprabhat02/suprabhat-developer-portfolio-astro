@@ -946,10 +946,7 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
               [78, 60, 250, 60],
               [78, 90, 250, 96],
             ].map(([x1, y1, x2, y2]) => (
-              <path
-                class="ln lv-dash"
-                d={`M${x1} ${y1}Q180 60 ${x2} ${y2}`}
-              />
+              <path class="ln lv-dash" d={`M${x1} ${y1}Q180 60 ${x2} ${y2}`} />
             ))}
           </g>
           <g class="lv-l" style="--d:.9">
@@ -1249,12 +1246,7 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
               <path
                 class="sa k k-draw"
                 style={`--i:${i}`}
-                d={rectPath(
-                  x as number,
-                  y as number,
-                  w as number,
-                  h as number,
-                )}
+                d={rectPath(x as number, y as number, w as number, h as number)}
                 pathLength="1"
               />
             ))}

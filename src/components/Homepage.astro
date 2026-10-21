@@ -214,7 +214,11 @@ const stats = [
 ] as const;
 
 const posts = await getBlogPosts(locale);
-const articleScenes = ['race', 'voice', 'components'] as const satisfies readonly SceneName[];
+const articleScenes = [
+  'race',
+  'voice',
+  'components',
+] as const satisfies readonly SceneName[];
 const featured = recommendations.filter((r) =>
   featuredRecommendationIds.includes(
     r.id as (typeof featuredRecommendationIds)[number],
