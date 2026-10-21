@@ -704,29 +704,15 @@
 
 /* ── Scroll-linked effects (progressive, no JavaScript) ─────────────── */
 
-.fx-scroll-progress {
-  transform-origin: left center;
-  transform: scaleX(0);
-}
-
-[dir='rtl'] .fx-scroll-progress {
-  transform-origin: right center;
-}
-
 @media (prefers-reduced-motion: no-preference) {
   /* Longhands only. The CSS minifier folds `animation-timeline` into an
      `animation` shorthand, which browsers reject, so a shorthand here would
      silently disable every scroll-linked effect in the production build. */
   @supports (animation-timeline: scroll()) {
-    .fx-scroll-progress,
     .fx-ring-progress {
       animation-timing-function: linear;
       animation-fill-mode: both;
       animation-timeline: scroll(root block);
-    }
-
-    .fx-scroll-progress {
-      animation-name: fx-grow-x;
     }
 
     .fx-ring-progress {
@@ -883,12 +869,6 @@
   }
 }
 
-@keyframes fx-grow-x {
-  to {
-    transform: scaleX(1);
-  }
-}
-
 @keyframes fx-ring {
   from {
     --fx-angle: 0deg;
@@ -994,10 +974,6 @@
   }
 
   .fx-marquee-track > [data-clone] {
-    display: none;
-  }
-
-  .fx-scroll-progress {
     display: none;
   }
 }
