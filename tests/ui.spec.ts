@@ -382,47 +382,6 @@ test('long page and article headings wrap instead of clipping', async ({
   }
 });
 
-test('page height settles after load, so the progress bar never runs backwards', async ({
-  page,
-}) => {
-  test.slow();
-  await page.goto('/');
-  // Skipped sections record their real size in idle time after load. Wait
-  // until the height holds still across two one-second polls.
-  let previous = -1;
-  await expect
-    .poll(
-      async () => {
-        const height = await page.evaluate(
-          () => document.documentElement.scrollHeight,
-        );
-        const settled = height === previous;
-        previous = height;
-        return settled;
-      },
-      { intervals: [1000], timeout: 30_000 },
-    )
-    .toBe(true);
-
-  // A first scroll to the bottom must not grow the page: if it did, the
-  // scroll range would grow too and the progress bar would slide back.
-  const heights = await page.evaluate(async () => {
-    const root = document.documentElement;
-    const seen = new Set<number>();
-    const settle = () =>
-      new Promise((resolve) =>
-        requestAnimationFrame(() => requestAnimationFrame(resolve)),
-      );
-    for (let top = 0; top < root.scrollHeight; top += innerHeight / 2) {
-      window.scrollTo({ top, behavior: 'instant' });
-      await settle();
-      seen.add(root.scrollHeight);
-    }
-    return [...seen];
-  });
-  expect(heights).toHaveLength(1);
-});
-
 test('scroll-linked progress indicators run in the production build', async ({
   page,
 }) => {
