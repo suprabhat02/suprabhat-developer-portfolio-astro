@@ -216,7 +216,14 @@ const combinedSchema = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#020c19" />
+    <!-- Static copies of --bg per theme (see docs/THEMING.md); the theme
+         scripts swap content so the browser bar matches the active theme. -->
+    <meta
+      name="theme-color"
+      content="#020c19"
+      data-dark="#020c19"
+      data-light="#f7fafe"
+    />
     <!-- Otherwise found only after the CSS; a late swap shifts the LCP text. -->
     <link
       rel="preload"
@@ -278,6 +285,12 @@ const combinedSchema = {
           localStorage.getItem('sk-theme') || 'dark';
       } catch {
         document.documentElement.dataset.theme = 'dark';
+      }
+      {
+        const themeColor = document.querySelector('meta[name="theme-color"]');
+        const themeColorValue =
+          themeColor?.dataset[document.documentElement.dataset.theme];
+        if (themeColor && themeColorValue) themeColor.content = themeColorValue;
       }
     </script>
     <SEOHead

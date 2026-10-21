@@ -42,10 +42,15 @@ static copies that browsers and social platforms read outside CSS:
 
 - `src/styles/tokens.css`: the `@supports not (color: oklch(0 0 0))` fallback
   block (hex values for very old browsers)
-- `src/layouts/BaseLayout.astro`: `<meta name="theme-color">`
+- `src/layouts/BaseLayout.astro`: `<meta name="theme-color">` (`content` and
+  `data-dark` = dark `--bg`, `data-light` = light `--bg`; the theme scripts
+  swap `content` to match the active theme)
 - `public/site.webmanifest`: `theme_color` and `background_color`
 - `public/assets/favicons/favicon.svg`, then regenerate the PNG and ICO sizes
-- `scripts/generate-og.mjs`, then run `npm run generate:og`
+- `scripts/generate-og.mjs` (the `palette` object), then run
+  `npm run generate:og`. It renders the default share image, the case-study
+  cards and the blog covers (`blogCovers`; add an entry for every new
+  English article, or the script stops with an error)
 
 ## Why contrast survives a hue change
 

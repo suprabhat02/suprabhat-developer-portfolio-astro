@@ -1,61 +1,23 @@
-import { mkdir, readFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile } from 'node:fs/promises';
+import process from 'node:process';
 import { chromium } from '@playwright/test';
 import sharp from 'sharp';
 import { createServer } from 'vite';
 
+// Share images are rendered outside CSS, so they use static copies of the
+// dark palette tokens (see docs/THEMING.md, "Make it permanent").
+const palette = {
+  bg: '#020c19',
+  text: '#eff6fd',
+  text2: '#b4c6db',
+  accent: '#00c872',
+  accent2: '#f8a3e5',
+};
+
+// Every card is laid out on a 1200x630 canvas. Blog covers are captured at
+// 4/3 scale (1600x840) so all share images keep the same proportions.
 const width = 1200;
 const height = 630;
-const portrait = await sharp('public/assets/images/portrait-1100.webp')
-  .resize(470, height, { fit: 'cover', position: 'north' })
-  .jpeg({ quality: 88, progressive: true })
-  .toBuffer();
-
-const copy = Buffer.from(`
-  <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
-        <path d="M48 0H0V48" fill="none" stroke="#00c872" stroke-opacity="0.1"/>
-      </pattern>
-      <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0" stop-color="#00c872"/>
-        <stop offset="1" stop-color="#f8a3e5"/>
-      </linearGradient>
-    </defs>
-    <rect width="1200" height="630" fill="#020c19"/>
-    <rect width="730" height="630" fill="url(#grid)"/>
-    <rect x="64" y="78" width="10" height="10" fill="url(#brand)"/>
-    <text x="92" y="90" fill="#b4c6db" font-family="Arial, sans-serif" font-size="21" font-weight="600">SENIOR FRONTEND ENGINEER</text>
-    <text x="64" y="245" fill="#eff6fd" font-family="Arial, sans-serif" font-size="78" font-weight="700">SUPRABHAT</text>
-    <text x="64" y="330" fill="url(#brand)" font-family="Arial, sans-serif" font-size="78" font-weight="700">KUMAR</text>
-    <text x="64" y="420" fill="#b4c6db" font-family="Arial, sans-serif" font-size="26">React · Next.js · TypeScript · FastAPI</text>
-    <text x="64" y="525" fill="#eff6fd" font-family="Arial, sans-serif" font-size="23">Fast, accessible SaaS frontends and data dashboards</text>
-    <rect x="730" width="6" height="630" fill="url(#brand)"/>
-  </svg>`);
-
-await sharp({
-  create: { width, height, channels: 3, background: '#020c19' },
-})
-  .composite([
-    { input: copy, left: 0, top: 0 },
-    { input: portrait, left: 730, top: 0 },
-  ])
-  .jpeg({ quality: 86, progressive: true, mozjpeg: true })
-  .toFile('public/assets/images/og-image.jpg');
-
-console.log('Generated public/assets/images/og-image.jpg (1200x630).');
-
-// Case-study share cards in the blog-cover style. Every locale reuses the
-// English card, so it is drawn from the English title and tags.
-const vite = await createServer({
-  configFile: false,
-  logLevel: 'error',
-  appType: 'custom',
-  server: { middlewareMode: true, hmr: false },
-  optimizeDeps: { noDiscovery: true },
-});
-const { getCaseStudies } = await vite.ssrLoadModule('/src/data/caseStudies.ts');
-const caseStudies = getCaseStudies('en');
-await vite.close();
 
 const geistMono = (
   await readFile(
@@ -67,7 +29,8 @@ const escapeHtml = (text) =>
     /[&<>"]/g,
     (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char],
   );
-const caseStudyCard = ({ title, tags }) => `<!doctype html>
+
+const page = (body, styles) => `<!doctype html>
 <html lang="en">
   <head>
     <style>
@@ -82,44 +45,194 @@ const caseStudyCard = ({ title, tags }) => `<!doctype html>
         width: ${width}px;
         height: ${height}px;
         overflow: hidden;
-        background: #020c19;
-        color: #eff6fd;
+        background: ${palette.bg};
+        color: ${palette.text};
         font-family: 'Geist Mono', monospace;
       }
-      .bar { position: absolute; inset: 0 auto 0 0; width: 10px; background: #00c872; }
-      .mark { position: absolute; top: 68px; left: 98px; width: 50px; height: 44px; }
-      .copy { position: absolute; top: 180px; left: 98px; right: 98px; }
-      .eyebrow { color: #00c872; font-size: 22px; font-weight: 600; letter-spacing: 0.14em; }
-      h1 { margin-top: 22px; font-size: 64px; font-weight: 700; line-height: 1.12; }
-      .tags { margin-top: 26px; color: #b4c6db; font-size: 25px; line-height: 1.5; }
-      .domain { position: absolute; left: 98px; bottom: 64px; color: #00c872; font-size: 24px; }
+      ${styles}
     </style>
   </head>
-  <body>
-    <div class="bar"></div>
-    <svg class="mark" viewBox="0 0 25.1 22" aria-hidden="true">
-      <path fill="#eff6fd" d="M16.6 0H6.99A6.99 6.25 0 0 0 6.99 12.5H11.27A2.73 2.75 0 0 1 11.27 18H1V22H11.27A7.53 6.75 0 0 0 11.27 8.5H6.99A2.19 2.25 0 0 1 6.99 4H16.6Z"/>
-      <rect fill="#00c872" x="21.1" y="18" width="4" height="4"/>
-    </svg>
-    <div class="copy">
-      <p class="eyebrow">CASE STUDY</p>
-      <h1>${escapeHtml(title)}</h1>
-      <p class="tags">${tags.map(escapeHtml).join(' · ')}</p>
-    </div>
-    <p class="domain">suprabhat-dev.com</p>
-  </body>
+  <body>${body}</body>
 </html>`;
 
+const brandMark = `<svg class="mark" viewBox="0 0 25.1 22" aria-hidden="true">
+  <path fill="${palette.text}" d="M16.6 0H6.99A6.99 6.25 0 0 0 6.99 12.5H11.27A2.73 2.75 0 0 1 11.27 18H1V22H11.27A7.53 6.75 0 0 0 11.27 8.5H6.99A2.19 2.25 0 0 1 6.99 4H16.6Z"/>
+  <rect fill="${palette.accent}" x="21.1" y="18" width="4" height="4"/>
+</svg>`;
+
+// Shared layout for case-study cards and blog covers.
+const cardStyles = `
+  .bar { position: absolute; inset: 0 auto 0 0; width: 10px; background: ${palette.accent}; }
+  .mark { position: absolute; top: 68px; left: 98px; width: 50px; height: 44px; }
+  .copy { position: absolute; top: 180px; left: 98px; right: 98px; }
+  .eyebrow { color: ${palette.accent}; font-size: 22px; font-weight: 600; letter-spacing: 0.14em; }
+  h1 { margin-top: 22px; font-size: 64px; font-weight: 700; line-height: 1.12; }
+  h1.long { font-size: 52px; }
+  .detail { margin-top: 26px; color: ${palette.text2}; font-size: 25px; line-height: 1.5; }
+  .domain { position: absolute; left: 98px; bottom: 64px; color: ${palette.accent}; font-size: 24px; }
+`;
+const card = ({ eyebrow, title, detail }) =>
+  page(
+    `<div class="bar"></div>
+    ${brandMark}
+    <div class="copy">
+      <p class="eyebrow">${escapeHtml(eyebrow)}</p>
+      <h1${title.length > 40 ? ' class="long"' : ''}>${escapeHtml(title)}</h1>
+      <p class="detail">${escapeHtml(detail)}</p>
+    </div>
+    <p class="domain">suprabhat-dev.com</p>`,
+    cardStyles,
+  );
+
+// Default share image: name and role beside the portrait.
+const portrait = (
+  await sharp('public/assets/images/portrait-1100.webp')
+    .resize(470, height, { fit: 'cover', position: 'north' })
+    .jpeg({ quality: 88 })
+    .toBuffer()
+).toString('base64');
+const defaultCard = page(
+  `<div class="grid"></div>
+  <div class="copy">
+    <p class="eyebrow"><span class="dot"></span>SENIOR FRONTEND ENGINEER</p>
+    <h1>SUPRABHAT<br /><span class="brand">KUMAR</span></h1>
+    <p class="stack">React · Next.js · TypeScript · FastAPI</p>
+    <p class="pitch">Fast, accessible SaaS frontends and data dashboards</p>
+  </div>
+  <div class="rule"></div>
+  <img class="portrait" src="data:image/jpeg;base64,${portrait}" alt="" />`,
+  `
+  .grid {
+    position: absolute; inset: 0 auto 0 0; width: 730px;
+    background-image:
+      linear-gradient(to right, rgb(0 200 114 / 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(0 200 114 / 0.1) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .copy { position: absolute; top: 74px; left: 64px; width: 610px; }
+  .eyebrow { display: flex; align-items: center; gap: 16px; color: ${palette.text2}; font-size: 20px; font-weight: 600; letter-spacing: 0.08em; }
+  .dot { width: 10px; height: 10px; background: linear-gradient(90deg, ${palette.accent}, ${palette.accent2}); }
+  h1 { margin-top: 82px; font-size: 76px; font-weight: 700; line-height: 1.08; letter-spacing: -0.02em; }
+  .brand {
+    background: linear-gradient(90deg, ${palette.accent}, ${palette.accent2});
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .stack { margin-top: 44px; color: ${palette.text2}; font-size: 24px; }
+  .pitch { margin-top: 62px; font-size: 21px; line-height: 1.4; }
+  .rule { position: absolute; top: 0; left: 730px; width: 6px; height: 100%; background: linear-gradient(${palette.accent}, ${palette.accent2}); }
+  .portrait { position: absolute; top: 0; left: 730px; width: 470px; height: 630px; object-fit: cover; }
+  .rule { z-index: 1; }
+  `,
+);
+
+// Case-study cards. Every locale reuses the English card, so it is drawn from
+// the English title and tags.
+const vite = await createServer({
+  configFile: false,
+  logLevel: 'error',
+  appType: 'custom',
+  server: { middlewareMode: true, hmr: false },
+  optimizeDeps: { noDiscovery: true },
+});
+const { getCaseStudies } = await vite.ssrLoadModule('/src/data/caseStudies.ts');
+const caseStudies = getCaseStudies('en');
+await vite.close();
+
+// Blog covers: the share image and on-page cover for every locale of each
+// article. Titles are the short cover headlines, not the article titles.
+const blogCovers = [
+  {
+    slug: 'accessibility-in-react-what-developers-skip',
+    title: 'Accessibility in React',
+    detail: 'What Most Developers Skip',
+  },
+  {
+    slug: 'clean-ui-design-principles-frontend',
+    title: 'Clean UI Design Principles',
+    detail: 'Spacing, OKLCH tokens, motion and contrast in code',
+  },
+  {
+    slug: 'cloud-web-interface-design-best-practices',
+    title: 'Cloud Web Interface Design',
+    detail: 'Best practices for scalable, accessible UIs',
+  },
+  {
+    slug: 'frontend-best-practices-clean-ui',
+    title: 'Scalable React UI',
+    detail: 'Without overengineering',
+  },
+  {
+    slug: 'frontend-code-review-checklist',
+    title: 'Frontend Code Review Checklist',
+    detail: 'A risk-first review order for safer releases',
+  },
+  {
+    slug: 'hiring-senior-frontend-engineer',
+    title: 'What to Look For When Hiring a Senior Frontend Engineer',
+    detail: 'Skills, signals and interview questions',
+  },
+  {
+    slug: 'why-clean-minimal-ui-professional-website',
+    title: 'Why Minimal UI Works',
+    detail: 'Clarity, hierarchy and conversion',
+  },
+];
+
+// Every English article needs a cover entry, and every entry an article.
+const articleSlugs = (await readdir('src/content/blog'))
+  .filter((file) => file.endsWith('.md'))
+  .map((file) => file.replace(/\.md$/, ''))
+  .sort();
+const coverSlugs = blogCovers.map(({ slug }) => slug).sort();
+if (articleSlugs.join() !== coverSlugs.join()) {
+  throw new Error(
+    `blogCovers must match src/content/blog.\n  articles: ${articleSlugs.join(', ')}\n  covers:   ${coverSlugs.join(', ')}`,
+  );
+}
+
+// PLAYWRIGHT_CHROMIUM_PATH lets the script run where the bundled browser
+// is a different build (for example a preinstalled Chromium).
+const browser = await chromium.launch({
+  executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH || undefined,
+});
+const render = async (html, scale) => {
+  const tab = await browser.newPage({
+    viewport: { width, height },
+    deviceScaleFactor: scale,
+  });
+  await tab.setContent(html);
+  await tab.evaluate('document.fonts.ready');
+  const shot = await tab.screenshot();
+  await tab.close();
+  return shot;
+};
+
+await sharp(await render(defaultCard, 1))
+  .jpeg({ quality: 86, progressive: true, mozjpeg: true })
+  .toFile('public/assets/images/og-image.jpg');
+console.log('Generated public/assets/images/og-image.jpg (1200x630).');
+
 await mkdir('public/images/work', { recursive: true });
-const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width, height } });
-for (const caseStudy of caseStudies) {
-  await page.setContent(caseStudyCard(caseStudy));
-  await page.evaluate('document.fonts.ready');
-  const output = `public/images/work/${caseStudy.slug}-og-1200x630.png`;
-  await sharp(await page.screenshot())
+for (const { slug, title, tags } of caseStudies) {
+  const output = `public/images/work/${slug}-og-1200x630.png`;
+  await sharp(
+    await render(
+      card({ eyebrow: 'CASE STUDY', title, detail: tags.join(' · ') }),
+      1,
+    ),
+  )
     .png({ compressionLevel: 9, palette: true })
     .toFile(output);
   console.log(`Generated ${output} (1200x630).`);
 }
+
+await mkdir('public/images/blog', { recursive: true });
+for (const { slug, title, detail } of blogCovers) {
+  const output = `public/images/blog/${slug}-cover-1600x840.png`;
+  await sharp(await render(card({ eyebrow: 'ARTICLE', title, detail }), 4 / 3))
+    .png({ compressionLevel: 9, palette: true })
+    .toFile(output);
+  console.log(`Generated ${output} (1600x840).`);
+}
+
 await browser.close();
