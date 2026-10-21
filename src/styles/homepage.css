@@ -1405,29 +1405,7 @@
   padding: 1rem 1rem 1.4rem;
 }
 
-.article-media {
-  overflow: hidden;
-  overflow: clip;
-  margin-block-end: 0.5rem;
-  border-radius: var(--radius-control);
-  background: var(--bg-2);
-}
-
-.card-illustration {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 8 / 5;
-  object-fit: cover;
-  transition: transform 700ms var(--fx-ease-out);
-}
-
-.article-card:hover .card-illustration,
-.trait-card:hover .card-illustration,
-.expertise-card:hover .card-illustration {
-  transform: scale(1.06);
-}
-
-.article-card > :not(.article-media) {
+.article-card > :not(.lv-scene) {
   margin-inline: 0.4rem;
 }
 
@@ -1634,18 +1612,11 @@
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  overflow: hidden;
-  overflow: clip;
-  padding: 0 0 1.4rem;
+  padding: 1rem 1rem 1.4rem;
 }
 
-.trait-card .card-illustration {
-  margin-block-end: 0.6rem;
-  border-block-end: 1px solid var(--border-strong);
-}
-
-.trait-card > :not(.card-illustration) {
-  margin-inline: 1.25rem;
+.trait-card > :not(.lv-scene) {
+  margin-inline: 0.4rem;
 }
 
 .trait-num {
@@ -1688,17 +1659,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
-  overflow: hidden;
-  overflow: clip;
-  padding: 0 1.4rem 1.5rem;
-}
-
-.expertise-card .card-illustration {
-  width: calc(100% + 2.8rem);
-  max-width: none;
-  margin-inline: -1.4rem;
-  border-block-end: 1px solid var(--border-strong);
-  mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  padding: 1.4rem 1.4rem 1.5rem;
 }
 
 .expertise-icon {
@@ -1706,7 +1667,6 @@
   place-items: center;
   width: 3rem;
   height: 3rem;
-  margin-block-start: -2.25rem;
   border: 1px solid var(--accent-border);
   border-radius: 14px;
   background: var(--bg-card);
@@ -1723,6 +1683,12 @@
   color: var(--text-2);
   font-size: 0.9rem;
   line-height: 1.65;
+}
+
+.article-card .lv-scene,
+.trait-card .lv-scene,
+.expertise-card .lv-scene {
+  margin-block-end: 0;
 }
 
 .skill-tags {
@@ -2434,7 +2400,6 @@ textarea.f-input {
   .stat-item:hover,
   .tm-chip:hover,
   .c-link:hover,
-  .card-illustration,
   .work-card-lines span {
     transition: none;
     transform: none;
@@ -2444,9 +2409,6 @@ textarea.f-input {
     transition: none;
   }
 
-  .article-card:hover .card-illustration,
-  .trait-card:hover .card-illustration,
-  .expertise-card:hover .card-illustration,
   .tm-chip:hover img {
     transform: none;
   }

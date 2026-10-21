@@ -867,5 +867,117 @@ const { scene, size = 'md', class: className } = Astro.props;
         </>
       )
     }
+    {
+      scene === 'components' && (
+        <>
+          <g class="lv-l" style="--d:.4">
+            <rect class="t" x="150" y="6" width="142" height="100" rx="12" />
+            <line class="ln" x1="150" y1="28" x2="292" y2="28" />
+            {[164, 176, 188].map((x) => (
+              <circle class="ftx lv-dim" cx={x} cy="17" r="3" />
+            ))}
+          </g>
+          <g class="lv-l" style="--d:.8">
+            {[
+              ['fas', 164, 40, 112, 16],
+              ['fbs', 164, 62, 72, 16],
+              ['t', 164, 84, 50, 16],
+            ].map(([tone, x, y, w, h], i) => (
+              <rect
+                class={`${tone} k k-rise`}
+                style={`--i:${i}`}
+                x={x}
+                y={y}
+                width={w}
+                height={h}
+                rx="6"
+              />
+            ))}
+          </g>
+          <g class="lv-l" style="--d:.6">
+            {[
+              ['fas', 30, 32, 'M56 32Q110 32 150 48'],
+              ['fbs', 30, 62, 'M56 62Q110 62 150 70'],
+              ['t', 30, 92, 'M56 92Q110 92 150 92'],
+            ].map(([tone, x, y, d], i) => (
+              <>
+                <rect
+                  class={tone as string}
+                  x={(x as number) - 18}
+                  y={(y as number) - 10}
+                  width="36"
+                  height="20"
+                  rx="6"
+                />
+                <path
+                  class="sa k k-draw"
+                  style={`--i:${i + 3}`}
+                  d={d as string}
+                  pathLength="1"
+                />
+              </>
+            ))}
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'server' && (
+        <>
+          <g class="lv-l" style="--d:.5" transform="translate(50 60)">
+            <rect class="t" x="-26" y="-40" width="52" height="80" rx="10" />
+            {[-24, -6, 12].map((y, i) => (
+              <rect
+                class={i % 2 ? 'fbs' : 'fas'}
+                x="-18"
+                y={y}
+                width="36"
+                height="12"
+                rx="4"
+              />
+            ))}
+          </g>
+          <g class="lv-l" style="--d:.5">
+            {[
+              [78, 30, 250, 24],
+              [78, 60, 250, 60],
+              [78, 90, 250, 96],
+            ].map(([x1, y1, x2, y2]) => (
+              <path
+                class="ln lv-dash"
+                d={`M${x1} ${y1}Q180 60 ${x2} ${y2}`}
+              />
+            ))}
+          </g>
+          <g class="lv-l" style="--d:.9">
+            {[
+              [78, 30, 250, 24],
+              [78, 60, 250, 60],
+              [78, 90, 250, 96],
+            ].map(([x1, y1, x2, y2], i) => (
+              <path
+                class="sb lv-packet k k-packet"
+                style={`--i:${i * 3}`}
+                d={`M${x1} ${y1}Q180 60 ${x2} ${y2}`}
+                pathLength="1"
+              />
+            ))}
+          </g>
+          <g class="lv-l" style="--d:1.3">
+            {[24, 60, 96].map((y, i) => (
+              <g transform={`translate(268 ${y})`}>
+                <circle class="t" r="12" />
+                <path
+                  class="ok k k-tick"
+                  style={`--i:${i * 3 + 4}`}
+                  d="M-4 0l3 3 6-6"
+                  pathLength="1"
+                />
+              </g>
+            ))}
+          </g>
+        </>
+      )
+    }
   </svg>
 </div>

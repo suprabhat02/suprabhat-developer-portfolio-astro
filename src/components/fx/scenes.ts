@@ -38,6 +38,10 @@ export const sceneNames = [
   'orbit',
   /** Americas, Europe and India pins with the shared overlap window. */
   'zones',
+  /** Loose component chips wiring themselves into a page frame. */
+  'components',
+  /** Request/response packets travelling from a server rack to endpoints. */
+  'server',
 ] as const;
 
 export type SceneName = (typeof sceneNames)[number];

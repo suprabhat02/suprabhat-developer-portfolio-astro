@@ -535,6 +535,12 @@
   --lv-dur: 3.2s;
   --lv-step: 140ms;
 }
+.lv-scene--components {
+  --lv-step: 200ms;
+}
+.lv-scene--server {
+  --lv-step: 260ms;
+}
 
 /* ── Keyframes (0% is always the resting frame) ───────────────────── */
 
