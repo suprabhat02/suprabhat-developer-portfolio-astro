@@ -614,7 +614,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
               data-glow
               data-tilt
             >
-              <LiveScene scene={articleScenes[i]} />
+              <LiveScene scene={articleScenes[i] ?? 'perf'} />
               {post.data.tags[0] && (
                 <a
                   class="article-kicker"
