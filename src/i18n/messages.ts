@@ -286,6 +286,11 @@ const en = {
   'blog.share.linkedin': 'Share on LinkedIn',
   'blog.share.linkLabel': 'article link',
   'blog.rss': 'Subscribe via RSS',
+  'blog.cta.eyebrow': 'Work with me',
+  'blog.cta.title': 'Need this applied to your product?',
+  'blog.cta.body': `I help SaaS teams ship fast, accessible React and TypeScript frontends. Start with a ${engagement.discoveryCall.toLowerCase()}; a written proposal follows within ${engagement.proposalTurnaround}.`,
+  'blog.cta.primary': 'Request a free discovery call',
+  'blog.cta.service': 'Related service: {service}',
   'page.notFound.title': 'That page is not here',
   'page.notFound.body':
     'The address may have changed, or the page may no longer exist.',
@@ -346,6 +351,7 @@ const en = {
   'form.projectConsulting': 'Async architecture advisory',
   'form.projectOther': 'Other',
   'form.budget': 'Budget range',
+  'form.budgetAudit': 'Fixed-price audit or review',
   'form.budget5k15k': 'USD 5,000–15,000',
   'form.budget15k30k': 'USD 15,000–30,000',
   'form.budget30kPlus': 'USD 30,000+',
@@ -370,7 +376,7 @@ const en = {
   'form.draftSaved': 'Draft saved on this device',
   'form.draftRestored': 'Draft restored from this device',
   'form.projectWebsite': 'Website design and development',
-  'form.qualificationNote': `Project enquiries start at ${engagement.minimumProjectBudget}. Include your goals, technical requirements, timeline, and documented budget.`,
+  'form.qualificationNote': `Defined projects start at ${engagement.minimumProjectBudget}; audits and reviews are quoted at a fixed price. Include your goals, technical requirements, timeline, and documented budget.`,
   'form.recruiterRoute':
     'Corporate recruiter? Skip this project form and contact me through',
   'form.errorTimeline': 'Select a timeline.',
@@ -741,6 +747,12 @@ const es: Translations = {
   'blog.share.linkedin': 'Compartir en LinkedIn',
   'blog.share.linkLabel': 'enlace del artículo',
   'blog.rss': 'Suscríbete por RSS',
+  'blog.cta.eyebrow': 'Trabaja conmigo',
+  'blog.cta.title': '¿Necesitas aplicar esto en tu producto?',
+  'blog.cta.body':
+    'Ayudo a equipos SaaS a lanzar frontends rápidos y accesibles con React y TypeScript. Empieza con una llamada de descubrimiento gratuita de 15–20 minutos; recibirás una propuesta por escrito en 2–3 días laborables.',
+  'blog.cta.primary': 'Solicita una llamada gratuita',
+  'blog.cta.service': 'Servicio relacionado: {service}',
   'page.notFound.title': 'Esa página no está aquí',
   'page.notFound.body':
     'La dirección puede haber cambiado o la página puede haber dejado de existir.',
@@ -802,6 +814,7 @@ const es: Translations = {
   'form.projectConsulting': 'Asesoría de arquitectura asíncrona',
   'form.projectOther': 'Otro',
   'form.budget': 'Rango de presupuesto',
+  'form.budgetAudit': 'Auditoría o revisión a precio fijo',
   'form.budget5k15k': '5.000–15.000 USD',
   'form.budget15k30k': '15.000–30.000 USD',
   'form.budget30kPlus': 'Más de 30.000 USD',
@@ -827,7 +840,7 @@ const es: Translations = {
   'form.draftRestored': 'Borrador restaurado desde este dispositivo',
   'form.projectWebsite': 'Diseño y desarrollo de sitios web',
   'form.qualificationNote':
-    'Las consultas de proyectos comienzan en 5.000 USD. Incluye objetivos, requisitos técnicos, calendario y presupuesto documentado.',
+    'Los proyectos definidos comienzan en 5.000 USD; las auditorías y revisiones se cotizan a precio fijo. Incluye objetivos, requisitos técnicos, calendario y presupuesto documentado.',
   'form.recruiterRoute':
     '¿Eres recruiter corporativo? Omite este formulario y contáctame por',
   'form.errorTimeline': 'Selecciona un plazo.',
@@ -1189,6 +1202,12 @@ const ar: Translations = {
   'blog.share.linkedin': 'شارك على LinkedIn',
   'blog.share.linkLabel': 'رابط المقال',
   'blog.rss': 'اشترك عبر RSS',
+  'blog.cta.eyebrow': 'اعمل معي',
+  'blog.cta.title': 'هل تحتاج إلى تطبيق هذا على منتجك؟',
+  'blog.cta.body':
+    'أساعد فرق SaaS على إطلاق واجهات أمامية سريعة وسهلة الوصول باستخدام React وTypeScript. ابدأ بمكالمة استكشافية مجانية مدتها 15–20 دقيقة، ثم تتلقى عرضًا مكتوبًا خلال 2–3 أيام عمل.',
+  'blog.cta.primary': 'اطلب مكالمة استكشافية مجانية',
+  'blog.cta.service': 'خدمة ذات صلة: {service}',
   'page.notFound.title': 'هذه الصفحة غير موجودة',
   'page.notFound.body': 'ربما تغيّر العنوان أو لم تعد الصفحة موجودة.',
   'page.notFound.eyebrow': 'خطأ 404',
@@ -1246,6 +1265,7 @@ const ar: Translations = {
   'form.projectConsulting': 'استشارة معمارية غير متزامنة',
   'form.projectOther': 'أخرى',
   'form.budget': 'نطاق الميزانية',
+  'form.budgetAudit': 'تدقيق أو مراجعة بسعر ثابت',
   'form.budget5k15k': '5,000–15,000 دولار أمريكي',
   'form.budget15k30k': '15,000–30,000 دولار أمريكي',
   'form.budget30kPlus': 'أكثر من 30,000 دولار أمريكي',
@@ -1270,7 +1290,7 @@ const ar: Translations = {
   'form.draftRestored': 'تمت استعادة المسودة من هذا الجهاز',
   'form.projectWebsite': 'تصميم وتطوير المواقع',
   'form.qualificationNote':
-    'تبدأ استفسارات المشاريع من 5,000 دولار أمريكي. أرفق الأهداف والمتطلبات التقنية والجدول الزمني والميزانية المحددة.',
+    'تبدأ المشاريع المحددة من 5,000 دولار أمريكي، وتُسعَّر عمليات التدقيق والمراجعة بسعر ثابت. أرفق الأهداف والمتطلبات التقنية والجدول الزمني والميزانية المحددة.',
   'form.recruiterRoute':
     'هل أنت مسؤول توظيف في شركة؟ تجاوز نموذج المشروع وتواصل معي عبر',
   'form.errorTimeline': 'اختر جدولًا زمنيًا.',

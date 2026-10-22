@@ -1,7 +1,18 @@
 import type { Locale } from '../i18n/config';
 
+export type ServiceId =
+  | 'defined-frontend-project'
+  | 'performance-audit'
+  | 'architecture-review'
+  | 'async-architecture-advisory'
+  | 'dashboard-development'
+  | 'design-system-engineering'
+  | 'accessibility-audit'
+  | 'website-delivery';
+
 export interface Service {
-  id: string;
+  /** Also the anchor id of the service card on the services page. */
+  id: ServiceId;
   name: string;
   description: string;
   fit?: string;
@@ -297,3 +308,29 @@ const localizedServices: Partial<Record<Locale, readonly Service[]>> = {
 
 export const getServices = (locale: Locale) =>
   localizedServices[locale] ?? services;
+
+/** The service each article leads readers to, keyed by article slug. */
+const articleServiceIds: Readonly<Record<string, ServiceId>> = {
+  'accessibility-in-react-what-developers-skip': 'accessibility-audit',
+  'clean-ui-design-principles-frontend': 'design-system-engineering',
+  'cloud-web-interface-design-best-practices': 'dashboard-development',
+  'frontend-best-practices-clean-ui': 'architecture-review',
+  'frontend-code-review-checklist': 'architecture-review',
+  'hiring-senior-frontend-engineer': 'defined-frontend-project',
+  'why-clean-minimal-ui-professional-website': 'website-delivery',
+};
+
+/**
+ * Resolves the localized service an article points to. Throws at build time
+ * when an article has no mapping, so a new post cannot ship without one.
+ */
+export const getArticleService = (locale: Locale, slug: string): Service => {
+  const id = articleServiceIds[slug];
+  const service = getServices(locale).find((entry) => entry.id === id);
+  if (!service) {
+    throw new Error(
+      `No service mapped for article "${slug}" (${locale}). Add it to articleServiceIds in src/data/services.ts.`,
+    );
+  }
+  return service;
+};

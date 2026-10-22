@@ -1455,6 +1455,35 @@ main {
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
 }
+.article-cta {
+  margin-top: 4rem;
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  background: var(--bg-card);
+  border: 1px solid var(--accent-border);
+  border-inline-start: 4px solid var(--accent);
+  border-radius: var(--radius-card);
+}
+.article-cta h2 {
+  margin: 0.5rem 0 0.75rem;
+  font-size: clamp(1.3rem, 3vw, 1.6rem);
+}
+.article-cta p:not(.eyebrow) {
+  margin: 0;
+  color: var(--text-2);
+}
+.article-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  margin-top: 1.5rem;
+}
+.article-cta-actions .text-link {
+  margin-top: 0;
+}
+.article-cta + .article-share {
+  margin-top: 3rem;
+}
 .article-share {
   margin-top: 4rem;
   padding-top: 2rem;
