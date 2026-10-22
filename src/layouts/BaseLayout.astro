@@ -16,6 +16,7 @@ import {
   SITE_DESCRIPTION,
   SITE_NAME,
   SITE_URL,
+  CLOUDFLARE_ANALYTICS_TOKEN,
   X_PROFILE_URL,
 } from '../config/site';
 import { getBlogFeedHref, getBlogFeedMeta } from '../data/blog';
@@ -354,6 +355,22 @@ const combinedSchema = {
     {/* import.meta.env.DEV && <PalettePicker /> */}
     <script>
       import '../scripts/motion';
+    </script>
+    <!--
+      Cloudflare Web Analytics. The beacon is injected only on the production
+      hostname, so dev, preview and CI runs never send page views. It loads
+      async after parsing and is never render-blocking.
+    -->
+    <script is:inline data-cf-token={CLOUDFLARE_ANALYTICS_TOKEN}>
+      if (location.hostname === 'suprabhat-dev.com') {
+        const beacon = document.createElement('script');
+        beacon.defer = true;
+        beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+        beacon.dataset.cfBeacon = JSON.stringify({
+          token: document.currentScript.dataset.cfToken,
+        });
+        document.body.append(beacon);
+      }
     </script>
   </body>
 </html>

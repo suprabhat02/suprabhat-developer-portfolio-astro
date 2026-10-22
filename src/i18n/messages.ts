@@ -259,7 +259,7 @@ const en = {
   'page.privacy.eyebrow': 'Privacy',
   'page.privacy.title': 'Contact form privacy',
   'page.privacy.body':
-    'This site does not install analytics. While you type, visible form fields are saved only in this browser so a refresh does not erase your draft. After you submit, the fields are sent through Web3Forms by email and the browser draft is deleted.',
+    'This site counts page views with Cloudflare Web Analytics, which sets no cookies and does not track you across sites. While you type, visible form fields are saved only in this browser so a refresh does not erase your draft. After you submit, the fields are sent through Web3Forms by email and the browser draft is deleted.',
   'page.privacy.contact':
     'Do not include sensitive personal information. You can instead email ',
   'page.blog.eyebrow': 'Writing',
@@ -720,7 +720,7 @@ const es: Translations = {
   'page.privacy.eyebrow': 'Privacidad',
   'page.privacy.title': 'Privacidad del formulario de contacto',
   'page.privacy.body':
-    'Este sitio no instala analítica. Mientras escribes, los campos visibles se guardan solo en este navegador para que una actualización no borre el borrador. Al enviar, los campos se mandan por correo mediante Web3Forms y se elimina el borrador local.',
+    'Este sitio cuenta las visitas con Cloudflare Web Analytics, que no usa cookies ni te rastrea entre sitios. Mientras escribes, los campos visibles se guardan solo en este navegador para que una actualización no borre el borrador. Al enviar, los campos se mandan por correo mediante Web3Forms y se elimina el borrador local.',
   'page.privacy.contact':
     'No incluyas información personal sensible. También puedes escribir a ',
   'page.blog.eyebrow': 'Artículos',
@@ -1176,7 +1176,7 @@ const ar: Translations = {
   'page.privacy.eyebrow': 'الخصوصية',
   'page.privacy.title': 'خصوصية نموذج الاتصال',
   'page.privacy.body':
-    'لا يثبت هذا الموقع أدوات تحليلات. أثناء الكتابة تُحفظ الحقول الظاهرة في هذا المتصفح فقط حتى لا تضيع المسودة عند التحديث. عند الإرسال تُرسل الحقول بالبريد عبر Web3Forms ثم تُحذف المسودة المحلية.',
+    'يحصي هذا الموقع الزيارات باستخدام Cloudflare Web Analytics، الذي لا يستخدم ملفات تعريف الارتباط ولا يتتبعك عبر المواقع. أثناء الكتابة تُحفظ الحقول الظاهرة في هذا المتصفح فقط حتى لا تضيع المسودة عند التحديث. عند الإرسال تُرسل الحقول بالبريد عبر Web3Forms ثم تُحذف المسودة المحلية.',
   'page.privacy.contact': 'لا تُدرج معلومات شخصية حساسة. يمكنك أيضًا مراسلة ',
   'page.blog.eyebrow': 'المقالات',
   'page.blog.latest': 'الأحدث',
