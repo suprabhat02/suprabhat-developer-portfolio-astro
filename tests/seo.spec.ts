@@ -605,6 +605,7 @@ test('indexable HTML pages have unique titles and canonical sitemap entries', as
     [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => url),
   );
   const titles = new Map<string, string>();
+  const descriptions = new Map<string, string>();
   const canonicals = new Map<string, string>();
 
   expect(htmlFiles.length).toBeGreaterThan(100);
@@ -639,6 +640,8 @@ test('indexable HTML pages have unique titles and canonical sitemap entries', as
       expect(sitemapUrls.has(canonical!)).toBe(true);
       expect(titles.get(title!)).toBeUndefined();
       titles.set(title!, path);
+      expect(descriptions.get(description!)).toBeUndefined();
+      descriptions.set(description!, path);
     } else {
       expect(sitemapUrls.has(canonical!)).toBe(false);
     }
