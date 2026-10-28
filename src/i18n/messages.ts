@@ -582,11 +582,11 @@ const es: Translations = {
     'Entrego estados de UI predecibles con Redux Toolkit.',
   'experience.topsoe.b3':
     'Colaboro con equipos multidisciplinares en un modelo híbrido.',
-  'experience.cognizant.title': 'Asociado de proyectos',
-  'experience.cognizant.b1': 'Desarrollé funciones de UI con TypeScript.',
+  'experience.cognizant.title': 'Associate – Projects (Frontend Developer)',
+  'experience.cognizant.b1': 'Desarrollé nuevas funcionalidades para el panel interno de analítica de BMW Group con React.js, TypeScript, AG Grid y Ant Design.',
   'experience.cognizant.b2':
-    'Trabajé con flujos de datos respaldados por GraphQL.',
-  'experience.cognizant.b3': 'Implementé interfaces modernas y adaptables.',
+    'Construí vistas AG Grid con alta densidad de datos para grandes conjuntos empresariales e integré API GraphQL y REST sobre MongoDB, gestionando estados asíncronos, de carga y de error.',
+  'experience.cognizant.b3': 'Aseguré compatibilidad entre navegadores y dispositivos; participé en sprints Agile y revisiones de código entre pares.',
   'experience.trueblue.title': 'Desarrollador web de implementación',
   'experience.trueblue.b1':
     'Implementé actualizaciones de UI adaptables para experiencias web.',
@@ -604,9 +604,9 @@ const es: Translations = {
     'Trabajé con React, TypeScript y CSS moderno.',
   'experience.swaragh.title': 'Desarrollador de UI',
   'experience.swaragh.b1':
-    'Creé interfaces adaptables con HTML, CSS y JavaScript.',
+    'Desarrollé sitios web y aplicaciones web adaptables y compatibles con distintos navegadores con HTML5, CSS3, JavaScript, jQuery, Bootstrap y Sass.',
   'experience.swaragh.b2':
-    'Construí interacciones con jQuery cuando era necesario.',
+    'Participé en las fases de diseño, desarrollo y pruebas.',
   'action.contact': 'Contactar',
   'action.start': 'Contactar con Suprabhat',
   'action.top': 'Volver arriba',
@@ -1046,10 +1046,10 @@ const ar: Translations = {
     'أبني واجهات حديثة وأنيقة باستخدام React وTypeScript.',
   'experience.topsoe.b2': 'أقدم حالة واجهة متوقعة باستخدام Redux Toolkit.',
   'experience.topsoe.b3': 'أتعاون مع فرق متعددة التخصصات ضمن بيئة عمل هجينة.',
-  'experience.cognizant.title': 'مساعد مشاريع',
-  'experience.cognizant.b1': 'طورت ميزات واجهة مستخدم باستخدام TypeScript.',
-  'experience.cognizant.b2': 'عملت مع تدفقات بيانات مدعومة بـ GraphQL.',
-  'experience.cognizant.b3': 'نفذت واجهات مستخدم حديثة ومتجاوبة.',
+  'experience.cognizant.title': 'Associate – Projects (Frontend Developer)',
+  'experience.cognizant.b1': 'طورت ميزات جديدة للوحة التحليلات الداخلية الخاصة بـ BMW Group باستخدام React.js وTypeScript وAG Grid وAnt Design.',
+  'experience.cognizant.b2': 'أنشأت عروض AG Grid كثيفة البيانات لمجموعات بيانات مؤسسية كبيرة ودمجت واجهات GraphQL وREST مع MongoDB، مع معالجة الحالات غير المتزامنة والتحميل والأخطاء.',
+  'experience.cognizant.b3': 'ضمنت التوافق بين المتصفحات والأجهزة وشاركت في دورات Agile ومراجعات الشيفرة مع الزملاء.',
   'experience.trueblue.title': 'مطور ويب للتنفيذ',
   'experience.trueblue.b1': 'نفذت تحديثات واجهة متجاوبة لتجارب الويب.',
   'experience.trueblue.b2': 'دمجت المكونات وضمنت سلوكًا متسقًا للواجهة.',
@@ -1065,8 +1065,8 @@ const ar: Translations = {
     'عملت عبر React وTypeScript وCSS الحديث.',
   'experience.swaragh.title': 'مطور واجهات مستخدم',
   'experience.swaragh.b1':
-    'أنشأت واجهات متجاوبة باستخدام HTML وCSS وJavaScript.',
-  'experience.swaragh.b2': 'أنشأت تفاعلات باستخدام jQuery عند الحاجة.',
+    'أنشأت مواقع وتطبيقات ويب متجاوبة ومتوافقة مع المتصفحات باستخدام HTML5 وCSS3 وJavaScript وjQuery وBootstrap وSass.',
+  'experience.swaragh.b2': 'ساهمت في مراحل التصميم والتطوير والاختبار.',
   'action.contact': 'تواصل',
   'action.start': 'تواصل مع سوبراهات',
   'action.top': 'العودة للأعلى',
