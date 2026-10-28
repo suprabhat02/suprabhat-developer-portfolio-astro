@@ -114,6 +114,13 @@ test('localized structured data uses page language and alternates', async ({
   const findSchema = (graph: Array<Record<string, unknown>>, type: string) =>
     graph.find((entry) => entry['@type'] === type);
 
+  const englishHome = await readGraph('/');
+  expect(findSchema(englishHome, 'WebSite')).toMatchObject({
+    name: 'Suprabhat Kumar',
+    alternateName: 'suprabhat-dev.com',
+    url: 'https://suprabhat-dev.com/',
+  });
+
   const spanishServices = await readGraph('/es/services/');
   expect(findSchema(spanishServices, 'WebPage')).toMatchObject({
     inLanguage: 'es',
