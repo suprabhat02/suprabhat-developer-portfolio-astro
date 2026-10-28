@@ -168,7 +168,9 @@ test('production SEO signals and internal links are crawlable', async ({
 }) => {
   await page.goto('/');
 
-  await expect(page).toHaveTitle('Suprabhat Kumar | Senior React Engineer in India');
+  await expect(page).toHaveTitle(
+    'Suprabhat Kumar | Senior React Engineer in India',
+  );
 
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     'href',
