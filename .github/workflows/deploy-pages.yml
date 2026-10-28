@@ -20,6 +20,8 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    outputs:
+      indexnow_changed: ${{ steps.search-facing-diff.outputs.changed }}
     permissions:
       contents: read
     steps:
@@ -28,6 +30,22 @@ jobs:
         with:
           # Full history: sitemap lastmod for static pages comes from git log.
           fetch-depth: 0
+
+      - name: Detect changes that affect indexed pages
+        id: search-facing-diff
+        if: github.event_name == 'push'
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          CURRENT_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          if [[ "$BEFORE_SHA" =~ ^0+$ ]]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          elif git diff --name-only "$BEFORE_SHA" "$CURRENT_SHA" | grep -Eq '^(src/content/|src/data/|src/pages/|src/components/|src/layouts/|src/i18n/|src/config/site\.ts$|astro\.config\.mjs$|public/robots\.txt$|public/indexnow-key\.txt$)'; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Keep agent instruction files identical
         run: cmp CLAUDE.md AGENTS.md && cmp CLAUDE.md .github/copilot-instructions.md
@@ -70,6 +88,7 @@ jobs:
     needs: verify
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     permissions:
+      contents: read
       pages: write
       id-token: write
     environment:
@@ -77,6 +96,24 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
+      - name: Check out source for IndexNow notification
+        if: needs.verify.outputs.indexnow_changed == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Set up Node.js for IndexNow notification
+        if: needs.verify.outputs.indexnow_changed == 'true'
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+      - name: Notify participating search engines through IndexNow
+        if: needs.verify.outputs.indexnow_changed == 'true'
+        continue-on-error: true
+        run: node scripts/submit-indexnow.mjs
