@@ -20,7 +20,7 @@ async function fetchText(url) {
     headers: { 'user-agent': 'suprabhat-dev-indexnow/1.0' },
   });
   if (!response.ok) {
-    throw new Error('GET ' + url + ' failed with HTTP ' + response.status);
+    throw new Error(`GET ${url} failed with HTTP ${response.status}`);
   }
   return response.text();
 }
@@ -78,10 +78,10 @@ const response = await fetch(endpoint, {
 if (!response.ok) {
   const detail = (await response.text()).slice(0, 500);
   throw new Error(
-    'IndexNow rejected the submission (HTTP ' + response.status + '): ' + detail,
+    `IndexNow rejected the submission (HTTP ${response.status}): ${detail}`,
   );
 }
 
 console.log(
-  'IndexNow accepted a submission containing ' + urlList.length + ' canonical sitemap URLs.',
+  `IndexNow accepted a submission containing ${urlList.length} canonical sitemap URLs.`,
 );
