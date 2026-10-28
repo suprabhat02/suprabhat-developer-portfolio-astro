@@ -62,11 +62,6 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Diagnose notifier formatting (temporary)
-        run: |
-          npx prettier --write scripts/submit-indexnow.mjs
-          git diff --unified=1 -- scripts/submit-indexnow.mjs
-
       - name: Check formatting
         run: npm run format:check
 
