@@ -75,7 +75,7 @@ const englishMeta: Record<SectionPage, { title: string; description: string }> =
     privacy: {
       title: 'Contact Form Privacy | Suprabhat Kumar',
       description:
-        'How the suprabhat-dev.com contact form handles your data: no analytics, drafts saved only in your browser, and submissions emailed through Web3Forms.',
+        'How this site uses Cloudflare Web Analytics and handles browser-local form drafts and Web3Forms submissions.',
     },
     blog: {
       title: 'React and Frontend Engineering Articles | Suprabhat Kumar',
@@ -137,7 +137,7 @@ const localizedDescriptions: Record<
     accessibility:
       'Declaración de accesibilidad de suprabhat-dev.com: objetivo WCAG 2.2 AA, qué está implementado, cómo se prueba, limitaciones y cómo avisar de una barrera.',
     privacy:
-      'Cómo se gestiona la información enviada mediante el formulario de contacto de Suprabhat Kumar.',
+      'Cómo este sitio utiliza Cloudflare Web Analytics y gestiona borradores locales del formulario y envíos mediante Web3Forms.',
     blog: 'Artículos de ingeniería frontend: rendimiento, accesibilidad, arquitectura y entrega profesional de interfaces.',
   },
   ar: {
@@ -160,7 +160,7 @@ const localizedDescriptions: Record<
     accessibility:
       'بيان إمكانية الوصول لموقع suprabhat-dev.com: الهدف WCAG 2.2 AA، وما هو مطبَّق، وكيف يُختبَر، والقيود المعروفة، وكيفية الإبلاغ عن أي عائق.',
     privacy:
-      'كيفية التعامل مع المعلومات المرسلة من خلال نموذج التواصل الخاص بسوبرابهات كومار.',
+      'كيفية استخدام هذا الموقع لـ Cloudflare Web Analytics والتعامل مع مسودات النموذج المحفوظة محليًا والرسائل المرسلة عبر Web3Forms.',
     blog: 'أدلة عملية في React وهندسة الواجهات الأمامية حول المعمارية وإمكانية الوصول والأداء ومراجعة الشيفرة وأنظمة التصميم والواجهات القابلة للصيانة.',
   },
 };

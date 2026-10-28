@@ -5,7 +5,7 @@ a zero-dependency motion layer ported from Aceternity UI (see `docs/MOTION.md`).
 
 Production URL: `https://suprabhat-dev.com`
 
-Requires Node.js 22.12 or newer.
+Requires Node.js 22.23.4 or newer; the exact CI version is pinned in .nvmrc.
 
 ## Setup
 
@@ -67,7 +67,7 @@ release workflow and dashboard locations.
 
 - Build command: `npm run build`
 - Output directory: `dist`
-- Node: 22
+- Node: 22.23.4 (pinned in .nvmrc)
 - Canonical host: `https://suprabhat-dev.com`
 - Sitemap: `https://suprabhat-dev.com/sitemap-index.xml`
 - RSS: `https://suprabhat-dev.com/rss.xml`, `https://suprabhat-dev.com/es/rss.xml`, `https://suprabhat-dev.com/ar/rss.xml`

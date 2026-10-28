@@ -10,7 +10,7 @@ export const getHomepageTitle = (locale: Locale) =>
     ? 'Suprabhat Kumar — Ingeniero Frontend Sénior'
     : locale === 'ar'
       ? 'سوبرابهات كومار — مهندس واجهات أمامية أول'
-      : 'Suprabhat Kumar | Senior React Frontend Engineer India';
+      : 'Suprabhat Kumar | Senior React Engineer in India';
 
 export const getHomepageDescription = (locale: Locale) =>
   locale === 'es'

@@ -71,15 +71,15 @@ export const experience: readonly Position[] = [
   {
     id: 'cognizant',
     company: 'Cognizant',
-    title: 'Associate Projects',
+    title: 'Associate – Projects (Frontend Developer)',
     start: 'Feb 2024',
     end: 'Apr 2025',
     location: 'Noida, Uttar Pradesh, India',
     mode: 'On-site',
     bullets: [
-      'Built scalable SaaS portal features with React and TypeScript.',
-      'Coordinated delivery with an Australian research and development team across time zones.',
-      'Delivered responsive product interfaces within defined service-level requirements.',
+      'Developed new features for the BMW Group internal analytics dashboard using React.js, TypeScript, AG Grid, and Ant Design.',
+      'Built data-dense AG Grid views for large enterprise datasets and integrated GraphQL and REST APIs over MongoDB, handling asynchronous, loading, and error states.',
+      'Ensured cross-browser and cross-device compatibility; participated in Agile sprints and peer code reviews.',
     ],
   },
   {
@@ -133,8 +133,8 @@ export const experience: readonly Position[] = [
     end: 'Jan 2022',
     location: 'Bengaluru, Karnataka, India',
     bullets: [
-      'Built responsive product interfaces and reusable UI components with HTML, CSS, JavaScript, and React.',
-      'Integrated backend APIs and maintained stable behavior across supported browsers and platforms.',
+      'Built responsive, cross-browser websites and web applications using HTML5, CSS3, JavaScript, jQuery, Bootstrap, and Sass.',
+      'Contributed across design, development, and testing.',
     ],
   },
 ] as const;
@@ -155,15 +155,15 @@ const localizedExperience: Partial<
       ],
     },
     cognizant: {
-      title: 'Asociado de proyectos',
+      title: 'Associate – Projects (Frontend Developer)',
       startLabel: 'febrero de 2024',
       endLabel: 'abril de 2025',
       locationLabel: 'Noida, Uttar Pradesh, India',
       modeLabel: 'Presencial',
       bullets: [
-        'Desarrollé funciones de UI con TypeScript.',
-        'Trabajé con flujos de datos respaldados por GraphQL.',
-        'Implementé interfaces modernas y adaptables.',
+        'Desarrollé nuevas funcionalidades para el panel interno de analítica de BMW Group con React.js, TypeScript, AG Grid y Ant Design.',
+        'Construí vistas AG Grid con alta densidad de datos para grandes conjuntos empresariales e integré API GraphQL y REST sobre MongoDB, gestionando estados asíncronos, de carga y de error.',
+        'Aseguré compatibilidad entre navegadores y dispositivos; participé en sprints Agile y revisiones de código entre pares.',
       ],
     },
     trueblue: {
@@ -209,8 +209,8 @@ const localizedExperience: Partial<
       endLabel: 'enero de 2022',
       locationLabel: 'Bengaluru, Karnataka, India',
       bullets: [
-        'Creé interfaces adaptables con HTML, CSS y JavaScript.',
-        'Construí interacciones con jQuery cuando era necesario.',
+        'Desarrollé sitios web y aplicaciones web adaptables y compatibles con distintos navegadores con HTML5, CSS3, JavaScript, jQuery, Bootstrap y Sass.',
+        'Participé en las fases de diseño, desarrollo y pruebas.',
       ],
     },
   },
@@ -227,15 +227,15 @@ const localizedExperience: Partial<
       ],
     },
     cognizant: {
-      title: 'مساعد مشاريع',
+      title: 'Associate – Projects (Frontend Developer)',
       startLabel: 'فبراير 2024',
       endLabel: 'أبريل 2025',
       locationLabel: 'نويدا، أوتار براديش، الهند',
       modeLabel: 'حضوري',
       bullets: [
-        'طورت ميزات واجهة مستخدم باستخدام TypeScript.',
-        'عملت مع تدفقات بيانات مدعومة بـ GraphQL.',
-        'نفذت واجهات مستخدم حديثة ومتجاوبة.',
+        'طورت ميزات جديدة للوحة التحليلات الداخلية الخاصة بـ BMW Group باستخدام React.js وTypeScript وAG Grid وAnt Design.',
+        'أنشأت عروض AG Grid كثيفة البيانات لمجموعات بيانات مؤسسية كبيرة ودمجت واجهات GraphQL وREST مع MongoDB، مع معالجة الحالات غير المتزامنة والتحميل والأخطاء.',
+        'ضمنت التوافق بين المتصفحات والأجهزة وشاركت في دورات Agile ومراجعات الشيفرة مع الزملاء.',
       ],
     },
     trueblue: {
@@ -281,8 +281,8 @@ const localizedExperience: Partial<
       endLabel: 'يناير 2022',
       locationLabel: 'بنغالورو، كارناتاكا، الهند',
       bullets: [
-        'أنشأت واجهات متجاوبة باستخدام HTML وCSS وJavaScript.',
-        'أنشأت تفاعلات باستخدام jQuery عند الحاجة.',
+        'أنشأت مواقع وتطبيقات ويب متجاوبة ومتوافقة مع المتصفحات باستخدام HTML5 وCSS3 وJavaScript وjQuery وBootstrap وSass.',
+        'ساهمت في مراحل التصميم والتطوير والاختبار.',
       ],
     },
   },

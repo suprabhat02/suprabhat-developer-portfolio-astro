@@ -21,7 +21,10 @@ export default defineConfig(
     languageOptions: {
       globals: {
         Buffer: 'readonly',
+        URL: 'readonly',
         console: 'readonly',
+        fetch: 'readonly',
+        process: 'readonly',
       },
     },
   },
