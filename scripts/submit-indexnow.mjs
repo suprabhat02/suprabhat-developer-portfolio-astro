@@ -104,9 +104,7 @@ if (!blogOnly) {
       /<sitemap\b[^>]*>\s*<loc>([\s\S]*?)<\/loc>\s*<\/sitemap>/g,
     ),
   ].map(([, loc]) => decodeXml(loc.trim()));
-  const sitemapUrls = childSitemaps.length
-    ? childSitemaps
-    : [sitemapIndexUrl];
+  const sitemapUrls = childSitemaps.length ? childSitemaps : [sitemapIndexUrl];
 
   for (const sitemapUrl of sitemapUrls) {
     const xml = await fetchText(sitemapUrl);
