@@ -101,6 +101,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.sha }}
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Set up Node.js for IndexNow notification
@@ -116,4 +117,7 @@ jobs:
       - name: Notify participating search engines through IndexNow
         if: needs.verify.outputs.indexnow_changed == 'true'
         continue-on-error: true
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          CURRENT_SHA: ${{ github.sha }}
         run: node scripts/submit-indexnow.mjs
