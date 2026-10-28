@@ -56,7 +56,7 @@ tests/            # Playwright end-to-end + accessibility tests
 
 ## Running locally
 
-Requires **Node.js 22.12+**.
+Requires **Node.js 22.23.4+**. The repository pins Node.js `22.23.4` in `.nvmrc` so local builds and CI use the same supported patch.
 
 ```bash
 npm install
