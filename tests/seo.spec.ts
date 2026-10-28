@@ -598,12 +598,8 @@ test('indexable HTML pages have unique titles and canonical sitemap entries', as
     const description = html
       .match(/<meta name="description" content="([^"]*)"/i)?.[1]
       ?.trim();
-    const robots = html.match(
-      /<meta name="robots" content="([^"]+)"/i,
-    )?.[1];
-    const canonical = html.match(
-      /<link rel="canonical" href="([^"]+)"/i,
-    )?.[1];
+    const robots = html.match(/<meta name="robots" content="([^"]+)"/i)?.[1];
+    const canonical = html.match(/<link rel="canonical" href="([^"]+)"/i)?.[1];
 
     expect(title).toBeTruthy();
     expect(description).toBeTruthy();
