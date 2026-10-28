@@ -578,6 +578,8 @@ test('indexable HTML pages have unique titles and canonical sitemap entries', as
     file.endsWith('.html'),
   );
   const sitemap = await readFile(new URL('sitemap-0.xml', dist), 'utf-8');
+  const indexNowKey = (await readFile(new URL('indexnow-key.txt', dist), 'utf-8')).trim();
+  expect(indexNowKey).toMatch(/^[A-Za-z0-9-]{8,128}$/);
   const sitemapUrls = new Set(
     [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => url),
   );
