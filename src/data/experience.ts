@@ -155,7 +155,7 @@ const localizedExperience: Partial<
       ],
     },
     cognizant: {
-      title: 'Associate – Projects (Frontend Developer)',
+      title: 'Asociado – Proyectos (Desarrollador Frontend)',
       startLabel: 'febrero de 2024',
       endLabel: 'abril de 2025',
       locationLabel: 'Noida, Uttar Pradesh, India',
@@ -227,7 +227,7 @@ const localizedExperience: Partial<
       ],
     },
     cognizant: {
-      title: 'Associate – Projects (Frontend Developer)',
+      title: 'مساعد – المشاريع (مطوّر واجهات أمامية)',
       startLabel: 'فبراير 2024',
       endLabel: 'أبريل 2025',
       locationLabel: 'نويدا، أوتار براديش، الهند',

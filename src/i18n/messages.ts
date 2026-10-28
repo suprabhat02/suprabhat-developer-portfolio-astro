@@ -582,7 +582,7 @@ const es: Translations = {
     'Entrego estados de UI predecibles con Redux Toolkit.',
   'experience.topsoe.b3':
     'Colaboro con equipos multidisciplinares en un modelo híbrido.',
-  'experience.cognizant.title': 'Associate – Projects (Frontend Developer)',
+  'experience.cognizant.title': 'Asociado – Proyectos (Desarrollador Frontend)',
   'experience.cognizant.b1':
     'Desarrollé nuevas funcionalidades para el panel interno de analítica de BMW Group con React.js, TypeScript, AG Grid y Ant Design.',
   'experience.cognizant.b2':
@@ -1048,7 +1048,7 @@ const ar: Translations = {
     'أبني واجهات حديثة وأنيقة باستخدام React وTypeScript.',
   'experience.topsoe.b2': 'أقدم حالة واجهة متوقعة باستخدام Redux Toolkit.',
   'experience.topsoe.b3': 'أتعاون مع فرق متعددة التخصصات ضمن بيئة عمل هجينة.',
-  'experience.cognizant.title': 'Associate – Projects (Frontend Developer)',
+  'experience.cognizant.title': 'مساعد – المشاريع (مطوّر واجهات أمامية)',
   'experience.cognizant.b1':
     'طورت ميزات جديدة للوحة التحليلات الداخلية الخاصة بـ BMW Group باستخدام React.js وTypeScript وAG Grid وAnt Design.',
   'experience.cognizant.b2':
