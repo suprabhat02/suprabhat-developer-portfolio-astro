@@ -56,7 +56,7 @@ wins** — say so instead of guessing.
   JS animation library; extend the existing compositor-only CSS approach.
 - Contact form posts to Web3Forms using `PUBLIC_WEB3FORMS_KEY`, which is an
   environment/hosting secret — **never** hardcode it or commit it.
-- Node version required: **22.12+** (CI uses Node 22).
+- Node version required: **22.23.4+** (CI pins `.nvmrc` so builds use a supported, reproducible patch).
 
 ## 2. Where things actually live (verify in the file before trusting this)
 
