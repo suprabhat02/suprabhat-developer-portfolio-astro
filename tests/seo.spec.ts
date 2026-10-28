@@ -168,6 +168,8 @@ test('production SEO signals and internal links are crawlable', async ({
 }) => {
   await page.goto('/');
 
+  await expect(page).toHaveTitle('Suprabhat Kumar | Senior React Engineer in India');
+
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     'href',
     'https://suprabhat-dev.com/',
@@ -304,6 +306,22 @@ test('production SEO signals and internal links are crawlable', async ({
   for (const path of internalPaths) {
     const response = await page.request.get(path);
     expect(response.status(), `Expected ${path} to resolve`).toBeLessThan(400);
+  }
+});
+
+test('privacy metadata describes analytics consistently in every locale', async ({
+  page,
+}) => {
+  for (const path of ['/privacy/', '/es/privacy/', '/ar/privacy/']) {
+    await page.goto(path);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+      'content',
+      'noindex,follow',
+    );
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+      'content',
+      /Cloudflare Web Analytics/,
+    );
   }
 });
 
