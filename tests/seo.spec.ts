@@ -343,18 +343,21 @@ test('resume downloads and experience history match the verified PDF', async ({
     {
       path: '/experience/',
       swaraghTitle: 'UI Developer',
+      cognizantTitle: 'Associate – Projects (Frontend Developer)',
     },
     {
       path: '/es/experience/',
       swaraghTitle: 'Desarrollador de UI',
+      cognizantTitle: 'Asociado – Proyectos (Desarrollador Frontend)',
     },
     {
       path: '/ar/experience/',
       swaraghTitle: 'مطور واجهات مستخدم',
+      cognizantTitle: 'مساعد – المشاريع (مطوّر واجهات أمامية)',
     },
   ];
 
-  for (const { path, swaraghTitle } of workHistory) {
+  for (const { path, swaraghTitle, cognizantTitle } of workHistory) {
     await page.goto(path);
     const cognizant = page.locator('.xp-item').filter({
       hasText: 'Cognizant',
@@ -363,9 +366,7 @@ test('resume downloads and experience history match the verified PDF', async ({
       hasText: 'Swaragh Technologies',
     });
 
-    await expect(cognizant).toContainText(
-      'Associate – Projects (Frontend Developer)',
-    );
+    await expect(cognizant).toContainText(cognizantTitle);
     await expect(cognizant).toContainText('BMW Group');
     await expect(cognizant).toContainText('AG Grid');
     await expect(swaragh).toContainText(swaraghTitle);
