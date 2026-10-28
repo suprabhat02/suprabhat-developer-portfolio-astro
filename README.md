@@ -23,7 +23,7 @@
 
 - **Lighthouse 100 / 100 / 100 / 100** on the production homepage (desktop) — LCP 0.6 s, TBT 0 ms, CLS 0, ~190 KiB transferred. Evidence and caveats in [`docs/LIGHTHOUSE-EVIDENCE.md`](docs/LIGHTHOUSE-EVIDENCE.md).
 - **Three locales — English, Spanish and Arabic** — with a full right-to-left layout for Arabic, localised blog collections and locale-aware sitemaps.
-- **SEO built in**: JSON-LD structured data, per-post `lastmod` in the sitemap, generated Open Graph images, and an RSS feed (posts are cross-posted to dev.to and Hashnode with canonical URLs pointing back here).
+- **SEO built in**: JSON-LD structured data, per-post `lastmod` in the sitemap, generated Open Graph images, RSS feeds, and IndexNow notifications after content-affecting production deployments (posts cross-posted to dev.to and Hashnode use canonical URLs pointing back here).
 - **Dark-first design system** with theme tokens and a zero-dependency motion layer — see [`docs/THEMING.md`](docs/THEMING.md) and [`docs/MOTION.md`](docs/MOTION.md).
 - **Accessibility covered by end-to-end tests** — Playwright with axe-core scans.
 - Dogfoods my own open-source library, [**react-smart-copy**](https://github.com/suprabhat02/react-smart-copy), for copy interactions.
