@@ -39,7 +39,7 @@ IndexNow is a discovery/freshness notification, not a ranking guarantee and not 
 
 ### 3. SEO regression guard
 
-The branch adds an end-to-end contract test intended to detect missing titles/descriptions, duplicate indexable titles or canonicals, indexable canonical URLs missing from the sitemap, noindex pages accidentally present in it, and malformed 404 indexing signals. The test also checks that the IndexNow key asset is present in the build. These are new checks; they should be considered pending until the CI workflow runs successfully.
+The branch adds an end-to-end contract test intended to detect missing titles/descriptions, duplicate indexable titles or canonicals, indexable canonical URLs missing from the sitemap, noindex pages accidentally present in it, and malformed 404 indexing signals. The test also checks that the IndexNow key asset is present in the build. A follow-up source review also corrected the homepage title to use natural phrasing ("Senior React Engineer in India") and fixed stale privacy-page meta descriptions that claimed there was no analytics despite the current Cloudflare Web Analytics disclosure. A regression test now guards the title and privacy metadata across all three locales. These checks should be considered pending until the clean CI workflow run for the latest branch head succeeds.
 
 ## Research conclusions from current official guidance
 
