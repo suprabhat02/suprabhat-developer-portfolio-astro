@@ -334,6 +334,78 @@ test('privacy metadata describes analytics consistently in every locale', async 
   }
 });
 
+test('resume downloads and experience history match the verified PDF', async ({
+  page,
+}) => {
+  const resumeHref =
+    '/assets/suprabhat-kumar-senior-frontend-engineer-resume.pdf';
+  const workHistory = [
+    {
+      path: '/experience/',
+      swaraghTitle: 'UI Developer',
+    },
+    {
+      path: '/es/experience/',
+      swaraghTitle: 'Desarrollador de UI',
+    },
+    {
+      path: '/ar/experience/',
+      swaraghTitle: 'مطور واجهات مستخدم',
+    },
+  ];
+
+  for (const { path, swaraghTitle } of workHistory) {
+    await page.goto(path);
+    const cognizant = page.locator('.xp-item').filter({
+      hasText: 'Cognizant',
+    });
+    const swaragh = page.locator('.xp-item').filter({
+      hasText: 'Swaragh Technologies',
+    });
+
+    await expect(cognizant).toContainText(
+      'Associate – Projects (Frontend Developer)',
+    );
+    await expect(cognizant).toContainText('BMW Group');
+    await expect(cognizant).toContainText('AG Grid');
+    await expect(swaragh).toContainText(swaraghTitle);
+    for (const skill of [
+      'HTML5',
+      'CSS3',
+      'JavaScript',
+      'jQuery',
+      'Bootstrap',
+      'Sass',
+    ]) {
+      await expect(swaragh).toContainText(skill);
+    }
+  }
+
+  for (const path of [
+    '/',
+    '/es/',
+    '/ar/',
+    '/about/',
+    '/es/about/',
+    '/ar/about/',
+    '/experience/',
+    '/es/experience/',
+    '/ar/experience/',
+  ]) {
+    await page.goto(path);
+    await expect(
+      page.locator('a[download][href="' + resumeHref + '"]').first(),
+    ).toHaveAttribute('href', resumeHref);
+  }
+
+  const response = await page.request.get(resumeHref);
+  expect(response.status()).toBe(200);
+  expect(response.headers()['content-type']).toContain('application/pdf');
+  const pdf = await response.body();
+  expect(pdf.subarray(0, 5).toString('ascii')).toBe('%PDF-');
+  expect(pdf.length).toBeGreaterThan(50000);
+});
+
 test('services page is fully localized, including structured data', async ({
   page,
 }) => {
