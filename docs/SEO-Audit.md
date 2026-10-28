@@ -33,7 +33,7 @@ The branch pins Node.js 22.23.4 in .nvmrc, updates GitHub Actions to read that f
 
 ### 2. IndexNow discovery notification for Bing and participating engines
 
-The branch adds a publicly hosted IndexNow verification key and a Node script that reads the deployed sitemap, validates its canonical HTTPS URLs, and submits the URL set to IndexNow. The deployment workflow only attempts this after a successful production deployment when the push changes content, route, metadata, or shared rendering files. Submission errors are non-blocking so an external indexing service cannot make a valid site deployment fail.
+The branch adds a publicly hosted IndexNow verification key and a Node script that verifies the deployed key before submitting URL changes. Blog-only commits submit the changed article URLs and affected locale blog indexes; deleted article URLs remain included so engines can observe their 404/redirect. Broader source changes use the current sitemap URL set because shared rendering, metadata, and data files can affect many generated pages. The deployment workflow only attempts submission after a successful production deployment when the push changes content, routes, metadata, or shared rendering files. Submission errors are non-blocking so an external indexing service cannot make a valid site deployment fail.
 
 IndexNow is a discovery/freshness notification, not a ranking guarantee and not a replacement for Google Search Console. The public key file is a protocol ownership check, not a private credential. The workflow and key must be merged and deployed before this integration is live; the branch's CI checks remain to be confirmed.
 
