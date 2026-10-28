@@ -36,7 +36,9 @@ function getChangedPaths() {
     !/^[0-9a-f]{40}$/i.test(before) ||
     !/^[0-9a-f]{40}$/i.test(current)
   ) {
-    throw new Error('IndexNow requires valid BEFORE_SHA and CURRENT_SHA commit SHAs.');
+    throw new Error(
+      'IndexNow requires valid BEFORE_SHA and CURRENT_SHA commit SHAs.',
+    );
   }
 
   const diff = execFileSync(
@@ -132,7 +134,9 @@ if (urlList.length === 0) {
   throw new Error('No changed URLs were resolved for the IndexNow submission.');
 }
 if (urlList.length > 10000) {
-  throw new Error('The URL submission exceeds IndexNow’s 10,000-URL request limit.');
+  throw new Error(
+    'The URL submission exceeds IndexNow’s 10,000-URL request limit.',
+  );
 }
 
 const response = await fetch(endpoint, {
