@@ -62,6 +62,11 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Diagnose formatter output (temporary)
+        run: |
+          npx prettier --write docs/SEO-Audit.md tests/seo.spec.ts
+          git diff --unified=1 -- docs/SEO-Audit.md tests/seo.spec.ts
+
       - name: Check formatting
         run: npm run format:check
 
