@@ -52,6 +52,7 @@ Google chooses result titles and snippets automatically from several sources. Wr
 Google's documentation for AI Overviews and AI Mode says the usual SEO fundamentals apply; there is no special AI-only schema or extra file required to appear. Avoid publishing large volumes of generic pages, keyword stuffing, doorway pages, or inauthentic mentions.
 
 Official references:
+
 - Search Essentials: https://developers.google.com/search/docs/essentials
 - SEO Starter Guide: https://developers.google.com/search/docs/fundamentals/seo-starter-guide
 - Title links: https://developers.google.com/search/docs/appearance/title-link
@@ -67,6 +68,7 @@ Official references:
 Bing's current Webmaster Guidelines emphasize crawlable internal links, accurate sitemaps with valid canonical URLs and meaningful freshness dates, clear original content, and IndexNow notifications for updated URLs. The new workflow addresses discovery notification for content-affecting pushes; Bing Webmaster Tools is still needed for verification, crawl reports, and measurement.
 
 Official references:
+
 - Bing Webmaster Guidelines: https://www.bing.com/webmasters/help/webmaster-guidelines-30fba23a
 - Bing URL submission and IndexNow: https://www.bing.com/webmasters/help/URL-Submission-62f2860b
 
