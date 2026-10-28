@@ -21,7 +21,7 @@ async function fetchText(url) {
     headers: { 'user-agent': 'suprabhat-dev-indexnow/1.0' },
   });
   if (!response.ok) {
-    throw new Error(\`GET \${url} failed with HTTP \${response.status}\`);
+    throw new Error(`GET ${url} failed with HTTP ${response.status}`);
   }
   return response.text();
 }
@@ -65,12 +65,12 @@ const blogPathFor = (sourcePath) => {
   const [, collection, sourceSlug] = match;
   const locale =
     collection === 'blog-es' ? 'es' : collection === 'blog-ar' ? 'ar' : 'en';
-  const prefix = locale === 'en' ? '' : \`/\${locale}\`;
+  const prefix = locale === 'en' ? '' : `/${locale}`;
   const slug = sourceSlug.split('/').map(encodeURIComponent).join('/');
   return {
     locale,
-    articleUrl: new URL(\`\${prefix}/blog/\${slug}/\`, site).href,
-    indexUrl: new URL(\`\${prefix}/blog/\`, site).href,
+    articleUrl: new URL(`${prefix}/blog/${slug}/`, site).href,
+    indexUrl: new URL(`${prefix}/blog/`, site).href,
   };
 };
 
@@ -149,10 +149,10 @@ const response = await fetch(endpoint, {
 if (!response.ok) {
   const detail = (await response.text()).slice(0, 500);
   throw new Error(
-    \`IndexNow rejected the submission (HTTP \${response.status}): \${detail}\`,
+    `IndexNow rejected the submission (HTTP ${response.status}): ${detail}`,
   );
 }
 
 console.log(
-  \`IndexNow accepted \${urlList.length} changed URL(s) from \${changes.length} source change(s).\`,
+  `IndexNow accepted ${urlList.length} changed URL(s) from ${changes.length} source change(s).`,
 );
