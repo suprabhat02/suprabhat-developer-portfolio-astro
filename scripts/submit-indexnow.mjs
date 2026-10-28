@@ -1,7 +1,9 @@
 import { readFile } from 'node:fs/promises';
 
 const site = new URL('https://suprabhat-dev.com/');
-const key = (await readFile(new URL('../public/indexnow-key.txt', import.meta.url), 'utf8')).trim();
+const key = (
+  await readFile(new URL('../public/indexnow-key.txt', import.meta.url), 'utf8')
+).trim();
 const keyLocation = new URL('/indexnow-key.txt', site).href;
 const endpoint = 'https://api.indexnow.org/indexnow';
 
@@ -25,7 +27,9 @@ async function fetchText(url) {
 
 const verifiedKey = (await fetchText(keyLocation)).trim();
 if (verifiedKey !== key) {
-  throw new Error('The deployed IndexNow key file does not match the repository key.');
+  throw new Error(
+    'The deployed IndexNow key file does not match the repository key.',
+  );
 }
 
 const sitemapIndexUrl = new URL('/sitemap-index.xml', site).href;
@@ -55,7 +59,9 @@ if (urlList.length === 0) {
   throw new Error('No canonical URLs were found in the deployed sitemap.');
 }
 if (urlList.length > 10000) {
-  throw new Error('The sitemap contains more URLs than one IndexNow request supports.');
+  throw new Error(
+    'The sitemap contains more URLs than one IndexNow request supports.',
+  );
 }
 
 const response = await fetch(endpoint, {
@@ -71,7 +77,11 @@ const response = await fetch(endpoint, {
 
 if (!response.ok) {
   const detail = (await response.text()).slice(0, 500);
-  throw new Error('IndexNow rejected the submission (HTTP ' + response.status + '): ' + detail);
+  throw new Error(
+    'IndexNow rejected the submission (HTTP ' + response.status + '): ' + detail,
+  );
 }
 
-console.log('IndexNow accepted a submission containing ' + urlList.length + ' canonical sitemap URLs.');
+console.log(
+  'IndexNow accepted a submission containing ' + urlList.length + ' canonical sitemap URLs.',
+);
