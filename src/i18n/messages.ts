@@ -583,10 +583,12 @@ const es: Translations = {
   'experience.topsoe.b3':
     'Colaboro con equipos multidisciplinares en un modelo híbrido.',
   'experience.cognizant.title': 'Associate – Projects (Frontend Developer)',
-  'experience.cognizant.b1': 'Desarrollé nuevas funcionalidades para el panel interno de analítica de BMW Group con React.js, TypeScript, AG Grid y Ant Design.',
+  'experience.cognizant.b1':
+    'Desarrollé nuevas funcionalidades para el panel interno de analítica de BMW Group con React.js, TypeScript, AG Grid y Ant Design.',
   'experience.cognizant.b2':
     'Construí vistas AG Grid con alta densidad de datos para grandes conjuntos empresariales e integré API GraphQL y REST sobre MongoDB, gestionando estados asíncronos, de carga y de error.',
-  'experience.cognizant.b3': 'Aseguré compatibilidad entre navegadores y dispositivos; participé en sprints Agile y revisiones de código entre pares.',
+  'experience.cognizant.b3':
+    'Aseguré compatibilidad entre navegadores y dispositivos; participé en sprints Agile y revisiones de código entre pares.',
   'experience.trueblue.title': 'Desarrollador web de implementación',
   'experience.trueblue.b1':
     'Implementé actualizaciones de UI adaptables para experiencias web.',
@@ -1047,9 +1049,12 @@ const ar: Translations = {
   'experience.topsoe.b2': 'أقدم حالة واجهة متوقعة باستخدام Redux Toolkit.',
   'experience.topsoe.b3': 'أتعاون مع فرق متعددة التخصصات ضمن بيئة عمل هجينة.',
   'experience.cognizant.title': 'Associate – Projects (Frontend Developer)',
-  'experience.cognizant.b1': 'طورت ميزات جديدة للوحة التحليلات الداخلية الخاصة بـ BMW Group باستخدام React.js وTypeScript وAG Grid وAnt Design.',
-  'experience.cognizant.b2': 'أنشأت عروض AG Grid كثيفة البيانات لمجموعات بيانات مؤسسية كبيرة ودمجت واجهات GraphQL وREST مع MongoDB، مع معالجة الحالات غير المتزامنة والتحميل والأخطاء.',
-  'experience.cognizant.b3': 'ضمنت التوافق بين المتصفحات والأجهزة وشاركت في دورات Agile ومراجعات الشيفرة مع الزملاء.',
+  'experience.cognizant.b1':
+    'طورت ميزات جديدة للوحة التحليلات الداخلية الخاصة بـ BMW Group باستخدام React.js وTypeScript وAG Grid وAnt Design.',
+  'experience.cognizant.b2':
+    'أنشأت عروض AG Grid كثيفة البيانات لمجموعات بيانات مؤسسية كبيرة ودمجت واجهات GraphQL وREST مع MongoDB، مع معالجة الحالات غير المتزامنة والتحميل والأخطاء.',
+  'experience.cognizant.b3':
+    'ضمنت التوافق بين المتصفحات والأجهزة وشاركت في دورات Agile ومراجعات الشيفرة مع الزملاء.',
   'experience.trueblue.title': 'مطور ويب للتنفيذ',
   'experience.trueblue.b1': 'نفذت تحديثات واجهة متجاوبة لتجارب الويب.',
   'experience.trueblue.b2': 'دمجت المكونات وضمنت سلوكًا متسقًا للواجهة.',
