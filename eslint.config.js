@@ -24,6 +24,7 @@ export default defineConfig(
         URL: 'readonly',
         console: 'readonly',
         fetch: 'readonly',
+        process: 'readonly',
       },
     },
   },
