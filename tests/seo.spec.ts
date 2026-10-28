@@ -570,3 +570,64 @@ test('share metadata, page types and sitemap dates follow the SEO contract', asy
     '<loc>https://suprabhat-dev.com/work/performance-modernization/</loc><lastmod>2026-09-04</lastmod>',
   );
 });
+
+test('indexable HTML pages have unique titles and canonical sitemap entries', async () => {
+  const dist = new URL('../dist/', import.meta.url);
+  const htmlFiles = (await readdir(dist, { recursive: true })).filter((file) =>
+    file.endsWith('.html'),
+  );
+  const sitemap = await readFile(new URL('sitemap-0.xml', dist), 'utf-8');
+  const sitemapUrls = new Set(
+    [...sitemap.matchAll(/<loc>([^<]+)<\\/loc>/g)].map(([, url]) => url),
+  );
+  const titles = new Map<string, string>();
+  const canonicals = new Map<string, string>();
+
+  expect(htmlFiles.length).toBeGreaterThan(100);
+  expect(sitemapUrls.size).toBeGreaterThan(70);
+
+  for (const file of htmlFiles) {
+    const path = file.replaceAll('\\\\', '/');
+    const html = await readFile(new URL(path, dist), 'utf-8');
+    const is404 = /(?:^|\\/)404(?:\\.html|\\/index\\.html)$/.test(path);
+    const title = html.match(/<title>([\\s\\S]*?)<\\/title>/i)?.[1]?.trim();
+    const description = html
+      .match(/<meta name="description" content="([^"]*)"/i)?.[1]
+      ?.trim();
+    const robots = html.match(
+      /<meta name="robots" content="([^"]+)"/i,
+    )?.[1];
+    const canonical = html.match(
+      /<link rel="canonical" href="([^"]+)"/i,
+    )?.[1];
+
+    expect(title, `Missing title: ${path}`).toBeTruthy();
+    expect(description, `Missing description: ${path}`).toBeTruthy();
+    expect(robots, `Missing or invalid robots directive: ${path}`).toMatch(
+      /^(?:index|noindex),follow$/,
+    );
+
+    if (is404) {
+      expect(robots, path).toBe('noindex,follow');
+      expect(canonical, path).toBeUndefined();
+      continue;
+    }
+
+    expect(canonical, `Missing canonical: ${path}`).toBeTruthy();
+    expect(canonicals.get(canonical!), `Duplicate canonical: ${path}`).toBe(
+      undefined,
+    );
+    canonicals.set(canonical!, path);
+
+    if (robots === 'index,follow') {
+      expect(sitemapUrls.has(canonical!), `Indexable canonical missing from sitemap: ${path}`).toBe(true);
+      expect(titles.get(title!), `Duplicate indexable title: ${path}`).toBe(
+        undefined,
+      );
+      titles.set(title!, path);
+    } else {
+      expect(sitemapUrls.has(canonical!), `Noindex URL present in sitemap: ${path}`).toBe(false);
+    }
+  }
+});
+
