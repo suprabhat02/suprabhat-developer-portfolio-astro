@@ -82,13 +82,11 @@ Reference: https://developers.google.com/search/docs/appearance/core-web-vitals
 
 Use these as intent clusters to validate in Search Console and Bing search reports, not as claims about search volume or current positions.
 
-| Intent | Representative searches | Best destination |
-|---|---|---|
-| Personal brand | Suprabhat Kumar, Suprabhat Kumar React developer, suprabhat-dev | Homepage and About |
-| Hiring and role | Senior React engineer, React TypeScript frontend engineer, senior frontend engineer India | Homepage, About, Experience |
-| Freelance services | React dashboard development, frontend architecture review, React performance audit, design system development, accessibility audit | Services and Contact |
-| Proof of execution | React SaaS dashboard case study, frontend performance modernization, accessible contact workflow, design system case study | Relevant Work/case-study pages |
-| Informational expertise | Accessibility in React, scalable React UI, frontend code review checklist, Core Web Vitals debugging | Blog articles linked to related case studies and services |
+- **Personal brand:** Suprabhat Kumar, Suprabhat Kumar React developer, and suprabhat-dev. Best destination: Homepage and About.
+- **Hiring and role:** Senior React engineer, React TypeScript frontend engineer, and senior frontend engineer India. Best destination: Homepage, About, and Experience.
+- **Freelance services:** React dashboard development, frontend architecture review, React performance audit, design system development, and accessibility audit. Best destination: Services and Contact.
+- **Proof of execution:** React SaaS dashboard case study, frontend performance modernization, accessible contact workflow, and design system case study. Best destination: relevant Work/case-study pages.
+- **Informational expertise:** Accessibility in React, scalable React UI, frontend code review checklist, and Core Web Vitals debugging. Best destination: blog articles linked to related case studies and services.
 
 Avoid creating a separate page for every variation of a role keyword, city, or country. Each indexable page should satisfy a distinct user intent with information that adds real value.
 
