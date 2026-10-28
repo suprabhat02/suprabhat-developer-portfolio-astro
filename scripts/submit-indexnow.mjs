@@ -30,7 +30,12 @@ function getChangedPaths() {
   const before = process.env.BEFORE_SHA;
   const current = process.env.CURRENT_SHA;
 
-  if (!before || !current || !/^[0-9a-f]{40}$/i.test(before) || !/^[0-9a-f]{40}$/i.test(current)) {
+  if (
+    !before ||
+    !current ||
+    !/^[0-9a-f]{40}$/i.test(before) ||
+    !/^[0-9a-f]{40}$/i.test(current)
+  ) {
     throw new Error('IndexNow requires valid BEFORE_SHA and CURRENT_SHA commit SHAs.');
   }
 
