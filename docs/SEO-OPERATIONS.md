@@ -40,7 +40,7 @@ Use Cloudflare in front of GitHub Pages only if custom cache rules, modern HTTP,
 
 1. Add and verify `suprabhat-dev.com`, either through DNS or by importing the Google Search Console property.
 2. Submit the sitemap index.
-3. Use Bing Webmaster Tools or another trusted integration for IndexNow if publishing frequency makes it useful.
+3. The production workflow now submits the canonical sitemap URL set to IndexNow after successful pushes that affect content, routes, metadata, or shared rendering. The public ownership-check file is https://suprabhat-dev.com/indexnow-key.txt. This notifies Bing and other participating IndexNow engines; it does not submit URLs to Google and does not guarantee indexing or rankings. Check the IndexNow report in Bing Webmaster Tools after the workflow is merged and deployed.
 4. Review crawl errors and keyword reports monthly.
 
 Never invent verification tokens or commit private service credentials. DNS and HTML verification values must come from the account owner.
