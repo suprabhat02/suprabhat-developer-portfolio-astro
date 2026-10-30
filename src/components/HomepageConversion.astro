@@ -9,6 +9,7 @@ import SectionHeader from './fx/SectionHeader.astro';
 import Icon, { type IconName } from './fx/Icon.astro';
 import LiveScene from './fx/LiveScene.astro';
 import OpenSourceSpotlight from './OpenSourceSpotlight.astro';
+import { isOpenSourceProjectId } from '../data/openSource';
 
 interface Props {
   locale: Locale;
@@ -19,11 +20,14 @@ interface Props {
 
 const { locale, work, pageHref, caseStudySlugs } = Astro.props;
 const content = getHomepageConversionContent(locale);
-// The open-source project has its own spotlight card above the grid.
+// Each open-source project has its own spotlight card above the grid.
 const featuredWork = work
   .filter((item) => item.kind !== 'open-source')
   .slice(0, 3);
-const openSourceItem = work.find((item) => item.kind === 'open-source');
+const openSourceIds = work
+  .map((item) => item.id)
+  .filter(isOpenSourceProjectId)
+  .filter((id) => caseStudySlugs.has(id));
 
 /**
  * Decorative mini-visual per problem card, keyed by position. Every locale
@@ -70,12 +74,13 @@ const pad = (value: number) => String(value).padStart(2, '0');
       <p class="conversion-note">{content.work.note}</p>
     </SectionHeader>
     {
-      openSourceItem && caseStudySlugs.has(openSourceItem.id) && (
+      openSourceIds.map((id) => (
         <OpenSourceSpotlight
           {locale}
-          caseStudyHref={pageHref(`/work/${openSourceItem.id}/`)}
+          project={id}
+          caseStudyHref={pageHref(`/work/${id}/`)}
         />
-      )
+      ))
     }
     <div class="conversion-grid conversion-grid--three">
       {

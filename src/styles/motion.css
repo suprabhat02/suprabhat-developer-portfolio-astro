@@ -602,8 +602,8 @@
     transform 360ms var(--fx-ease-out);
 }
 
-/* ── Animated icons (see src/components/fx/Icon.astro) ─────────────── */
-/* Each shape has pathLength="1", so one dash unit is the whole stroke. */
+/* ── Line icons (see src/components/fx/Icon.astro) ──────────────────── */
+/* Static for everyone: no draw-in and no hover or focus motion. */
 
 .fx-icon {
   flex-shrink: 0;
@@ -612,94 +612,8 @@
   transform-origin: center;
 }
 
-.fx-icon > * {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
-}
-
-/* Hover or keyboard focus on the surrounding card replays the icon. */
-:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon > *,
-:where(.fx-glow):focus-within .fx-icon > * {
-  animation: fx-icon-draw 760ms var(--fx-ease-out) both;
-}
-
-:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--bob {
-  animation: fx-icon-bob 900ms var(--fx-ease-spring);
-}
-
-:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--wave {
-  animation: fx-icon-wave 900ms ease-in-out;
-}
-
-:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--swing {
-  animation: fx-icon-swing 900ms var(--fx-ease-spring);
-}
-
-:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--pulse {
-  animation: fx-icon-pulse 700ms var(--fx-ease-spring);
-}
-
-:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--nudge {
-  animation: fx-icon-nudge 600ms var(--fx-ease-spring);
-}
-
-:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--spin {
-  animation: fx-icon-spin 1100ms var(--fx-ease-out);
-}
-
 [dir='rtl'] .fx-icon--nudge {
   scale: -1 1;
-}
-
-@keyframes fx-icon-draw {
-  from {
-    stroke-dashoffset: 1;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes fx-icon-bob {
-  40% {
-    transform: translateY(-3px);
-  }
-}
-
-@keyframes fx-icon-wave {
-  25% {
-    transform: skewY(-8deg);
-  }
-  60% {
-    transform: skewY(5deg);
-  }
-}
-
-@keyframes fx-icon-swing {
-  30% {
-    transform: rotate(-12deg);
-  }
-  65% {
-    transform: rotate(8deg);
-  }
-}
-
-@keyframes fx-icon-pulse {
-  45% {
-    transform: scale(1.18);
-  }
-}
-
-@keyframes fx-icon-nudge {
-  45% {
-    transform: translate(3px, -3px);
-  }
-}
-
-@keyframes fx-icon-spin {
-  to {
-    transform: rotate(1turn);
-  }
 }
 
 /* ── Scroll-linked effects (progressive, no JavaScript) ─────────────── */
@@ -724,13 +638,7 @@
      them on, mobile Lighthouse drops to 98-99 on Speed Index. */
   @supports (animation-timeline: view()) {
     [data-scroll-reveals]
-      :is(
-        .fx-reveal,
-        .fx-reveal-scale,
-        .fx-words > span,
-        .fx-icon--draw > *,
-        .fx-lamp-line
-      ) {
+      :is(.fx-reveal, .fx-reveal-scale, .fx-words > span, .fx-lamp-line) {
       animation-timing-function: linear;
       animation-fill-mode: both;
       animation-timeline: view();
@@ -751,12 +659,6 @@
     [data-scroll-reveals] .fx-words > span {
       animation-name: fx-word;
       animation-range: cover 8% cover 38%;
-    }
-
-    /* Icons draw themselves in as they enter the viewport. */
-    [data-scroll-reveals] .fx-icon--draw > * {
-      animation-name: fx-icon-draw;
-      animation-range: entry 10% entry 90%;
     }
 
     [data-scroll-reveals] .fx-lamp-line {
@@ -948,12 +850,6 @@
 
   .fx-meteors {
     display: none;
-  }
-
-  .fx-icon,
-  .fx-icon > *,
-  .fx-icon--draw > * {
-    animation: none !important;
   }
 
   .fx-tilt,

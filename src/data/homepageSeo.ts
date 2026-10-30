@@ -1,7 +1,10 @@
 import { SITE_URL } from '../config/site';
 import { getServices } from './services';
 import { getHomepageConversionContent } from './homepageConversion';
-import { getReactSmartCopySchema } from './openSource';
+import {
+  getReactInpChunkerSchema,
+  getReactSmartCopySchema,
+} from './openSource';
 import { localeMeta, localePrefix, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
 
@@ -62,6 +65,7 @@ export const getHomepageSchema = (locale: Locale) => {
       },
     },
     getReactSmartCopySchema(SITE_URL, language, locale),
+    getReactInpChunkerSchema(SITE_URL, language, locale),
     {
       '@type': 'ItemList',
       '@id': `${pageUrl}#problems`,

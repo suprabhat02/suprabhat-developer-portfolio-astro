@@ -60,9 +60,10 @@ src/components/fx/
    (`animation-name`, `animation-timing-function`, `animation-fill-mode`,
    `animation-timeline`): the CSS minifier folds a timeline into an `animation`
    shorthand, which browsers reject, so the effect silently disappears from
-   the production build. Scroll reveals (`.fx-reveal`, `.fx-words`, icon
-   draw-in) are opt-in through `data-scroll-reveals` on `<html>`, because they
-   cost mobile Speed Index.
+   the production build. Scroll reveals (`.fx-reveal`, `.fx-words`) are opt-in
+   through `data-scroll-reveals` on `<html>`, because they cost mobile Speed
+   Index. Line icons (`Icon.astro`) are static for every user: no draw-in and
+   no hover or focus motion.
 6. **Reduced motion is honored everywhere.** `prefers-reduced-motion: reduce`
    stops every animation, removes tilt and glide transitions, and turns
    marquees into static wrapped lists without their decorative clones.

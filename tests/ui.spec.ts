@@ -98,45 +98,63 @@ test('motion layer is progressive, accessible, and honors reduced motion', async
   }
 });
 
-test('open-source spotlight links react-smart-copy and copies the install command', async ({
+test('open-source spotlights link both libraries and copy their install commands', async ({
   page,
   context,
 }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  const libraries = ['react-smart-copy', 'react-inp-chunker'] as const;
   for (const prefix of ['', '/es', '/ar']) {
-    await page.goto(`${prefix}/work/`);
-    const card = page.locator('.oss-card');
-    await expect(card).toBeVisible();
-    for (const href of [
-      'https://suprabhat02.github.io/react-smart-copy/',
-      'https://github.com/suprabhat02/react-smart-copy',
-      'https://www.npmjs.com/package/react-smart-copy',
-    ]) {
-      const link = card.locator(`a[href="${href}"]`);
-      await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    for (const path of [`${prefix}/`, `${prefix}/work/`]) {
+      await page.goto(path);
+      const cards = page.locator(
+        path === `${prefix}/` ? '#work .oss-card' : '.oss-card',
+      );
+      await expect(cards).toHaveCount(libraries.length);
+      for (const library of libraries) {
+        const card = page.locator(`.oss-card[data-project="${library}"]`);
+        await expect(card).toBeVisible();
+        for (const href of [
+          `https://suprabhat02.github.io/${library}/`,
+          `https://github.com/suprabhat02/${library}`,
+          `https://www.npmjs.com/package/${library}`,
+        ]) {
+          const link = card.locator(`a[href="${href}"]`);
+          await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+        }
+        await expect(
+          card.locator(`a[href="${prefix}/work/${library}/"]`),
+        ).toBeVisible();
+      }
     }
-    await expect(
-      card.locator(`a[href="${prefix}/work/react-smart-copy/"]`),
-    ).toBeVisible();
   }
 
   await page.goto('/work/');
-  const button = page.locator('.oss-card .copy-btn');
-  await expect(button).toBeVisible();
-  await button.click();
-  await expect(button).toHaveAttribute('data-state', 'copied');
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-    'npm install react-smart-copy',
-  );
-  await expect(button).toHaveAttribute('data-state', 'idle', {
-    timeout: 4000,
-  });
+  for (const library of libraries) {
+    const button = page.locator(
+      `.oss-card[data-project="${library}"] .copy-btn`,
+    );
+    await expect(button).toBeVisible();
+    await button.click();
+    await expect(button).toHaveAttribute('data-state', 'copied');
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+      `npm install ${library}`,
+    );
+    await expect(button).toHaveAttribute('data-state', 'idle', {
+      timeout: 4000,
+    });
+  }
 
-  await page.goto('/work/react-smart-copy/');
-  const structuredData = (
-    await page.locator('script[type="application/ld+json"]').allTextContents()
-  ).join('');
-  expect(structuredData).toContain('SoftwareSourceCode');
+  for (const library of libraries) {
+    await page.goto(`/work/${library}/`);
+    const structuredData = (
+      await page.locator('script[type="application/ld+json"]').allTextContents()
+    ).join('');
+    expect(structuredData).toContain('SoftwareSourceCode');
+    expect(structuredData).toContain(
+      `"codeRepository":"https://github.com/suprabhat02/${library}"`,
+    );
+  }
 });
 
 test('living cards render decorative scenes with depth and stay static at rest', async ({

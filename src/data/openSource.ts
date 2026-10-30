@@ -6,8 +6,9 @@ import type {
 } from './caseStudies';
 
 /**
- * Open-source work. Facts are taken from the published npm package and its
- * README (react-smart-copy 1.14.0); update them when a release changes them.
+ * Open-source work. Facts are taken from each published npm package and its
+ * README (react-smart-copy 1.14.0, react-inp-chunker 0.2.0); update them when
+ * a release changes them.
  */
 
 export interface OpenSourceLinks {
@@ -16,8 +17,10 @@ export interface OpenSourceLinks {
   readonly npm: string;
 }
 
+export type OpenSourceProjectId = 'react-smart-copy' | 'react-inp-chunker';
+
 export interface OpenSourceProject {
-  readonly id: 'react-smart-copy';
+  readonly id: OpenSourceProjectId;
   readonly name: string;
   readonly install: string;
   readonly license: 'MIT';
@@ -39,6 +42,32 @@ export const reactSmartCopy: OpenSourceProject = {
     npm: 'https://www.npmjs.com/package/react-smart-copy',
   },
 } as const;
+
+export const reactInpChunker: OpenSourceProject = {
+  id: 'react-inp-chunker',
+  name: 'react-inp-chunker',
+  install: 'npm install react-inp-chunker',
+  license: 'MIT',
+  language: 'TypeScript',
+  runtime: 'React 18 and 19',
+  links: {
+    docs: 'https://suprabhat02.github.io/react-inp-chunker/',
+    repository: 'https://github.com/suprabhat02/react-inp-chunker',
+    npm: 'https://www.npmjs.com/package/react-inp-chunker',
+  },
+} as const;
+
+const openSourceProjects: Record<OpenSourceProjectId, OpenSourceProject> = {
+  'react-smart-copy': reactSmartCopy,
+  'react-inp-chunker': reactInpChunker,
+};
+
+export const isOpenSourceProjectId = (id: string): id is OpenSourceProjectId =>
+  id in openSourceProjects;
+
+export const getOpenSourceProject = (
+  id: OpenSourceProjectId,
+): OpenSourceProject => openSourceProjects[id];
 
 /** Copy for the homepage spotlight card and the work index. */
 export interface OpenSourceCopy {
@@ -119,19 +148,93 @@ const openSourceCopy: Record<Locale, OpenSourceCopy> = {
   },
 };
 
-export const getOpenSourceCopy = (locale: Locale): OpenSourceCopy =>
-  openSourceCopy[locale];
+const reactInpChunkerCopy: Record<Locale, OpenSourceCopy> = {
+  en: {
+    eyebrow: 'Open source · npm package',
+    tagline:
+      'Chunk heavy React work and yield to the main thread to protect INP',
+    description:
+      'A headless React and TypeScript library that splits heavy synchronous work into time slices of a few milliseconds and yields to the main thread between them, so clicks and typing stay responsive and Interaction to Next Paint (INP) stays good.',
+    facts: [
+      'Yields with scheduler.yield(), then MessageChannel, then setTimeout',
+      '5 ms time slices by default, with pause, resume, and cancel',
+      'React 18 and 19, safe for server rendering',
+      'React-free core for plain TypeScript, Web Workers, and Node',
+      'No dependencies beyond React; ESM and CommonJS builds',
+    ],
+    installLabel: 'Install command',
+    linksLabel: 'Project links',
+    docsLabel: 'Docs and live playground',
+    repositoryLabel: 'Source on GitHub',
+    npmLabel: 'Package on npm',
+    caseStudyLabel: 'Read the case study',
+    meta: 'MIT license · TypeScript · React 18 and 19',
+  },
+  es: {
+    eyebrow: 'Código abierto · paquete npm',
+    tagline:
+      'Divide el trabajo pesado de React y cede el hilo principal para proteger el INP',
+    description:
+      'Una biblioteca headless de React y TypeScript que divide el trabajo síncrono pesado en franjas de pocos milisegundos y cede el hilo principal entre ellas, para que los clics y la escritura sigan respondiendo y la métrica Interaction to Next Paint (INP) se mantenga buena.',
+    facts: [
+      'Cede el control con scheduler.yield(), luego MessageChannel y luego setTimeout',
+      'Franjas de 5 ms por defecto, con pausa, reanudación y cancelación',
+      'React 18 y 19, compatible con renderizado en servidor',
+      'Núcleo sin React para TypeScript, Web Workers y Node',
+      'Sin dependencias además de React; builds ESM y CommonJS',
+    ],
+    installLabel: 'Comando de instalación',
+    linksLabel: 'Enlaces del proyecto',
+    docsLabel: 'Documentación y playground',
+    repositoryLabel: 'Código en GitHub',
+    npmLabel: 'Paquete en npm',
+    caseStudyLabel: 'Leer el caso de estudio',
+    meta: 'Licencia MIT · TypeScript · React 18 y 19',
+  },
+  ar: {
+    eyebrow: 'مفتوح المصدر · حزمة npm',
+    tagline:
+      'تقسيم عمل React الثقيل وإعادة التحكم إلى الخيط الرئيسي لحماية مؤشر INP',
+    description:
+      'مكتبة React وTypeScript بلا واجهة مفروضة تقسم العمل المتزامن الثقيل إلى شرائح زمنية (time slices) من بضع أجزاء من الثانية، وتعيد التحكم إلى الخيط الرئيسي بينها، فتبقى النقرات والكتابة سريعة الاستجابة ويبقى مؤشر Interaction to Next Paint (INP) جيدًا.',
+    facts: [
+      'تعيد التحكم عبر scheduler.yield() ثم MessageChannel ثم setTimeout',
+      'شرائح زمنية مدتها 5 ملي ثانية افتراضيًا، مع الإيقاف المؤقت والاستئناف والإلغاء',
+      'React 18 و19، وآمنة مع العرض على الخادم',
+      'نواة لا تعتمد على React لاستخدامها مع TypeScript وWeb Workers وNode',
+      'بلا اعتماديات غير React، مع إصدارات ESM وCommonJS',
+    ],
+    installLabel: 'أمر التثبيت',
+    linksLabel: 'روابط المشروع',
+    docsLabel: 'التوثيق والبيئة التجريبية الحيّة',
+    repositoryLabel: 'الشيفرة على GitHub',
+    npmLabel: 'الحزمة على npm',
+    caseStudyLabel: 'اقرأ دراسة الحالة',
+    meta: 'ترخيص MIT · TypeScript · React 18 و19',
+  },
+};
+
+export const getOpenSourceCopy = (
+  locale: Locale,
+  id: OpenSourceProjectId = 'react-smart-copy',
+): OpenSourceCopy =>
+  id === 'react-inp-chunker'
+    ? reactInpChunkerCopy[locale]
+    : openSourceCopy[locale];
 
 type CaseStudyBase = Omit<CaseStudy, 'proof'>;
 
-const projectLinks = (copy: OpenSourceCopy): CaseStudyProject => ({
-  install: reactSmartCopy.install,
+const projectLinks = (
+  project: OpenSourceProject,
+  copy: OpenSourceCopy,
+): CaseStudyProject => ({
+  install: project.install,
   installLabel: copy.installLabel,
   linksLabel: copy.linksLabel,
   links: [
-    { label: copy.docsLabel, href: reactSmartCopy.links.docs },
-    { label: copy.repositoryLabel, href: reactSmartCopy.links.repository },
-    { label: copy.npmLabel, href: reactSmartCopy.links.npm },
+    { label: copy.docsLabel, href: project.links.docs },
+    { label: copy.repositoryLabel, href: project.links.repository },
+    { label: copy.npmLabel, href: project.links.npm },
   ],
 });
 
@@ -241,7 +344,7 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
       'Design system engineering',
       'Accessibility audit',
     ],
-    project: projectLinks(openSourceCopy.en),
+    project: projectLinks(reactSmartCopy, openSourceCopy.en),
   },
   es: {
     slug: 'react-smart-copy',
@@ -354,7 +457,7 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
       'Ingeniería de sistemas de diseño',
       'Auditoría de accesibilidad',
     ],
-    project: projectLinks(openSourceCopy.es),
+    project: projectLinks(reactSmartCopy, openSourceCopy.es),
   },
   ar: {
     slug: 'react-smart-copy',
@@ -464,7 +567,7 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
       'هندسة نظام التصميم',
       'تدقيق إمكانية الوصول',
     ],
-    project: projectLinks(openSourceCopy.ar),
+    project: projectLinks(reactSmartCopy, openSourceCopy.ar),
   },
 };
 
@@ -558,26 +661,477 @@ export const reactSmartCopyProof: Record<Locale, readonly CaseStudyProof[]> = {
   ],
 };
 
-/** SoftwareSourceCode JSON-LD for the project (no @context; the layout adds it). */
+/** Facts below come from the react-inp-chunker 0.2.0 README and package.json. */
+export const reactInpChunkerCaseStudy: Record<Locale, CaseStudyBase> = {
+  en: {
+    slug: 'react-inp-chunker',
+    datePublished: '2026-10-30',
+    dateModified: '2026-10-30',
+    title: 'react-inp-chunker',
+    seoTitle: 'react-inp-chunker Case Study | React INP Library',
+    description:
+      'How react-inp-chunker, an open-source TypeScript library, splits heavy React work into short slices and yields to the main thread to protect INP.',
+    eyebrow: 'Case study · Open source',
+    summary:
+      'An open-source, headless React and TypeScript library that keeps heavy synchronous work from blocking user input. It processes work in time slices of a few milliseconds and yields to the main thread between them, so long-running updates do not cost Interaction to Next Paint (INP).',
+    confidentialityNote:
+      'This is a public open-source project. The source code, documentation, live playground, and releases are publicly available under the MIT license.',
+    meta: [
+      { label: 'Project type', value: 'Open-source React library on npm' },
+      { label: 'Role', value: 'Author and maintainer' },
+      { label: 'Primary focus', value: 'INP, main-thread scheduling, DX' },
+      { label: 'Stack area', value: 'TypeScript, React 18+, Scheduler API' },
+    ],
+    tags: [
+      'Open source',
+      'React',
+      'TypeScript',
+      'INP',
+      'Core Web Vitals',
+      'npm package',
+    ],
+    sections: [
+      {
+        id: 'context',
+        heading: 'Context',
+        body: [
+          'One thread runs a page’s JavaScript, handles every click and key press, and paints the screen. Filtering thousands of rows, parsing a large CSV, or building a search index inside a React component holds that thread, and any input that arrives meanwhile waits in a queue.',
+          'A task longer than 50 ms is a long task, and an interaction that lands in one is the most common way to fail Interaction to Next Paint (INP), the Core Web Vital for responsiveness.',
+        ],
+      },
+      {
+        id: 'problem',
+        heading: 'Problem',
+        body: [
+          'The work itself is often necessary and cannot simply be made faster. The goal was a small, typed primitive that makes sure the work never holds the main thread for more than a few milliseconds at a time, without asking teams to restructure their components.',
+        ],
+        bullets: [
+          'A long synchronous loop blocks clicks, typing, and painting until it returns.',
+          'Yielding by hand with nested setTimeout calls is clamped to a minimum delay of about 4 ms and spreads scheduling logic through components.',
+          'Progress, pause, resume, and cancel have to reach React state without tearing under concurrent rendering.',
+          'No state update may arrive after a component unmounts.',
+        ],
+      },
+      {
+        id: 'approach',
+        heading: 'Approach',
+        body: [
+          'The library processes items back to back until the time slice (5 ms by default) is used up, or until the browser reports pending input. It then yields so the browser can handle input and paint, and resumes where it stopped.',
+          'It yields with the best tool the browser has: scheduler.yield() where it is supported, MessageChannel in Safari and older browsers, and setTimeout(0) as the last resort.',
+        ],
+        bullets: [
+          'useChunkedTask runs one function over a list and re-renders with progress once per slice, not once per item.',
+          'useDeferredTask runs work written as a generator and pauses at each yield once the slice is used up.',
+          'react-inp-chunker/core exposes createChunkScheduler and createDeferredTask without importing React, for plain TypeScript, a Web Worker, or a Node script.',
+          'Both engines expose start, pause, resume, cancel, a subscribe and getSnapshot pair, and a settled promise that always resolves.',
+          'batchSize and collectResults tune work at the extremes; most code needs neither.',
+        ],
+      },
+      {
+        id: 'guarantees',
+        heading: 'Guarantees and developer feedback',
+        body: [
+          'A slice overruns by at most one item, or batchSize items if that option is raised, because the clock is read after every item. A settled task never reports its results a render late, nothing runs after cancel(), and no state update arrives after unmount.',
+          'In development, a single item that blocks for more than 50 ms is reported with its index, and work cheap enough that the clock read dominates gets a batchSize suggestion. Both warnings are compiled out of the production build that bundlers select through the production export condition.',
+        ],
+      },
+      {
+        id: 'reliability',
+        heading: 'Compatibility, quality, and footprint',
+        body: [
+          'The package supports React 18 and 19, Node 18, 20, 22, and 24, ESM and CommonJS, and server rendering, where both hooks render an idle state and run nothing. The test suite runs on both React majors at 100% statement, branch, function, and line coverage.',
+          'It has no dependencies beyond React. The README reports 1.83 kB for useChunkedTask, 1.72 kB for useDeferredTask, 1.34 kB for createChunkScheduler without React, and 2.35 kB for everything, minified and compressed with Brotli. Releases are published from CI through npm Trusted Publishing with signed provenance.',
+        ],
+      },
+    ],
+    outcomes: [
+      'Published on npm as react-inp-chunker under the MIT license, with documentation and a live playground on GitHub Pages.',
+      'Provides two React hooks, useChunkedTask and useDeferredTask, and a React-free core that runs the same scheduling engine.',
+      'Keeps each slice of work to a few milliseconds by default, so input handling and painting can run between slices.',
+      'Checks its compatibility claims, including React 18 and 19, four Node versions, ESM, and CommonJS, on every push.',
+    ],
+    nextSteps: [
+      'Read the documentation and try the live playground.',
+      'Install it with npm install react-inp-chunker.',
+      'Report issues or contribute on GitHub.',
+    ],
+    relatedServices: [
+      'Frontend performance audit',
+      'React and TypeScript architecture review',
+      'SaaS dashboard development',
+    ],
+    project: projectLinks(reactInpChunker, reactInpChunkerCopy.en),
+  },
+  es: {
+    slug: 'react-inp-chunker',
+    datePublished: '2026-10-30',
+    dateModified: '2026-10-30',
+    title: 'react-inp-chunker',
+    seoTitle: 'react-inp-chunker | Biblioteca de React para el INP',
+    description:
+      'Cómo react-inp-chunker, biblioteca TypeScript de código abierto, divide el trabajo pesado de React en franjas y cede el hilo principal para proteger el INP.',
+    eyebrow: 'Caso de estudio · Código abierto',
+    summary:
+      'Una biblioteca de React y TypeScript headless y de código abierto que evita que el trabajo síncrono pesado bloquee la entrada del usuario. Procesa el trabajo en franjas de pocos milisegundos y cede el hilo principal entre ellas, para que las actualizaciones largas no perjudiquen la métrica Interaction to Next Paint (INP).',
+    confidentialityNote:
+      'Es un proyecto público de código abierto. El código, la documentación, el playground y las versiones están disponibles públicamente bajo la licencia MIT.',
+    meta: [
+      {
+        label: 'Tipo de proyecto',
+        value: 'Biblioteca React de código abierto en npm',
+      },
+      { label: 'Rol', value: 'Autor y mantenedor' },
+      {
+        label: 'Enfoque principal',
+        value: 'INP, planificación del hilo principal, DX',
+      },
+      { label: 'Área técnica', value: 'TypeScript, React 18+, Scheduler API' },
+    ],
+    tags: [
+      'Código abierto',
+      'React',
+      'TypeScript',
+      'INP',
+      'Core Web Vitals',
+      'Paquete npm',
+    ],
+    sections: [
+      {
+        id: 'context',
+        heading: 'Contexto',
+        body: [
+          'Un solo hilo ejecuta el JavaScript de una página, atiende cada clic y cada tecla y pinta la pantalla. Filtrar miles de filas, analizar un CSV grande o construir un índice de búsqueda dentro de un componente de React ocupa ese hilo, y cualquier interacción que llegue mientras tanto espera en una cola.',
+          'Una tarea de más de 50 ms es una tarea larga, y una interacción que coincide con una es la causa más común de no superar Interaction to Next Paint (INP), la Core Web Vital de capacidad de respuesta.',
+        ],
+      },
+      {
+        id: 'problem',
+        heading: 'Problema',
+        body: [
+          'El trabajo suele ser necesario y no siempre puede hacerse más rápido. El objetivo era una primitiva pequeña y tipada que garantice que el trabajo nunca ocupe el hilo principal más de unos milisegundos seguidos, sin obligar a los equipos a reestructurar sus componentes.',
+        ],
+        bullets: [
+          'Un bucle síncrono largo bloquea los clics, la escritura y el pintado hasta que termina.',
+          'Ceder el control a mano con setTimeout anidados tiene un retardo mínimo de unos 4 ms y reparte la lógica de planificación por los componentes.',
+          'El progreso, la pausa, la reanudación y la cancelación deben llegar al estado de React sin inconsistencias en el renderizado concurrente.',
+          'Ninguna actualización de estado puede llegar después de desmontar un componente.',
+        ],
+      },
+      {
+        id: 'approach',
+        heading: 'Enfoque',
+        body: [
+          'La biblioteca procesa elementos uno tras otro hasta agotar la franja de tiempo (5 ms por defecto) o hasta que el navegador indica que hay una interacción pendiente. Entonces cede el control para que el navegador atienda la entrada y pinte, y continúa donde se detuvo.',
+          'Cede el control con la mejor herramienta disponible en el navegador: scheduler.yield() donde se admite, MessageChannel en Safari y navegadores antiguos, y setTimeout(0) como último recurso.',
+        ],
+        bullets: [
+          'useChunkedTask aplica una función a una lista y vuelve a renderizar con el progreso una vez por franja, no una vez por elemento.',
+          'useDeferredTask ejecuta trabajo escrito como generador y se detiene en cada yield cuando se agota la franja.',
+          'react-inp-chunker/core ofrece createChunkScheduler y createDeferredTask sin importar React, para TypeScript sin framework, un Web Worker o un script de Node.',
+          'Ambos motores ofrecen start, pause, resume, cancel, un par subscribe y getSnapshot, y una promesa settled que siempre se resuelve.',
+          'batchSize y collectResults ajustan los casos extremos; la mayoría del código no necesita ninguno.',
+        ],
+      },
+      {
+        id: 'guarantees',
+        heading: 'Garantías y avisos para desarrollo',
+        body: [
+          'Una franja se excede como máximo en un elemento, o en batchSize elementos si se aumenta esa opción, porque el reloj se lee después de cada elemento. Una tarea terminada nunca informa de sus resultados un render tarde, nada se ejecuta después de cancel() y ninguna actualización de estado llega tras desmontar.',
+          'En desarrollo, un elemento que bloquea más de 50 ms se informa con su índice, y el trabajo tan barato que domina la lectura del reloj recibe una sugerencia de batchSize. Ambos avisos se eliminan del build de producción que los bundlers eligen mediante la condición de exportación production.',
+        ],
+      },
+      {
+        id: 'reliability',
+        heading: 'Compatibilidad, calidad y tamaño',
+        body: [
+          'El paquete admite React 18 y 19, Node 18, 20, 22 y 24, ESM y CommonJS, y renderizado en servidor, donde ambos hooks renderizan un estado inactivo y no ejecutan nada. La suite de pruebas se ejecuta en ambas versiones mayores de React con un 100% de cobertura de sentencias, ramas, funciones y líneas.',
+          'No tiene dependencias además de React. El README indica 1,83 kB para useChunkedTask, 1,72 kB para useDeferredTask, 1,34 kB para createChunkScheduler sin React y 2,35 kB para todo, minificados y comprimidos con Brotli. Las versiones se publican desde CI mediante npm Trusted Publishing con procedencia firmada.',
+        ],
+      },
+    ],
+    outcomes: [
+      'Publicado en npm como react-inp-chunker bajo la licencia MIT, con documentación y playground en GitHub Pages.',
+      'Ofrece dos hooks de React, useChunkedTask y useDeferredTask, y un núcleo sin React que ejecuta el mismo motor de planificación.',
+      'Mantiene cada franja de trabajo en pocos milisegundos por defecto, para que la entrada y el pintado puedan ejecutarse entre franjas.',
+      'Comprueba en cada push su compatibilidad declarada, incluidos React 18 y 19, cuatro versiones de Node, ESM y CommonJS.',
+    ],
+    nextSteps: [
+      'Lee la documentación y prueba el playground.',
+      'Instálalo con npm install react-inp-chunker.',
+      'Informa de problemas o contribuye en GitHub.',
+    ],
+    relatedServices: [
+      'Auditoría de rendimiento frontend',
+      'Revisión de arquitectura React y TypeScript',
+      'Desarrollo de dashboards SaaS',
+    ],
+    project: projectLinks(reactInpChunker, reactInpChunkerCopy.es),
+  },
+  ar: {
+    slug: 'react-inp-chunker',
+    datePublished: '2026-10-30',
+    dateModified: '2026-10-30',
+    title: 'react-inp-chunker',
+    seoTitle: 'react-inp-chunker | مكتبة React لحماية مؤشر INP',
+    description:
+      'كيف تقسم react-inp-chunker، وهي مكتبة TypeScript مفتوحة المصدر، عمل React الثقيل إلى شرائح قصيرة وتعيد التحكم إلى الخيط الرئيسي لحماية مؤشر INP.',
+    eyebrow: 'دراسة حالة · مفتوح المصدر',
+    summary:
+      'مكتبة React وTypeScript مفتوحة المصدر وبلا واجهة مفروضة تمنع العمل المتزامن الثقيل من حجب تفاعل المستخدم. تعالج العمل في شرائح زمنية (time slices) من بضع أجزاء من الثانية وتعيد التحكم إلى الخيط الرئيسي بينها، فلا تضر التحديثات الطويلة بمؤشر Interaction to Next Paint (INP).',
+    confidentialityNote:
+      'هذا مشروع عام مفتوح المصدر. الشيفرة والتوثيق والبيئة التجريبية الحيّة والإصدارات متاحة للجميع بموجب ترخيص MIT.',
+    meta: [
+      { label: 'نوع المشروع', value: 'مكتبة React مفتوحة المصدر على npm' },
+      { label: 'الدور', value: 'المؤلف والمشرف على الصيانة' },
+      {
+        label: 'التركيز الأساسي',
+        value: 'مؤشر INP وجدولة الخيط الرئيسي وتجربة المطور',
+      },
+      { label: 'النطاق التقني', value: 'TypeScript وReact 18+ وScheduler API' },
+    ],
+    tags: [
+      'مفتوح المصدر',
+      'React',
+      'TypeScript',
+      'INP',
+      'Core Web Vitals',
+      'حزمة npm',
+    ],
+    sections: [
+      {
+        id: 'context',
+        heading: 'السياق',
+        body: [
+          'يشغّل خيط واحد شيفرة JavaScript في الصفحة، ويعالج كل نقرة وكل ضغطة مفتاح، ويرسم الشاشة. تصفية آلاف الصفوف أو تحليل ملف CSV كبير أو بناء فهرس بحث داخل مكون React يشغل ذلك الخيط، وأي تفاعل يصل في أثناء ذلك ينتظر في طابور.',
+          'المهمة التي تتجاوز 50 ملي ثانية مهمة طويلة، والتفاعل الذي يقع في أثنائها هو أكثر الأسباب شيوعًا للإخفاق في مؤشر Interaction to Next Paint (INP)، وهو مقياس Core Web Vitals لسرعة الاستجابة.',
+        ],
+      },
+      {
+        id: 'problem',
+        heading: 'المشكلة',
+        body: [
+          'كثيرًا ما يكون العمل نفسه ضروريًا ولا يمكن تسريعه ببساطة. كان الهدف أداة صغيرة مضبوطة الأنواع تضمن ألا يشغل العمل الخيط الرئيسي أكثر من بضع أجزاء من الثانية في كل مرة، دون أن تضطر الفرق إلى إعادة هيكلة مكوناتها.',
+        ],
+        bullets: [
+          'تحجب الحلقة المتزامنة الطويلة النقرات والكتابة والرسم حتى تنتهي.',
+          'إعادة التحكم يدويًا باستدعاءات setTimeout المتداخلة مقيدة بتأخير أدنى يقارب 4 ملي ثانية، وتوزع منطق الجدولة على المكونات.',
+          'يجب أن يصل التقدم والإيقاف المؤقت والاستئناف والإلغاء إلى حالة React دون التمزّق البصري (Tearing)، أي ظهور قيم غير متّسقة في الواجهة أثناء العرض المتزامن.',
+          'لا يجوز أن يصل أي تحديث للحالة بعد إزالة المكون.',
+        ],
+      },
+      {
+        id: 'approach',
+        heading: 'النهج',
+        body: [
+          'تعالج المكتبة العناصر واحدًا تلو الآخر حتى تنفد الشريحة الزمنية (5 ملي ثانية افتراضيًا)، أو حتى يبلغ المتصفح عن تفاعل معلق. عندها تعيد التحكم ليعالج المتصفح الإدخال ويرسم، ثم تستأنف من حيث توقفت.',
+          'تعيد التحكم بأفضل أداة يوفرها المتصفح: scheduler.yield() حيث يكون مدعومًا، وMessageChannel في Safari والمتصفحات الأقدم، وsetTimeout(0) كحل أخير.',
+        ],
+        bullets: [
+          'يطبق useChunkedTask دالة واحدة على قائمة، ويعيد العرض مع التقدم مرة واحدة لكل شريحة لا لكل عنصر.',
+          'يشغّل useDeferredTask عملًا مكتوبًا كمولّد، ويتوقف عند كل yield عندما تنفد الشريحة.',
+          'توفر react-inp-chunker/core الدالتين createChunkScheduler وcreateDeferredTask دون استيراد React، لاستخدامهما مع TypeScript فقط أو داخل Web Worker أو في سكربت Node.',
+          'يوفر المحركان start وpause وresume وcancel، والزوج subscribe وgetSnapshot، ووعد settled يُحسم دائمًا.',
+          'يضبط الخياران batchSize وcollectResults الحالات القصوى، ولا يحتاج معظم الشيفرة إلى أي منهما.',
+        ],
+      },
+      {
+        id: 'guarantees',
+        heading: 'الضمانات وتنبيهات التطوير',
+        body: [
+          'لا تتجاوز الشريحة حدها بأكثر من عنصر واحد، أو بعدد batchSize من العناصر إذا رُفع هذا الخيار، لأن الساعة تُقرأ بعد كل عنصر. ولا تبلغ المهمة المكتملة عن نتائجها متأخرة بعرض واحد، ولا يعمل شيء بعد cancel()، ولا يصل أي تحديث للحالة بعد إزالة المكون.',
+          'في بيئة التطوير، يُبلغ عن أي عنصر واحد يحجب الخيط أكثر من 50 ملي ثانية مع رقمه، ويحصل العمل الرخيص الذي تطغى عليه قراءة الساعة على اقتراح لقيمة batchSize. وتُزال التنبيهات كلها من نسخة الإنتاج التي تختارها أدوات الحزم عبر شرط التصدير production.',
+        ],
+      },
+      {
+        id: 'reliability',
+        heading: 'التوافق والجودة والحجم',
+        body: [
+          'تدعم الحزمة React 18 و19، وNode 18 و20 و22 و24، وESM وCommonJS، والعرض على الخادم حيث يعرض الخطافان حالة خاملة ولا يشغّلان شيئًا. وتعمل مجموعة الاختبارات على الإصدارين الرئيسيين من React بتغطية 100% للعبارات والفروع والدوال والأسطر.',
+          'لا تعتمد الحزمة على شيء غير React. ويذكر README حجم 1.83 كيلوبايت لـ useChunkedTask و1.72 كيلوبايت لـ useDeferredTask و1.34 كيلوبايت لـ createChunkScheduler دون React و2.35 كيلوبايت للحزمة كاملة بعد التصغير والضغط بـ Brotli. وتُنشر الإصدارات من CI عبر npm Trusted Publishing مع إثبات مصدر موقّع.',
+        ],
+      },
+    ],
+    outcomes: [
+      'منشورة على npm باسم react-inp-chunker بترخيص MIT، مع توثيق وبيئة تجريبية حيّة على GitHub Pages.',
+      'توفر خطافين لـ React هما useChunkedTask وuseDeferredTask، ونواة لا تعتمد على React تشغّل محرك الجدولة نفسه.',
+      'تُبقي كل شريحة عمل في حدود بضع أجزاء من الثانية افتراضيًا، فيمكن معالجة الإدخال والرسم بين الشرائح.',
+      'تتحقق في كل دفع من ادعاءات التوافق، ومنها React 18 و19 وأربعة إصدارات من Node وESM وCommonJS.',
+    ],
+    nextSteps: [
+      'اقرأ التوثيق وجرّب البيئة التجريبية الحيّة.',
+      'ثبّتها بالأمر npm install react-inp-chunker.',
+      'أبلغ عن المشكلات أو ساهم على GitHub.',
+    ],
+    relatedServices: [
+      'تدقيق أداء الواجهات',
+      'مراجعة معمارية React وTypeScript',
+      'تطوير لوحات SaaS',
+    ],
+    project: projectLinks(reactInpChunker, reactInpChunkerCopy.ar),
+  },
+};
+
+export const reactInpChunkerProof: Record<Locale, readonly CaseStudyProof[]> = {
+  en: [
+    {
+      id: 'role',
+      heading: 'My role',
+      items: [
+        'Designed the API, the scheduling engine, and the state model, and wrote the library in strict TypeScript.',
+        'Wrote the documentation and the live playground, which runs the same work with and without chunking.',
+        'Published and maintain the package on npm under the MIT license.',
+      ],
+    },
+    {
+      id: 'constraints',
+      heading: 'Constraints',
+      items: [
+        'The library could not make the work faster, only make sure it never holds the main thread for more than a few milliseconds at a time.',
+        'It had to stay headless and work in React 18 and 19, under server rendering, and outside React.',
+        'Results had to stay consistent under concurrent React, with nothing running after cancel or unmount.',
+      ],
+    },
+    {
+      id: 'decisions',
+      heading: 'Key decisions',
+      items: [
+        'Split a React-free scheduling core from the hooks so the same engine runs in plain TypeScript, a Web Worker, or Node.',
+        'Read the clock after every item to bound each slice overrun to one item, and added batchSize for work too cheap to time item by item.',
+        'Chose the yield mechanism per browser: scheduler.yield(), then MessageChannel, then setTimeout.',
+      ],
+    },
+  ],
+  es: [
+    {
+      id: 'role',
+      heading: 'Mi rol',
+      items: [
+        'Diseñé la API, el motor de planificación y el modelo de estados, y escribí la biblioteca en TypeScript estricto.',
+        'Redacté la documentación y el playground, que ejecuta el mismo trabajo con y sin división en franjas.',
+        'Publico y mantengo el paquete en npm bajo la licencia MIT.',
+      ],
+    },
+    {
+      id: 'constraints',
+      heading: 'Restricciones',
+      items: [
+        'La biblioteca no podía hacer el trabajo más rápido, solo garantizar que nunca ocupe el hilo principal más de unos milisegundos seguidos.',
+        'Debía ser headless y funcionar en React 18 y 19, con renderizado en servidor y fuera de React.',
+        'Los resultados debían ser coherentes en React concurrente, sin nada en ejecución tras cancelar o desmontar.',
+      ],
+    },
+    {
+      id: 'decisions',
+      heading: 'Decisiones clave',
+      items: [
+        'Separé un núcleo de planificación sin React de los hooks para que el mismo motor funcione en TypeScript, un Web Worker o Node.',
+        'Leo el reloj después de cada elemento para limitar el exceso de cada franja a un elemento, y añadí batchSize para trabajo demasiado barato para medirlo elemento a elemento.',
+        'Elegí el mecanismo para ceder el control según el navegador: scheduler.yield(), luego MessageChannel y luego setTimeout.',
+      ],
+    },
+  ],
+  ar: [
+    {
+      id: 'role',
+      heading: 'دوري',
+      items: [
+        'صممت الواجهة البرمجية ومحرك الجدولة ونموذج الحالات، وكتبت المكتبة بلغة TypeScript الصارمة.',
+        'كتبت التوثيق والبيئة التجريبية الحيّة التي تشغّل العمل نفسه مع التقسيم ودونه.',
+        'أنشر الحزمة على npm وأتولى صيانتها بترخيص MIT.',
+      ],
+    },
+    {
+      id: 'constraints',
+      heading: 'القيود',
+      items: [
+        'لم يكن بوسع المكتبة أن تجعل العمل أسرع، بل أن تضمن ألا يشغل الخيط الرئيسي أكثر من بضع أجزاء من الثانية في كل مرة.',
+        'كان عليها أن تبقى بلا واجهة مفروضة وأن تعمل مع React 18 و19 ومع العرض على الخادم وخارج React.',
+        'كان على النتائج أن تبقى متسقة في React المتزامن، دون أن يعمل شيء بعد الإلغاء أو إزالة المكون.',
+      ],
+    },
+    {
+      id: 'decisions',
+      heading: 'القرارات الرئيسية',
+      items: [
+        'فصلت نواة جدولة لا تعتمد على React عن الخطافات ليعمل المحرك نفسه مع TypeScript أو داخل Web Worker أو في Node.',
+        'أقرأ الساعة بعد كل عنصر لأحصر تجاوز كل شريحة في عنصر واحد، وأضفت batchSize للعمل الأرخص من أن يُقاس عنصرًا عنصرًا.',
+        'اخترت آلية إعادة التحكم بحسب المتصفح: scheduler.yield() ثم MessageChannel ثم setTimeout.',
+      ],
+    },
+  ],
+};
+
+/** SoftwareSourceCode JSON-LD for a project (no @context; the layout adds it). */
+const getOpenSourceSchema = (
+  project: OpenSourceProject,
+  copy: OpenSourceCopy,
+  details: { runtimePlatform: string; keywords: string },
+  siteUrl: string,
+  language: string,
+) => ({
+  '@type': 'SoftwareSourceCode',
+  '@id': `${siteUrl}/#${project.id}`,
+  name: project.name,
+  description: copy.description,
+  inLanguage: language,
+  url: project.links.docs,
+  codeRepository: project.links.repository,
+  sameAs: [project.links.npm, project.links.repository],
+  programmingLanguage: ['TypeScript', 'JavaScript'],
+  runtimePlatform: details.runtimePlatform,
+  license: 'https://opensource.org/licenses/MIT',
+  isAccessibleForFree: true,
+  keywords: details.keywords,
+  author: { '@id': `${siteUrl}/#person` },
+  maintainer: { '@id': `${siteUrl}/#person` },
+});
+
 export const getReactSmartCopySchema = (
   siteUrl: string,
   language: string,
   locale: Locale,
-) => ({
-  '@type': 'SoftwareSourceCode',
-  '@id': `${siteUrl}/#${reactSmartCopy.id}`,
-  name: reactSmartCopy.name,
-  description: openSourceCopy[locale].description,
-  inLanguage: language,
-  url: reactSmartCopy.links.docs,
-  codeRepository: reactSmartCopy.links.repository,
-  sameAs: [reactSmartCopy.links.npm, reactSmartCopy.links.repository],
-  programmingLanguage: ['TypeScript', 'JavaScript'],
-  runtimePlatform: 'React 18 and 19, modern browsers',
-  license: 'https://opensource.org/licenses/MIT',
-  isAccessibleForFree: true,
-  keywords:
-    'react, clipboard, copy to clipboard, paste, accessibility, typescript, headless',
-  author: { '@id': `${siteUrl}/#person` },
-  maintainer: { '@id': `${siteUrl}/#person` },
-});
+) =>
+  getOpenSourceSchema(
+    reactSmartCopy,
+    openSourceCopy[locale],
+    {
+      runtimePlatform: 'React 18 and 19, modern browsers',
+      keywords:
+        'react, clipboard, copy to clipboard, paste, accessibility, typescript, headless',
+    },
+    siteUrl,
+    language,
+  );
+
+export const getReactInpChunkerSchema = (
+  siteUrl: string,
+  language: string,
+  locale: Locale,
+) =>
+  getOpenSourceSchema(
+    reactInpChunker,
+    reactInpChunkerCopy[locale],
+    {
+      runtimePlatform: 'React 18 and 19, modern browsers, Node.js 18+',
+      keywords:
+        'react, typescript, inp, interaction to next paint, core web vitals, performance, scheduler.yield, main thread, headless',
+    },
+    siteUrl,
+    language,
+  );
+
+/** The project schema for an open-source case-study slug, if it has one. */
+export const getOpenSourceSchemaForSlug = (
+  slug: string,
+  siteUrl: string,
+  language: string,
+  locale: Locale,
+) => {
+  if (slug === reactSmartCopy.id) {
+    return getReactSmartCopySchema(siteUrl, language, locale);
+  }
+  if (slug === reactInpChunker.id) {
+    return getReactInpChunkerSchema(siteUrl, language, locale);
+  }
+  return undefined;
+};

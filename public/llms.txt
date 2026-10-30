@@ -22,6 +22,11 @@ Suprabhat has delivered with distributed teams in Denmark, China, and Australia.
   - Case study: https://suprabhat-dev.com/work/react-smart-copy/
   - Install: npm install react-smart-copy
   - This website uses the package's framework-agnostic core for its copy buttons.
+- [react-inp-chunker](https://suprabhat02.github.io/react-inp-chunker/): headless React and TypeScript primitives that chunk heavy synchronous work and yield to the main thread, so long-running updates do not cost Interaction to Next Paint (INP), authored and maintained by Suprabhat Kumar. useChunkedTask and useDeferredTask hooks plus a React-free core (react-inp-chunker/core); 5 ms time slices by default; yields with scheduler.yield(), then MessageChannel, then setTimeout; pause, resume, and cancel; no dependencies beyond React; React 18 and 19; ESM and CommonJS; MIT license.
+  - Source: https://github.com/suprabhat02/react-inp-chunker
+  - Package: https://www.npmjs.com/package/react-inp-chunker
+  - Case study: https://suprabhat-dev.com/work/react-inp-chunker/
+  - Install: npm install react-inp-chunker
 
 ## Problems solved
 
