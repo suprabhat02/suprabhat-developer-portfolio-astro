@@ -752,10 +752,6 @@
 
 .stat-num {
   color: var(--text);
-  background: linear-gradient(120deg, var(--text), var(--accent-strong));
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   font-size: clamp(2rem, 4vw, 2.75rem);
   font-weight: 800;
   letter-spacing: -0.04em;
@@ -2100,10 +2096,6 @@ details[open] .faq-icon {
 .cta-title {
   max-width: 18ch;
   color: var(--text);
-  background: linear-gradient(180deg, var(--text) 30%, var(--text-2));
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   font-size: clamp(2rem, 4.2vw, 3.4rem);
   font-weight: 800;
   letter-spacing: -0.04em;
