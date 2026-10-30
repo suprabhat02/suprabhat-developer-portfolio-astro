@@ -28,8 +28,9 @@ src/components/fx/
 | Grid and Dot Backgrounds | `Backdrop pattern="grid" \| "dots"`                       | Hero, inner pages, alternate sections    |
 | Aurora Background        | `Backdrop aurora` (`.fx-aurora`)                          | Hero, inner pages                        |
 | Moving Border            | `.fx-moving-border`                                       | Secondary CTAs, hero portrait frame      |
-| Card Spotlight / Glowing | `.fx-glow` + `data-glow`                                  | Cards site-wide                          |
-| 3D Card Effect           | `.fx-tilt` + `data-tilt`, `.fx-pop` children              | Hero portrait, work and expertise cards  |
+| Card Spotlight / Glowing | `.fx-glow` + `data-glow` (pointer-lit hairline)           | Secondary cards, chips and links         |
+| Frame card               | `.fx-card-gradient` (neutral corners close into a frame)  | Primary cards site-wide                  |
+| Parallax scene layers    | `.fx-live` + `.lv-l` layers with depth `--d`              | Living cards (cards never rotate)        |
 | Card Hover Effect        | `.fx-hover-group` + `.fx-hover-pill` + `data-hover-group` | Engagements, skills table                |
 | Flip Words               | `FlipWords.astro`                                         | Hero                                     |
 | Infinite Moving Cards    | `.fx-marquee` + `.fx-marquee-track`                       | Keyword strip, recommendations           |
@@ -65,7 +66,7 @@ src/components/fx/
    Index. Line icons (`Icon.astro`) are static for every user: no draw-in and
    no hover or focus motion.
 6. **Reduced motion is honored everywhere.** `prefers-reduced-motion: reduce`
-   stops every animation, removes tilt and glide transitions, and turns
+   stops every animation, removes parallax and glide transitions, and turns
    marquees into static wrapped lists without their decorative clones.
 7. **Pointer effects need a fine, hover-capable pointer.** Touch devices skip
    them entirely.
@@ -103,7 +104,9 @@ throttled RTL loads.
 <article class="fx-glow fx-reveal" data-glow>…</article>
 ```
 
-For a 3D card, add `fx-tilt` and `data-tilt`. Mark children that should float
-above the surface with `fx-pop`. An element that already uses `::before` or
-`::after` for its own decoration must not also use `fx-glow`, which owns both
-pseudo-elements.
+For a primary card, add `fx-card-gradient`: a quiet hairline with neutral
+viewfinder corners that close into a full frame on hover, focus or tap. The
+frame owns the card's `::before`, so do not combine it with an element that
+uses `::before` for its own decoration. `fx-glow` owns `::after` and is
+hidden on frame cards, so each card has one interaction. Cards stay calm:
+there is no 3D tilt; living cards get depth from parallax scene layers.

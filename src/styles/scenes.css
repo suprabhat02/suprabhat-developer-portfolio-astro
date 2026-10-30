@@ -2,15 +2,15 @@
  * Living cards: animated SVG mini-scenes (LiveScene.astro) plus the card
  * treatment that drives them.
  *
- * A living card combines four effects:
+ * A living card combines three calm effects:
  *   1. its scene, which plays a short story only while the card is
  *      engaged (hover, keyboard focus, or a tap on touch screens, which
  *      motion.ts records as `data-active`) and rests in its finished state
  *      otherwise. Scrolling never plays it;
- *   2. the orbiting gradient border (`fx-card-gradient`);
- *   3. the pointer spotlight (`fx-glow` + `data-glow`);
- *   4. 3D tilt (`fx-tilt` + `data-tilt`) with multi-depth parallax: scene
- *      layers drift by `--px/--py` scaled by their own depth `--d`.
+ *   2. the frame border (`fx-card-gradient`): neutral corners that close
+ *      into a full frame on engagement;
+ *   3. multi-depth parallax: scene layers drift by `--px/--py` scaled by
+ *      their own depth `--d`, while the card itself stays still.
  *
  * Choreography rules:
  *   - Keyframe 0% matches the resting styles, so scenes look complete at
@@ -26,10 +26,11 @@
   --sc-tile: color-mix(in oklch, var(--text) 7%, transparent);
   --sc-edge: color-mix(in oklch, var(--text) 18%, transparent);
   --sc-a: var(--accent);
-  --sc-b: var(--accent-2);
+  /* Secondary is the cool neutral, so orange stays the single active signal. */
+  --sc-b: var(--text-2);
   --sc-ok: var(--success);
   --sc-a-soft: color-mix(in oklch, var(--accent) 30%, transparent);
-  --sc-b-soft: color-mix(in oklch, var(--accent-2) 26%, transparent);
+  --sc-b-soft: color-mix(in oklch, var(--sc-b) 26%, transparent);
   --lv-dur: 4s;
   --lv-step: 140ms;
   position: relative;
@@ -60,7 +61,7 @@
 }
 
 /* Pointer spotlight inside the scene, following the card's pointer
-   position (--px/--py from the tilt handler), plus a one-shot sheen that
+   position (--px/--py from the parallax handler), plus a one-shot sheen that
    sweeps across when the card is engaged. Both are paint-only layers. */
 .lv-scene::before,
 .lv-scene::after {
@@ -76,7 +77,7 @@
 .lv-scene::before {
   background: radial-gradient(
     14rem circle at calc(50% + var(--px, 0) * 100%)
-      calc(50% + var(--py, 0) * 100%),
+      calc(35% + var(--py, 0) * 100%),
     color-mix(in oklch, var(--accent-vivid) 22%, transparent),
     transparent 70%
   );
@@ -263,7 +264,7 @@
 }
 
 .lv-scene .lv-beam {
-  fill: color-mix(in oklch, var(--accent-2) 14%, transparent);
+  fill: color-mix(in oklch, var(--sc-b) 14%, transparent);
 }
 
 .lv-scene .k-scan {
@@ -316,8 +317,8 @@
 }
 
 .lv-scene .lv-window {
-  fill: color-mix(in oklch, var(--accent-2) 13%, transparent);
-  stroke: color-mix(in oklch, var(--accent-2) 45%, transparent);
+  fill: color-mix(in oklch, var(--sc-b) 13%, transparent);
+  stroke: color-mix(in oklch, var(--sc-b) 45%, transparent);
   stroke-dasharray: 4 5;
 }
 
@@ -1032,7 +1033,8 @@
 }
 
 /* ── Card layer: parallax depth ───────────────────────────────────── */
-/* `--px/--py` (−0.5…0.5) are written by the tilt handler in motion.ts. */
+/* `--px/--py` (−0.5…0.5) are written by the parallax handler in motion.ts;
+   only the scene layers move, the card itself never rotates. */
 
 .fx-live .lv-l {
   translate: calc(var(--px, 0) * var(--d, 1) * 16px)
@@ -1040,7 +1042,7 @@
   transition: translate 700ms var(--fx-ease-out);
 }
 
-.fx-live[data-tilting] .lv-l {
+.fx-live[data-parallax] .lv-l {
   transition-duration: 160ms;
 }
 

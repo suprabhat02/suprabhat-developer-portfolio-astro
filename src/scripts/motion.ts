@@ -52,7 +52,11 @@ const closestFromEvent = <T extends Element>(
 function initPointerGlow(): Cleanup {
   const onMove = rafThrottle((event: PointerEvent) => {
     if (!allowsPointerMotion()) return;
-    const card = closestFromEvent<HTMLElement>(event, '[data-glow]');
+    // Frame cards keep their hairline glow off, so they need no pointer data.
+    const card = closestFromEvent<HTMLElement>(
+      event,
+      '[data-glow]:not(.fx-card-gradient)',
+    );
     if (!card) return;
     const rect = card.getBoundingClientRect();
     card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
@@ -63,24 +67,21 @@ function initPointerGlow(): Cleanup {
   return () => document.removeEventListener('pointermove', onMove);
 }
 
-/* ── 3D tilt: rotates the hovered card toward the pointer ──────────── */
-/* Also exposes the pointer offset as `--px/--py` for parallax layers. */
+/* ── Scene parallax: layers inside living cards drift with the pointer ─ */
+/* Writes the pointer offset (−0.5…0.5) as `--px/--py`; cards never rotate. */
 
-const MAX_TILT_DEG = 7;
-
-function initTilt(): Cleanup {
+function initParallax(): Cleanup {
   let active: HTMLElement | null = null;
 
   const reset = (element: HTMLElement) => {
-    element.removeAttribute('data-tilting');
-    ['--rx', '--ry', '--px', '--py'].forEach((property) =>
-      element.style.removeProperty(property),
-    );
+    element.removeAttribute('data-parallax');
+    element.style.removeProperty('--px');
+    element.style.removeProperty('--py');
   };
 
   const onMove = rafThrottle((event: PointerEvent) => {
     const card = allowsPointerMotion()
-      ? closestFromEvent<HTMLElement>(event, '[data-tilt]')
+      ? closestFromEvent<HTMLElement>(event, '.fx-live')
       : null;
 
     if (active && active !== card) reset(active);
@@ -90,10 +91,7 @@ function initTilt(): Cleanup {
     const rect = card.getBoundingClientRect();
     const x = (event.clientX - rect.left) / rect.width - 0.5;
     const y = (event.clientY - rect.top) / rect.height - 0.5;
-    card.setAttribute('data-tilting', '');
-    card.style.setProperty('--rx', `${(-y * MAX_TILT_DEG).toFixed(2)}deg`);
-    card.style.setProperty('--ry', `${(x * MAX_TILT_DEG).toFixed(2)}deg`);
-    // Normalised pointer offset (−0.5…0.5) for parallax layers inside.
+    card.setAttribute('data-parallax', '');
     card.style.setProperty('--px', x.toFixed(3));
     card.style.setProperty('--py', y.toFixed(3));
   });
@@ -430,7 +428,7 @@ const initializers: ReadonlyArray<() => Cleanup> = [
   initNavIndicator,
   initScrollSpy,
   initPointerGlow,
-  initTilt,
+  initParallax,
   initHoverGroups,
   initLiveScenes,
   initLazyGlobes,

@@ -86,9 +86,8 @@ const pad = (value: number) => String(value).padStart(2, '0');
       {
         featuredWork.map((item, index) => (
           <article
-            class="conversion-card work-card fx-glow fx-tilt fx-reveal-scale"
+            class="conversion-card work-card fx-glow fx-reveal-scale"
             data-glow
-            data-tilt
           >
             <div class="work-card-media" aria-hidden="true">
               <span class="work-card-index">{pad(index + 1)}</span>
@@ -98,7 +97,7 @@ const pad = (value: number) => String(value).padStart(2, '0');
                 <span />
               </span>
             </div>
-            <h3 class="fx-pop">{item.title}</h3>
+            <h3>{item.title}</h3>
             <p>{item.summary}</p>
             <ul
               class="conversion-tags"
@@ -252,9 +251,8 @@ const pad = (value: number) => String(value).padStart(2, '0');
       {
         content.engagements.items.map((item, index) => (
           <article
-            class="conversion-card engagement-card fx-live fx-glow fx-tilt fx-card-gradient fx-reveal"
+            class="conversion-card engagement-card fx-live fx-glow fx-card-gradient fx-reveal"
             data-glow
-            data-tilt
           >
             <LiveScene scene={item.visual} />
             <span class="engagement-index" aria-hidden="true">
@@ -304,9 +302,8 @@ const pad = (value: number) => String(value).padStart(2, '0');
       {
         content.approach.items.map((item, index) => (
           <li
-            class="conversion-card conversion-card--compact step-card fx-live fx-glow fx-tilt fx-card-gradient fx-reveal"
+            class="conversion-card conversion-card--compact step-card fx-live fx-glow fx-card-gradient fx-reveal"
             data-glow
-            data-tilt
           >
             <span class="step-head">
               <span class="step-num" aria-hidden="true">
@@ -342,9 +339,8 @@ const pad = (value: number) => String(value).padStart(2, '0');
       {
         content.collaboration.items.map((item, index) => (
           <article
-            class="conversion-card conversion-card--compact collab-card fx-live fx-glow fx-tilt fx-card-gradient fx-reveal"
+            class="conversion-card conversion-card--compact collab-card fx-live fx-glow fx-card-gradient fx-reveal"
             data-glow
-            data-tilt
           >
             <LiveScene scene={item.visual} />
             <div class="collab-head">

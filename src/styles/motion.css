@@ -181,12 +181,13 @@
     transparent 15%,
     var(--au-stripe) 20%
   );
+  /* Orange against the cool graphite highlight: a light leak, not a wall. */
   --au-colors: repeating-linear-gradient(
     90deg,
     var(--accent) 10%,
-    var(--accent-2) 15%,
+    var(--text-2) 15%,
     var(--accent-strong) 20%,
-    color-mix(in oklch, var(--accent-2) 60%, var(--accent)) 25%,
+    color-mix(in oklch, var(--text-2) 55%, var(--accent)) 25%,
     var(--accent) 30%
   );
   position: absolute;
@@ -305,36 +306,21 @@
   background: var(--fx-border-fill, var(--bg-card));
 }
 
-/* ── Card spotlight + glowing border (Aceternity "Card Spotlight") ──── */
-/* `--mx/--my` are written by src/scripts/motion.ts on fine pointers. */
+/* ── Card spotlight border (Aceternity "Card Spotlight") ──────────────────── */
+/* `--mx/--my` are written by src/scripts/motion.ts on fine pointers. Cards
+   stay calm: one pointer-lit hairline, no interior wash and no tilt. */
 
 .fx-glow {
   position: relative;
   isolation: isolate;
 }
 
-.fx-glow::before,
 .fx-glow::after {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 320ms ease;
-}
-
-.fx-glow::before {
-  z-index: -1;
-  background: radial-gradient(
-    480px circle at var(--mx, 50%) var(--my, 0%),
-    var(--fx-glow-soft),
-    transparent 62%
-  );
-}
-
-.fx-glow::after {
   padding: 1px;
+  border-radius: inherit;
   background: radial-gradient(
     320px circle at var(--mx, 50%) var(--my, 0%),
     var(--fx-glow-strong),
@@ -343,30 +329,19 @@
   mask:
     linear-gradient(#000 0 0) content-box exclude,
     linear-gradient(#000 0 0);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 320ms ease;
 }
 
-.fx-glow:hover::before,
-.fx-glow:hover::after,
-.fx-glow:focus-within::before,
 .fx-glow:focus-within::after {
   opacity: 0.6;
 }
 
-/* ── 3D card (Aceternity "3D Card Effect") ──────────────────────────── */
-
-.fx-tilt {
-  transform: perspective(1100px) rotateX(var(--rx, 0deg))
-    rotateY(var(--ry, 0deg));
-  transform-style: preserve-3d;
-  transition: transform 450ms var(--fx-ease-out);
-}
-
-.fx-tilt[data-tilting] {
-  transition-duration: 120ms;
-}
-
-.fx-tilt .fx-pop {
-  transform: translateZ(var(--pop, 36px));
+@media (hover: hover) {
+  .fx-glow:hover::after {
+    opacity: 0.6;
+  }
 }
 
 /* ── Card hover effect (Aceternity "Card Hover Effect") ─────────────── */
@@ -852,7 +827,6 @@
     display: none;
   }
 
-  .fx-tilt,
   .fx-focus-item,
   .fx-hover-pill {
     transition: none;

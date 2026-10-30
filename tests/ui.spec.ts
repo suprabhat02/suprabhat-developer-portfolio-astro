@@ -163,12 +163,17 @@ test('living cards render decorative scenes with depth and stay static at rest',
   await page.goto('/');
   const cards = page.locator('.fx-live');
   expect(await cards.count()).toBeGreaterThanOrEqual(17);
-  // Every living card has the full effect stack and a decorative scene.
+  // Every living card has the frame border and a decorative scene; cards
+  // stay still (scene layers carry the depth), and the frame's corners follow
+  // the card's own radius.
   const summary = await cards.evaluateAll((elements) =>
     elements.map((card) => ({
       glow: card.hasAttribute('data-glow'),
       tilt: card.hasAttribute('data-tilt'),
       border: card.classList.contains('fx-card-gradient'),
+      frameRadiusMatches:
+        getComputedStyle(card, '::before').borderTopLeftRadius ===
+        getComputedStyle(card).borderTopLeftRadius,
       sceneHidden:
         card.querySelector('.lv-scene')?.getAttribute('aria-hidden') ?? null,
     })),
@@ -176,8 +181,9 @@ test('living cards render decorative scenes with depth and stay static at rest',
   for (const card of summary) {
     expect(card).toEqual({
       glow: true,
-      tilt: true,
+      tilt: false,
       border: true,
+      frameRadiusMatches: true,
       sceneHidden: 'true',
     });
   }

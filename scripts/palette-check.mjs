@@ -20,7 +20,14 @@
 /* ── Candidates to test ──────────────────────────────────────────────── */
 const CANDIDATES = [
   {
-    name: 'Current (emerald + magenta)',
+    name: 'Baked: signal orange #ff4d2a on cool graphite',
+    seeds: [33, 33, 250, 0.24],
+    split: true,
+    fill: [0.6693, 0.2196],
+    nc: 0.35,
+  },
+  {
+    name: 'Previous: Tropic emerald + magenta',
     seeds: [158, 335, 250, 0.2],
     split: false,
   },

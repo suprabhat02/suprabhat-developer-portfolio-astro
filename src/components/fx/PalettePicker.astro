@@ -1,111 +1,28 @@
 ---
 /*
- * DEV-ONLY palette switcher. Rendered only under `astro dev`
- * (see BaseLayout.astro guard) so it never reaches a production build.
- * Lets you preview brand palettes live by rewriting the four seeds in
- * tokens.css on :root. Pick a winner, then delete this component and bake
- * the seeds into src/styles/tokens.css.
+ * DEV-ONLY palette and card lab. Rendered only under `astro dev` (see the
+ * BaseLayout.astro guard), so it never reaches a production build.
+ *
+ * "Baked" is the shipped design: no overrides, so dev matches production.
+ * Every other option overrides seeds or roles on :root. Role shapes:
+ *   pinned  an exact brand fill in both themes (the baked shape; seeds only)
+ *   split   text-safe accent plus a bright fill at a fixed lightness
+ *   classic one accent that is both text and fill (the previous system)
+ * scripts/palette-check.mjs gates every palette here on every neutral.
  *
  * Each palette: [primary-h, secondary-h, neutral-h, chroma].
- * Single-color palettes set secondary-h === primary-h so nothing reads as a
- * two-tone gradient. Split palettes (high-chroma hues) also preview the
- * text-safe accent / bright fill roles; scripts/palette-check.mjs gates every
- * entry here with the same role formulas.
  */
 type Seeds = [number, number, number, number];
+type Shape = 'pinned' | 'split' | 'classic';
 type Palette = {
   id: string;
   label: string;
   seeds: Seeds;
-  split?: boolean;
-  /** Exact brand fill [L, C] at the primary hue, used in both themes. */
+  shape: Shape;
+  /** Pinned brand fill [L, C] at the primary hue. */
   fill?: [number, number];
-  /** Neutral chroma scale (0 = pure greys). */
+  /** Neutral chroma scale (0 = pure greys); classic palettes default to 1. */
   nc?: number;
-};
-
-const single: Palette[] = [
-  { id: 'a1', label: 'A1 Cobalt on warm carbon', seeds: [262, 262, 55, 0.2] },
-  {
-    id: 'a2',
-    label: 'A2 Jade on green-black (tonal)',
-    seeds: [170, 170, 160, 0.17],
-  },
-  {
-    id: 'a3',
-    label: 'A3 Ice cyan on violet ink (split)',
-    seeds: [208, 208, 290, 0.13],
-    split: true,
-  },
-  {
-    id: 'a4',
-    label: 'A4 Signal gold on plum-black (split)',
-    seeds: [88, 88, 330, 0.15],
-    split: true,
-  },
-  {
-    id: 'a5',
-    label: 'A5 Hot magenta on teal-black',
-    seeds: [345, 345, 200, 0.2],
-  },
-  {
-    id: 'a6',
-    label: 'A6 Ultraviolet on olive-black',
-    seeds: [300, 300, 110, 0.18],
-  },
-];
-
-const two: Palette[] = [
-  {
-    id: 'b1',
-    label: 'B1 Aurora: jade to cyan on violet ink',
-    seeds: [165, 212, 298, 0.17],
-  },
-  {
-    id: 'b2',
-    label: 'B2 Infrared: pink to coral on green-black',
-    seeds: [352, 32, 162, 0.19],
-  },
-  {
-    id: 'b3',
-    label: 'B3 Deep sea: cobalt to cyan on warm carbon',
-    seeds: [258, 205, 50, 0.19],
-  },
-  {
-    id: 'b4',
-    label: 'B4 Dusk: rose to amber on teal-black',
-    seeds: [8, 68, 198, 0.18],
-  },
-  {
-    id: 'b5',
-    label: 'B5 Solar: gold to orange on indigo ink (split)',
-    seeds: [90, 45, 270, 0.15],
-    split: true,
-  },
-  {
-    id: 'b6',
-    label: 'B6 Glacier: ice cyan to mint on cocoa-black (split)',
-    seeds: [205, 160, 30, 0.13],
-    split: true,
-  },
-];
-
-const compare: Palette[] = [
-  {
-    id: 'current',
-    label: 'Current (Tropic emerald + magenta)',
-    seeds: [158, 335, 250, 0.2],
-  },
-];
-
-const swatch = (seeds: Seeds, mono: boolean, split = false) => {
-  const [p, s, , c] = seeds;
-  const a = `oklch(${split ? 0.78 : 0.72} ${c} ${p})`;
-  if (mono) return `background:${a};`;
-  const b = split
-    ? `oklch(0.6 ${Number((c * 0.9).toFixed(3))} ${s})`
-    : `oklch(0.82 ${Number((c * 0.65).toFixed(3))} ${s})`;
-  return `background:linear-gradient(120deg, ${a}, ${b});`;
 };
 
 // #ff4d2a = oklch(0.6693 0.2196 33), #ccff00 = oklch(0.9306 0.2287 123.1).
@@ -114,7 +31,7 @@ const bold: Palette[] = [
     id: 'o1',
     label: 'O1 Signal orange #ff4d2a on carbon',
     seeds: [33, 33, 60, 0.2196],
-    split: true,
+    shape: 'pinned',
     fill: [0.6693, 0.2196],
     nc: 0.15,
   },
@@ -122,7 +39,7 @@ const bold: Palette[] = [
     id: 'o2',
     label: 'O2 Signal orange #ff4d2a on deep navy ink',
     seeds: [33, 33, 262, 0.2196],
-    split: true,
+    shape: 'pinned',
     fill: [0.6693, 0.2196],
     nc: 1.4,
   },
@@ -130,7 +47,7 @@ const bold: Palette[] = [
     id: 'l1',
     label: 'L1 Acid lime #ccff00 on carbon',
     seeds: [123, 123, 125, 0.2287],
-    split: true,
+    shape: 'pinned',
     fill: [0.9306, 0.2287],
     nc: 0.15,
   },
@@ -138,18 +55,114 @@ const bold: Palette[] = [
     id: 'l2',
     label: 'L2 Acid lime #ccff00 on aubergine ink',
     seeds: [123, 123, 318, 0.2287],
-    split: true,
+    shape: 'pinned',
     fill: [0.9306, 0.2287],
     nc: 1.3,
   },
 ];
+
+const single: Palette[] = [
+  {
+    id: 'a1',
+    label: 'A1 Cobalt on warm carbon',
+    seeds: [262, 262, 55, 0.2],
+    shape: 'classic',
+  },
+  {
+    id: 'a2',
+    label: 'A2 Jade on green-black (tonal)',
+    seeds: [170, 170, 160, 0.17],
+    shape: 'classic',
+  },
+  {
+    id: 'a3',
+    label: 'A3 Ice cyan on violet ink (split)',
+    seeds: [208, 208, 290, 0.13],
+    shape: 'split',
+  },
+  {
+    id: 'a4',
+    label: 'A4 Signal gold on plum-black (split)',
+    seeds: [88, 88, 330, 0.15],
+    shape: 'split',
+  },
+  {
+    id: 'a5',
+    label: 'A5 Hot magenta on teal-black',
+    seeds: [345, 345, 200, 0.2],
+    shape: 'classic',
+  },
+  {
+    id: 'a6',
+    label: 'A6 Ultraviolet on olive-black',
+    seeds: [300, 300, 110, 0.18],
+    shape: 'classic',
+  },
+];
+
+const two: Palette[] = [
+  {
+    id: 'b1',
+    label: 'B1 Aurora: jade to cyan on violet ink',
+    seeds: [165, 212, 298, 0.17],
+    shape: 'classic',
+  },
+  {
+    id: 'b2',
+    label: 'B2 Infrared: pink to coral on green-black',
+    seeds: [352, 32, 162, 0.19],
+    shape: 'classic',
+  },
+  {
+    id: 'b3',
+    label: 'B3 Deep sea: cobalt to cyan on warm carbon',
+    seeds: [258, 205, 50, 0.19],
+    shape: 'classic',
+  },
+  {
+    id: 'b4',
+    label: 'B4 Dusk: rose to amber on teal-black',
+    seeds: [8, 68, 198, 0.18],
+    shape: 'classic',
+  },
+  {
+    id: 'b5',
+    label: 'B5 Solar: gold to orange on indigo ink (split)',
+    seeds: [90, 45, 270, 0.15],
+    shape: 'split',
+  },
+  {
+    id: 'b6',
+    label: 'B6 Glacier: ice cyan to mint on cocoa-black (split)',
+    seeds: [205, 160, 30, 0.13],
+    shape: 'split',
+  },
+  {
+    id: 'tropic',
+    label: 'Previous: Tropic emerald + magenta',
+    seeds: [158, 335, 250, 0.2],
+    shape: 'classic',
+  },
+];
+
+const swatch = (p: Palette, mono: boolean) => {
+  const [h, s, , c] = p.seeds;
+  if (p.fill) return `background:oklch(${p.fill[0]} ${p.fill[1]} ${h});`;
+  const split = p.shape === 'split';
+  const a = `oklch(${split ? 0.78 : 0.72} ${c} ${h})`;
+  if (mono) return `background:${a};`;
+  const b = split
+    ? `oklch(0.6 ${Number((c * 0.9).toFixed(3))} ${s})`
+    : `oklch(0.82 ${Number((c * 0.65).toFixed(3))} ${s})`;
+  return `background:linear-gradient(120deg, ${a}, ${b});`;
+};
 
 // Neutral systems: [id, label, neutral-h, chroma scale]. Mirrors NEUTRALS in
 // scripts/palette-check.mjs, which gates every palette on every entry.
 const neutrals: Array<[string, string, number, number]> = [
   ['carbon', 'Carbon (pure greys)', 60, 0],
   ['warm-graphite', 'Warm graphite', 55, 0.35],
-  ['cool-graphite', 'Cool graphite', 250, 0.35],
+  ['cool-graphite', 'Cool graphite (baked)', 250, 0.35],
   ['deep-ink', 'Deep ink (navy)', 262, 1.4],
   ['aubergine', 'Aubergine', 320, 1.3],
   ['forest', 'Forest', 160, 1.2],
@@ -164,36 +177,27 @@ const lab: Array<{
     key: 'density',
     title: 'Layout',
     options: [
-      ['current', 'Current'],
-      ['spacious', 'Spacious'],
-    ],
-  },
-  {
-    key: 'motion',
-    title: 'Cards',
-    options: [
-      ['current', 'Current'],
-      ['calm', 'Calm'],
+      ['baked', 'Spacious (baked)'],
+      ['compact', 'Compact (previous)'],
     ],
   },
   {
     key: 'border',
     title: 'Card border',
     options: [
-      ['current', 'Orbit'],
+      ['baked', 'Frame (baked)'],
       ['quiet', 'Quiet'],
       ['trace', 'Trace'],
-      ['viewfinder', 'Frame'],
       ['proximity', 'Proximity'],
+      ['orbit', 'Orbit (previous)'],
     ],
   },
 ];
 
 const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
+  { title: 'Bold (pinned brand fill)', items: bold, mono: true },
   { title: 'Single color', items: single, mono: true },
   { title: 'Two color', items: two, mono: false },
-  { title: 'Bold (exact brand fill)', items: bold, mono: true },
-  { title: 'Compare', items: compare, mono: false },
 ];
 ---
 
@@ -205,8 +209,20 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
     </summary>
     <div class="pp__body">
       <p class="pp__hint">
-        Dev-only. Click a palette to preview it, then compare both themes.
+        Dev-only. “Baked” is what ships; everything else is a preview.
       </p>
+
+      <section class="pp__group">
+        <ul class="pp__list">
+          <li>
+            <button type="button" class="pp__btn" data-baked data-id="baked">
+              <span class="pp__swatch pp__swatch--baked" aria-hidden="true"
+              ></span>
+              <span class="pp__label">Baked: #ff4d2a on cool graphite</span>
+            </button>
+          </li>
+        </ul>
+      </section>
 
       {
         groups.map((group) => (
@@ -219,18 +235,14 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
                     type="button"
                     class="pp__btn"
                     data-seeds={p.seeds.join(',')}
-                    data-split={p.split ? 'true' : undefined}
+                    data-shape={p.shape}
                     data-fill={p.fill?.join(',')}
                     data-nc={p.nc}
                     data-id={p.id}
                   >
                     <span
                       class="pp__swatch"
-                      style={
-                        p.fill
-                          ? `background:oklch(${p.fill[0]} ${p.fill[1]} ${p.seeds[0]});`
-                          : swatch(p.seeds, group.mono, p.split)
-                      }
+                      style={swatch(p, group.mono)}
                       aria-hidden="true"
                     />
                     <span class="pp__label">{p.label}</span>
@@ -297,22 +309,22 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
 
       <label class="pp__chroma">
         <span class="pp__chromarow">
-          <span>Saturation</span>
-          <span data-chroma-value>0.20</span>
+          <span>Accent text chroma</span>
+          <span data-chroma-value>0.24</span>
         </span>
         <input
           type="range"
           min="0.05"
           max="0.28"
           step="0.01"
-          value="0.2"
+          value="0.24"
           data-chroma-slider
-          aria-label="Brand saturation (chroma)"
+          aria-label="Accent text chroma"
         />
       </label>
 
       <output class="pp__readout" data-palette-readout>
-        primary 158 · secondary 335 · neutral 250 · chroma 0.20
+        baked · primary 33 · neutral 250 ×0.35 · chroma 0.24
       </output>
     </div>
   </details>
@@ -320,31 +332,22 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
 
 <script is:inline>
   (() => {
-    const KEY = 'sk-palette-dev';
-    const LAB_KEY = 'sk-lab-dev';
+    const KEY = 'sk-palette-dev-2';
+    const LAB_KEY = 'sk-lab-dev-2';
     const root = document.documentElement;
     const readout = document.querySelector('[data-palette-readout]');
     const slider = document.querySelector('[data-chroma-slider]');
     const chromaValue = document.querySelector('[data-chroma-value]');
-    const buttons = Array.from(document.querySelectorAll('[data-seeds]'));
+    const buttons = Array.from(
+      document.querySelectorAll('[data-seeds], [data-baked]'),
+    );
     const neutralButtons = Array.from(
       document.querySelectorAll('[data-neutral]'),
     );
     const labButtons = Array.from(document.querySelectorAll('[data-lab]'));
 
-    let palette = {
-      seeds: [158, 335, 250, 0.2],
-      split: false,
-      fill: null,
-      nc: null,
-      id: 'current',
-    };
-    let lab = {
-      neutral: '',
-      density: 'current',
-      motion: 'current',
-      border: 'current',
-    };
+    let palette = { id: 'baked' };
+    let lab = { neutral: '', density: 'baked', border: 'baked' };
 
     const set = (name, value) =>
       value === null || value === undefined
@@ -352,30 +355,34 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
         : root.style.setProperty(name, String(value));
 
     const render = () => {
-      const [p, s, ownN, c] = palette.seeds;
+      const { seeds, shape, fill, nc, chroma } = palette;
       const neutral = neutralButtons.find(
         (b) => lab.neutral && b.dataset.neutral === lab.neutral,
       );
-      const n = neutral ? Number(neutral.dataset.nh) : ownN;
-      const nc = neutral ? Number(neutral.dataset.nscale) : palette.nc;
-      const fill = palette.fill;
-      set('--seed-primary-h', p);
-      set('--seed-secondary-h', s);
-      set('--seed-neutral-h', n);
-      set('--seed-chroma', c);
-      root.toggleAttribute('data-accent-split', Boolean(palette.split));
-      root.toggleAttribute('data-pp-fill', Boolean(fill));
-      set('--pp-fill-l', fill ? fill[0] : null);
-      set('--pp-fill-c', fill ? fill[1] : null);
-      // Hover fill: a step brighter, or darker for fills already near white.
+      set('--seed-primary-h', seeds?.[0]);
+      set('--seed-secondary-h', seeds?.[1]);
+      set('--seed-neutral-h', neutral ? neutral.dataset.nh : seeds?.[2]);
       set(
-        '--pp-hover-l',
-        fill ? (fill[0] > 0.85 ? fill[0] - 0.05 : fill[0] + 0.05) : null,
+        '--seed-neutral-chroma',
+        neutral ? neutral.dataset.nscale : seeds ? (nc ?? 1) : null,
       );
-      root.toggleAttribute('data-pp-nc', nc !== null && nc !== undefined);
-      set('--pp-nc', nc);
-      for (const key of ['density', 'motion', 'border']) {
-        if (lab[key] === 'current') root.removeAttribute(`data-pp-${key}`);
+      set('--seed-chroma', chroma ?? seeds?.[3]);
+      set('--seed-fill-l', fill?.[0]);
+      set('--seed-fill-c', fill?.[1]);
+      // Pinned hover fill: a step brighter, or darker for fills near white.
+      set(
+        '--accent-vivid',
+        fill
+          ? `oklch(${fill[0] > 0.85 ? fill[0] - 0.05 : fill[0] + 0.05} ${fill[1]} var(--seed-primary-h))`
+          : null,
+      );
+      if (shape === 'split' || shape === 'classic') {
+        root.setAttribute('data-pp-shape', shape);
+      } else {
+        root.removeAttribute('data-pp-shape');
+      }
+      for (const key of ['density', 'border']) {
+        if (lab[key] === 'baked') root.removeAttribute(`data-pp-${key}`);
         else root.setAttribute(`data-pp-${key}`, lab[key]);
       }
       buttons.forEach((b) =>
@@ -393,11 +400,14 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
           String(lab[b.dataset.lab] === b.dataset.value),
         ),
       );
+      const cs = getComputedStyle(root);
+      const seed = (name) => cs.getPropertyValue(`--seed-${name}`).trim();
+      const c = Number(seed('chroma'));
       if (readout) {
-        readout.textContent = `primary ${p} · secondary ${s} · neutral ${n}${nc !== null && nc !== undefined ? ` ×${nc}` : ''} · chroma ${Number(c).toFixed(2)}${fill ? ' · pinned fill' : palette.split ? ' · split' : ''}`;
+        readout.textContent = `${palette.id || 'custom'} · primary ${seed('primary-h')} · neutral ${seed('neutral-h')} ×${seed('neutral-chroma')} · chroma ${c.toFixed(2)} · ${shape ?? 'pinned'}`;
       }
       if (slider) slider.value = String(c);
-      if (chromaValue) chromaValue.textContent = Number(c).toFixed(2);
+      if (chromaValue) chromaValue.textContent = c.toFixed(2);
       try {
         localStorage.setItem(KEY, JSON.stringify(palette));
         localStorage.setItem(LAB_KEY, JSON.stringify(lab));
@@ -408,15 +418,17 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
 
     buttons.forEach((btn) => {
       btn.addEventListener('click', () => {
-        palette = {
-          seeds: (btn.dataset.seeds || '').split(',').map(Number),
-          split: btn.dataset.split === 'true',
-          fill: btn.dataset.fill
-            ? btn.dataset.fill.split(',').map(Number)
-            : null,
-          nc: btn.dataset.nc ? Number(btn.dataset.nc) : null,
-          id: btn.dataset.id,
-        };
+        const list = (value) => value?.split(',').map(Number);
+        palette =
+          btn.dataset.baked !== undefined
+            ? { id: 'baked' }
+            : {
+                id: btn.dataset.id,
+                seeds: list(btn.dataset.seeds),
+                shape: btn.dataset.shape,
+                fill: list(btn.dataset.fill),
+                nc: btn.dataset.nc ? Number(btn.dataset.nc) : undefined,
+              };
         render();
       });
     });
@@ -437,12 +449,7 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
 
     if (slider) {
       slider.addEventListener('input', () => {
-        const [p, s, n] = palette.seeds;
-        palette = {
-          ...palette,
-          seeds: [p, s, n, Number(slider.value)],
-          id: '',
-        };
+        palette = { ...palette, chroma: Number(slider.value) };
         render();
       });
     }
@@ -474,9 +481,7 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
 
     try {
       const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (saved && Array.isArray(saved.seeds)) {
-        palette = { split: false, fill: null, nc: null, id: '', ...saved };
-      }
+      if (saved && typeof saved.id === 'string') palette = saved;
       const savedLab = JSON.parse(localStorage.getItem(LAB_KEY) || 'null');
       if (savedLab) lab = { ...lab, ...savedLab };
     } catch {
@@ -618,6 +623,9 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
   .pp__swatch--own {
     background: linear-gradient(90deg, var(--bg) 50%, var(--text) 50%);
   }
+  .pp__swatch--baked {
+    background: oklch(0.6693 0.2196 33);
+  }
   .pp__seg {
     display: flex;
     flex-wrap: wrap;
@@ -643,8 +651,8 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
 <style is:inline>
   /* Lab previews (dev only). Colour formulas mirror scripts/palette-check.mjs. */
 
-  /* Split accent: text-safe accent plus a bright fill with dark ink. */
-  :root[data-accent-split]:not([data-theme='light']) {
+  /* Split shape: text-safe accent plus a bright fill at a fixed lightness. */
+  :root[data-pp-shape='split']:not([data-theme='light']) {
     --accent: oklch(0.78 var(--seed-chroma) var(--seed-primary-h));
     --accent-strong: oklch(
       0.84 calc(var(--seed-chroma) * 0.72) var(--seed-primary-h)
@@ -654,7 +662,7 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
     );
     --accent-vivid: oklch(0.84 var(--seed-chroma) var(--seed-primary-h));
   }
-  :root[data-accent-split][data-theme='light'] {
+  :root[data-pp-shape='split'][data-theme='light'] {
     --accent: oklch(0.46 calc(var(--seed-chroma) * 0.55) var(--seed-primary-h));
     --accent-strong: oklch(
       0.42 calc(var(--seed-chroma) * 0.5) var(--seed-primary-h)
@@ -664,130 +672,99 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
     );
     --accent-fill: oklch(0.88 var(--seed-chroma) var(--seed-primary-h));
     --accent-vivid: oklch(0.92 var(--seed-chroma) var(--seed-primary-h));
-    --on-accent-fill: oklch(
-      0.22 calc(0.03 * var(--pp-nc, 1)) var(--seed-neutral-h)
-    );
-  }
-  :root[data-accent-split] .prose {
-    --astro-code-token-keyword: var(--accent);
   }
 
-  /* Pinned brand fill (bold palettes): the exact colour in both themes. */
-  :root[data-accent-split][data-pp-fill]:not([data-theme='light']) {
-    --accent: oklch(var(--pp-fill-l) var(--pp-fill-c) var(--seed-primary-h));
-    --accent-vivid: oklch(
-      var(--pp-hover-l) var(--pp-fill-c) var(--seed-primary-h)
-    );
-  }
-  :root[data-accent-split][data-pp-fill][data-theme='light'] {
-    --accent: oklch(0.5 calc(var(--seed-chroma) * 0.8) var(--seed-primary-h));
+  /* Classic shape: one accent that is both text and fill (previous system). */
+  :root[data-pp-shape='classic']:not([data-theme='light']) {
+    --accent: oklch(0.72 var(--seed-chroma) var(--seed-primary-h));
     --accent-strong: oklch(
-      0.44 calc(var(--seed-chroma) * 0.7) var(--seed-primary-h)
+      0.81 calc(var(--seed-chroma) * 0.7) var(--seed-primary-h)
     );
-    --accent-fill: oklch(
-      var(--pp-fill-l) var(--pp-fill-c) var(--seed-primary-h)
+    --accent-vivid: oklch(0.78 var(--seed-chroma) var(--seed-primary-h));
+    --accent-2: oklch(
+      0.82 calc(var(--seed-chroma) * 0.65) var(--seed-secondary-h)
+    );
+  }
+  :root[data-pp-shape='classic'][data-theme='light'] {
+    --accent: oklch(0.48 calc(var(--seed-chroma) * 0.55) var(--seed-primary-h));
+    --accent-strong: oklch(
+      0.43 calc(var(--seed-chroma) * 0.5) var(--seed-primary-h)
     );
     --accent-vivid: oklch(
-      var(--pp-hover-l) var(--pp-fill-c) var(--seed-primary-h)
+      0.5 calc(var(--seed-chroma) * 0.58) var(--seed-primary-h)
     );
+    --accent-2: oklch(
+      0.5 calc(var(--seed-chroma) * 0.85) var(--seed-secondary-h)
+    );
+    --accent-fill: var(--accent);
+    --on-accent-fill: var(--on-accent);
+  }
+  :root[data-pp-shape='classic'] .prose {
+    --astro-code-token-keyword: var(--accent-2);
   }
 
-  /* Neutral system: scales every neutral's chroma (0 = pure greys). */
-  :root[data-pp-nc]:not([data-theme='light']) {
-    --bg: oklch(0.15 calc(0.035 * var(--pp-nc)) var(--seed-neutral-h));
-    --bg-2: oklch(0.18 calc(0.04 * var(--pp-nc)) var(--seed-neutral-h));
-    --bg-3: oklch(0.23 calc(0.045 * var(--pp-nc)) var(--seed-neutral-h));
-    --bg-deep: oklch(0.12 calc(0.03 * var(--pp-nc)) var(--seed-neutral-h));
-    --bg-card: oklch(0.2 calc(0.04 * var(--pp-nc)) var(--seed-neutral-h));
-    --bg-card-hover: oklch(
-      0.23 calc(0.045 * var(--pp-nc)) var(--seed-neutral-h)
-    );
-    --surface: oklch(0.18 calc(0.037 * var(--pp-nc)) var(--seed-neutral-h));
-    --surface-strong: oklch(
-      0.22 calc(0.042 * var(--pp-nc)) var(--seed-neutral-h)
-    );
-    --text: oklch(0.97 calc(0.012 * var(--pp-nc)) var(--seed-neutral-h));
-    --text-2: oklch(0.82 calc(0.035 * var(--pp-nc)) var(--seed-neutral-h));
-    --text-3: oklch(0.71 calc(0.04 * var(--pp-nc)) var(--seed-neutral-h));
-    --on-accent: oklch(0.14 calc(0.03 * var(--pp-nc)) var(--seed-neutral-h));
+  /* Layout: Compact, the previous spacing. */
+  :root[data-pp-density='compact'] .homepage-shell .section {
+    padding-block: clamp(5rem, 11vw, 9rem);
   }
-  :root[data-pp-nc][data-theme='light'] {
-    --bg: oklch(0.985 calc(0.006 * var(--pp-nc)) var(--seed-neutral-h));
-    --bg-2: oklch(0.966 calc(0.014 * var(--pp-nc)) var(--seed-neutral-h));
-    --bg-3: oklch(0.935 calc(0.02 * var(--pp-nc)) var(--seed-neutral-h));
-    --bg-deep: oklch(0.94 calc(0.022 * var(--pp-nc)) var(--seed-neutral-h));
-    --bg-card-hover: oklch(
-      0.977 calc(0.01 * var(--pp-nc)) var(--seed-neutral-h)
-    );
-    --surface-strong: oklch(
-      0.97 calc(0.012 * var(--pp-nc)) var(--seed-neutral-h)
-    );
-    --text: oklch(0.2 calc(0.04 * var(--pp-nc)) var(--seed-neutral-h));
-    --text-2: oklch(0.38 calc(0.045 * var(--pp-nc)) var(--seed-neutral-h));
-    --text-3: oklch(0.48 calc(0.045 * var(--pp-nc)) var(--seed-neutral-h));
+  :root[data-pp-density='compact'] .section {
+    padding-block: clamp(5rem, 10vw, 9rem);
   }
-
-  /* Layout: Spacious. More air around and inside cards, shorter measure. */
-  :root[data-pp-density='spacious'] :is(.homepage-shell .section, .section) {
-    padding-block: clamp(6rem, 13vw, 11rem);
+  :root[data-pp-density='compact'] .section-head {
+    margin-block-end: clamp(2.5rem, 6vw, 4rem);
   }
-  :root[data-pp-density='spacious'] .section-head {
-    margin-block-end: clamp(3rem, 7vw, 5.5rem);
+  :root[data-pp-density='compact'] :is(.conversion-grid, .bento-grid) {
+    gap: clamp(1rem, 2.4vw, 1.5rem);
   }
-  :root[data-pp-density='spacious']
-    :is(
-      .conversion-grid,
-      .bento-grid,
-      .articles-grid,
-      .expertise-grid,
-      .stats-grid,
-      .grid
-    ) {
-    gap: clamp(1.25rem, 3vw, 2.25rem);
+  :root[data-pp-density='compact']
+    :is(.articles-grid, .expertise-grid, .stats-grid, .grid) {
+    gap: 1rem;
   }
-  :root[data-pp-density='spacious'] .conversion-card,
-  :root[data-pp-density='spacious'] .xp-card {
-    padding: clamp(1.75rem, 4vw, 2.75rem);
+  :root[data-pp-density='compact'] .conversion-card {
+    padding: clamp(1.5rem, 3.4vw, 2.1rem);
   }
-  :root[data-pp-density='spacious'] :is(.article-card, .trait-card) {
-    padding: 1.5rem 1.5rem 2rem;
+  :root[data-pp-density='compact'] .xp-card {
+    padding: clamp(1.4rem, 3.5vw, 2.25rem);
   }
-  :root[data-pp-density='spacious']
-    :is(.expertise-card, .rec-card, .hero-proof-card) {
-    padding: 2rem;
+  :root[data-pp-density='compact'] :is(.article-card, .trait-card) {
+    padding: 1rem 1rem 1.4rem;
   }
-  :root[data-pp-density='spacious'] .stat-item {
-    padding: 1.6rem 1.75rem;
+  :root[data-pp-density='compact'] .expertise-card {
+    padding: 1.4rem 1.4rem 1.5rem;
   }
-  :root[data-pp-density='spacious'] .grid article {
-    padding: clamp(1.75rem, 3.5vw, 2.5rem);
+  :root[data-pp-density='compact'] .rec-card {
+    padding: 1.5rem;
   }
-  :root[data-pp-density='spacious'] .oss-card {
-    padding: clamp(2rem, 5vw, 3.5rem);
+  :root[data-pp-density='compact'] .hero-proof-card {
+    padding: 1.35rem;
   }
-  :root[data-pp-density='spacious']
-    :is(.problem-outcome, .case-study-body p, .case-study-note p, .bullets li) {
-    max-width: 64ch;
+  :root[data-pp-density='compact'] .stat-item {
+    padding: 1.25rem 1.35rem;
+  }
+  :root[data-pp-density='compact'] :is(.grid article, .quote) {
+    padding: clamp(1.35rem, 3vw, 2rem);
+  }
+  :root[data-pp-density='compact'] .oss-card {
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+  }
+  :root[data-pp-density='compact'] :is(.problem-outcome, .bullets li) {
+    max-width: none;
+  }
+  :root[data-pp-density='compact'] .case-study-body p {
+    max-width: 78ch;
+  }
+  :root[data-pp-density='compact'] .case-study-note {
+    max-width: 74ch;
+  }
+  :root[data-pp-density='compact'] .xp-bullets li {
+    max-width: 72ch;
   }
 
-  /* Cards: Calm. One interaction per card: no tilt, no interior wash. */
-  :root[data-pp-motion='calm'] .fx-tilt {
-    transform: none;
-  }
-  :root[data-pp-motion='calm'] .fx-glow::before {
-    display: none;
-  }
-
-  /* Card border treatments (replace the orbiting conic arc). */
+  /* Card border alternatives to the baked Frame. */
   @property --pp-sweep {
     syntax: '<angle>';
     inherits: false;
     initial-value: 0deg;
-  }
-  @property --pp-len {
-    syntax: '<length-percentage>';
-    inherits: false;
-    initial-value: 14px;
   }
   @property --pp-ink {
     syntax: '<color>';
@@ -805,9 +782,8 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
         padding-box,
       linear-gradient(var(--gc-fill), var(--gc-fill)) padding-box,
       var(--pp-edge);
-    animation: none;
   }
-  :root[data-pp-border] .fx-card-gradient.fx-glow::after {
+  :root[data-pp-border] .fx-card-gradient.fx-card-gradient::before {
     display: none;
   }
 
@@ -845,36 +821,26 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
     --pp-sweep: 360deg;
   }
 
-  /* Frame: viewfinder corners that close into a full frame. */
-  :root[data-pp-border='viewfinder'] .fx-card-gradient.fx-card-gradient {
-    --pp-ink: color-mix(in oklch, var(--text) 40%, transparent);
-    --pp-w: var(--card-border-width);
-    --pp-edge:
-      linear-gradient(var(--pp-ink), var(--pp-ink)) left top / var(--pp-len)
-        var(--pp-w) no-repeat border-box,
-      linear-gradient(var(--pp-ink), var(--pp-ink)) left top / var(--pp-w)
-        var(--pp-len) no-repeat border-box,
-      linear-gradient(var(--pp-ink), var(--pp-ink)) right top / var(--pp-len)
-        var(--pp-w) no-repeat border-box,
-      linear-gradient(var(--pp-ink), var(--pp-ink)) right top / var(--pp-w)
-        var(--pp-len) no-repeat border-box,
-      linear-gradient(var(--pp-ink), var(--pp-ink)) left bottom / var(--pp-len)
-        var(--pp-w) no-repeat border-box,
-      linear-gradient(var(--pp-ink), var(--pp-ink)) left bottom / var(--pp-w)
-        var(--pp-len) no-repeat border-box,
-      linear-gradient(var(--pp-ink), var(--pp-ink)) right bottom / var(--pp-len)
-        var(--pp-w) no-repeat border-box,
-      linear-gradient(var(--pp-ink), var(--pp-ink)) right bottom / var(--pp-w)
-        var(--pp-len) no-repeat border-box,
-      linear-gradient(var(--gc-edge), var(--gc-edge)) border-box;
-    transition:
-      --pp-len 560ms cubic-bezier(0.65, 0, 0.35, 1),
-      --pp-ink 260ms ease;
+  /* Orbit (previous): an accent arc that orbits the edge on hover. */
+  :root[data-pp-border='orbit'] .fx-card-gradient.fx-card-gradient {
+    --pp-edge: conic-gradient(
+        from var(--fx-angle),
+        var(--gc-edge) 0%,
+        var(--gc-edge) 55%,
+        var(--accent) 72%,
+        var(--accent-2) 82%,
+        var(--gc-edge) 95%
+      )
+      border-box;
   }
-  :root[data-pp-border='viewfinder']
+  :root[data-pp-border='orbit']
     .fx-card-gradient.fx-card-gradient:is(:hover, :focus-within) {
-    --pp-len: calc(50% + 1px);
-    --pp-ink: var(--accent);
+    animation: pp-orbit 3.2s linear infinite;
+  }
+  @keyframes pp-orbit {
+    to {
+      --fx-angle: 360deg;
+    }
   }
 
   /* Proximity: the pointer lights the hairlines of every nearby card. */
@@ -892,6 +858,7 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
   @media (prefers-reduced-motion: reduce) {
     :root[data-pp-border] .fx-card-gradient.fx-card-gradient {
       transition: none;
+      animation: none;
     }
   }
 </style>

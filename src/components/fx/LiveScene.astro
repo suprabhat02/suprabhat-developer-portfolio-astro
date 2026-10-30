@@ -10,8 +10,7 @@
  *   tied to scrolling instead. Nothing animates while idle, and everything
  *   is static under `prefers-reduced-motion: reduce`.
  * - Layers marked `.lv-l` drift with the pointer (`--px/--py`, written by
- *   the tilt handler in motion.ts) at their own depth `--d`, producing
- *   parallax inside the card.
+ *   the parallax handler in motion.ts) at their own depth `--d`.
  * - Elements are positioned with SVG attributes on wrapper groups and
  *   animated with CSS on the inner element, so the two never fight over
  *   `transform`.

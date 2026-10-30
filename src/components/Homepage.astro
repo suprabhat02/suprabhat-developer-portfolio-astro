@@ -464,7 +464,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
           <p class="hero-trust-line">{conversion.hero.trustLine}</p>
         </div>
 
-        <figure class="hero-portrait-wrap hero-card fx-tilt" data-tilt>
+        <figure class="hero-portrait-wrap hero-card">
           <div class="hero-portrait-frame fx-moving-border">
             {
               /*
@@ -489,7 +489,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
               pictureAttributes={{ class: 'hero-picture' }}
             />
           </div>
-          <figcaption class="hero-portrait-cap fx-pop">
+          <figcaption class="hero-portrait-cap">
             {t(locale, 'home.portraitCaption')}
           </figcaption>
           <span class="hero-orbit" aria-hidden="true">
@@ -507,11 +507,10 @@ const contactIndex = featured.length > 0 ? '14' : '13';
                 class:list={[
                   'hero-proof-card',
                   heroProofClass[card.variant],
-                  'fx-live fx-glow fx-tilt fx-card-gradient',
+                  'fx-live fx-glow fx-card-gradient',
                 ]}
                 href={card.href}
                 data-glow
-                data-tilt
               >
                 <LiveScene scene={heroProofScene[card.variant]} size="sm" />
                 <span class="hero-card-kicker">
@@ -563,11 +562,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
       <div class="stats-grid">
         {
           stats.map((stat) => (
-            <div
-              class="stat-item fx-glow fx-tilt fx-card-gradient"
-              data-glow
-              data-tilt
-            >
+            <div class="stat-item fx-glow fx-card-gradient" data-glow>
               <span class="stat-num">{stat.value}</span>
               <span class="stat-lbl">{stat.label}</span>
             </div>
@@ -604,9 +599,8 @@ const contactIndex = featured.length > 0 ? '14' : '13';
         {
           posts.slice(0, 3).map((post, i) => (
             <article
-              class="article-card fx-live fx-focus-item fx-glow fx-tilt fx-card-gradient fx-reveal"
+              class="article-card fx-live fx-focus-item fx-glow fx-card-gradient fx-reveal"
               data-glow
-              data-tilt
             >
               <LiveScene scene={articleScenes[i] ?? 'race'} />
               {post.data.tags[0] && (
@@ -694,9 +688,8 @@ const contactIndex = featured.length > 0 ? '14' : '13';
         {
           traits.map((trait, index) => (
             <div
-              class="trait-card fx-live fx-glow fx-tilt fx-card-gradient fx-reveal"
+              class="trait-card fx-live fx-glow fx-card-gradient fx-reveal"
               data-glow
-              data-tilt
             >
               <LiveScene scene={trait.visual} />
               <span class="trait-num">0{index + 1}</span>
@@ -742,12 +735,11 @@ const contactIndex = featured.length > 0 ? '14' : '13';
         {
           expertiseCards.map((card) => (
             <div
-              class="expertise-card fx-live fx-glow fx-tilt fx-card-gradient fx-reveal-scale"
+              class="expertise-card fx-live fx-glow fx-card-gradient fx-reveal-scale"
               data-glow
-              data-tilt
             >
               <LiveScene scene={card.visual} />
-              <div class="expertise-icon fx-pop">
+              <div class="expertise-icon">
                 <Icon name={expertiseIcons[card.icon]} size={24} />
               </div>
               <h3>{card.title}</h3>

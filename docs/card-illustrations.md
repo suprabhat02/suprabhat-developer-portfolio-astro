@@ -43,7 +43,8 @@ in sync between a Figma file and the code.
    (scenes must look complete and static until engaged).
 4. Reference the scene from content with `<LiveScene scene="your-name" />`
    inside a card carrying the `fx-live fx-card-gradient` classes (plus
-   `fx-glow`/`data-glow`, and `fx-tilt`/`data-tilt` if the card tilts).
+   `fx-glow`/`data-glow`). Wrap layers in `<g class="lv-l" style="--d:…">`
+   to give them parallax depth.
 
 Do not add raster images, external SVG downloads, or any other static
 illustration format for on-page cards — it breaks theme-reactivity, adds

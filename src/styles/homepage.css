@@ -145,7 +145,7 @@
 .homepage-shell .section {
   position: relative;
   isolation: isolate;
-  padding-block: clamp(5rem, 11vw, 9rem);
+  padding-block: clamp(6rem, 13vw, 11rem);
 }
 
 .homepage-shell .section-alt {
@@ -161,7 +161,7 @@
   display: grid;
   gap: 1.1rem;
   max-width: 62rem;
-  margin-block-end: clamp(2.5rem, 6vw, 4rem);
+  margin-block-end: clamp(3rem, 7vw, 5.5rem);
 }
 
 .section-head--center {
@@ -605,7 +605,7 @@
   flex-direction: column;
   gap: 0.6rem;
   min-width: 0;
-  padding: 1.35rem;
+  padding: 2rem;
   border: var(--card-border-width) solid var(--border-strong);
   border-radius: var(--radius-card);
   background: var(--card-fill);
@@ -741,21 +741,17 @@
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
+  gap: clamp(1.25rem, 3vw, 2.25rem);
 }
 
 .stat-item {
   display: grid;
   gap: 0.35rem;
-  padding: 1.25rem 1.35rem;
+  padding: 1.6rem 1.75rem;
 }
 
 .stat-num {
   color: var(--text);
-  background: linear-gradient(120deg, var(--text), var(--accent-strong));
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   font-size: clamp(2rem, 4vw, 2.75rem);
   font-weight: 800;
   letter-spacing: -0.04em;
@@ -773,7 +769,7 @@
 
 .conversion-grid {
   display: grid;
-  gap: clamp(1rem, 2.4vw, 1.5rem);
+  gap: clamp(1.25rem, 3vw, 2.25rem);
 }
 
 .conversion-grid--three {
@@ -786,7 +782,7 @@
 
 .conversion-card {
   min-width: 0;
-  padding: clamp(1.5rem, 3.4vw, 2.1rem);
+  padding: clamp(1.75rem, 4vw, 2.75rem);
 }
 
 .conversion-card h3 {
@@ -938,7 +934,7 @@
 .bento-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(1rem, 2.4vw, 1.5rem);
+  gap: clamp(1.25rem, 3vw, 2.25rem);
 }
 
 .bento-card {
@@ -1398,14 +1394,14 @@
 .articles-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
+  gap: clamp(1.25rem, 3vw, 2.25rem);
 }
 
 .article-card {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  padding: 1rem 1rem 1.4rem;
+  padding: 1.5rem 1.5rem 2rem;
 }
 
 .article-card > :not(.lv-scene) {
@@ -1615,7 +1611,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  padding: 1rem 1rem 1.4rem;
+  padding: 1.5rem 1.5rem 2rem;
 }
 
 .trait-card > :not(.lv-scene) {
@@ -1655,14 +1651,14 @@
 .expertise-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
+  gap: clamp(1.25rem, 3vw, 2.25rem);
 }
 
 .expertise-card {
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
-  padding: 1.4rem 1.4rem 1.5rem;
+  padding: 2rem;
 }
 
 .expertise-icon {
@@ -1851,7 +1847,7 @@
   flex-direction: column;
   gap: 1.25rem;
   width: 100%;
-  padding: 1.5rem;
+  padding: 2rem;
 }
 
 .rec-quote-mark {
@@ -2100,10 +2096,6 @@ details[open] .faq-icon {
 .cta-title {
   max-width: 18ch;
   color: var(--text);
-  background: linear-gradient(180deg, var(--text) 30%, var(--text-2));
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   font-size: clamp(2rem, 4.2vw, 3.4rem);
   font-weight: 800;
   letter-spacing: -0.04em;
@@ -2474,6 +2466,7 @@ textarea.f-input {
 }
 
 .conversion-card .problem-outcome {
+  max-width: 64ch;
   color: var(--text);
   font-size: 0.9rem;
   line-height: 1.6;

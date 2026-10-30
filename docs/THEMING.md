@@ -7,18 +7,36 @@ grounds, text, buttons, glows, gradients, borders, focus rings, and both themes.
 
 ## Seeds
 
-| Seed                 | Default | Controls                                    |
-| -------------------- | ------- | ------------------------------------------- |
-| `--seed-primary-h`   | `158`   | Brand hue (emerald)                         |
-| `--seed-secondary-h` | `335`   | Secondary hue used in gradients (magenta)   |
-| `--seed-neutral-h`   | `250`   | Hue bias of backgrounds and text (ink blue) |
-| `--seed-chroma`      | `0.2`   | Brand saturation, `0` (grey) to about `0.3` |
-| `--seed-success-h`   | `155`   | Success state                               |
-| `--seed-warning-h`   | `75`    | Warning state                               |
-| `--seed-danger-h`    | `25`    | Error state                                 |
+| Seed                    | Default  | Controls                                         |
+| ----------------------- | -------- | ------------------------------------------------ |
+| `--seed-primary-h`      | `33`     | Brand hue (signal orange)                        |
+| `--seed-secondary-h`    | `33`     | Secondary hue; equal to primary = single hue     |
+| `--seed-neutral-h`      | `250`    | Hue bias of backgrounds and text (cool graphite) |
+| `--seed-neutral-chroma` | `0.35`   | Neutral tint strength, `0` = pure greys          |
+| `--seed-chroma`         | `0.24`   | Chroma of the accent text partners               |
+| `--seed-fill-l`         | `0.6693` | Lightness of the pinned brand fill (`#ff4d2a`)   |
+| `--seed-fill-c`         | `0.2196` | Chroma of the pinned brand fill                  |
+| `--seed-success-h`      | `155`    | Success state                                    |
+| `--seed-warning-h`      | `75`     | Warning state                                    |
+| `--seed-danger-h`       | `10`     | Error state (crimson, clear of the brand orange) |
 
 Hues are OKLCH angles in degrees: about 25 orange, 75 amber, 155 green,
 200 cyan, 260 blue, 292 violet, 330 pink.
+
+## The pinned brand fill
+
+`#ff4d2a` measures 3.3:1 on white, so it can never be light-theme text. The
+brand colour is therefore pinned as a fill: `--accent-fill` is `#ff4d2a` in
+both themes, always carrying dark ink (`--on-accent-fill`, about 5.2:1). In
+dark mode `--accent` is the same colour (5.9:1 on the page); in light mode
+`--accent` is a deepened brick of the same hue for text and links. Any fill
+that carries a label uses the fill pair; small decorative marks may use
+`--accent`.
+
+Run `node scripts/palette-check.mjs` after changing a seed: it derives every
+role the way `tokens.css` does and fails if any text pair is below 4.5:1.
+Under `npm run dev`, the palette preview in the bottom corner shows the
+baked palette plus alternatives without editing files.
 
 ## Try a palette in DevTools
 
@@ -47,6 +65,8 @@ static copies that browsers and social platforms read outside CSS:
   swap `content` to match the active theme)
 - `public/site.webmanifest`: `theme_color` and `background_color`
 - `public/assets/favicons/favicon.svg`, then regenerate the PNG and ICO sizes
+  from `docs/brand/source/tile-*.svg`
+- `src/scripts/globe.ts`: the canvas fallback colours
 - `scripts/generate-og.mjs` (the `palette` object), then run
   `npm run generate:og`. It renders the default share image, the case-study
   cards and the blog covers (`blogCovers`; add an entry for every new
