@@ -8,61 +8,76 @@
  *
  * Each palette: [primary-h, secondary-h, neutral-h, chroma].
  * Single-color palettes set secondary-h === primary-h so nothing reads as a
- * two-tone gradient.
+ * two-tone gradient. Split palettes (high-chroma hues) also preview the
+ * text-safe accent / bright fill roles; scripts/palette-check.mjs gates every
+ * entry here with the same role formulas.
  */
 type Seeds = [number, number, number, number];
-type Palette = { id: string; label: string; seeds: Seeds };
+type Palette = { id: string; label: string; seeds: Seeds; split?: boolean };
 
 const single: Palette[] = [
-  { id: 'mono-teal', label: 'Teal', seeds: [185, 185, 200, 0.19] },
-  { id: 'mono-emerald', label: 'Emerald', seeds: [150, 150, 160, 0.19] },
-  { id: 'mono-cyan', label: 'Cyan', seeds: [200, 200, 210, 0.18] },
-  { id: 'mono-azure', label: 'Azure', seeds: [245, 245, 250, 0.2] },
-  { id: 'mono-indigo', label: 'Indigo', seeds: [272, 272, 268, 0.2] },
-  { id: 'mono-violet', label: 'Violet', seeds: [292, 292, 285, 0.2] },
-  { id: 'mono-magenta', label: 'Magenta', seeds: [330, 330, 320, 0.2] },
-  { id: 'mono-rose', label: 'Rose', seeds: [355, 355, 350, 0.19] },
-  { id: 'mono-coral', label: 'Coral', seeds: [30, 30, 40, 0.19] },
-  { id: 'mono-amber', label: 'Amber', seeds: [70, 70, 80, 0.17] },
-  { id: 'mono-lime', label: 'Lime', seeds: [135, 135, 140, 0.19] },
+  { id: 'a1', label: 'A1 Cobalt on warm carbon', seeds: [262, 262, 55, 0.2] },
+  {
+    id: 'a2',
+    label: 'A2 Jade on green-black (tonal)',
+    seeds: [170, 170, 160, 0.17],
+  },
+  {
+    id: 'a3',
+    label: 'A3 Ice cyan on violet ink (split)',
+    seeds: [208, 208, 290, 0.13],
+    split: true,
+  },
+  {
+    id: 'a4',
+    label: 'A4 Signal gold on plum-black (split)',
+    seeds: [88, 88, 330, 0.15],
+    split: true,
+  },
+  {
+    id: 'a5',
+    label: 'A5 Hot magenta on teal-black',
+    seeds: [345, 345, 200, 0.2],
+  },
+  {
+    id: 'a6',
+    label: 'A6 Ultraviolet on olive-black',
+    seeds: [300, 300, 110, 0.18],
+  },
 ];
 
 const two: Palette[] = [
-  { id: 'reef', label: 'Reef (teal + coral)', seeds: [185, 25, 220, 0.19] },
   {
-    id: 'tropic',
-    label: 'Tropic (emerald + magenta)',
-    seeds: [158, 335, 250, 0.2],
-  },
-  { id: 'sunset', label: 'Sunset (rose + amber)', seeds: [355, 65, 300, 0.19] },
-  {
-    id: 'electric',
-    label: 'Electric (cyan + magenta)',
-    seeds: [205, 330, 255, 0.2],
+    id: 'b1',
+    label: 'B1 Aurora: jade to cyan on violet ink',
+    seeds: [165, 212, 298, 0.17],
   },
   {
-    id: 'citrus',
-    label: 'Citrus Jade (lime + aqua)',
-    seeds: [140, 195, 230, 0.19],
-  },
-  { id: 'cobalt', label: 'Cobalt (blue + teal)', seeds: [250, 190, 255, 0.2] },
-  {
-    id: 'grape',
-    label: 'Grape (magenta + orange)',
-    seeds: [320, 30, 285, 0.2],
+    id: 'b2',
+    label: 'B2 Infrared: pink to coral on green-black',
+    seeds: [352, 32, 162, 0.19],
   },
   {
-    id: 'ocean',
-    label: 'Ocean (blue + teal, calm)',
-    seeds: [225, 185, 235, 0.2],
+    id: 'b3',
+    label: 'B3 Deep sea: cobalt to cyan on warm carbon',
+    seeds: [258, 205, 50, 0.19],
   },
-  { id: 'berry', label: 'Berry (pink + violet)', seeds: [330, 278, 290, 0.2] },
-  { id: 'ember', label: 'Ember (orange + amber)', seeds: [25, 55, 30, 0.18] },
-  { id: 'forest', label: 'Forest (green + lime)', seeds: [150, 95, 150, 0.18] },
   {
-    id: 'mint-ink',
-    label: 'Mint Ink (indigo + mint)',
-    seeds: [255, 165, 250, 0.19],
+    id: 'b4',
+    label: 'B4 Dusk: rose to amber on teal-black',
+    seeds: [8, 68, 198, 0.18],
+  },
+  {
+    id: 'b5',
+    label: 'B5 Solar: gold to orange on indigo ink (split)',
+    seeds: [90, 45, 270, 0.15],
+    split: true,
+  },
+  {
+    id: 'b6',
+    label: 'B6 Glacier: ice cyan to mint on cocoa-black (split)',
+    seeds: [205, 160, 30, 0.13],
+    split: true,
   },
 ];
 
@@ -74,11 +89,13 @@ const compare: Palette[] = [
   },
 ];
 
-const swatch = (seeds: Seeds, mono: boolean) => {
+const swatch = (seeds: Seeds, mono: boolean, split = false) => {
   const [p, s, , c] = seeds;
-  const a = `oklch(0.72 ${c} ${p})`;
+  const a = `oklch(${split ? 0.78 : 0.72} ${c} ${p})`;
   if (mono) return `background:${a};`;
-  const b = `oklch(0.82 ${Number((c * 0.65).toFixed(3))} ${s})`;
+  const b = split
+    ? `oklch(0.6 ${Number((c * 0.9).toFixed(3))} ${s})`
+    : `oklch(0.82 ${Number((c * 0.65).toFixed(3))} ${s})`;
   return `background:linear-gradient(120deg, ${a}, ${b});`;
 };
 
@@ -97,7 +114,7 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
     </summary>
     <div class="pp__body">
       <p class="pp__hint">
-        Dev-only. Click to preview, then tell the agent the winner.
+        Dev-only. Click a palette to preview it, then compare both themes.
       </p>
 
       {
@@ -111,11 +128,12 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
                     type="button"
                     class="pp__btn"
                     data-seeds={p.seeds.join(',')}
+                    data-split={p.split ? 'true' : undefined}
                     data-id={p.id}
                   >
                     <span
                       class="pp__swatch"
-                      style={swatch(p.seeds, group.mono)}
+                      style={swatch(p.seeds, group.mono, p.split)}
                       aria-hidden="true"
                     />
                     <span class="pp__label">{p.label}</span>
@@ -160,6 +178,7 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
     const buttons = Array.from(document.querySelectorAll('.pp__btn'));
 
     let current = [158, 335, 250, 0.2];
+    let split = false;
 
     const render = (id) => {
       const [p, s, n, c] = current;
@@ -167,8 +186,9 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
       root.style.setProperty('--seed-secondary-h', String(s));
       root.style.setProperty('--seed-neutral-h', String(n));
       root.style.setProperty('--seed-chroma', String(c));
+      root.toggleAttribute('data-accent-split', split);
       if (readout) {
-        readout.textContent = `primary ${p} · secondary ${s} · neutral ${n} · chroma ${Number(c).toFixed(2)}`;
+        readout.textContent = `primary ${p} · secondary ${s} · neutral ${n} · chroma ${Number(c).toFixed(2)}${split ? ' · split' : ''}`;
       }
       if (slider) slider.value = String(c);
       if (chromaValue) chromaValue.textContent = Number(c).toFixed(2);
@@ -178,7 +198,10 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
         );
       }
       try {
-        localStorage.setItem(KEY, JSON.stringify({ seeds: current, id }));
+        localStorage.setItem(
+          KEY,
+          JSON.stringify({ seeds: current, split, id }),
+        );
       } catch {
         /* ignore */
       }
@@ -187,6 +210,7 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
     buttons.forEach((btn) => {
       btn.addEventListener('click', () => {
         current = (btn.dataset.seeds || '').split(',').map(Number);
+        split = btn.dataset.split === 'true';
         render(btn.dataset.id);
       });
     });
@@ -203,6 +227,7 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
       const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
       if (saved && Array.isArray(saved.seeds)) {
         current = saved.seeds;
+        split = saved.split === true;
         render(saved.id);
       }
     } catch {
@@ -339,5 +364,32 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
       500 11px/1.4 ui-monospace,
       monospace;
     opacity: 0.85;
+  }
+</style>
+
+<style is:inline>
+  /* Split-accent preview: same role formulas as scripts/palette-check.mjs. */
+  :root[data-accent-split]:not([data-theme='light']) {
+    --accent: oklch(0.78 var(--seed-chroma) var(--seed-primary-h));
+    --accent-strong: oklch(
+      0.84 calc(var(--seed-chroma) * 0.72) var(--seed-primary-h)
+    );
+    --accent-2: oklch(
+      0.6 calc(var(--seed-chroma) * 0.9) var(--seed-secondary-h)
+    );
+  }
+  :root[data-accent-split][data-theme='light'] {
+    --accent: oklch(0.46 calc(var(--seed-chroma) * 0.55) var(--seed-primary-h));
+    --accent-strong: oklch(
+      0.42 calc(var(--seed-chroma) * 0.5) var(--seed-primary-h)
+    );
+    --accent-2: oklch(
+      0.72 calc(var(--seed-chroma) * 0.95) var(--seed-secondary-h)
+    );
+    --accent-fill: oklch(0.88 var(--seed-chroma) var(--seed-primary-h));
+    --on-accent-fill: oklch(0.22 0.03 var(--seed-neutral-h));
+  }
+  :root[data-accent-split] .prose {
+    --astro-code-token-keyword: var(--accent);
   }
 </style>

@@ -62,9 +62,9 @@
 }
 
 .btn-primary {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: var(--on-accent);
+  border-color: var(--accent-fill, var(--accent));
+  background: var(--accent-fill, var(--accent));
+  color: var(--on-accent-fill, var(--on-accent));
   box-shadow:
     0 12px 32px -12px color-mix(in oklch, var(--accent) 70%, transparent),
     inset 0 1px 0 color-mix(in oklch, white 28%, transparent);
