@@ -3074,7 +3074,7 @@ main {
 
 .oss-cta:hover {
   background: var(--accent-vivid);
-  color: var(--on-accent);
+  color: var(--on-accent-fill, var(--on-accent));
   transform: translateY(-2px);
 }
 

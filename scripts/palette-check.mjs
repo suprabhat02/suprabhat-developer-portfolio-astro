@@ -10,6 +10,11 @@
  * Exits non-zero if any text pair falls below 4.5:1, so it can gate a commit.
  * Edit CANDIDATES below. Seeds are [primary-h, secondary-h, neutral-h, chroma],
  * matching the four --seed-* variables in tokens.css.
+ *
+ * Optional per candidate: `fill: [L, C]` pins an exact brand colour as the
+ * fill in both themes (and the dark-theme accent); `nc` scales every neutral
+ * chroma (0 = pure greys). Every candidate is also checked on every entry in
+ * NEUTRALS, mirroring the dev PalettePicker's neutral row.
  */
 
 /* ── Candidates to test ──────────────────────────────────────────────── */
@@ -85,6 +90,48 @@ const CANDIDATES = [
     seeds: [205, 160, 30, 0.13],
     split: true,
   },
+
+  // Bold: exact brand fills. #ff4d2a = oklch(0.6693 0.2196 33.0),
+  // #ccff00 = oklch(0.9306 0.2287 123.1).
+  {
+    name: 'O1 Signal orange #ff4d2a on carbon',
+    seeds: [33, 33, 60, 0.2196],
+    split: true,
+    fill: [0.6693, 0.2196],
+    nc: 0.15,
+  },
+  {
+    name: 'O2 Signal orange #ff4d2a on deep navy ink',
+    seeds: [33, 33, 262, 0.2196],
+    split: true,
+    fill: [0.6693, 0.2196],
+    nc: 1.4,
+  },
+  {
+    name: 'L1 Acid lime #ccff00 on carbon',
+    seeds: [123, 123, 125, 0.2287],
+    split: true,
+    fill: [0.9306, 0.2287],
+    nc: 0.15,
+  },
+  {
+    name: 'L2 Acid lime #ccff00 on aubergine ink',
+    seeds: [123, 123, 318, 0.2287],
+    split: true,
+    fill: [0.9306, 0.2287],
+    nc: 1.3,
+  },
+];
+
+/* Neutral systems from the picker: [neutral-h, chroma scale]. */
+const NEUTRALS = [
+  ['own', null, null],
+  ['carbon', 60, 0],
+  ['warm graphite', 55, 0.35],
+  ['cool graphite', 250, 0.35],
+  ['deep ink', 262, 1.4],
+  ['aubergine', 320, 1.3],
+  ['forest', 160, 1.2],
 ];
 
 /* ── OKLCH -> sRGB ───────────────────────────────────────────────────── */
@@ -146,38 +193,53 @@ const contrast = (fg, bg) => {
 };
 
 /* ── Role derivation, mirroring tokens.css ───────────────────────────── */
-const roles = ([P, S, N, C], split) => {
+const roles = ([P, S, N, C], split, fill, nc = 1) => {
+  const n = (L, c) => [L, c * nc, N];
+  // Hover fill: a step brighter, or darker for fills already near white.
+  const hover = fill && [
+    fill[0] > 0.85 ? fill[0] - 0.05 : fill[0] + 0.05,
+    fill[1],
+    P,
+  ];
   const dark = {
-    bg: [0.15, 0.035, N],
-    'bg-card': [0.2, 0.04, N],
-    surface: [0.18, 0.037, N],
-    'surface-strong': [0.22, 0.042, N],
-    text: [0.97, 0.012, N],
-    'text-2': [0.82, 0.035, N],
-    'text-3': [0.71, 0.04, N],
-    accent: [split ? 0.78 : 0.72, C, P],
+    bg: n(0.15, 0.035),
+    'bg-card': n(0.2, 0.04),
+    surface: n(0.18, 0.037),
+    'surface-strong': n(0.22, 0.042),
+    text: n(0.97, 0.012),
+    'text-2': n(0.82, 0.035),
+    'text-3': n(0.71, 0.04),
+    accent: fill ? [fill[0], fill[1], P] : [split ? 0.78 : 0.72, C, P],
     'accent-strong': [split ? 0.84 : 0.81, C * (split ? 0.72 : 0.7), P],
     'accent-2': [split ? 0.6 : 0.82, C * (split ? 0.9 : 0.65), S],
-    'on-accent': [0.14, 0.03, N],
+    'accent-vivid': hover || [split ? 0.84 : 0.78, C, P],
+    'on-accent': n(0.14, 0.03),
   };
   dark['accent-fill'] = dark.accent;
   dark['on-accent-fill'] = dark['on-accent'];
 
   const light = {
-    bg: [0.985, 0.006, N],
-    'bg-card': [1, 0, N],
-    surface: [1, 0, N],
-    'surface-strong': [0.97, 0.012, N],
-    text: [0.2, 0.04, N],
-    'text-2': [0.38, 0.045, N],
-    'text-3': [0.48, 0.045, N],
-    accent: [split ? 0.46 : 0.48, C * 0.55, P],
-    'accent-strong': [split ? 0.42 : 0.43, C * 0.5, P],
+    bg: n(0.985, 0.006),
+    'bg-card': n(1, 0),
+    surface: n(1, 0),
+    'surface-strong': n(0.97, 0.012),
+    text: n(0.2, 0.04),
+    'text-2': n(0.38, 0.045),
+    'text-3': n(0.48, 0.045),
+    accent: fill ? [0.5, C * 0.8, P] : [split ? 0.46 : 0.48, C * 0.55, P],
+    'accent-strong': fill
+      ? [0.44, C * 0.7, P]
+      : [split ? 0.42 : 0.43, C * 0.5, P],
     'accent-2': [split ? 0.72 : 0.5, C * (split ? 0.95 : 0.85), S],
-    'on-accent': [1, 0, N],
+    'on-accent': n(1, 0),
   };
-  light['accent-fill'] = split ? [0.88, C, P] : light.accent;
-  light['on-accent-fill'] = split ? [0.22, 0.03, N] : light['on-accent'];
+  light['accent-fill'] = fill
+    ? [fill[0], fill[1], P]
+    : split
+      ? [0.88, C, P]
+      : light.accent;
+  light['accent-vivid'] = hover || (split ? [0.92, C, P] : [0.5, C * 0.58, P]);
+  light['on-accent-fill'] = split ? n(0.22, 0.03) : light['on-accent'];
 
   // Shiki keywords use --accent-2; a split palette's bright accent-2 is not
   // text-safe, so the picker preview maps them to --accent instead.
@@ -198,8 +260,25 @@ const PAIRS = [
   ['accent ink on card', 'accent-strong', 'bg-card'],
   ['label on accent fill', 'on-accent', 'accent'],
   ['label on bright fill', 'on-accent-fill', 'accent-fill'],
+  ['label on hover fill', 'on-accent-fill', 'accent-vivid'],
   ['code keyword on surface', 'code-keyword', 'surface'],
 ];
+
+const worstPair = (seeds, split, fill, nc) => {
+  const { dark, light } = roles(seeds, split, fill, nc);
+  let worst = { ratio: Infinity };
+  for (const [theme, set] of [
+    ['dark', dark],
+    ['light', light],
+  ]) {
+    for (const [label, fg, bg] of PAIRS) {
+      const ratio = contrast(set[fg], set[bg]);
+      if (!Number.isFinite(ratio)) return { ratio: NaN, theme, label };
+      if (ratio < worst.ratio) worst = { ratio, theme, label };
+    }
+  }
+  return worst;
+};
 
 const hueGap = (a, b) => {
   const d = Math.abs(a - b) % 360;
@@ -209,14 +288,14 @@ const hueGap = (a, b) => {
 /* ── Report ──────────────────────────────────────────────────────────── */
 let failed = false;
 
-for (const { name, seeds, split } of CANDIDATES) {
+for (const { name, seeds, split, fill, nc } of CANDIDATES) {
   const [P, S, N] = seeds;
-  const { dark, light } = roles(seeds, split);
+  const { dark, light } = roles(seeds, split, fill, nc);
   let worst = Infinity;
 
   console.log(`\n${'='.repeat(72)}`);
   console.log(
-    `${name}   seeds=[${seeds.join(', ')}]${split ? '  (split accent)' : ''}`,
+    `${name}   seeds=[${seeds.join(', ')}]${fill ? `  (pinned fill ${hex([fill[0], fill[1], P])})` : split ? '  (split accent)' : ''}${nc !== undefined ? `  neutral chroma x${nc}` : ''}`,
   );
   console.log(
     `  gradient spread ${hueGap(P, S)}deg  |  accent vs background ${hueGap(P, N)}deg`,
@@ -235,7 +314,7 @@ for (const { name, seeds, split } of CANDIDATES) {
     for (const [label, fg, bg] of PAIRS) {
       const ratio = contrast(set[fg], set[bg]);
       worst = Math.min(worst, ratio);
-      if (ratio < 4.5) {
+      if (!(ratio >= 4.5)) {
         failed = true;
         console.log(
           `    FAIL ${theme.padEnd(5)} ${label.padEnd(24)} ${ratio.toFixed(2)}:1`,
@@ -250,5 +329,27 @@ for (const { name, seeds, split } of CANDIDATES) {
 
 console.log(
   `\n${failed ? 'Some pairs are below AA.' : 'All candidates pass AA in both themes.'}`,
+);
+
+/* ── Every candidate on every neutral system (picker neutral row) ──── */
+console.log(
+  `\nWorst text pair per candidate x neutral (both themes):\n${''.padEnd(44)}${NEUTRALS.map(([label]) => label.slice(0, 9).padStart(10)).join('')}`,
+);
+for (const { name, seeds, split, fill, nc } of CANDIDATES) {
+  const cells = NEUTRALS.map(([, h, scale]) => {
+    const worst =
+      h === null
+        ? worstPair(seeds, split, fill, nc)
+        : worstPair([seeds[0], seeds[1], h, seeds[3]], split, fill, scale);
+    if (!(worst.ratio >= 4.5)) {
+      failed = true;
+      return `${worst.ratio.toFixed(2)}!`.padStart(10);
+    }
+    return worst.ratio.toFixed(2).padStart(10);
+  });
+  console.log(`${name.slice(0, 43).padEnd(44)}${cells.join('')}`);
+}
+console.log(
+  `\n${failed ? 'FAIL: some combination is below AA (marked !).' : 'Every candidate passes AA on every neutral system.'}`,
 );
 process.exit(failed ? 1 : 0);

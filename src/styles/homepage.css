@@ -73,7 +73,7 @@
 .btn-primary:hover {
   border-color: var(--accent-vivid);
   background: var(--accent-vivid);
-  color: var(--on-accent);
+  color: var(--on-accent-fill, var(--on-accent));
   box-shadow: 0 18px 40px -12px
     color-mix(in oklch, var(--accent) 80%, transparent);
 }

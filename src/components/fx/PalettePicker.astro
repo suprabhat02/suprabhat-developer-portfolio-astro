@@ -13,7 +13,16 @@
  * entry here with the same role formulas.
  */
 type Seeds = [number, number, number, number];
-type Palette = { id: string; label: string; seeds: Seeds; split?: boolean };
+type Palette = {
+  id: string;
+  label: string;
+  seeds: Seeds;
+  split?: boolean;
+  /** Exact brand fill [L, C] at the primary hue, used in both themes. */
+  fill?: [number, number];
+  /** Neutral chroma scale (0 = pure greys). */
+  nc?: number;
+};
 
 const single: Palette[] = [
   { id: 'a1', label: 'A1 Cobalt on warm carbon', seeds: [262, 262, 55, 0.2] },
@@ -99,9 +108,91 @@ const swatch = (seeds: Seeds, mono: boolean, split = false) => {
   return `background:linear-gradient(120deg, ${a}, ${b});`;
 };
 
+// #ff4d2a = oklch(0.6693 0.2196 33), #ccff00 = oklch(0.9306 0.2287 123.1).
+const bold: Palette[] = [
+  {
+    id: 'o1',
+    label: 'O1 Signal orange #ff4d2a on carbon',
+    seeds: [33, 33, 60, 0.2196],
+    split: true,
+    fill: [0.6693, 0.2196],
+    nc: 0.15,
+  },
+  {
+    id: 'o2',
+    label: 'O2 Signal orange #ff4d2a on deep navy ink',
+    seeds: [33, 33, 262, 0.2196],
+    split: true,
+    fill: [0.6693, 0.2196],
+    nc: 1.4,
+  },
+  {
+    id: 'l1',
+    label: 'L1 Acid lime #ccff00 on carbon',
+    seeds: [123, 123, 125, 0.2287],
+    split: true,
+    fill: [0.9306, 0.2287],
+    nc: 0.15,
+  },
+  {
+    id: 'l2',
+    label: 'L2 Acid lime #ccff00 on aubergine ink',
+    seeds: [123, 123, 318, 0.2287],
+    split: true,
+    fill: [0.9306, 0.2287],
+    nc: 1.3,
+  },
+];
+
+// Neutral systems: [id, label, neutral-h, chroma scale]. Mirrors NEUTRALS in
+// scripts/palette-check.mjs, which gates every palette on every entry.
+const neutrals: Array<[string, string, number, number]> = [
+  ['carbon', 'Carbon (pure greys)', 60, 0],
+  ['warm-graphite', 'Warm graphite', 55, 0.35],
+  ['cool-graphite', 'Cool graphite', 250, 0.35],
+  ['deep-ink', 'Deep ink (navy)', 262, 1.4],
+  ['aubergine', 'Aubergine', 320, 1.3],
+  ['forest', 'Forest', 160, 1.2],
+];
+
+const lab: Array<{
+  key: string;
+  title: string;
+  options: Array<[string, string]>;
+}> = [
+  {
+    key: 'density',
+    title: 'Layout',
+    options: [
+      ['current', 'Current'],
+      ['spacious', 'Spacious'],
+    ],
+  },
+  {
+    key: 'motion',
+    title: 'Cards',
+    options: [
+      ['current', 'Current'],
+      ['calm', 'Calm'],
+    ],
+  },
+  {
+    key: 'border',
+    title: 'Card border',
+    options: [
+      ['current', 'Orbit'],
+      ['quiet', 'Quiet'],
+      ['trace', 'Trace'],
+      ['viewfinder', 'Frame'],
+      ['proximity', 'Proximity'],
+    ],
+  },
+];
+
 const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
   { title: 'Single color', items: single, mono: true },
   { title: 'Two color', items: two, mono: false },
+  { title: 'Bold (exact brand fill)', items: bold, mono: true },
   { title: 'Compare', items: compare, mono: false },
 ];
 ---
@@ -129,11 +220,17 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
                     class="pp__btn"
                     data-seeds={p.seeds.join(',')}
                     data-split={p.split ? 'true' : undefined}
+                    data-fill={p.fill?.join(',')}
+                    data-nc={p.nc}
                     data-id={p.id}
                   >
                     <span
                       class="pp__swatch"
-                      style={swatch(p.seeds, group.mono, p.split)}
+                      style={
+                        p.fill
+                          ? `background:oklch(${p.fill[0]} ${p.fill[1]} ${p.seeds[0]});`
+                          : swatch(p.seeds, group.mono, p.split)
+                      }
                       aria-hidden="true"
                     />
                     <span class="pp__label">{p.label}</span>
@@ -141,6 +238,59 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
                 </li>
               ))}
             </ul>
+          </section>
+        ))
+      }
+
+      <section class="pp__group">
+        <h3 class="pp__grouptitle">Neutral system</h3>
+        <ul class="pp__list">
+          <li>
+            <button type="button" class="pp__btn" data-neutral="">
+              <span class="pp__swatch pp__swatch--own" aria-hidden="true"
+              ></span>
+              <span class="pp__label">From palette</span>
+            </button>
+          </li>
+          {
+            neutrals.map(([id, label, h, scale]) => (
+              <li>
+                <button
+                  type="button"
+                  class="pp__btn"
+                  data-neutral={id}
+                  data-nh={h}
+                  data-nscale={scale}
+                >
+                  <span
+                    class="pp__swatch"
+                    style={`background:linear-gradient(90deg, oklch(0.15 ${0.035 * scale} ${h}) 50%, oklch(0.97 ${0.012 * scale} ${h}) 50%);`}
+                    aria-hidden="true"
+                  />
+                  <span class="pp__label">{label}</span>
+                </button>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      {
+        lab.map((row) => (
+          <section class="pp__group">
+            <h3 class="pp__grouptitle">{row.title}</h3>
+            <div class="pp__seg" role="group" aria-label={row.title}>
+              {row.options.map(([value, label]) => (
+                <button
+                  type="button"
+                  class="pp__segbtn"
+                  data-lab={row.key}
+                  data-value={value}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </section>
         ))
       }
@@ -171,37 +321,86 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
 <script is:inline>
   (() => {
     const KEY = 'sk-palette-dev';
+    const LAB_KEY = 'sk-lab-dev';
     const root = document.documentElement;
     const readout = document.querySelector('[data-palette-readout]');
     const slider = document.querySelector('[data-chroma-slider]');
     const chromaValue = document.querySelector('[data-chroma-value]');
-    const buttons = Array.from(document.querySelectorAll('.pp__btn'));
+    const buttons = Array.from(document.querySelectorAll('[data-seeds]'));
+    const neutralButtons = Array.from(
+      document.querySelectorAll('[data-neutral]'),
+    );
+    const labButtons = Array.from(document.querySelectorAll('[data-lab]'));
 
-    let current = [158, 335, 250, 0.2];
-    let split = false;
+    let palette = {
+      seeds: [158, 335, 250, 0.2],
+      split: false,
+      fill: null,
+      nc: null,
+      id: 'current',
+    };
+    let lab = {
+      neutral: '',
+      density: 'current',
+      motion: 'current',
+      border: 'current',
+    };
 
-    const render = (id) => {
-      const [p, s, n, c] = current;
-      root.style.setProperty('--seed-primary-h', String(p));
-      root.style.setProperty('--seed-secondary-h', String(s));
-      root.style.setProperty('--seed-neutral-h', String(n));
-      root.style.setProperty('--seed-chroma', String(c));
-      root.toggleAttribute('data-accent-split', split);
+    const set = (name, value) =>
+      value === null || value === undefined
+        ? root.style.removeProperty(name)
+        : root.style.setProperty(name, String(value));
+
+    const render = () => {
+      const [p, s, ownN, c] = palette.seeds;
+      const neutral = neutralButtons.find(
+        (b) => lab.neutral && b.dataset.neutral === lab.neutral,
+      );
+      const n = neutral ? Number(neutral.dataset.nh) : ownN;
+      const nc = neutral ? Number(neutral.dataset.nscale) : palette.nc;
+      const fill = palette.fill;
+      set('--seed-primary-h', p);
+      set('--seed-secondary-h', s);
+      set('--seed-neutral-h', n);
+      set('--seed-chroma', c);
+      root.toggleAttribute('data-accent-split', Boolean(palette.split));
+      root.toggleAttribute('data-pp-fill', Boolean(fill));
+      set('--pp-fill-l', fill ? fill[0] : null);
+      set('--pp-fill-c', fill ? fill[1] : null);
+      // Hover fill: a step brighter, or darker for fills already near white.
+      set(
+        '--pp-hover-l',
+        fill ? (fill[0] > 0.85 ? fill[0] - 0.05 : fill[0] + 0.05) : null,
+      );
+      root.toggleAttribute('data-pp-nc', nc !== null && nc !== undefined);
+      set('--pp-nc', nc);
+      for (const key of ['density', 'motion', 'border']) {
+        if (lab[key] === 'current') root.removeAttribute(`data-pp-${key}`);
+        else root.setAttribute(`data-pp-${key}`, lab[key]);
+      }
+      buttons.forEach((b) =>
+        b.setAttribute('aria-pressed', String(b.dataset.id === palette.id)),
+      );
+      neutralButtons.forEach((b) =>
+        b.setAttribute(
+          'aria-pressed',
+          String(b.dataset.neutral === lab.neutral),
+        ),
+      );
+      labButtons.forEach((b) =>
+        b.setAttribute(
+          'aria-pressed',
+          String(lab[b.dataset.lab] === b.dataset.value),
+        ),
+      );
       if (readout) {
-        readout.textContent = `primary ${p} · secondary ${s} · neutral ${n} · chroma ${Number(c).toFixed(2)}${split ? ' · split' : ''}`;
+        readout.textContent = `primary ${p} · secondary ${s} · neutral ${n}${nc !== null && nc !== undefined ? ` ×${nc}` : ''} · chroma ${Number(c).toFixed(2)}${fill ? ' · pinned fill' : palette.split ? ' · split' : ''}`;
       }
       if (slider) slider.value = String(c);
       if (chromaValue) chromaValue.textContent = Number(c).toFixed(2);
-      if (id !== undefined) {
-        buttons.forEach((b) =>
-          b.setAttribute('aria-pressed', String(b.dataset.id === id)),
-        );
-      }
       try {
-        localStorage.setItem(
-          KEY,
-          JSON.stringify({ seeds: current, split, id }),
-        );
+        localStorage.setItem(KEY, JSON.stringify(palette));
+        localStorage.setItem(LAB_KEY, JSON.stringify(lab));
       } catch {
         /* ignore */
       }
@@ -209,30 +408,81 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
 
     buttons.forEach((btn) => {
       btn.addEventListener('click', () => {
-        current = (btn.dataset.seeds || '').split(',').map(Number);
-        split = btn.dataset.split === 'true';
-        render(btn.dataset.id);
+        palette = {
+          seeds: (btn.dataset.seeds || '').split(',').map(Number),
+          split: btn.dataset.split === 'true',
+          fill: btn.dataset.fill
+            ? btn.dataset.fill.split(',').map(Number)
+            : null,
+          nc: btn.dataset.nc ? Number(btn.dataset.nc) : null,
+          id: btn.dataset.id,
+        };
+        render();
+      });
+    });
+
+    neutralButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        lab.neutral = btn.dataset.neutral || '';
+        render();
+      });
+    });
+
+    labButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        lab[btn.dataset.lab] = btn.dataset.value;
+        render();
       });
     });
 
     if (slider) {
       slider.addEventListener('input', () => {
-        current = [current[0], current[1], current[2], Number(slider.value)];
-        buttons.forEach((b) => b.setAttribute('aria-pressed', 'false'));
+        const [p, s, n] = palette.seeds;
+        palette = {
+          ...palette,
+          seeds: [p, s, n, Number(slider.value)],
+          id: '',
+        };
         render();
       });
     }
 
+    // Proximity border: every card near the pointer learns its offset.
+    const fine = matchMedia('(hover: hover) and (pointer: fine)');
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    let frame = 0;
+    let last = null;
+    document.addEventListener(
+      'pointermove',
+      (event) => {
+        if (lab.border !== 'proximity' || !fine.matches || still.matches)
+          return;
+        last = event;
+        if (frame) return;
+        frame = requestAnimationFrame(() => {
+          frame = 0;
+          document.querySelectorAll('.fx-card-gradient').forEach((card) => {
+            const r = card.getBoundingClientRect();
+            if (r.bottom < -300 || r.top > innerHeight + 300) return;
+            card.style.setProperty('--pp-px', `${last.clientX - r.left}px`);
+            card.style.setProperty('--pp-py', `${last.clientY - r.top}px`);
+          });
+        });
+      },
+      { passive: true },
+    );
+
     try {
       const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
       if (saved && Array.isArray(saved.seeds)) {
-        current = saved.seeds;
-        split = saved.split === true;
-        render(saved.id);
+        palette = { split: false, fill: null, nc: null, id: '', ...saved };
       }
+      const savedLab = JSON.parse(localStorage.getItem(LAB_KEY) || 'null');
+      if (savedLab) lab = { ...lab, ...savedLab };
     } catch {
       /* ignore */
     }
+    render();
   })();
 </script>
 
@@ -365,10 +615,35 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
       monospace;
     opacity: 0.85;
   }
+  .pp__swatch--own {
+    background: linear-gradient(90deg, var(--bg) 50%, var(--text) 50%);
+  }
+  .pp__seg {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    padding-inline: 0.25rem;
+  }
+  .pp__segbtn {
+    padding: 0.3rem 0.6rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 11px;
+    cursor: pointer;
+  }
+  .pp__segbtn[aria-pressed='true'] {
+    border-color: var(--accent);
+    background: color-mix(in oklch, var(--accent) 14%, transparent);
+  }
 </style>
 
 <style is:inline>
-  /* Split-accent preview: same role formulas as scripts/palette-check.mjs. */
+  /* Lab previews (dev only). Colour formulas mirror scripts/palette-check.mjs. */
+
+  /* Split accent: text-safe accent plus a bright fill with dark ink. */
   :root[data-accent-split]:not([data-theme='light']) {
     --accent: oklch(0.78 var(--seed-chroma) var(--seed-primary-h));
     --accent-strong: oklch(
@@ -377,6 +652,7 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
     --accent-2: oklch(
       0.6 calc(var(--seed-chroma) * 0.9) var(--seed-secondary-h)
     );
+    --accent-vivid: oklch(0.84 var(--seed-chroma) var(--seed-primary-h));
   }
   :root[data-accent-split][data-theme='light'] {
     --accent: oklch(0.46 calc(var(--seed-chroma) * 0.55) var(--seed-primary-h));
@@ -387,9 +663,235 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
       0.72 calc(var(--seed-chroma) * 0.95) var(--seed-secondary-h)
     );
     --accent-fill: oklch(0.88 var(--seed-chroma) var(--seed-primary-h));
-    --on-accent-fill: oklch(0.22 0.03 var(--seed-neutral-h));
+    --accent-vivid: oklch(0.92 var(--seed-chroma) var(--seed-primary-h));
+    --on-accent-fill: oklch(
+      0.22 calc(0.03 * var(--pp-nc, 1)) var(--seed-neutral-h)
+    );
   }
   :root[data-accent-split] .prose {
     --astro-code-token-keyword: var(--accent);
+  }
+
+  /* Pinned brand fill (bold palettes): the exact colour in both themes. */
+  :root[data-accent-split][data-pp-fill]:not([data-theme='light']) {
+    --accent: oklch(var(--pp-fill-l) var(--pp-fill-c) var(--seed-primary-h));
+    --accent-vivid: oklch(
+      var(--pp-hover-l) var(--pp-fill-c) var(--seed-primary-h)
+    );
+  }
+  :root[data-accent-split][data-pp-fill][data-theme='light'] {
+    --accent: oklch(0.5 calc(var(--seed-chroma) * 0.8) var(--seed-primary-h));
+    --accent-strong: oklch(
+      0.44 calc(var(--seed-chroma) * 0.7) var(--seed-primary-h)
+    );
+    --accent-fill: oklch(
+      var(--pp-fill-l) var(--pp-fill-c) var(--seed-primary-h)
+    );
+    --accent-vivid: oklch(
+      var(--pp-hover-l) var(--pp-fill-c) var(--seed-primary-h)
+    );
+  }
+
+  /* Neutral system: scales every neutral's chroma (0 = pure greys). */
+  :root[data-pp-nc]:not([data-theme='light']) {
+    --bg: oklch(0.15 calc(0.035 * var(--pp-nc)) var(--seed-neutral-h));
+    --bg-2: oklch(0.18 calc(0.04 * var(--pp-nc)) var(--seed-neutral-h));
+    --bg-3: oklch(0.23 calc(0.045 * var(--pp-nc)) var(--seed-neutral-h));
+    --bg-deep: oklch(0.12 calc(0.03 * var(--pp-nc)) var(--seed-neutral-h));
+    --bg-card: oklch(0.2 calc(0.04 * var(--pp-nc)) var(--seed-neutral-h));
+    --bg-card-hover: oklch(
+      0.23 calc(0.045 * var(--pp-nc)) var(--seed-neutral-h)
+    );
+    --surface: oklch(0.18 calc(0.037 * var(--pp-nc)) var(--seed-neutral-h));
+    --surface-strong: oklch(
+      0.22 calc(0.042 * var(--pp-nc)) var(--seed-neutral-h)
+    );
+    --text: oklch(0.97 calc(0.012 * var(--pp-nc)) var(--seed-neutral-h));
+    --text-2: oklch(0.82 calc(0.035 * var(--pp-nc)) var(--seed-neutral-h));
+    --text-3: oklch(0.71 calc(0.04 * var(--pp-nc)) var(--seed-neutral-h));
+    --on-accent: oklch(0.14 calc(0.03 * var(--pp-nc)) var(--seed-neutral-h));
+  }
+  :root[data-pp-nc][data-theme='light'] {
+    --bg: oklch(0.985 calc(0.006 * var(--pp-nc)) var(--seed-neutral-h));
+    --bg-2: oklch(0.966 calc(0.014 * var(--pp-nc)) var(--seed-neutral-h));
+    --bg-3: oklch(0.935 calc(0.02 * var(--pp-nc)) var(--seed-neutral-h));
+    --bg-deep: oklch(0.94 calc(0.022 * var(--pp-nc)) var(--seed-neutral-h));
+    --bg-card-hover: oklch(
+      0.977 calc(0.01 * var(--pp-nc)) var(--seed-neutral-h)
+    );
+    --surface-strong: oklch(
+      0.97 calc(0.012 * var(--pp-nc)) var(--seed-neutral-h)
+    );
+    --text: oklch(0.2 calc(0.04 * var(--pp-nc)) var(--seed-neutral-h));
+    --text-2: oklch(0.38 calc(0.045 * var(--pp-nc)) var(--seed-neutral-h));
+    --text-3: oklch(0.48 calc(0.045 * var(--pp-nc)) var(--seed-neutral-h));
+  }
+
+  /* Layout: Spacious. More air around and inside cards, shorter measure. */
+  :root[data-pp-density='spacious'] :is(.homepage-shell .section, .section) {
+    padding-block: clamp(6rem, 13vw, 11rem);
+  }
+  :root[data-pp-density='spacious'] .section-head {
+    margin-block-end: clamp(3rem, 7vw, 5.5rem);
+  }
+  :root[data-pp-density='spacious']
+    :is(
+      .conversion-grid,
+      .bento-grid,
+      .articles-grid,
+      .expertise-grid,
+      .stats-grid,
+      .grid
+    ) {
+    gap: clamp(1.25rem, 3vw, 2.25rem);
+  }
+  :root[data-pp-density='spacious'] .conversion-card,
+  :root[data-pp-density='spacious'] .xp-card {
+    padding: clamp(1.75rem, 4vw, 2.75rem);
+  }
+  :root[data-pp-density='spacious'] :is(.article-card, .trait-card) {
+    padding: 1.5rem 1.5rem 2rem;
+  }
+  :root[data-pp-density='spacious']
+    :is(.expertise-card, .rec-card, .hero-proof-card) {
+    padding: 2rem;
+  }
+  :root[data-pp-density='spacious'] .stat-item {
+    padding: 1.6rem 1.75rem;
+  }
+  :root[data-pp-density='spacious'] .grid article {
+    padding: clamp(1.75rem, 3.5vw, 2.5rem);
+  }
+  :root[data-pp-density='spacious'] .oss-card {
+    padding: clamp(2rem, 5vw, 3.5rem);
+  }
+  :root[data-pp-density='spacious']
+    :is(.problem-outcome, .case-study-body p, .case-study-note p, .bullets li) {
+    max-width: 64ch;
+  }
+
+  /* Cards: Calm. One interaction per card: no tilt, no interior wash. */
+  :root[data-pp-motion='calm'] .fx-tilt {
+    transform: none;
+  }
+  :root[data-pp-motion='calm'] .fx-glow::before {
+    display: none;
+  }
+
+  /* Card border treatments (replace the orbiting conic arc). */
+  @property --pp-sweep {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+  }
+  @property --pp-len {
+    syntax: '<length-percentage>';
+    inherits: false;
+    initial-value: 14px;
+  }
+  @property --pp-ink {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: transparent;
+  }
+  :root[data-pp-border] .fx-card-gradient.fx-card-gradient {
+    background:
+      var(--gc-pattern) padding-box,
+      linear-gradient(
+          160deg,
+          color-mix(in oklch, var(--text) 4%, transparent),
+          transparent 45%
+        )
+        padding-box,
+      linear-gradient(var(--gc-fill), var(--gc-fill)) padding-box,
+      var(--pp-edge);
+    animation: none;
+  }
+  :root[data-pp-border] .fx-card-gradient.fx-glow::after {
+    display: none;
+  }
+
+  /* Quiet: a static hairline that warms to the accent. */
+  :root[data-pp-border='quiet'] .fx-card-gradient.fx-card-gradient {
+    --pp-ink: var(--gc-edge);
+    --pp-edge: linear-gradient(var(--pp-ink), var(--pp-ink)) border-box;
+    transition: --pp-ink 260ms ease;
+  }
+  :root[data-pp-border='quiet']
+    .fx-card-gradient.fx-card-gradient:is(:hover, :focus-within) {
+    --pp-ink: color-mix(in oklch, var(--accent) 70%, transparent);
+  }
+
+  /* Trace: the accent draws itself once around the whole perimeter. */
+  :root[data-pp-border='trace'] .fx-card-gradient.fx-card-gradient {
+    --pp-edge: conic-gradient(
+        from -45deg,
+        var(--accent) 0deg var(--pp-sweep),
+        var(--gc-edge) var(--pp-sweep) 360deg
+      )
+      border-box;
+    transition: --pp-sweep 720ms cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  [dir='rtl']:root[data-pp-border='trace'] .fx-card-gradient.fx-card-gradient {
+    --pp-edge: conic-gradient(
+        from 45deg,
+        var(--gc-edge) 0deg calc(360deg - var(--pp-sweep)),
+        var(--accent) 0deg
+      )
+      border-box;
+  }
+  :root[data-pp-border='trace']
+    .fx-card-gradient.fx-card-gradient:is(:hover, :focus-within) {
+    --pp-sweep: 360deg;
+  }
+
+  /* Frame: viewfinder corners that close into a full frame. */
+  :root[data-pp-border='viewfinder'] .fx-card-gradient.fx-card-gradient {
+    --pp-ink: color-mix(in oklch, var(--text) 40%, transparent);
+    --pp-w: var(--card-border-width);
+    --pp-edge:
+      linear-gradient(var(--pp-ink), var(--pp-ink)) left top / var(--pp-len)
+        var(--pp-w) no-repeat border-box,
+      linear-gradient(var(--pp-ink), var(--pp-ink)) left top / var(--pp-w)
+        var(--pp-len) no-repeat border-box,
+      linear-gradient(var(--pp-ink), var(--pp-ink)) right top / var(--pp-len)
+        var(--pp-w) no-repeat border-box,
+      linear-gradient(var(--pp-ink), var(--pp-ink)) right top / var(--pp-w)
+        var(--pp-len) no-repeat border-box,
+      linear-gradient(var(--pp-ink), var(--pp-ink)) left bottom / var(--pp-len)
+        var(--pp-w) no-repeat border-box,
+      linear-gradient(var(--pp-ink), var(--pp-ink)) left bottom / var(--pp-w)
+        var(--pp-len) no-repeat border-box,
+      linear-gradient(var(--pp-ink), var(--pp-ink)) right bottom / var(--pp-len)
+        var(--pp-w) no-repeat border-box,
+      linear-gradient(var(--pp-ink), var(--pp-ink)) right bottom / var(--pp-w)
+        var(--pp-len) no-repeat border-box,
+      linear-gradient(var(--gc-edge), var(--gc-edge)) border-box;
+    transition:
+      --pp-len 560ms cubic-bezier(0.65, 0, 0.35, 1),
+      --pp-ink 260ms ease;
+  }
+  :root[data-pp-border='viewfinder']
+    .fx-card-gradient.fx-card-gradient:is(:hover, :focus-within) {
+    --pp-len: calc(50% + 1px);
+    --pp-ink: var(--accent);
+  }
+
+  /* Proximity: the pointer lights the hairlines of every nearby card. */
+  :root[data-pp-border='proximity'] .fx-card-gradient.fx-card-gradient {
+    --pp-edge:
+      radial-gradient(
+          280px circle at var(--pp-px, -999px) var(--pp-py, -999px),
+          var(--accent),
+          transparent 70%
+        )
+        border-box,
+      linear-gradient(var(--gc-edge), var(--gc-edge)) border-box;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root[data-pp-border] .fx-card-gradient.fx-card-gradient {
+      transition: none;
+    }
   }
 </style>
