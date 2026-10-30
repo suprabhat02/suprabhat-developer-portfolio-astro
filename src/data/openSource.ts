@@ -191,14 +191,12 @@ const reactInpChunkerCopy: Record<Locale, OpenSourceCopy> = {
     caseStudyLabel: 'Leer el caso de estudio',
     meta: 'Licencia MIT · TypeScript · React 18 y 19',
   },
-  // TODO(ar-review): confirm "إعادة التحكم إلى الخيط الرئيسي" (yield to the
-  // main thread) and "شرائح زمنية" (time slices).
   ar: {
     eyebrow: 'مفتوح المصدر · حزمة npm',
     tagline:
       'تقسيم عمل React الثقيل وإعادة التحكم إلى الخيط الرئيسي لحماية مؤشر INP',
     description:
-      'مكتبة React وTypeScript بلا واجهة مفروضة تقسم العمل المتزامن الثقيل إلى شرائح زمنية من بضع أجزاء من الثانية، وتعيد التحكم إلى الخيط الرئيسي بينها، فتبقى النقرات والكتابة سريعة الاستجابة ويبقى مؤشر Interaction to Next Paint (INP) جيدًا.',
+      'مكتبة React وTypeScript بلا واجهة مفروضة تقسم العمل المتزامن الثقيل إلى شرائح زمنية (time slices) من بضع أجزاء من الثانية، وتعيد التحكم إلى الخيط الرئيسي بينها، فتبقى النقرات والكتابة سريعة الاستجابة ويبقى مؤشر Interaction to Next Paint (INP) جيدًا.',
     facts: [
       'تعيد التحكم عبر scheduler.yield() ثم MessageChannel ثم setTimeout',
       'شرائح زمنية مدتها 5 ملي ثانية افتراضيًا، مع الإيقاف المؤقت والاستئناف والإلغاء',
@@ -208,7 +206,7 @@ const reactInpChunkerCopy: Record<Locale, OpenSourceCopy> = {
     ],
     installLabel: 'أمر التثبيت',
     linksLabel: 'روابط المشروع',
-    docsLabel: 'التوثيق وساحة التجربة الحية',
+    docsLabel: 'التوثيق والبيئة التجريبية الحيّة',
     repositoryLabel: 'الشيفرة على GitHub',
     npmLabel: 'الحزمة على npm',
     caseStudyLabel: 'اقرأ دراسة الحالة',
@@ -869,10 +867,6 @@ export const reactInpChunkerCaseStudy: Record<Locale, CaseStudyBase> = {
     ],
     project: projectLinks(reactInpChunker, reactInpChunkerCopy.es),
   },
-  // TODO(ar-review): confirm the Arabic technical phrasing in this study:
-  // "إعادة التحكم إلى الخيط الرئيسي" (yield to the main thread), "شريحة زمنية"
-  // (time slice), "مهمة طويلة" (long task), "التمزق" (tearing) and
-  // "ساحة التجربة الحية" (live playground).
   ar: {
     slug: 'react-inp-chunker',
     datePublished: '2026-10-30',
@@ -883,9 +877,9 @@ export const reactInpChunkerCaseStudy: Record<Locale, CaseStudyBase> = {
       'كيف تقسم react-inp-chunker، وهي مكتبة TypeScript مفتوحة المصدر، عمل React الثقيل إلى شرائح قصيرة وتعيد التحكم إلى الخيط الرئيسي لحماية مؤشر INP.',
     eyebrow: 'دراسة حالة · مفتوح المصدر',
     summary:
-      'مكتبة React وTypeScript مفتوحة المصدر وبلا واجهة مفروضة تمنع العمل المتزامن الثقيل من حجب تفاعل المستخدم. تعالج العمل في شرائح زمنية من بضع أجزاء من الثانية وتعيد التحكم إلى الخيط الرئيسي بينها، فلا تضر التحديثات الطويلة بمؤشر Interaction to Next Paint (INP).',
+      'مكتبة React وTypeScript مفتوحة المصدر وبلا واجهة مفروضة تمنع العمل المتزامن الثقيل من حجب تفاعل المستخدم. تعالج العمل في شرائح زمنية (time slices) من بضع أجزاء من الثانية وتعيد التحكم إلى الخيط الرئيسي بينها، فلا تضر التحديثات الطويلة بمؤشر Interaction to Next Paint (INP).',
     confidentialityNote:
-      'هذا مشروع عام مفتوح المصدر. الشيفرة والتوثيق وساحة التجربة الحية والإصدارات متاحة للجميع بموجب ترخيص MIT.',
+      'هذا مشروع عام مفتوح المصدر. الشيفرة والتوثيق والبيئة التجريبية الحيّة والإصدارات متاحة للجميع بموجب ترخيص MIT.',
     meta: [
       { label: 'نوع المشروع', value: 'مكتبة React مفتوحة المصدر على npm' },
       { label: 'الدور', value: 'المؤلف والمشرف على الصيانة' },
@@ -921,7 +915,7 @@ export const reactInpChunkerCaseStudy: Record<Locale, CaseStudyBase> = {
         bullets: [
           'تحجب الحلقة المتزامنة الطويلة النقرات والكتابة والرسم حتى تنتهي.',
           'إعادة التحكم يدويًا باستدعاءات setTimeout المتداخلة مقيدة بتأخير أدنى يقارب 4 ملي ثانية، وتوزع منطق الجدولة على المكونات.',
-          'يجب أن يصل التقدم والإيقاف المؤقت والاستئناف والإلغاء إلى حالة React دون تمزق في العرض المتزامن.',
+          'يجب أن يصل التقدم والإيقاف المؤقت والاستئناف والإلغاء إلى حالة React دون التمزّق البصري (Tearing)، أي ظهور قيم غير متّسقة في الواجهة أثناء العرض المتزامن.',
           'لا يجوز أن يصل أي تحديث للحالة بعد إزالة المكون.',
         ],
       },
@@ -958,13 +952,13 @@ export const reactInpChunkerCaseStudy: Record<Locale, CaseStudyBase> = {
       },
     ],
     outcomes: [
-      'منشورة على npm باسم react-inp-chunker بترخيص MIT، مع توثيق وساحة تجربة حية على GitHub Pages.',
+      'منشورة على npm باسم react-inp-chunker بترخيص MIT، مع توثيق وبيئة تجريبية حيّة على GitHub Pages.',
       'توفر خطافين لـ React هما useChunkedTask وuseDeferredTask، ونواة لا تعتمد على React تشغّل محرك الجدولة نفسه.',
       'تُبقي كل شريحة عمل في حدود بضع أجزاء من الثانية افتراضيًا، فيمكن معالجة الإدخال والرسم بين الشرائح.',
       'تتحقق في كل دفع من ادعاءات التوافق، ومنها React 18 و19 وأربعة إصدارات من Node وESM وCommonJS.',
     ],
     nextSteps: [
-      'اقرأ التوثيق وجرّب ساحة التجربة الحية.',
+      'اقرأ التوثيق وجرّب البيئة التجريبية الحيّة.',
       'ثبّتها بالأمر npm install react-inp-chunker.',
       'أبلغ عن المشكلات أو ساهم على GitHub.',
     ],
@@ -1042,7 +1036,7 @@ export const reactInpChunkerProof: Record<Locale, readonly CaseStudyProof[]> = {
       heading: 'دوري',
       items: [
         'صممت الواجهة البرمجية ومحرك الجدولة ونموذج الحالات، وكتبت المكتبة بلغة TypeScript الصارمة.',
-        'كتبت التوثيق وساحة التجربة الحية التي تشغّل العمل نفسه مع التقسيم ودونه.',
+        'كتبت التوثيق والبيئة التجريبية الحيّة التي تشغّل العمل نفسه مع التقسيم ودونه.',
         'أنشر الحزمة على npm وأتولى صيانتها بترخيص MIT.',
       ],
     },

@@ -156,7 +156,6 @@ const localizedWork: Partial<Record<Locale, readonly WorkItem[]>> = {
       id: 'react-inp-chunker',
       kind: 'open-source',
       title: 'react-inp-chunker',
-      // TODO(ar-review): confirm "تعيد التحكم إلى الخيط الرئيسي" (yields to the main thread).
       summary:
         'ألّفت وأصون مكتبة React وTypeScript مفتوحة المصدر تقسم العمل المتزامن الثقيل وتعيد التحكم إلى الخيط الرئيسي لحماية مؤشر Interaction to Next Paint (INP).',
       tags: ['مفتوح المصدر', 'React', 'TypeScript', 'INP'],
