@@ -10,6 +10,7 @@ test('case studies expose localized proof and outcomes', async ({ page }) => {
     'accessible-contact-workflow',
     'frontend-quality-system',
     'react-smart-copy',
+    'react-inp-chunker',
   ];
   const localeChecks = [
     {
@@ -500,7 +501,7 @@ test('case-study dates come from data, not the old 2026-09-06 placeholder', asyn
       datesBySlug.set(entry.name, dates);
     }
   }
-  expect(datesBySlug.size).toBe(7);
+  expect(datesBySlug.size).toBe(8);
 });
 
 test('every case study shares its own built image, not the default', async () => {
@@ -514,7 +515,7 @@ test('every case study shares its own built image, not the default', async () =>
       ),
     )
   ).flat();
-  expect(pages).toHaveLength(21);
+  expect(pages).toHaveLength(24);
 
   for (const path of pages) {
     const html = await readFile(new URL(path, dist), 'utf-8');
@@ -724,6 +725,81 @@ test('indexable HTML pages have unique titles and canonical sitemap entries', as
       descriptions.set(description!, path);
     } else {
       expect(sitemapUrls.has(canonical!)).toBe(false);
+    }
+  }
+});
+
+test('react-inp-chunker case study and both libraries meet the SEO contract', async () => {
+  const dist = new URL('../dist/', import.meta.url);
+  const read = (path: string) => readFile(new URL(path, dist), 'utf-8');
+  const graphOf = (html: string) =>
+    [
+      ...html.matchAll(
+        /<script type="application\/ld\+json">(.*?)<\/script>/gs,
+      ),
+    ].flatMap(([, json]) => {
+      const data = JSON.parse(json ?? '{}') as {
+        '@graph'?: Array<Record<string, unknown>>;
+      };
+      return data['@graph'] ?? [];
+    });
+  const site = 'https://suprabhat-dev.com';
+  const sitemap = await read('sitemap-0.xml');
+  const libraries = ['react-smart-copy', 'react-inp-chunker'];
+
+  for (const prefix of ['', 'es/', 'ar/']) {
+    const url = `${site}/${prefix}work/react-inp-chunker/`;
+    const html = await read(`${prefix}work/react-inp-chunker/index.html`);
+    const title = html.match(/<title>([^<]+)<\/title>/)?.[1] ?? '';
+    const description =
+      html.match(/<meta name="description" content="([^"]+)"/)?.[1] ?? '';
+    expect(title, prefix).toContain('react-inp-chunker');
+    expect(title.length, prefix).toBeLessThanOrEqual(60);
+    expect(description.length, prefix).toBeGreaterThan(70);
+    expect(description.length, prefix).toBeLessThanOrEqual(160);
+    expect(html).toContain(`<link rel="canonical" href="${url}"`);
+    for (const [lang, href] of [
+      ['en', `${site}/work/react-inp-chunker/`],
+      ['es', `${site}/es/work/react-inp-chunker/`],
+      ['ar', `${site}/ar/work/react-inp-chunker/`],
+      ['x-default', `${site}/work/react-inp-chunker/`],
+    ]) {
+      expect(html, `${prefix} ${lang}`).toContain(
+        `<link rel="alternate" hreflang="${lang}" href="${href}"`,
+      );
+    }
+    expect(sitemap).toMatch(
+      new RegExp(
+        `<loc>${url.replaceAll('.', '\\.')}</loc><lastmod>\\d{4}-\\d{2}-\\d{2}</lastmod>`,
+      ),
+    );
+
+    const graph = graphOf(html);
+    expect(graph.find((node) => node['@type'] === 'TechArticle')).toMatchObject(
+      { url, image: `${site}/images/work/react-inp-chunker-og-1200x630.png` },
+    );
+    expect(
+      graph.find((node) => node['@type'] === 'SoftwareSourceCode'),
+    ).toMatchObject({
+      '@id': `${site}/#react-inp-chunker`,
+      name: 'react-inp-chunker',
+      codeRepository: 'https://github.com/suprabhat02/react-inp-chunker',
+      license: 'https://opensource.org/licenses/MIT',
+    });
+
+    // The homepage graph and #work section carry both libraries.
+    const home = await read(`${prefix}index.html`);
+    const projects = graphOf(home)
+      .filter((node) => node['@type'] === 'SoftwareSourceCode')
+      .map((node) => node.name);
+    expect(projects, prefix).toEqual(libraries);
+    for (const library of libraries) {
+      expect(home, `${prefix} ${library}`).toContain(
+        `data-project="${library}"`,
+      );
+      expect(home, `${prefix} ${library}`).toContain(
+        `href="/${prefix}work/${library}/"`,
+      );
     }
   }
 });

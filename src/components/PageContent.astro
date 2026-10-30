@@ -19,6 +19,7 @@ import { getSkills } from '../data/skills';
 import { getToolGroups } from '../data/tools';
 import { getCaseStudies } from '../data/caseStudies';
 import { getInternalWorkNotice, getWork } from '../data/work';
+import { isOpenSourceProjectId } from '../data/openSource';
 import {
   getBlogFeedHref,
   getBlogPosts,
@@ -43,12 +44,15 @@ const services = getServices(locale);
 const { skillsLead, skillGroups } = getSkills(locale);
 const internalWorkNotice = getInternalWorkNotice(locale);
 const work = getWork(locale);
-const openSourceWork = work.find((item) => item.kind === 'open-source');
 const clientWork = work.filter((item) => item.kind !== 'open-source');
 const pad = (value: number) => String(value).padStart(2, '0');
 const caseStudySlugs = new Set(
   getCaseStudies(locale).map((caseStudy) => caseStudy.slug),
 );
+const openSourceIds = work
+  .map((item) => item.id)
+  .filter(isOpenSourceProjectId)
+  .filter((id) => caseStudySlugs.has(id));
 const posts = await getBlogPosts(locale);
 const tagGroups = getBlogTagGroupsFromPosts(locale, posts);
 const dateLocale = localeMeta[locale].htmlLang;
@@ -440,13 +444,14 @@ const notFoundLinks = [
           lead={internalWorkNotice}
         />
         <div>
-          {openSourceWork && caseStudySlugs.has(openSourceWork.id) && (
+          {openSourceIds.map((id) => (
             <OpenSourceSpotlight
               {locale}
-              caseStudyHref={href(`/work/${openSourceWork.id}/`)}
+              project={id}
+              caseStudyHref={href(`/work/${id}/`)}
               headingLevel="h2"
             />
-          )}
+          ))}
           <div class="grid three">
             {clientWork.map((item, index) => (
               <article

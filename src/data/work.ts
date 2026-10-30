@@ -26,6 +26,14 @@ export const work: readonly WorkItem[] = [
     tags: ['Open source', 'React', 'TypeScript', 'Accessibility'],
   },
   {
+    id: 'react-inp-chunker',
+    kind: 'open-source',
+    title: 'react-inp-chunker',
+    summary:
+      'Authored and maintain an open-source React and TypeScript library that chunks heavy synchronous work and yields to the main thread to protect Interaction to Next Paint (INP).',
+    tags: ['Open source', 'React', 'TypeScript', 'INP'],
+  },
+  {
     id: 'analytics-command-center',
     title: 'Analytics command center',
     summary:
@@ -85,6 +93,14 @@ const localizedWork: Partial<Record<Locale, readonly WorkItem[]>> = {
       tags: ['Código abierto', 'React', 'TypeScript', 'Accesibilidad'],
     },
     {
+      id: 'react-inp-chunker',
+      kind: 'open-source',
+      title: 'react-inp-chunker',
+      summary:
+        'Creé y mantengo una biblioteca de React y TypeScript de código abierto que divide el trabajo síncrono pesado y cede el hilo principal para proteger Interaction to Next Paint (INP).',
+      tags: ['Código abierto', 'React', 'TypeScript', 'INP'],
+    },
+    {
       id: 'analytics-command-center',
       title: 'Centro de control analítico',
       summary:
@@ -135,6 +151,15 @@ const localizedWork: Partial<Record<Locale, readonly WorkItem[]>> = {
       summary:
         'ألّفت وأصون مكتبة React مفتوحة المصدر لتفاعلات حافظة متاحة وآمنة الأنواع، مع حالات خطأ صادقة ودون اعتماديات وقت تشغيل.',
       tags: ['مفتوح المصدر', 'React', 'TypeScript', 'إمكانية الوصول'],
+    },
+    {
+      id: 'react-inp-chunker',
+      kind: 'open-source',
+      title: 'react-inp-chunker',
+      // TODO(ar-review): confirm "تعيد التحكم إلى الخيط الرئيسي" (yields to the main thread).
+      summary:
+        'ألّفت وأصون مكتبة React وTypeScript مفتوحة المصدر تقسم العمل المتزامن الثقيل وتعيد التحكم إلى الخيط الرئيسي لحماية مؤشر Interaction to Next Paint (INP).',
+      tags: ['مفتوح المصدر', 'React', 'TypeScript', 'INP'],
     },
     {
       id: 'analytics-command-center',

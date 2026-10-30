@@ -6,7 +6,7 @@ import {
   getCaseStudyArticleSchema,
   getCaseStudyOgImage,
 } from '../../data/caseStudySeo';
-import { getReactSmartCopySchema } from '../../data/openSource';
+import { getOpenSourceSchemaForSlug } from '../../data/openSource';
 import { SITE_URL } from '../../config/site';
 import { localeMeta } from '../../i18n/config';
 import { t } from '../../i18n/messages';
@@ -26,6 +26,12 @@ const url = `${SITE_URL}${pagePath}`;
 const title = caseStudy.seoTitle;
 const description = caseStudy.description;
 const ogImage = getCaseStudyOgImage(caseStudy.slug);
+const projectSchema = getOpenSourceSchemaForSlug(
+  caseStudy.slug,
+  SITE_URL,
+  localeMeta[locale].htmlLang,
+  locale,
+);
 const schema = [
   {
     '@context': 'https://schema.org',
@@ -53,9 +59,7 @@ const schema = [
     ],
   },
   getCaseStudyArticleSchema(locale, caseStudy, url),
-  ...(caseStudy.project
-    ? [getReactSmartCopySchema(SITE_URL, localeMeta[locale].htmlLang, 'en')]
-    : []),
+  ...(projectSchema ? [projectSchema] : []),
 ];
 ---
 
