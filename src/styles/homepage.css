@@ -2483,7 +2483,7 @@ textarea.f-input {
   color: var(--accent-ink);
 }
 
-/* Approach steps and collaboration cards with animated icons */
+/* Approach steps and collaboration cards with line icons */
 .step-head {
   display: flex;
   align-items: center;
