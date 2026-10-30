@@ -71,8 +71,8 @@ textarea {
   outline-offset: 4px;
 }
 ::selection {
-  background: var(--accent);
-  color: var(--on-accent);
+  background: var(--accent-fill);
+  color: var(--on-accent-fill);
 }
 
 .wrap {
@@ -97,8 +97,8 @@ textarea {
   top: 0.75rem;
   left: 0.75rem;
   padding: 0.75rem 1rem;
-  background: var(--accent);
-  color: var(--on-accent);
+  background: var(--accent-fill);
+  color: var(--on-accent-fill);
   font-weight: 700;
   border-radius: var(--radius-small);
   transform: translateY(-160%);
@@ -510,8 +510,8 @@ textarea {
   text-align: center;
 }
 .mob-lang-btn.is-active {
-  background: var(--accent);
-  color: var(--on-accent);
+  background: var(--accent-fill);
+  color: var(--on-accent-fill);
 }
 
 :root[data-theme] .site-nav[data-pill] a {
@@ -759,8 +759,8 @@ main {
   cursor: pointer;
 }
 .button.primary {
-  color: var(--on-accent);
-  background: var(--accent);
+  color: var(--on-accent-fill);
+  background: var(--accent-fill);
   border-color: var(--accent);
 }
 .button:hover {
@@ -876,10 +876,7 @@ main {
   display: inline-grid;
   place-items: center;
   min-width: 0.75em;
-  color: transparent;
-  background: linear-gradient(135deg, var(--text), var(--accent-strong) 62%);
-  background-clip: text;
-  -webkit-background-clip: text;
+  color: var(--text);
   filter: drop-shadow(
     0 20px 40px color-mix(in oklch, var(--accent) 15%, transparent)
   );
@@ -1389,8 +1386,8 @@ main {
   );
 }
 .cta {
-  background: var(--accent);
-  color: var(--on-accent);
+  background: var(--accent-fill);
+  color: var(--on-accent-fill);
 }
 .cta .eyebrow,
 .cta .lead {
@@ -1914,10 +1911,6 @@ main {
 .article-page h1,
 .case-study-hero h1 {
   color: var(--text);
-  background: linear-gradient(180deg, var(--text) 35%, var(--text-2) 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   text-wrap: balance;
 }
 @media (forced-colors: active) {
@@ -2377,11 +2370,7 @@ main {
 
 .xp-year {
   margin: 0;
-  color: var(--text-3);
-  background: linear-gradient(180deg, var(--text-2), var(--text-3));
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-2);
   font-size: clamp(2.25rem, 5vw, 3.75rem);
   font-weight: 800;
   letter-spacing: -0.05em;
@@ -2390,9 +2379,7 @@ main {
 }
 
 .xp-item--current .xp-year {
-  background: var(--gradient-brand);
-  background-clip: text;
-  -webkit-background-clip: text;
+  color: var(--text-2);
 }
 
 .xp-company {
@@ -2856,10 +2843,6 @@ main {
 .oss-title {
   margin: 0 0 0.6rem;
   color: var(--text);
-  background: var(--gradient-brand);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   font-size: clamp(1.75rem, 4vw, 2.6rem);
   font-weight: 800;
   letter-spacing: -0.04em;
@@ -3062,8 +3045,8 @@ main {
   min-height: 46px;
   padding: 0.7rem 1.3rem;
   border-radius: var(--radius-control);
-  background: var(--accent);
-  color: var(--on-accent);
+  background: var(--accent-fill);
+  color: var(--on-accent-fill);
   font-weight: 750;
   text-decoration: none;
   box-shadow: 0 12px 32px -12px var(--accent-glow);

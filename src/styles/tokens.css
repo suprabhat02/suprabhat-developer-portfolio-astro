@@ -10,13 +10,24 @@
  *   :root { --seed-primary-h: 25; }    → orange brand
  *   :root { --seed-chroma: 0.12; }     → calmer, less saturated
  *
+ * The palette is "Volt Mono": one hue (acid green) at several lightnesses.
+ * --seed-secondary-h equals --seed-primary-h on purpose, so --gradient-brand
+ * is the accent deepening into itself rather than two colors meeting.
+ *
+ * Acid green only exists above about L 0.84, so it cannot be AA text on a
+ * light ground at any chroma. Hence two separate accent roles:
+ *   --accent       always text-safe (>= 4.5:1 on its ground, both themes)
+ *   --accent-fill  the bright acid, for fills only, never for text
+ * Put --on-accent-fill on top of --accent-fill, and --on-accent on --accent.
+ *
  * Roles (use these in components, never raw colors):
  *   --bg, --bg-2, --bg-3, --bg-deep        page grounds, darkest to lightest
  *   --bg-card, --surface, --surface-strong card and panel fills
  *   --text, --text-2, --text-3             body, secondary, tertiary text
  *   --accent (+ -strong/-vivid/-dim/-ink)   brand color and its text-safe ink
- *   --accent-2                              secondary brand color
- *   --on-accent                             text placed on an accent fill
+ *   --accent-fill, --on-accent-fill         bright acid fill and its ink
+ *   --accent-2                              deeper end of the brand gradient
+ *   --on-accent                             text placed on an --accent fill
  *   --success, --warning, --danger          semantic states
  *   --shadow-ink                            drop-shadow ink; add alpha with
  *                                           color-mix()
@@ -27,10 +38,10 @@
 
 :root {
   /* ── Seeds ───────────────────────────────────────────────────────── */
-  --seed-primary-h: 158; /* emerald */
-  --seed-secondary-h: 335; /* magenta */
-  --seed-neutral-h: 250; /* hue bias of the neutrals (ink blue) */
-  --seed-chroma: 0.2; /* brand saturation, 0–0.3 */
+  --seed-primary-h: 130; /* acid green */
+  --seed-secondary-h: 130; /* same hue: the gradient is one color, two depths */
+  --seed-neutral-h: 275; /* hue bias of the neutrals (cool violet ink) */
+  --seed-chroma: 0.24; /* brand saturation, 0–0.3 */
   --seed-success-h: 155;
   --seed-warning-h: 75;
   --seed-danger-h: 25;
@@ -47,16 +58,20 @@
   --text: oklch(0.97 0.012 var(--seed-neutral-h));
   --text-2: oklch(0.82 0.035 var(--seed-neutral-h));
   --text-3: oklch(0.71 0.04 var(--seed-neutral-h));
-  --accent: oklch(0.72 var(--seed-chroma) var(--seed-primary-h));
+  /* Acid reads as acid only above ~L 0.78, so the dark accent sits there.
+     On this ground it is still well clear of AA as text. */
+  --accent: oklch(0.78 var(--seed-chroma) var(--seed-primary-h));
   --accent-strong: oklch(
-    0.81 calc(var(--seed-chroma) * 0.7) var(--seed-primary-h)
+    0.84 calc(var(--seed-chroma) * 0.72) var(--seed-primary-h)
   );
-  --accent-vivid: oklch(0.78 var(--seed-chroma) var(--seed-primary-h));
-  --accent-dim: oklch(0.62 var(--seed-chroma) var(--seed-primary-h));
-  --accent-2: oklch(
-    0.82 calc(var(--seed-chroma) * 0.65) var(--seed-secondary-h)
-  );
+  --accent-vivid: oklch(0.86 var(--seed-chroma) var(--seed-primary-h));
+  --accent-dim: oklch(0.66 var(--seed-chroma) var(--seed-primary-h));
+  /* Deeper end of the single-hue gradient, so the ramp is actually visible. */
+  --accent-2: oklch(0.6 calc(var(--seed-chroma) * 0.9) var(--seed-secondary-h));
   --on-accent: oklch(0.14 0.03 var(--seed-neutral-h));
+  /* On a dark ground the acid is already bright enough to be the fill too. */
+  --accent-fill: var(--accent);
+  --on-accent-fill: var(--on-accent);
   --success: oklch(0.78 0.16 var(--seed-success-h));
   --warning: oklch(0.82 0.15 var(--seed-warning-h));
   --danger: oklch(0.7 0.18 var(--seed-danger-h));
@@ -72,9 +87,11 @@
   --border: color-mix(in oklch, var(--text) 7%, transparent);
   --border-strong: color-mix(in oklch, var(--text) 10%, transparent);
   --line: var(--divider);
+  /* One hue, bright to deep. Reserved for emphasis: see docs/THEMING.md for
+     the surface ladder (flat → hairline → shadow → tint → gradient). */
   --gradient-brand: linear-gradient(
     120deg,
-    var(--accent) 0%,
+    var(--accent-fill) 0%,
     var(--accent-2) 100%
   );
   --shadow: 0 24px 70px oklch(0 0 0 / 0.4);
@@ -108,20 +125,25 @@
   --text-3: oklch(0.48 0.045 var(--seed-neutral-h));
   /* Lighter grounds leave less sRGB room for chroma, so light accents scale
      the seed down to stay in gamut (a clipped color shifts hue and contrast). */
-  --accent: oklch(0.48 calc(var(--seed-chroma) * 0.55) var(--seed-primary-h));
+  /* --accent stays deep here so every `color: var(--accent)` keeps passing AA
+     on a white card. The acid lives in --accent-fill, which never holds text. */
+  --accent: oklch(0.46 calc(var(--seed-chroma) * 0.55) var(--seed-primary-h));
   --accent-strong: oklch(
-    0.43 calc(var(--seed-chroma) * 0.5) var(--seed-primary-h)
+    0.42 calc(var(--seed-chroma) * 0.5) var(--seed-primary-h)
   );
   --accent-vivid: oklch(
     0.5 calc(var(--seed-chroma) * 0.58) var(--seed-primary-h)
   );
   --accent-dim: oklch(
-    0.4 calc(var(--seed-chroma) * 0.45) var(--seed-primary-h)
+    0.38 calc(var(--seed-chroma) * 0.45) var(--seed-primary-h)
   );
   --accent-2: oklch(
-    0.5 calc(var(--seed-chroma) * 0.85) var(--seed-secondary-h)
+    0.72 calc(var(--seed-chroma) * 0.95) var(--seed-secondary-h)
   );
   --on-accent: oklch(1 0 var(--seed-neutral-h));
+  /* Bright acid, kept bright: dark ink goes on top instead of white. */
+  --accent-fill: oklch(0.88 var(--seed-chroma) var(--seed-primary-h));
+  --on-accent-fill: oklch(0.22 0.03 var(--seed-neutral-h));
   --success: oklch(0.47 0.11 var(--seed-success-h));
   --warning: oklch(0.5 0.1 var(--seed-warning-h));
   --danger: oklch(0.5 0.19 var(--seed-danger-h));
@@ -139,46 +161,50 @@
 /* Browsers without OKLCH get the default palette as static values. */
 @supports not (color: oklch(0 0 0)) {
   :root {
-    --bg: #020c19;
-    --bg-2: #031222;
-    --bg-3: #0b1e31;
-    --bg-deep: #010610;
-    --bg-card: #071727;
-    --bg-card-hover: #0b1e31;
-    --surface: #041221;
-    --surface-strong: #0a1c2d;
-    --text: #eff6fd;
-    --text-2: #b4c6db;
-    --text-3: #8fa4ba;
-    --accent: #00c872;
-    --accent-strong: #66dc9e;
-    --accent-vivid: #00dc84;
-    --accent-dim: #00a754;
-    --accent-2: #f8a3e5;
-    --on-accent: #020a15;
+    --bg: #07091a;
+    --bg-2: #0d1023;
+    --bg-3: #171b32;
+    --bg-deep: #040511;
+    --bg-card: #111428;
+    --bg-card-hover: #171b32;
+    --surface: #0d1022;
+    --surface-strong: #15192e;
+    --text: #f2f5fd;
+    --text-2: #bdc3db;
+    --text-3: #9aa0bb;
+    --accent: #89d000;
+    --accent-strong: #a5e05d;
+    --accent-vivid: #9ded00;
+    --accent-dim: #6da600;
+    --accent-2: #5f9200;
+    --on-accent: #060815;
+    --accent-fill: #89d000;
+    --on-accent-fill: #060815;
     --success: #4ed589;
     --warning: #fcb442;
     --danger: #fa6863;
   }
 
   [data-theme='light'] {
-    --bg: #f7fafe;
-    --bg-2: #edf5fd;
-    --bg-3: #e0ebf7;
-    --bg-deep: #e1edfa;
+    --bg: #f9fafe;
+    --bg-2: #f1f3fe;
+    --bg-3: #e5e9f7;
+    --bg-deep: #e6eafa;
     --bg-card: #ffffff;
-    --bg-card-hover: #f3f8fe;
+    --bg-card-hover: #f5f7fe;
     --surface: #ffffff;
-    --surface-strong: #eff6fd;
-    --text: #071727;
-    --text-2: #30445a;
-    --text-3: #4a6076;
-    --accent: #077045;
-    --accent-strong: #01603a;
-    --accent-vivid: #037649;
-    --accent-dim: #085634;
-    --accent-2: #9a3289;
+    --surface-strong: #f2f5fd;
+    --text: #111428;
+    --text-2: #3b415b;
+    --text-3: #565c77;
+    --accent: #406500;
+    --accent-strong: #385800;
+    --accent-vivid: #497100;
+    --accent-dim: #2f4c00;
+    --accent-2: #7bbb00;
     --on-accent: #ffffff;
+    --accent-fill: #a2f400;
+    --on-accent-fill: #161929;
     --success: #106c3e;
     --warning: #845a0f;
     --danger: #b71824;
