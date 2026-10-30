@@ -7,11 +7,11 @@ import { createServer } from 'vite';
 // Share images are rendered outside CSS, so they use static copies of the
 // dark palette tokens (see docs/THEMING.md, "Make it permanent").
 const palette = {
-  bg: '#07091a',
-  text: '#f2f5fd',
-  text2: '#bdc3db',
-  accent: '#89d000',
-  accent2: '#5f9200',
+  bg: '#020c19',
+  text: '#eff6fd',
+  text2: '#b4c6db',
+  accent: '#00c872',
+  accent2: '#f8a3e5',
 };
 
 // Every card is laid out on a 1200x630 canvas. Blog covers are captured at

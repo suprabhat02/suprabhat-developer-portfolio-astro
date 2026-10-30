@@ -608,8 +608,8 @@
 .ip-badge {
   padding: 0.12rem 0.6rem;
   border-radius: var(--radius-pill);
-  background: var(--accent-fill);
-  color: var(--on-accent-fill);
+  background: var(--accent);
+  color: var(--on-accent);
   font-size: 0.72rem;
   font-weight: 750;
 }
