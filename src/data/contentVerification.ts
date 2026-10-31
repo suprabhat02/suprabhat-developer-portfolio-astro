@@ -32,15 +32,14 @@ export const contentVerificationTodos: readonly ContentVerificationTodo[] = [
     status: 'blocked',
     value: '',
     question:
-      'Confirm employer approval, audit prices and localized pricing notes.',
+      'Confirm audit prices and localized pricing notes before publishing them.',
     affectedContent: ['services'],
   },
   {
     id: 'booking-url',
     status: 'blocked',
     value: '',
-    question:
-      'Confirm employer approval and the booking URL before enabling booking links.',
+    question: 'Confirm the booking URL before enabling booking links.',
     affectedContent: ['hero actions', 'homepage contact', 'case-study CTA'],
   },
   {
