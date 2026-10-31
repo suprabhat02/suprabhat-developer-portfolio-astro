@@ -609,12 +609,16 @@ test('case-study dates come from data, not the old 2026-09-06 placeholder', asyn
         .find((node) => node['@type'] === 'TechArticle');
       const where = `${dir}/${entry.name}`;
       const { datePublished = '', dateModified = '' } = article ?? {};
-      expect(datePublished, where).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-      expect(dateModified, where).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(datePublished, where).toMatch(
+        /^\d{4}-\d{2}-\d{2}T00:00:00\+05:30$/,
+      );
+      expect(dateModified, where).toMatch(
+        /^\d{4}-\d{2}-\d{2}T00:00:00\+05:30$/,
+      );
       expect(dateModified >= datePublished, where).toBe(true);
-      expect(dateModified, where).not.toBe('2026-09-06');
+      expect(dateModified.slice(0, 10), where).not.toBe('2026-09-06');
       if (!publishedOnPlaceholderDate.has(entry.name)) {
-        expect(datePublished, where).not.toBe('2026-09-06');
+        expect(datePublished.slice(0, 10), where).not.toBe('2026-09-06');
       }
       const dates = `${datePublished}/${dateModified}`;
       expect(datesBySlug.get(entry.name) ?? dates, where).toBe(dates);
@@ -699,7 +703,6 @@ test('share metadata, page types and sitemap dates follow the SEO contract', asy
       return data['@graph'] ?? [];
     });
 
-  // Article: cover alt, Open Graph article fields, date-only everywhere.
   const article = await read(
     'blog/accessibility-in-react-what-developers-skip/index.html',
   );
@@ -718,7 +721,10 @@ test('share metadata, page types and sitemap dates follow the SEO contract', asy
   ]);
   expect(
     graphOf(article).find((node) => node['@type'] === 'BlogPosting'),
-  ).toMatchObject({ datePublished: '2026-10-15', dateModified: '2026-10-19' });
+  ).toMatchObject({
+    datePublished: '2026-10-15T00:00:00+05:30',
+    dateModified: '2026-10-19T00:00:00+05:30',
+  });
 
   // The accessibility article cites its sources inline in every locale.
   for (const prefix of ['', 'es/', 'ar/']) {
@@ -962,12 +968,24 @@ test('all generated indexable pages have crawlable links and reciprocal language
       const node = value as Record<string, unknown>;
       if (node['@type'] === 'Person')
         expect(node, document.file).not.toHaveProperty('inLanguage');
-      if (node['@type'] === 'ProfessionalService')
+      if (node['@type'] === 'ProfessionalService') {
         expect(node['@id'], document.file).toBe(
           'https://suprabhat-dev.com/#service',
         );
+        if (/^\/(?:(?:es|ar)\/)?$/.test(canonical.pathname)) {
+          expect(node.image, document.file).toBe(document.ogImage);
+          expect(node, document.file).not.toHaveProperty('address');
+          expect(node, document.file).not.toHaveProperty('priceRange');
+        }
+      }
       if (node['@type'] === 'BlogPosting' || node['@type'] === 'TechArticle') {
         expect(node['@id'], document.file).toBe(`${canonical.href}#article`);
+        for (const key of ['datePublished', 'dateModified']) {
+          expect(node[key], document.file).toMatch(
+            /^\d{4}-\d{2}-\d{2}T00:00:00\+05:30$/,
+          );
+          expect(Number.isFinite(Date.parse(String(node[key])))).toBe(true);
+        }
         expect(node.publisher, document.file).toMatchObject({
           '@id': 'https://suprabhat-dev.com/#person',
         });
