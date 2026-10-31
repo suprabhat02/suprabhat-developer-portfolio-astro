@@ -1001,9 +1001,12 @@ test('contact form shows placeholders and toasts, resetting only on success', as
   });
   await form.locator('[name="name"]').fill('Test Person');
   await form.locator('[name="email"]').fill('test@example.com');
-  await form.locator('[name="project_type"]').selectOption('design-system');
-  await form.locator('[name="budget"]').selectOption('5k-15k');
-  await form.locator('[name="timeline"]').selectOption('exploring');
+  for (const name of ['project_type', 'budget', 'timeline']) {
+    await expect(form.locator(`[name="${name}"]`)).not.toHaveAttribute(
+      'required',
+      '',
+    );
+  }
   await form.locator('[name="message"]').fill('Need a design system.');
 
   await form.getByRole('button', { name: 'Send enquiry' }).click();
@@ -1027,6 +1030,7 @@ test('contact form shows placeholders and toasts, resetting only on success', as
 
   await success.getByRole('button', { name: 'Dismiss notification' }).click();
   await expect(success).toHaveCount(0);
+  await expect(page).toHaveURL('/contact/thanks/');
 });
 
 test('compact header and About photo', async ({ page }) => {

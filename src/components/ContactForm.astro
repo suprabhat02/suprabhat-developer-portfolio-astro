@@ -17,7 +17,7 @@ const linkedin = profile.social.find((item) => item.label === 'LinkedIn');
 const formId =
   variant === 'homepage' ? 'homepage-contact-form' : 'contact-form';
 const fieldId = (name: string) => `${formId}-${name}`;
-const redirectPath = variant === 'homepage' ? '/#contact' : '/contact/';
+const redirectPath = '/contact/thanks/';
 const redirectUrl = new URL(`${localePrefix(locale)}${redirectPath}`, SITE_URL)
   .href;
 const formClass =
@@ -35,6 +35,7 @@ const formClass =
       method="POST"
       aria-label={t(locale, 'home.contactForm')}
       data-contact-form
+      data-success-path={`${localePrefix(locale)}${redirectPath}`}
       data-error-name={t(locale, 'form.errorName')}
       data-error-email={t(locale, 'form.errorEmail')}
       data-error-project-type={t(locale, 'form.errorProjectType')}
@@ -140,13 +141,13 @@ const formClass =
         <legend>{t(locale, 'form.projectFit')}</legend>
         <div class="f-field">
           <label class="f-label" for={fieldId('project-type')}>
-            {t(locale, 'form.projectType')} <span aria-hidden="true">*</span>
+            {t(locale, 'form.projectType')}{' '}
+            <span class="f-optional">{t(locale, 'form.optional')}</span>
           </label>
           <select
             class="f-input"
             id={fieldId('project-type')}
             name="project_type"
-            required
             aria-describedby={fieldId('project-type-error')}
           >
             <option value="" disabled selected>
@@ -175,13 +176,13 @@ const formClass =
         <div class="form-row">
           <div class="f-field">
             <label class="f-label" for={fieldId('budget')}>
-              {t(locale, 'form.budget')} <span aria-hidden="true">*</span>
+              {t(locale, 'form.budget')}{' '}
+              <span class="f-optional">{t(locale, 'form.optional')}</span>
             </label>
             <select
               class="f-input"
               id={fieldId('budget')}
               name="budget"
-              required
               aria-describedby={fieldId('budget-error')}
             >
               <option value="" disabled selected>
@@ -201,13 +202,13 @@ const formClass =
           </div>
           <div class="f-field">
             <label class="f-label" for={fieldId('timeline')}>
-              {t(locale, 'form.timeline')} <span aria-hidden="true">*</span>
+              {t(locale, 'form.timeline')}{' '}
+              <span class="f-optional">{t(locale, 'form.optional')}</span>
             </label>
             <select
               class="f-input"
               id={fieldId('timeline')}
               name="timeline"
-              required
               aria-describedby={fieldId('timeline-error')}
             >
               <option value="" disabled selected>
@@ -398,7 +399,7 @@ const formClass =
             return;
 
           const invalid =
-            !field.value.trim() ||
+            (field.required && !field.value.trim()) ||
             (name === 'email' && !emailPattern.test(field.value));
           const errorElement = document.getElementById(`${field.id}-error`);
           field.toggleAttribute('aria-invalid', invalid);
@@ -468,6 +469,12 @@ const formClass =
               }
             }
             if (draftStatus) draftStatus.textContent = '';
+            const successPath = form.dataset.successPath;
+            if (successPath)
+              window.setTimeout(
+                () => window.location.assign(successPath),
+                1500,
+              );
           }
         } catch {
           status.textContent = '';

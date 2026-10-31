@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { localePrefix, type Locale } from '../i18n/config';
+import { t } from '../i18n/messages';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+---
+
+<BaseLayout
+  locale={locale}
+  page="contact/thanks"
+  title={t(locale, 'contact.thanksTitle')}
+  description={t(locale, 'contact.thanksBody')}
+  noindex
+>
+  <section class="page section">
+    <div class="wrap">
+      <h1>{t(locale, 'contact.thanksTitle')}</h1>
+      <p>{t(locale, 'contact.thanksBody')}</p>
+      <p>{t(locale, 'page.contact.responseTime')}</p>
+      <a class="button" href={`${localePrefix(locale)}/`}
+        >{t(locale, 'nav.home')}</a
+      >
+    </div>
+  </section>
+</BaseLayout>

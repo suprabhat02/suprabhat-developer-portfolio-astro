@@ -1,0 +1,16 @@
+---
+import ContactThanks from '../../../components/ContactThanks.astro';
+
+export function getStaticPaths() {
+  return (['es', 'ar'] as const).map((locale) => ({
+    params: { locale },
+    props: { locale },
+  }));
+}
+interface Props {
+  locale: 'es' | 'ar';
+}
+const { locale } = Astro.props;
+---
+
+<ContactThanks {locale} />

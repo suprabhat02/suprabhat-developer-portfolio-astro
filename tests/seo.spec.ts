@@ -1,6 +1,30 @@
 import { expect, test } from '@playwright/test';
 import { access, readdir, readFile } from 'node:fs/promises';
 
+test('localized contact thanks pages are noindex and excluded from the sitemap', async ({
+  page,
+}) => {
+  const sitemap = await readFile(
+    new URL('../dist/sitemap-0.xml', import.meta.url),
+    'utf8',
+  );
+  for (const prefix of ['', '/es', '/ar']) {
+    const path = `${prefix}/contact/thanks/`;
+    const response = await page.goto(path);
+    expect(response?.status()).toBe(200);
+    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+      'content',
+      'noindex,follow',
+    );
+    await expect(page.locator('html')).toHaveAttribute(
+      'dir',
+      prefix === '/ar' ? 'rtl' : 'ltr',
+    );
+    expect(sitemap).not.toContain(path);
+  }
+});
+
 test('case studies expose localized proof and outcomes', async ({ page }) => {
   const slugs = [
     'analytics-command-center',

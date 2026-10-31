@@ -185,14 +185,7 @@ test('homepage renders correct structure and passes accessibility', async ({
     'action',
     'https://api.web3forms.com/submit',
   );
-  for (const fieldName of [
-    'name',
-    'email',
-    'project_type',
-    'budget',
-    'timeline',
-    'message',
-  ]) {
+  for (const fieldName of ['name', 'email', 'message']) {
     await expect(projectForm.locator(`[name="${fieldName}"]`)).toHaveAttribute(
       'required',
       '',
@@ -202,7 +195,7 @@ test('homepage renders correct structure and passes accessibility', async ({
   const errorSummary = projectForm.locator('[data-error-summary]');
   await expect(errorSummary).toBeVisible();
   await expect(errorSummary).toBeFocused();
-  await expect(errorSummary.locator('a')).toHaveCount(6);
+  await expect(errorSummary.locator('a')).toHaveCount(3);
 
   // No global SPA router: static pages keep navigation crawlable and avoid stale persisted shell state.
   await expect(
