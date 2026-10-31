@@ -893,6 +893,15 @@ test('hero uses the aurora backdrop and a plain-text name', async ({
       '1024px',
     );
     await expect(hero.locator('.fx-grid')).toHaveCount(0);
+    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('h1')).toHaveAttribute('id', 'hero-heading');
+    await expect(page.locator('h1')).toContainText('React');
+    await expect(page.locator('#hero-name')).toHaveText(
+      prefix === '/ar' ? 'سوبرابهات' : 'Suprabhat Kumar',
+    );
+    await expect(page.locator('#hero-heading .fx-gradient-text')).toHaveCount(
+      0,
+    );
     await expect(page.locator('#hero-name .fx-gradient-text')).toHaveCount(0);
     const fill = await page
       .locator('#hero-name')

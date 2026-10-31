@@ -17,6 +17,10 @@ const en = {
   'nav.openMenu': 'Open navigation menu',
   'nav.closeMenu': 'Close navigation menu',
   'nav.home': 'Home',
+  'home.heading':
+    'Senior React engineer for SaaS dashboards, performance and accessibility',
+  'home.headingSub':
+    'Frontend architecture with React, Next.js and TypeScript.',
   'nav.homeAria': 'home',
   'nav.about': 'About',
   'nav.skills': 'Skills',
@@ -453,6 +457,9 @@ const es: Translations = {
   'nav.openMenu': 'Abrir menú de navegación',
   'nav.closeMenu': 'Cerrar menú de navegación',
   'nav.home': 'Inicio',
+  'home.heading':
+    'Ingeniero React sénior especializado en paneles SaaS, rendimiento y accesibilidad',
+  'home.headingSub': 'Arquitectura frontend con React, Next.js y TypeScript.',
   'nav.homeAria': 'Inicio',
   'nav.about': 'Sobre mí',
   'nav.skills': 'Habilidades',
@@ -940,6 +947,9 @@ const ar: Translations = {
   'nav.openMenu': 'فتح قائمة التنقل',
   'nav.closeMenu': 'إغلاق قائمة التنقل',
   'nav.home': 'الرئيسية',
+  'home.heading': 'مهندس React أول متخصص في لوحات SaaS والأداء وإمكانية الوصول',
+  'home.headingSub':
+    'معمارية الواجهات الأمامية باستخدام React وNext.js وTypeScript.',
   'nav.homeAria': 'الرئيسية',
   'nav.about': 'نبذة عني',
   'nav.skills': 'المهارات',

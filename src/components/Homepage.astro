@@ -300,7 +300,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
   <section
     id="home"
     class="hero"
-    aria-labelledby="hero-name"
+    aria-labelledby="hero-name hero-heading"
     data-motion-scope
     data-tap-motion
   >
@@ -325,10 +325,13 @@ const contactIndex = featured.length > 0 ? '14' : '13';
             />
           </p>
 
-          <h1 id="hero-name" class="hero-name">
+          <p id="hero-name" class="hero-name">
             {locale === 'ar' ? profile.name : 'Suprabhat Kumar'}
+          </p>
+          <h1 id="hero-heading" class="hero-heading">
+            {t(locale, 'home.heading')}
           </h1>
-          <p class="hero-sub">{conversion.hero.title}</p>
+          <p class="hero-sub">{t(locale, 'home.headingSub')}</p>
           {
             flipWords && (
               <p class="hero-flip">

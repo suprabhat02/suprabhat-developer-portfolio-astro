@@ -365,13 +365,22 @@
 }
 
 .homepage-shell .hero-name {
+  margin-block-end: 0.75rem;
+  color: var(--text);
+  font-size: 1.25rem;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
+.homepage-shell .hero-heading {
   max-width: none;
   margin: 0 0 1.25rem;
   color: var(--text);
-  font-size: clamp(3rem, 8.4vw, 6.25rem);
+  font-size: 3rem;
   font-weight: 800;
-  letter-spacing: -0.055em;
-  line-height: 0.92;
+  letter-spacing: 0;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
 }
 
 .hero-name > span {
@@ -379,7 +388,7 @@
 }
 
 /* Arabic letters only join with zero tracking. */
-[dir='rtl'] .homepage-shell .hero-name {
+[dir='rtl'] .homepage-shell .hero-heading {
   letter-spacing: 0;
   line-height: 1.15;
 }
@@ -2781,8 +2790,8 @@ textarea.f-input {
     margin-block-end: 1.75rem;
   }
 
-  .homepage-shell .hero-name {
-    font-size: clamp(2.9rem, 14vw, 4rem);
+  .homepage-shell .hero-heading {
+    font-size: 2.25rem;
     margin-block-end: 1.5rem;
   }
 
