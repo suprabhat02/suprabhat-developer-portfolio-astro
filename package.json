@@ -15,16 +15,16 @@
     "audit:lighthouse": "node scripts/audit-lighthouse.mjs"
   },
   "dependencies": {
-    "@astrojs/markdown-satteri": "0.4.4",
+    "@astrojs/markdown-satteri": "0.4.5",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "@fontsource-variable/geist-mono": "^5.3.0",
-    "astro": "^7.4.0",
-    "react-smart-copy": "1.14.0",
+    "astro": "^7.4.2",
+    "react-smart-copy": "1.24.0",
     "sharp": "^0.35.5"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.10",
+    "@astrojs/check": "^0.9.12",
     "@axe-core/playwright": "^4.14.0",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.64.1",
@@ -35,6 +35,6 @@
     "prettier-plugin-astro": "^0.14.1",
     "svgo": "^4.1.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.71.2"
+    "typescript-eslint": "^8.72.1"
   }
 }
