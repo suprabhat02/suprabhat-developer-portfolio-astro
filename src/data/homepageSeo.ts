@@ -1,7 +1,10 @@
 import { SITE_URL } from '../config/site';
 import { getServices } from './services';
 import { getHomepageConversionContent } from './homepageConversion';
-import { getReactSmartCopySchema } from './openSource';
+import {
+  getReactInpChunkerSchema,
+  getReactSmartCopySchema,
+} from './openSource';
 import { localeMeta, localePrefix, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
 
@@ -10,14 +13,14 @@ export const getHomepageTitle = (locale: Locale) =>
     ? 'Suprabhat Kumar — Ingeniero Frontend Sénior'
     : locale === 'ar'
       ? 'سوبرابهات كومار — مهندس واجهات أمامية أول'
-      : 'Suprabhat Kumar | Senior React Engineer in India';
+      : 'Suprabhat Kumar | Senior React Frontend Engineer in India';
 
 export const getHomepageDescription = (locale: Locale) =>
   locale === 'es'
-    ? 'Ingeniero frontend sénior con más de seis años creando productos SaaS rápidos y accesibles con React y TypeScript.'
+    ? 'Ingeniero frontend sénior especializado en React y TypeScript: desarrollo de paneles SaaS, sistemas de diseño, accesibilidad y rendimiento web.'
     : locale === 'ar'
-      ? 'مهندس واجهات أمامية أول بخبرة تزيد على ست سنوات في بناء منتجات SaaS سريعة ومتاحة ولوحات بيانات وأنظمة تصميم باستخدام React وTypeScript.'
-      : 'Senior React frontend engineer in India with 6+ years building SaaS dashboards, design systems, accessible interfaces, and fast web products.';
+      ? 'مهندس واجهات أمامية أول متخصص في React وTypeScript لبناء لوحات SaaS وأنظمة التصميم والواجهات المتاحة وتحسين أداء الويب، مع التعاون عن بُعد من الهند.'
+      : 'Hire Suprabhat Kumar, a senior React and TypeScript engineer in India, for SaaS dashboards, design systems and frontend performance reviews.';
 
 export const getHomepageSchema = (locale: Locale) => {
   const services = getServices(locale);
@@ -62,6 +65,7 @@ export const getHomepageSchema = (locale: Locale) => {
       },
     },
     getReactSmartCopySchema(SITE_URL, language, locale),
+    getReactInpChunkerSchema(SITE_URL, language, locale),
     {
       '@type': 'ItemList',
       '@id': `${pageUrl}#problems`,

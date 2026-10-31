@@ -26,6 +26,27 @@ npm run format
 npm run test:e2e   # Playwright + axe
 ```
 
+Run the production build before browser tests. The default suite covers
+desktop Chromium and Pixel 7. For the extended device matrix in PowerShell:
+
+```powershell
+npx playwright install chromium firefox webkit
+npm run build
+$env:DEVICE_MATRIX = '1'
+try {
+	npm run test:e2e -- --workers=3 --grep "hero rotating phrases|major-device journeys|world map renders|collaboration bento|motion layer is progressive"
+} finally {
+	Remove-Item Env:DEVICE_MATRIX
+}
+```
+
+This runs 12 emulated profiles: small, standard and large iPhones; small and
+standard Android phones; iPad portrait and landscape; Android tablet; laptop;
+wide desktop; Firefox desktop; and WebKit desktop. It covers English, Spanish
+and Arabic, both themes, navigation, key content routes, contact validation,
+hero alignment, map and SVG interactions, accessibility and reduced motion.
+Emulation does not replace testing on physical hardware.
+
 ## Editing content
 
 The homepage and inner-page content are native Astro, driven by typed data and

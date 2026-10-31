@@ -7,7 +7,7 @@
  * fully drawn timeline where scroll timelines are unsupported.
  */
 import { getExperience } from '../data/experience';
-import { localeMeta, type Locale } from '../i18n/config';
+import type { Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
 
 interface Props {
@@ -43,8 +43,6 @@ const toISO = (value: string) => {
 };
 const yearOf = (value: string) => value.split(' ')[1] ?? value;
 const roleKey = (promotion?: boolean) => (promotion ? 'senior' : 'developer');
-// Role progressions read oldest to newest, so the arrow follows the script.
-const progressionArrow = localeMeta[locale].dir === 'rtl' ? ' ← ' : ' → ';
 ---
 
 <div class="xp-timeline">
@@ -57,16 +55,7 @@ const progressionArrow = localeMeta[locale].dir === 'rtl' ? ' ← ' : ' → ';
         const title =
           job.title !== undefined
             ? t(locale, `experience.${job.id}.title`, job.title)
-            : [...(job.roles ?? [])]
-                .reverse()
-                .map((role) =>
-                  t(
-                    locale,
-                    `experience.${job.id}.${roleKey(role.promotion)}`,
-                    role.title,
-                  ),
-                )
-                .join(progressionArrow);
+            : job.company;
         const details = [
           job.mode && (job.modeLabel ?? job.mode),
           job.location && (job.locationLabel ?? job.location),
@@ -82,7 +71,7 @@ const progressionArrow = localeMeta[locale].dir === 'rtl' ? ' ← ' : ' → ';
               <p class="xp-year" aria-hidden="true">
                 {yearOf(job.start)}
               </p>
-              <p class="xp-company">{job.company}</p>
+              {!job.roles && <p class="xp-company">{job.company}</p>}
               <p class="xp-dates">
                 <time datetime={toISO(job.start)}>
                   {job.startLabel ?? job.start}
@@ -97,7 +86,12 @@ const progressionArrow = localeMeta[locale].dir === 'rtl' ? ' ← ' : ' → ';
                 )}
               </p>
             </div>
-            <div class="xp-card fx-glow" data-glow>
+            <div
+              class:list={[
+                'xp-card fx-card-gradient',
+                { 'xp-card--progression': job.roles },
+              ]}
+            >
               <div class="xp-card-head">
                 <Heading class="xp-title">{title}</Heading>
                 {details.length > 0 && (
@@ -131,13 +125,6 @@ const progressionArrow = localeMeta[locale].dir === 'rtl' ? ' ← ' : ' → ';
                       ]}
                     >
                       <div class="xp-role-head">
-                        <SubHeading class="xp-role-title">
-                          {t(
-                            locale,
-                            `experience.${job.id}.${roleKey(role.promotion)}`,
-                            role.title,
-                          )}
-                        </SubHeading>
                         {role.promotion && (
                           <span class="promo-badge">
                             <svg
@@ -157,6 +144,13 @@ const progressionArrow = localeMeta[locale].dir === 'rtl' ? ' ← ' : ' → ';
                             {t(locale, 'home.promoted')}
                           </span>
                         )}
+                        <SubHeading class="xp-role-title">
+                          {t(
+                            locale,
+                            `experience.${job.id}.${roleKey(role.promotion)}`,
+                            role.title,
+                          )}
+                        </SubHeading>
                         <p class="xp-role-dates">
                           <time datetime={toISO(role.start)}>
                             {role.startLabel ?? role.start}

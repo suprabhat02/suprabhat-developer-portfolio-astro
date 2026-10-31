@@ -7,11 +7,10 @@ import { createServer } from 'vite';
 // Share images are rendered outside CSS, so they use static copies of the
 // dark palette tokens (see docs/THEMING.md, "Make it permanent").
 const palette = {
-  bg: '#020c19',
-  text: '#eff6fd',
-  text2: '#b4c6db',
-  accent: '#00c872',
-  accent2: '#f8a3e5',
+  bg: '#070c10',
+  text: '#f3f5f8',
+  text2: '#bec5cc',
+  accent: '#ff4d2a',
 };
 
 // Every card is laid out on a 1200x630 canvas. Blog covers are captured at
@@ -105,21 +104,18 @@ const defaultCard = page(
   .grid {
     position: absolute; inset: 0 auto 0 0; width: 730px;
     background-image:
-      linear-gradient(to right, rgb(0 200 114 / 0.1) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(0 200 114 / 0.1) 1px, transparent 1px);
+      linear-gradient(to right, rgb(255 77 42 / 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 77 42 / 0.1) 1px, transparent 1px);
     background-size: 48px 48px;
   }
   .copy { position: absolute; top: 74px; left: 64px; width: 610px; }
   .eyebrow { display: flex; align-items: center; gap: 16px; color: ${palette.text2}; font-size: 20px; font-weight: 600; letter-spacing: 0.08em; }
-  .dot { width: 10px; height: 10px; background: linear-gradient(90deg, ${palette.accent}, ${palette.accent2}); }
+  .dot { width: 10px; height: 10px; background: ${palette.accent}; }
   h1 { margin-top: 82px; font-size: 76px; font-weight: 700; line-height: 1.08; letter-spacing: -0.02em; }
-  .brand {
-    background: linear-gradient(90deg, ${palette.accent}, ${palette.accent2});
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
+  .brand { color: ${palette.accent}; }
   .stack { margin-top: 44px; color: ${palette.text2}; font-size: 24px; }
   .pitch { margin-top: 62px; font-size: 21px; line-height: 1.4; }
-  .rule { position: absolute; top: 0; left: 730px; width: 6px; height: 100%; background: linear-gradient(${palette.accent}, ${palette.accent2}); }
+  .rule { position: absolute; top: 0; left: 730px; width: 6px; height: 100%; background: ${palette.accent}; }
   .portrait { position: absolute; top: 0; left: 730px; width: 470px; height: 630px; object-fit: cover; }
   .rule { z-index: 1; }
   `,

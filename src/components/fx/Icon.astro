@@ -1,14 +1,11 @@
 ---
 /**
- * Animated line icons.
+ * Line icons.
  *
  * Paths come from Lucide (https://lucide.dev, ISC License, Copyright (c)
  * Lucide Contributors). They are inlined as SVG so no icon font or request is
- * needed. Motion is pure CSS (see `.fx-icon` in motion.css):
- * - strokes draw in as the icon scrolls into view (scroll-driven, no JS);
- * - hovering or focusing the surrounding card redraws them and plays the
- *   icon's own micro-motion (bob, wave, swing, pulse, nudge, spin);
- * - everything is static under `prefers-reduced-motion: reduce`.
+ * needed. Icons are static for every user (see `.fx-icon` in motion.css); the
+ * `draw` prop and per-icon motion names are kept for API compatibility.
  * Icons are decorative by default; pass `label` only when the icon is the
  * sole content of a control.
  */

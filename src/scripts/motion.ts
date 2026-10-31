@@ -52,7 +52,11 @@ const closestFromEvent = <T extends Element>(
 function initPointerGlow(): Cleanup {
   const onMove = rafThrottle((event: PointerEvent) => {
     if (!allowsPointerMotion()) return;
-    const card = closestFromEvent<HTMLElement>(event, '[data-glow]');
+    // Frame cards keep their hairline glow off, so they need no pointer data.
+    const card = closestFromEvent<HTMLElement>(
+      event,
+      '[data-glow]:not(.fx-card-gradient)',
+    );
     if (!card) return;
     const rect = card.getBoundingClientRect();
     card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
@@ -63,37 +67,39 @@ function initPointerGlow(): Cleanup {
   return () => document.removeEventListener('pointermove', onMove);
 }
 
-/* ── 3D tilt: rotates the hovered card toward the pointer ──────────── */
-/* Also exposes the pointer offset as `--px/--py` for parallax layers. */
+/* ── Card depth and scene parallax ─────────────────────────────────── */
 
-const MAX_TILT_DEG = 7;
-
-function initTilt(): Cleanup {
+function initParallax(): Cleanup {
   let active: HTMLElement | null = null;
+  let bounds: DOMRect | null = null;
 
   const reset = (element: HTMLElement) => {
-    element.removeAttribute('data-tilting');
-    ['--rx', '--ry', '--px', '--py'].forEach((property) =>
-      element.style.removeProperty(property),
-    );
+    element.removeAttribute('data-parallax');
+    element.style.removeProperty('--px');
+    element.style.removeProperty('--py');
   };
 
   const onMove = rafThrottle((event: PointerEvent) => {
     const card = allowsPointerMotion()
-      ? closestFromEvent<HTMLElement>(event, '[data-tilt]')
+      ? closestFromEvent<HTMLElement>(event, '.fx-card-gradient')
       : null;
 
-    if (active && active !== card) reset(active);
+    if (active !== card) {
+      if (active) reset(active);
+      bounds = card?.getBoundingClientRect() ?? null;
+    }
     active = card;
-    if (!card) return;
+    if (!card || !bounds) return;
 
-    const rect = card.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width - 0.5;
-    const y = (event.clientY - rect.top) / rect.height - 0.5;
-    card.setAttribute('data-tilting', '');
-    card.style.setProperty('--rx', `${(-y * MAX_TILT_DEG).toFixed(2)}deg`);
-    card.style.setProperty('--ry', `${(x * MAX_TILT_DEG).toFixed(2)}deg`);
-    // Normalised pointer offset (−0.5…0.5) for parallax layers inside.
+    const x = Math.max(
+      -0.5,
+      Math.min(0.5, (event.clientX - bounds.left) / bounds.width - 0.5),
+    );
+    const y = Math.max(
+      -0.5,
+      Math.min(0.5, (event.clientY - bounds.top) / bounds.height - 0.5),
+    );
+    card.setAttribute('data-parallax', '');
     card.style.setProperty('--px', x.toFixed(3));
     card.style.setProperty('--py', y.toFixed(3));
   });
@@ -101,11 +107,23 @@ function initTilt(): Cleanup {
   const onLeaveDocument = () => {
     if (active) reset(active);
     active = null;
+    bounds = null;
   };
 
   document.addEventListener('pointermove', onMove, { passive: true });
   document.documentElement.addEventListener('pointerleave', onLeaveDocument);
+  window.addEventListener('scroll', onLeaveDocument, { passive: true });
+  window.addEventListener('resize', onLeaveDocument, { passive: true });
+  window.addEventListener('blur', onLeaveDocument);
+  media.reducedMotion.addEventListener('change', onLeaveDocument);
+  media.finePointer.addEventListener('change', onLeaveDocument);
   return () => {
+    onLeaveDocument();
+    window.removeEventListener('scroll', onLeaveDocument);
+    window.removeEventListener('resize', onLeaveDocument);
+    window.removeEventListener('blur', onLeaveDocument);
+    media.reducedMotion.removeEventListener('change', onLeaveDocument);
+    media.finePointer.removeEventListener('change', onLeaveDocument);
     document.removeEventListener('pointermove', onMove);
     document.documentElement.removeEventListener(
       'pointerleave',
@@ -354,10 +372,16 @@ function initInViewMotion(): Cleanup {
 const INTERACTIVE = 'a, button, input, select, textarea, label, summary';
 
 function initLiveScenes(): Cleanup {
-  if (media.finePointer.matches || media.reducedMotion.matches) {
+  if (media.reducedMotion.matches) {
     return () => undefined;
   }
   let active: HTMLElement | null = null;
+  let press: {
+    pointerId: number;
+    clientX: number;
+    clientY: number;
+    scrollY: number;
+  } | null = null;
 
   const setActive = (card: HTMLElement | null) => {
     if (active && active !== card) active.removeAttribute('data-active');
@@ -365,18 +389,68 @@ function initLiveScenes(): Cleanup {
     card?.setAttribute('data-active', '');
   };
 
-  const onClick = (event: MouseEvent) => {
+  const onDown = (event: PointerEvent) => {
+    press =
+      event.isPrimary && event.pointerType !== 'mouse'
+        ? {
+            pointerId: event.pointerId,
+            clientX: event.clientX,
+            clientY: event.clientY,
+            scrollY: window.scrollY,
+          }
+        : null;
+  };
+
+  const onCancel = () => {
+    press = null;
+  };
+
+  const onUp = (event: PointerEvent) => {
+    const start = press;
+    press = null;
+    if (
+      !start ||
+      event.pointerId !== start.pointerId ||
+      media.reducedMotion.matches ||
+      Math.hypot(event.clientX - start.clientX, event.clientY - start.clientY) >
+        8 ||
+      Math.abs(window.scrollY - start.scrollY) > 1
+    )
+      return;
     const target = event.target instanceof Element ? event.target : null;
-    const card = target?.closest<HTMLElement>('.fx-live') ?? null;
+    const card =
+      target?.closest<HTMLElement>('.fx-live, [data-tap-motion]') ?? null;
     if (card && target?.closest(INTERACTIVE)) return;
     setActive(card && card !== active ? card : null);
   };
 
-  document.addEventListener('click', onClick, { passive: true });
+  document.addEventListener('pointerdown', onDown, { passive: true });
+  document.addEventListener('pointerup', onUp, { passive: true });
+  document.addEventListener('pointercancel', onCancel, { passive: true });
   return () => {
-    document.removeEventListener('click', onClick);
+    document.removeEventListener('pointerdown', onDown);
+    document.removeEventListener('pointerup', onUp);
+    document.removeEventListener('pointercancel', onCancel);
     setActive(null);
   };
+}
+
+/* ── Hero: attach its backdrop drift on the first pointer or focus ─── */
+
+function initHeroEngagement(): Cleanup {
+  const hero = document.querySelector<HTMLElement>('[data-tap-motion]');
+  if (!hero) return () => undefined;
+  const events = ['pointerover', 'pointerdown', 'focusin'] as const;
+  const cleanup = () =>
+    events.forEach((type) => hero.removeEventListener(type, engage));
+  function engage() {
+    hero?.setAttribute('data-engaged', '');
+    cleanup();
+  }
+  events.forEach((type) =>
+    hero.addEventListener(type, engage, { passive: true }),
+  );
+  return cleanup;
 }
 
 /* ── Globe: fetch the renderer only when one approaches the viewport ─ */
@@ -430,9 +504,10 @@ const initializers: ReadonlyArray<() => Cleanup> = [
   initNavIndicator,
   initScrollSpy,
   initPointerGlow,
-  initTilt,
+  initParallax,
   initHoverGroups,
   initLiveScenes,
+  initHeroEngagement,
   initLazyGlobes,
   initToasts,
 ];

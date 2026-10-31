@@ -1,9 +1,14 @@
 ---
 /**
- * Featured open-source project card. Used on the homepage (under an h2) and
- * on /work/ (under the page h1), so the heading level is configurable.
+ * Open-source project card. Used on the homepage (under an h2) and on /work/
+ * (under the page h1), so the heading level is configurable. Several cards
+ * can share a page, so landmark and control names include the project name.
  */
-import { getOpenSourceCopy, reactSmartCopy } from '../data/openSource';
+import {
+  getOpenSourceCopy,
+  getOpenSourceProject,
+  type OpenSourceProjectId,
+} from '../data/openSource';
 import type { Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
 import CopyButton from './fx/CopyButton.astro';
@@ -11,27 +16,35 @@ import Icon from './fx/Icon.astro';
 
 interface Props {
   locale: Locale;
+  project: OpenSourceProjectId;
   caseStudyHref: string;
   headingLevel?: 'h2' | 'h3';
 }
 
-const { locale, caseStudyHref, headingLevel: Heading = 'h3' } = Astro.props;
-const copy = getOpenSourceCopy(locale);
+const {
+  locale,
+  project: projectId,
+  caseStudyHref,
+  headingLevel: Heading = 'h3',
+} = Astro.props;
+const project = getOpenSourceProject(projectId);
+const copy = getOpenSourceCopy(locale, projectId);
 const externalLinks = [
-  { href: reactSmartCopy.links.docs, label: copy.docsLabel, icon: 'book-open' },
+  { href: project.links.docs, label: copy.docsLabel, icon: 'book-open' },
   {
-    href: reactSmartCopy.links.repository,
+    href: project.links.repository,
     label: copy.repositoryLabel,
     icon: 'github',
   },
-  { href: reactSmartCopy.links.npm, label: copy.npmLabel, icon: 'package' },
+  { href: project.links.npm, label: copy.npmLabel, icon: 'package' },
 ] as const;
-const titleId = `oss-${reactSmartCopy.id}-title`;
+const titleId = `oss-${project.id}-title`;
 ---
 
 <article
   class="oss-card fx-glow fx-card-gradient fx-reveal"
   aria-labelledby={titleId}
+  data-project={project.id}
   data-glow
 >
   <div class="oss-copy">
@@ -39,7 +52,7 @@ const titleId = `oss-${reactSmartCopy.id}-title`;
       <Icon name="package" size={16} />
       {copy.eyebrow}
     </p>
-    <Heading id={titleId} class="oss-title">{reactSmartCopy.name}</Heading>
+    <Heading id={titleId} class="oss-title">{project.name}</Heading>
     <p class="oss-tagline">{copy.tagline}</p>
     <p class="oss-description">{copy.description}</p>
     <ul class="oss-facts">
@@ -58,32 +71,32 @@ const titleId = `oss-${reactSmartCopy.id}-title`;
     <div
       class="oss-terminal"
       role="group"
-      aria-label={copy.installLabel}
+      aria-label={`${copy.installLabel}: ${project.name}`}
       dir="ltr"
     >
       <div class="oss-terminal-bar" aria-hidden="true">
         <span class="oss-light oss-light--close"></span>
         <span class="oss-light oss-light--min"></span>
         <span class="oss-light oss-light--max"></span>
-        <span class="oss-terminal-title">react-smart-copy — zsh</span>
+        <span class="oss-terminal-title">{project.name} — zsh</span>
       </div>
       <div class="oss-terminal-body">
         <code
           ><span class="oss-path" aria-hidden="true">~</span><span
             class="oss-prompt"
             aria-hidden="true">%</span
-          >{reactSmartCopy.install}<span class="oss-cursor" aria-hidden="true"
+          >{project.install}<span class="oss-cursor" aria-hidden="true"
           ></span></code
         >
         <CopyButton
-          value={reactSmartCopy.install}
-          label={t(locale, 'copy.installLabel')}
+          value={project.install}
+          label={`${t(locale, 'copy.installLabel')} ${project.name}`}
           {locale}
         />
       </div>
     </div>
 
-    <nav class="oss-links" aria-label={copy.linksLabel}>
+    <nav class="oss-links" aria-label={`${copy.linksLabel}: ${project.name}`}>
       <ul>
         {
           externalLinks.map((link) => (
@@ -100,7 +113,7 @@ const titleId = `oss-${reactSmartCopy.id}-title`;
     </nav>
 
     <a class="oss-cta" href={caseStudyHref}>
-      {copy.caseStudyLabel}
+      {copy.caseStudyLabel}<span class="sr-only">: {project.name}</span>
       <span aria-hidden="true">→</span>
     </a>
     <p class="oss-meta">{copy.meta}</p>

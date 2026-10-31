@@ -3,7 +3,12 @@ import {
   additionalCaseStudies,
   additionalCaseStudyProof,
 } from './additionalCaseStudies';
-import { reactSmartCopyCaseStudy, reactSmartCopyProof } from './openSource';
+import {
+  reactInpChunkerCaseStudy,
+  reactInpChunkerProof,
+  reactSmartCopyCaseStudy,
+  reactSmartCopyProof,
+} from './openSource';
 
 export interface CaseStudySection {
   id: string;
@@ -1460,14 +1465,26 @@ const caseStudyProof: Record<
   },
 };
 
+const openSourceProof = (
+  caseStudy: CaseStudyBase,
+  locale: Locale,
+): readonly CaseStudyProof[] | undefined => {
+  if (caseStudy.slug === reactSmartCopyCaseStudy[locale].slug) {
+    return reactSmartCopyProof[locale];
+  }
+  if (caseStudy.slug === reactInpChunkerCaseStudy[locale].slug) {
+    return reactInpChunkerProof[locale];
+  }
+  return undefined;
+};
+
 const withProof = (caseStudy: CaseStudyBase, locale: Locale): CaseStudy => ({
   ...caseStudy,
   proof:
     caseStudyProof[locale][caseStudy.slug] ??
     additionalCaseStudyProof[locale][caseStudy.slug] ??
-    (caseStudy.slug === reactSmartCopyCaseStudy[locale].slug
-      ? reactSmartCopyProof[locale]
-      : []),
+    openSourceProof(caseStudy, locale) ??
+    [],
 });
 
 export const caseStudies: readonly CaseStudy[] = [
@@ -1476,6 +1493,7 @@ export const caseStudies: readonly CaseStudy[] = [
   withProof(performanceModernization.en, 'en'),
   ...additionalCaseStudies.en.map((caseStudy) => withProof(caseStudy, 'en')),
   withProof(reactSmartCopyCaseStudy.en, 'en'),
+  withProof(reactInpChunkerCaseStudy.en, 'en'),
 ] as const;
 
 const localizedCaseStudies: Record<Locale, readonly CaseStudy[]> = {
@@ -1485,6 +1503,7 @@ const localizedCaseStudies: Record<Locale, readonly CaseStudy[]> = {
     withProof(performanceModernization.en, 'en'),
     ...additionalCaseStudies.en.map((caseStudy) => withProof(caseStudy, 'en')),
     withProof(reactSmartCopyCaseStudy.en, 'en'),
+    withProof(reactInpChunkerCaseStudy.en, 'en'),
   ],
   es: [
     withProof(analyticsCommandCenter.es, 'es'),
@@ -1492,6 +1511,7 @@ const localizedCaseStudies: Record<Locale, readonly CaseStudy[]> = {
     withProof(performanceModernization.es, 'es'),
     ...additionalCaseStudies.es.map((caseStudy) => withProof(caseStudy, 'es')),
     withProof(reactSmartCopyCaseStudy.es, 'es'),
+    withProof(reactInpChunkerCaseStudy.es, 'es'),
   ],
   ar: [
     withProof(analyticsCommandCenter.ar, 'ar'),
@@ -1499,6 +1519,7 @@ const localizedCaseStudies: Record<Locale, readonly CaseStudy[]> = {
     withProof(performanceModernization.ar, 'ar'),
     ...additionalCaseStudies.ar.map((caseStudy) => withProof(caseStudy, 'ar')),
     withProof(reactSmartCopyCaseStudy.ar, 'ar'),
+    withProof(reactInpChunkerCaseStudy.ar, 'ar'),
   ],
 };
 

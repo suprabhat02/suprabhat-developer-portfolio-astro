@@ -169,9 +169,13 @@
  * The original animates `background-position`, which repaints every
  * frame. Here both layers tile seamlessly (every stripe period divides
  * its tile), the blended layer moves by exactly one shared tile width with
- * `transform`, and the blur, skew and mask stay static.
+ * `transform`, and the blur and mask stay static. Each layer carries the
+ * skew itself: skewing the blurred, masked container delayed first paint by
+ * up to two seconds in Lighthouse. Layers share the container's height, so
+ * the skew origin and the result are unchanged.
  */
 .fx-aurora-bg {
+  --au-skew: -10deg;
   --au-stripe: var(--bg);
   --au-stripes: repeating-linear-gradient(
     90deg,
@@ -181,21 +185,22 @@
     transparent 15%,
     var(--au-stripe) 20%
   );
+  /* Orange against the cool graphite highlight: a light leak, not a wall. */
   --au-colors: repeating-linear-gradient(
     90deg,
     var(--accent) 10%,
-    var(--accent-2) 15%,
+    var(--text-2) 15%,
     var(--accent-strong) 20%,
-    color-mix(in oklch, var(--accent-2) 60%, var(--accent)) 25%,
+    color-mix(in oklch, var(--text-2) 55%, var(--accent)) 25%,
     var(--accent) 30%
   );
   position: absolute;
   inset: -2rem -12rem;
+  max-block-size: 64rem;
   overflow: hidden;
   overflow: clip;
   opacity: var(--au-opacity, 0.62);
   filter: blur(12px);
-  transform: skewX(-10deg);
   mask-image: radial-gradient(
     ellipse 95% 110% at 100% 0%,
     #000 18%,
@@ -204,7 +209,7 @@
 }
 
 [dir='rtl'] .fx-aurora-bg {
-  transform: skewX(10deg);
+  --au-skew: 10deg;
   mask-image: radial-gradient(
     ellipse 95% 110% at 0% 0%,
     #000 18%,
@@ -218,7 +223,7 @@
   [dir='rtl'] .fx-aurora-bg {
     opacity: calc(var(--au-opacity, 0.62) * 0.75);
     mask-image: radial-gradient(
-      ellipse 120% 38% at 50% 0%,
+      ellipse 120% 48rem at 50% 0%,
       #000 10%,
       transparent 80%
     );
@@ -231,6 +236,7 @@
   left: 0;
   background-image: var(--au-stripes), var(--au-colors);
   background-repeat: repeat-x;
+  transform: skewX(var(--au-skew));
 }
 
 .fx-aurora-base {
@@ -246,8 +252,28 @@
     600px 100%,
     450px 100%;
   mix-blend-mode: difference;
-  will-change: transform;
-  animation: fx-aurora-flow 70s linear infinite;
+}
+
+/* Attached on first engagement (motion.ts sets data-engaged): even paused,
+   the animation promotes this ~3,000px blended layer, which delayed first
+   paint. The first keyframe equals the static skew, so it starts seamlessly
+   and later pauses in place rather than snapping back. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero[data-engaged] .fx-aurora-flow {
+    animation: fx-aurora-flow 70s linear infinite;
+    animation-play-state: paused;
+  }
+
+  .hero[data-engaged]:is(:focus-within, [data-active]) .fx-aurora-flow {
+    animation-play-state: running;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .hero[data-engaged]:has(.hero-content:hover, .hero-portrait-wrap:hover)
+    .fx-aurora-flow {
+    animation-play-state: running;
+  }
 }
 
 [data-theme='light'] .fx-aurora-bg {
@@ -260,8 +286,11 @@
 }
 
 @keyframes fx-aurora-flow {
+  from {
+    transform: skewX(var(--au-skew));
+  }
   to {
-    transform: translate3d(-1800px, 0, 0);
+    transform: skewX(var(--au-skew)) translate3d(-1800px, 0, 0);
   }
 }
 
@@ -305,36 +334,21 @@
   background: var(--fx-border-fill, var(--bg-card));
 }
 
-/* ── Card spotlight + glowing border (Aceternity "Card Spotlight") ──── */
-/* `--mx/--my` are written by src/scripts/motion.ts on fine pointers. */
+/* ── Card spotlight border (Aceternity "Card Spotlight") ──────────────────── */
+/* `--mx/--my` are written by src/scripts/motion.ts on fine pointers. Cards
+  use one pointer-lit hairline without an interior wash. */
 
 .fx-glow {
   position: relative;
   isolation: isolate;
 }
 
-.fx-glow::before,
 .fx-glow::after {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 320ms ease;
-}
-
-.fx-glow::before {
-  z-index: -1;
-  background: radial-gradient(
-    480px circle at var(--mx, 50%) var(--my, 0%),
-    var(--fx-glow-soft),
-    transparent 62%
-  );
-}
-
-.fx-glow::after {
   padding: 1px;
+  border-radius: inherit;
   background: radial-gradient(
     320px circle at var(--mx, 50%) var(--my, 0%),
     var(--fx-glow-strong),
@@ -343,30 +357,19 @@
   mask:
     linear-gradient(#000 0 0) content-box exclude,
     linear-gradient(#000 0 0);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 320ms ease;
 }
 
-.fx-glow:hover::before,
-.fx-glow:hover::after,
-.fx-glow:focus-within::before,
 .fx-glow:focus-within::after {
   opacity: 0.6;
 }
 
-/* ── 3D card (Aceternity "3D Card Effect") ──────────────────────────── */
-
-.fx-tilt {
-  transform: perspective(1100px) rotateX(var(--rx, 0deg))
-    rotateY(var(--ry, 0deg));
-  transform-style: preserve-3d;
-  transition: transform 450ms var(--fx-ease-out);
-}
-
-.fx-tilt[data-tilting] {
-  transition-duration: 120ms;
-}
-
-.fx-tilt .fx-pop {
-  transform: translateZ(var(--pop, 36px));
+@media (hover: hover) {
+  .fx-glow:hover::after {
+    opacity: 0.6;
+  }
 }
 
 /* ── Card hover effect (Aceternity "Card Hover Effect") ─────────────── */
@@ -441,13 +444,18 @@
 /* ── Flip words (Aceternity "Flip Words") ───────────────────────────── */
 /* A clipped slot column. Hidden words are clipped, never transparent. */
 
+.fx-flip-wrap {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
 .fx-flip {
-  --flip-line: 1.3em;
-  display: inline-block;
+  --flip-line: 1.5em;
+  display: block;
   height: var(--flip-line);
   overflow: hidden;
   overflow: clip;
-  vertical-align: bottom;
 }
 
 .fx-flip-track {
@@ -456,6 +464,8 @@
 }
 
 .fx-flip-track > span {
+  display: flex;
+  align-items: center;
   height: var(--flip-line);
   line-height: var(--flip-line);
   white-space: nowrap;
@@ -602,8 +612,8 @@
     transform 360ms var(--fx-ease-out);
 }
 
-/* ── Animated icons (see src/components/fx/Icon.astro) ─────────────── */
-/* Each shape has pathLength="1", so one dash unit is the whole stroke. */
+/* ── Line icons (see src/components/fx/Icon.astro) ──────────────────── */
+/* Static for everyone: no draw-in and no hover or focus motion. */
 
 .fx-icon {
   flex-shrink: 0;
@@ -612,94 +622,8 @@
   transform-origin: center;
 }
 
-.fx-icon > * {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
-}
-
-/* Hover or keyboard focus on the surrounding card replays the icon. */
-:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon > *,
-:where(.fx-glow):focus-within .fx-icon > * {
-  animation: fx-icon-draw 760ms var(--fx-ease-out) both;
-}
-
-:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--bob {
-  animation: fx-icon-bob 900ms var(--fx-ease-spring);
-}
-
-:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--wave {
-  animation: fx-icon-wave 900ms ease-in-out;
-}
-
-:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--swing {
-  animation: fx-icon-swing 900ms var(--fx-ease-spring);
-}
-
-:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--pulse {
-  animation: fx-icon-pulse 700ms var(--fx-ease-spring);
-}
-
-:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--nudge {
-  animation: fx-icon-nudge 600ms var(--fx-ease-spring);
-}
-
-:where(.fx-glow, a, button):is(:hover, :focus-visible) .fx-icon--spin {
-  animation: fx-icon-spin 1100ms var(--fx-ease-out);
-}
-
 [dir='rtl'] .fx-icon--nudge {
   scale: -1 1;
-}
-
-@keyframes fx-icon-draw {
-  from {
-    stroke-dashoffset: 1;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes fx-icon-bob {
-  40% {
-    transform: translateY(-3px);
-  }
-}
-
-@keyframes fx-icon-wave {
-  25% {
-    transform: skewY(-8deg);
-  }
-  60% {
-    transform: skewY(5deg);
-  }
-}
-
-@keyframes fx-icon-swing {
-  30% {
-    transform: rotate(-12deg);
-  }
-  65% {
-    transform: rotate(8deg);
-  }
-}
-
-@keyframes fx-icon-pulse {
-  45% {
-    transform: scale(1.18);
-  }
-}
-
-@keyframes fx-icon-nudge {
-  45% {
-    transform: translate(3px, -3px);
-  }
-}
-
-@keyframes fx-icon-spin {
-  to {
-    transform: rotate(1turn);
-  }
 }
 
 /* ── Scroll-linked effects (progressive, no JavaScript) ─────────────── */
@@ -724,13 +648,7 @@
      them on, mobile Lighthouse drops to 98-99 on Speed Index. */
   @supports (animation-timeline: view()) {
     [data-scroll-reveals]
-      :is(
-        .fx-reveal,
-        .fx-reveal-scale,
-        .fx-words > span,
-        .fx-icon--draw > *,
-        .fx-lamp-line
-      ) {
+      :is(.fx-reveal, .fx-reveal-scale, .fx-words > span, .fx-lamp-line) {
       animation-timing-function: linear;
       animation-fill-mode: both;
       animation-timeline: view();
@@ -751,12 +669,6 @@
     [data-scroll-reveals] .fx-words > span {
       animation-name: fx-word;
       animation-range: cover 8% cover 38%;
-    }
-
-    /* Icons draw themselves in as they enter the viewport. */
-    [data-scroll-reveals] .fx-icon--draw > * {
-      animation-name: fx-icon-draw;
-      animation-range: entry 10% entry 90%;
     }
 
     [data-scroll-reveals] .fx-lamp-line {
@@ -950,13 +862,6 @@
     display: none;
   }
 
-  .fx-icon,
-  .fx-icon > *,
-  .fx-icon--draw > * {
-    animation: none !important;
-  }
-
-  .fx-tilt,
   .fx-focus-item,
   .fx-hover-pill {
     transition: none;

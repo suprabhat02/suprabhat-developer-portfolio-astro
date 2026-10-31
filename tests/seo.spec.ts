@@ -10,6 +10,7 @@ test('case studies expose localized proof and outcomes', async ({ page }) => {
     'accessible-contact-workflow',
     'frontend-quality-system',
     'react-smart-copy',
+    'react-inp-chunker',
   ];
   const localeChecks = [
     {
@@ -176,7 +177,7 @@ test('production SEO signals and internal links are crawlable', async ({
   await page.goto('/');
 
   await expect(page).toHaveTitle(
-    'Suprabhat Kumar | Senior React Engineer in India',
+    'Suprabhat Kumar | Senior React Frontend Engineer in India',
   );
 
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
@@ -422,13 +423,16 @@ test('services page is fully localized, including structured data', async ({
   expect(structuredData).not.toContain('Best for:');
 });
 
-test('Person sameAs links every public profile in all locales', async ({
+test('Person schema includes public profiles and collaboration without changing home location', async ({
   page,
 }) => {
   type JsonLdNode = {
     '@type'?: string;
     '@graph'?: JsonLdNode[];
     sameAs?: string[];
+    knowsAbout?: string[];
+    description?: string;
+    homeLocation?: { address: { addressCountry: string } };
   };
   for (const path of ['/', '/es/', '/ar/']) {
     await page.goto(path);
@@ -448,6 +452,50 @@ test('Person sameAs links every public profile in all locales', async ({
         'https://suprabhatkumar.hashnode.dev',
       ]),
     );
+    const countries =
+      path === '/ar/'
+        ? ['الدنمارك', 'الصين', 'ألمانيا', 'أستراليا', 'نيوزيلندا']
+        : path === '/es/'
+          ? ['Dinamarca', 'China', 'Alemania', 'Australia', 'Nueva Zelanda']
+          : ['Denmark', 'China', 'Germany', 'Australia', 'New Zealand'];
+    for (const country of countries) {
+      expect(person?.description, path).toContain(country);
+    }
+    expect(person?.homeLocation?.address.addressCountry, path).toBe('IN');
+    expect(person?.knowsAbout, path).toEqual(
+      expect.arrayContaining([
+        'CSS3',
+        'Ant Design',
+        'Material UI',
+        'Zustand',
+        'Astro',
+        'shadcn/ui',
+        'Zod',
+        'GitHub Actions',
+      ]),
+    );
+  }
+});
+
+test('collaboration countries remain tied to the confirmed employers', async ({
+  page,
+}) => {
+  for (const [prefix, germany, australia, newZealand] of [
+    ['', 'Germany', 'Australia', 'New Zealand'],
+    ['/es', 'Alemania', 'Australia', 'Nueva Zelanda'],
+    ['/ar', 'ألمانيا', 'أستراليا', 'نيوزيلندا'],
+  ] as const) {
+    await page.goto(`${prefix}/experience/`);
+    const cognizant = page.locator('.xp-item').filter({ hasText: 'Cognizant' });
+    const trueblue = page.locator('.xp-item').filter({ hasText: 'TrueBlue' });
+    await expect(cognizant).toContainText(germany);
+    await expect(cognizant).toContainText('BMW');
+    await expect(trueblue).toContainText(australia);
+    await expect(trueblue).toContainText(newZealand);
+    await page.goto(`${prefix}/about/`);
+    for (const country of [germany, australia, newZealand]) {
+      await expect(page.locator('main')).toContainText(country);
+    }
   }
 });
 
@@ -500,7 +548,7 @@ test('case-study dates come from data, not the old 2026-09-06 placeholder', asyn
       datesBySlug.set(entry.name, dates);
     }
   }
-  expect(datesBySlug.size).toBe(7);
+  expect(datesBySlug.size).toBe(8);
 });
 
 test('every case study shares its own built image, not the default', async () => {
@@ -514,7 +562,7 @@ test('every case study shares its own built image, not the default', async () =>
       ),
     )
   ).flat();
-  expect(pages).toHaveLength(21);
+  expect(pages).toHaveLength(24);
 
   for (const path of pages) {
     const html = await readFile(new URL(path, dist), 'utf-8');
@@ -704,7 +752,9 @@ test('indexable HTML pages have unique titles and canonical sitemap entries', as
 
     expect(title).toBeTruthy();
     expect(description).toBeTruthy();
-    expect(robots).toMatch(/^(?:index|noindex),follow$/);
+    expect(robots).toMatch(
+      /^(?:index|noindex),follow(?:,max-image-preview:large)?$/,
+    );
 
     if (is404) {
       expect(robots).toBe('noindex,follow');
@@ -716,7 +766,8 @@ test('indexable HTML pages have unique titles and canonical sitemap entries', as
     expect(canonicals.get(canonical!)).toBeUndefined();
     canonicals.set(canonical!, path);
 
-    if (robots === 'index,follow') {
+    if (robots?.split(',').includes('index')) {
+      expect(robots).toContain('max-image-preview:large');
       expect(sitemapUrls.has(canonical!)).toBe(true);
       expect(titles.get(title!)).toBeUndefined();
       titles.set(title!, path);
@@ -724,6 +775,210 @@ test('indexable HTML pages have unique titles and canonical sitemap entries', as
       descriptions.set(description!, path);
     } else {
       expect(sitemapUrls.has(canonical!)).toBe(false);
+    }
+  }
+});
+
+test('all generated indexable pages have crawlable links and reciprocal language metadata', async ({
+  page,
+}) => {
+  const dist = new URL('../dist/', import.meta.url);
+  const files = (await readdir(dist, { recursive: true })).filter((file) =>
+    file.endsWith('.html'),
+  );
+  const sources = await Promise.all(
+    files.map(async (file) => ({
+      file,
+      html: await readFile(new URL(file.replaceAll('\\', '/'), dist), 'utf8'),
+    })),
+  );
+  const documents = await page.evaluate(
+    (items) =>
+      items.map(({ file, html }) => {
+        const document = new DOMParser().parseFromString(html, 'text/html');
+        const meta = (selector: string) =>
+          document.querySelector(selector)?.getAttribute('content');
+        return {
+          file,
+          title: document.title,
+          description: meta('meta[name="description"]'),
+          robots: meta('meta[name="robots"]'),
+          canonical: document
+            .querySelector('link[rel="canonical"]')
+            ?.getAttribute('href'),
+          lang: document.documentElement.lang,
+          dir: document.documentElement.dir,
+          h1Count: document.querySelectorAll('main h1').length,
+          text: document.querySelector('main')?.textContent?.trim(),
+          ogTitle: meta('meta[property="og:title"]'),
+          ogDescription: meta('meta[property="og:description"]'),
+          ogUrl: meta('meta[property="og:url"]'),
+          ogImage: meta('meta[property="og:image"]'),
+          twitterImage: meta('meta[name="twitter:image"]'),
+          missingAlt: document.querySelectorAll('img:not([alt])').length,
+          ids: [...document.querySelectorAll('[id]')].map(
+            (element) => element.id,
+          ),
+          links: [...document.querySelectorAll('a[href]')].map(
+            (anchor) => anchor.getAttribute('href') ?? '',
+          ),
+          alternates: [...document.querySelectorAll('link[hreflang]')].map(
+            (link) => ({
+              lang: link.getAttribute('hreflang'),
+              href: link.getAttribute('href'),
+            }),
+          ),
+          schemas: [
+            ...document.querySelectorAll('script[type="application/ld+json"]'),
+          ].map((script) => JSON.parse(script.textContent ?? '{}')),
+        };
+      }),
+    sources,
+  );
+  const indexable = documents.filter((document) =>
+    document.robots?.split(',').includes('index'),
+  );
+  const byCanonical = new Map(
+    documents
+      .filter((document) => document.canonical)
+      .map((document) => [document.canonical, document]),
+  );
+  const incoming = new Set<string>();
+  for (const document of indexable) {
+    expect(document.h1Count, document.file).toBe(1);
+    expect(document.text, document.file).toBeTruthy();
+    expect(document.dir, document.file).toBe(
+      document.lang === 'ar' ? 'rtl' : 'ltr',
+    );
+    expect(document.ogTitle, document.file).toBe(document.title);
+    expect(document.ogDescription, document.file).toBe(document.description);
+    expect(document.ogUrl, document.file).toBe(document.canonical);
+    expect(document.ogImage, document.file).toMatch(
+      /^https:\/\/suprabhat-dev\.com\//,
+    );
+    expect(document.twitterImage, document.file).toBe(document.ogImage);
+    expect(document.missingAlt, document.file).toBe(0);
+    expect(document.schemas.length, document.file).toBeGreaterThan(0);
+    expect(document.robots, document.file).not.toMatch(
+      /nosnippet|noarchive|nocache|noimageindex/,
+    );
+    for (const alternate of document.alternates) {
+      const target = byCanonical.get(alternate.href);
+      expect(
+        target,
+        `${document.file} alternate ${alternate.href}`,
+      ).toBeDefined();
+      if (alternate.lang !== 'x-default')
+        expect(target?.lang).toBe(alternate.lang);
+      expect(
+        target?.alternates.some(
+          (item) =>
+            item.lang === document.lang && item.href === document.canonical,
+        ),
+      ).toBe(true);
+    }
+    const canonical = new URL(document.canonical!);
+    for (const href of document.links) {
+      const targetUrl = new URL(href, canonical);
+      if (targetUrl.origin !== canonical.origin) continue;
+      const fragment = targetUrl.hash;
+      targetUrl.hash = '';
+      targetUrl.search = '';
+      if (
+        !targetUrl.pathname.endsWith('/') &&
+        !targetUrl.pathname.endsWith('.html')
+      )
+        continue;
+      const target = byCanonical.get(targetUrl.href);
+      expect(target, `${document.file} link ${href}`).toBeDefined();
+      if (targetUrl.href !== canonical.href) incoming.add(targetUrl.href);
+      if (fragment)
+        expect(target?.ids, `${document.file} anchor ${href}`).toContain(
+          decodeURIComponent(fragment.slice(1)),
+        );
+    }
+  }
+  for (const document of indexable)
+    expect(
+      incoming.has(document.canonical!),
+      `Orphan page: ${document.file}`,
+    ).toBe(true);
+  console.log(
+    `Validated crawlability and metadata for ${indexable.length} indexable HTML pages.`,
+  );
+});
+
+test('react-inp-chunker case study and both libraries meet the SEO contract', async () => {
+  const dist = new URL('../dist/', import.meta.url);
+  const read = (path: string) => readFile(new URL(path, dist), 'utf-8');
+  const graphOf = (html: string) =>
+    [
+      ...html.matchAll(
+        /<script type="application\/ld\+json">(.*?)<\/script>/gs,
+      ),
+    ].flatMap(([, json]) => {
+      const data = JSON.parse(json ?? '{}') as {
+        '@graph'?: Array<Record<string, unknown>>;
+      };
+      return data['@graph'] ?? [];
+    });
+  const site = 'https://suprabhat-dev.com';
+  const sitemap = await read('sitemap-0.xml');
+  const libraries = ['react-smart-copy', 'react-inp-chunker'];
+
+  for (const prefix of ['', 'es/', 'ar/']) {
+    const url = `${site}/${prefix}work/react-inp-chunker/`;
+    const html = await read(`${prefix}work/react-inp-chunker/index.html`);
+    const title = html.match(/<title>([^<]+)<\/title>/)?.[1] ?? '';
+    const description =
+      html.match(/<meta name="description" content="([^"]+)"/)?.[1] ?? '';
+    expect(title, prefix).toContain('react-inp-chunker');
+    expect(title.length, prefix).toBeLessThanOrEqual(60);
+    expect(description.length, prefix).toBeGreaterThan(70);
+    expect(description.length, prefix).toBeLessThanOrEqual(160);
+    expect(html).toContain(`<link rel="canonical" href="${url}"`);
+    for (const [lang, href] of [
+      ['en', `${site}/work/react-inp-chunker/`],
+      ['es', `${site}/es/work/react-inp-chunker/`],
+      ['ar', `${site}/ar/work/react-inp-chunker/`],
+      ['x-default', `${site}/work/react-inp-chunker/`],
+    ]) {
+      expect(html, `${prefix} ${lang}`).toContain(
+        `<link rel="alternate" hreflang="${lang}" href="${href}"`,
+      );
+    }
+    expect(sitemap).toMatch(
+      new RegExp(
+        `<loc>${url.replaceAll('.', '\\.')}</loc><lastmod>\\d{4}-\\d{2}-\\d{2}</lastmod>`,
+      ),
+    );
+
+    const graph = graphOf(html);
+    expect(graph.find((node) => node['@type'] === 'TechArticle')).toMatchObject(
+      { url, image: `${site}/images/work/react-inp-chunker-og-1200x630.png` },
+    );
+    expect(
+      graph.find((node) => node['@type'] === 'SoftwareSourceCode'),
+    ).toMatchObject({
+      '@id': `${site}/#react-inp-chunker`,
+      name: 'react-inp-chunker',
+      codeRepository: 'https://github.com/suprabhat02/react-inp-chunker',
+      license: 'https://opensource.org/licenses/MIT',
+    });
+
+    // The homepage graph and #work section carry both libraries.
+    const home = await read(`${prefix}index.html`);
+    const projects = graphOf(home)
+      .filter((node) => node['@type'] === 'SoftwareSourceCode')
+      .map((node) => node.name);
+    expect(projects, prefix).toEqual(libraries);
+    for (const library of libraries) {
+      expect(home, `${prefix} ${library}`).toContain(
+        `data-project="${library}"`,
+      );
+      expect(home, `${prefix} ${library}`).toContain(
+        `href="/${prefix}work/${library}/"`,
+      );
     }
   }
 });

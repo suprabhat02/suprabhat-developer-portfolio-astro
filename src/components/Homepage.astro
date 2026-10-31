@@ -1,6 +1,7 @@
 ---
 import { getProfile } from '../data/profile';
-import { tools } from '../data/tools';
+import { getSkillLogos, getToolGroups } from '../data/tools';
+import { getSkills } from '../data/skills';
 import { getCaseStudies } from '../data/caseStudies';
 import { getWork } from '../data/work';
 import {
@@ -38,6 +39,7 @@ import '../styles/homepage.css';
 const { locale = 'en' } = Astro.props as { locale?: Locale };
 const profile = getProfile(locale);
 const conversion = getHomepageConversionContent(locale);
+const toolGroups = getToolGroups();
 const work = getWork(locale);
 const caseStudies = getCaseStudies(locale);
 const featuredCaseStudy =
@@ -61,20 +63,6 @@ const heroStack = [
 ] as const;
 
 type FlipWordList = readonly [string, string, string, string];
-type ToolCategory =
-  | 'language'
-  | 'frontend'
-  | 'state'
-  | 'runtime'
-  | 'design'
-  | 'styling'
-  | 'devops'
-  | 'ai'
-  | 'testing'
-  | 'cloud'
-  | 'backend'
-  | 'database'
-  | 'tool';
 const problemTitles = conversion.problems.items.map((item) => item.title);
 const [flipFirst, flipSecond, flipThird, flipFourth] = problemTitles;
 const flipWords: FlipWordList | null =
@@ -104,40 +92,7 @@ const marqueeKeywords = [
   'Astro',
 ] as const;
 
-const skillColumns = [
-  {
-    heading: t(locale, 'skills.frontendCore'),
-    items: [
-      'React + Next.js',
-      'TypeScript + JavaScript',
-      'HTML5 + CSS3 + Sass',
-      'Tailwind CSS',
-    ],
-  },
-  {
-    heading: t(locale, 'skills.stateData'),
-    items: [
-      'Redux Toolkit + RTK Query',
-      'TanStack Query',
-      'React Hooks + Context API',
-      'GraphQL',
-    ],
-  },
-  {
-    heading: t(locale, 'skills.uiLibraries'),
-    items: ['Ant Design', 'Chakra UI', 'Headless UI', 'Bootstrap 5'],
-  },
-  {
-    heading: t(locale, 'skills.backendApis'),
-    items: [
-      'FastAPI (Python)',
-      'PostgreSQL',
-      'MongoDB',
-      'Node.js',
-      'REST API design',
-    ],
-  },
-] as const;
+const skillColumns = getSkills(locale).skillGroups;
 const recruiterHighlights = [
   {
     label: t(locale, 'home.recruiterRoleLabel'),
@@ -299,31 +254,6 @@ const expertiseCards = [
   },
 ] as const;
 
-// Category labels shown above each tool chip
-const toolCategories: Record<string, ToolCategory> = {
-  HTML5: 'language',
-  TypeScript: 'language',
-  React: 'frontend',
-  'Next.js': 'frontend',
-  Redux: 'state',
-  'TanStack Query': 'state',
-  GraphQL: 'backend',
-  'Node.js': 'runtime',
-  Figma: 'design',
-  'Tailwind CSS': 'styling',
-  'Bootstrap 5': 'styling',
-  Git: 'devops',
-  Sass: 'styling',
-  jQuery: 'frontend',
-  'Claude AI': 'ai',
-  Storybook: 'testing',
-  Azure: 'cloud',
-  FastAPI: 'backend',
-  PostgreSQL: 'database',
-  MongoDB: 'database',
-};
-const toolCategoryLabel = (toolName: string) =>
-  t(locale, `tool.category.${toolCategories[toolName] ?? 'tool'}`);
 interface ContactLink {
   href: string;
   label: string;
@@ -367,7 +297,13 @@ const contactIndex = featured.length > 0 ? '14' : '13';
 
 <div class="homepage-shell">
   <!-- ── HERO ─────────────────────────────────────────────── -->
-  <section id="home" class="hero" aria-labelledby="hero-name" data-motion-scope>
+  <section
+    id="home"
+    class="hero"
+    aria-labelledby="hero-name"
+    data-motion-scope
+    data-tap-motion
+  >
     <Backdrop pattern="aurora" />
     <div class="wrap">
       <div class="hero-grid">
@@ -464,7 +400,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
           <p class="hero-trust-line">{conversion.hero.trustLine}</p>
         </div>
 
-        <figure class="hero-portrait-wrap hero-card fx-tilt" data-tilt>
+        <figure class="hero-portrait-wrap hero-card">
           <div class="hero-portrait-frame fx-moving-border">
             {
               /*
@@ -489,7 +425,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
               pictureAttributes={{ class: 'hero-picture' }}
             />
           </div>
-          <figcaption class="hero-portrait-cap fx-pop">
+          <figcaption class="hero-portrait-cap">
             {t(locale, 'home.portraitCaption')}
           </figcaption>
           <span class="hero-orbit" aria-hidden="true">
@@ -507,11 +443,10 @@ const contactIndex = featured.length > 0 ? '14' : '13';
                 class:list={[
                   'hero-proof-card',
                   heroProofClass[card.variant],
-                  'fx-live fx-glow fx-tilt fx-card-gradient',
+                  'fx-live fx-glow fx-card-gradient',
                 ]}
                 href={card.href}
                 data-glow
-                data-tilt
               >
                 <LiveScene scene={heroProofScene[card.variant]} size="sm" />
                 <span class="hero-card-kicker">
@@ -563,11 +498,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
       <div class="stats-grid">
         {
           stats.map((stat) => (
-            <div
-              class="stat-item fx-glow fx-tilt fx-card-gradient"
-              data-glow
-              data-tilt
-            >
+            <div class="stat-item fx-glow fx-card-gradient" data-glow>
               <span class="stat-num">{stat.value}</span>
               <span class="stat-lbl">{stat.label}</span>
             </div>
@@ -604,9 +535,8 @@ const contactIndex = featured.length > 0 ? '14' : '13';
         {
           posts.slice(0, 3).map((post, i) => (
             <article
-              class="article-card fx-live fx-focus-item fx-glow fx-tilt fx-card-gradient fx-reveal"
+              class="article-card fx-live fx-focus-item fx-glow fx-card-gradient fx-reveal"
               data-glow
-              data-tilt
             >
               <LiveScene scene={articleScenes[i] ?? 'race'} />
               {post.data.tags[0] && (
@@ -663,10 +593,16 @@ const contactIndex = featured.length > 0 ? '14' : '13';
       />
 
       <div class="about-split">
-        <TextReveal
-          class="about-statement"
-          text={t(locale, 'home.aboutStatement')}
-        />
+        <div class="about-copy">
+          <TextReveal
+            class="about-statement"
+            text={t(locale, 'home.aboutStatement')}
+          />
+          <p class="about-byline">
+            <bdi>{profile.nickname}</bdi>
+            <span>{profile.name}</span>
+          </p>
+        </div>
         <figure class="about-photo fx-reveal">
           <div class="about-photo-frame">
             <Picture
@@ -694,9 +630,8 @@ const contactIndex = featured.length > 0 ? '14' : '13';
         {
           traits.map((trait, index) => (
             <div
-              class="trait-card fx-live fx-glow fx-tilt fx-card-gradient fx-reveal"
+              class="trait-card fx-live fx-glow fx-card-gradient fx-reveal"
               data-glow
-              data-tilt
             >
               <LiveScene scene={trait.visual} />
               <span class="trait-num">0{index + 1}</span>
@@ -742,12 +677,11 @@ const contactIndex = featured.length > 0 ? '14' : '13';
         {
           expertiseCards.map((card) => (
             <div
-              class="expertise-card fx-live fx-glow fx-tilt fx-card-gradient fx-reveal-scale"
+              class="expertise-card fx-live fx-glow fx-card-gradient fx-reveal-scale"
               data-glow
-              data-tilt
             >
               <LiveScene scene={card.visual} />
-              <div class="expertise-icon fx-pop">
+              <div class="expertise-icon">
                 <Icon name={expertiseIcons[card.icon]} size={24} />
               </div>
               <h3>{card.title}</h3>
@@ -770,10 +704,11 @@ const contactIndex = featured.length > 0 ? '14' : '13';
     class="section section-alt cv-auto"
     aria-labelledby="skills-title"
   >
+    <Backdrop pattern="dots" />
     <div class="wrap">
       <SectionHeader
         index="09"
-        eyebrow="Skills"
+        eyebrow={t(locale, 'page.skills.eyebrow')}
         title={t(locale, 'page.skills.eyebrow')}
         titleId="skills-title"
         lead={t(locale, 'home.skillsLead')}
@@ -783,12 +718,34 @@ const contactIndex = featured.length > 0 ? '14' : '13';
           <span class="fx-hover-pill" aria-hidden="true"></span>
           {
             skillColumns.map((column) => (
-              <div class="skill-col">
+              <div class="skill-col" data-skill-group={column.id}>
                 <h3>{column.heading}</h3>
                 <ul class="skill-ul">
-                  {column.items.map((item) => (
-                    <li>{item}</li>
-                  ))}
+                  {column.items.map((item) => {
+                    const logos = getSkillLogos(item);
+                    return (
+                      <li>
+                        <span class="skill-logos" aria-hidden="true">
+                          {logos.length > 0 ? (
+                            logos.map((logo) => (
+                              <img
+                                src={logo.src}
+                                alt=""
+                                width="22"
+                                height="22"
+                                loading="lazy"
+                                decoding="async"
+                                class:list={{ 'tm-invert': logo.invert }}
+                              />
+                            ))
+                          ) : (
+                            <Icon name="layers" size={18} />
+                          )}
+                        </span>
+                        <span>{item}</span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             ))
@@ -839,28 +796,40 @@ const contactIndex = featured.length > 0 ? '14' : '13';
       />
     </div>
 
-    <div class="tm-wrap wrap" aria-label={t(locale, 'home.stackAria')}>
-      <ul class="tm-grid" role="list">
-        {
-          tools.map((tool) => (
-            <li class="tm-item">
-              <div class="tm-chip fx-glow" data-glow>
-                <span class="tm-cat">{toolCategoryLabel(tool.name)}</span>
-                <img
-                  src={tool.icon}
-                  alt=""
-                  width="36"
-                  height="36"
-                  loading="lazy"
-                  decoding="async"
-                  class:list={[{ 'tm-invert': tool.invertOnDark }]}
-                />
-                <span class="tm-name">{tool.name}</span>
-              </div>
-            </li>
-          ))
-        }
-      </ul>
+    <div
+      class="tm-wrap tm-groups wrap"
+      aria-label={t(locale, 'home.stackAria')}
+    >
+      {
+        toolGroups.map((group) => (
+          <section class="tm-group" aria-labelledby={`tool-group-${group.id}`}>
+            <div class="tm-group-heading">
+              <h3 id={`tool-group-${group.id}`}>
+                {t(locale, `page.tools.group.${group.id}.title`)}
+              </h3>
+              <p>{t(locale, `page.tools.group.${group.id}.description`)}</p>
+            </div>
+            <ul class="tm-grid" role="list">
+              {group.tools.map((tool, index) => (
+                <li class="tm-item fx-reveal" style={`--tool-index: ${index}`}>
+                  <div class="tm-chip fx-glow" data-glow>
+                    <img
+                      src={tool.icon}
+                      alt=""
+                      width="36"
+                      height="36"
+                      loading="lazy"
+                      decoding="async"
+                      class:list={{ 'tm-invert': tool.invertOnDark }}
+                    />
+                    <span class="tm-name">{tool.name}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
     </div>
   </section>
 
@@ -944,6 +913,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
     class="section section-alt cv-auto section-glow section-glow-bl"
     aria-labelledby="faq-title"
   >
+    <Backdrop pattern="dots" />
     <div class="wrap">
       <div class="faq-2col">
         <div class="faq-intro fx-reveal">

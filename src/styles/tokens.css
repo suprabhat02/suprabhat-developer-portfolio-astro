@@ -6,17 +6,23 @@
  * border is derived from the seeds in OKLCH, whose lightness channel is fixed
  * per role, so any hue keeps the same text contrast:
  *
- *   :root { --seed-primary-h: 160; }   → emerald brand
- *   :root { --seed-primary-h: 25; }    → orange brand
- *   :root { --seed-chroma: 0.12; }     → calmer, less saturated
+ *   :root { --seed-neutral-h: 60; }        → warm instead of cool neutrals
+ *   :root { --seed-neutral-chroma: 0; }    → pure greys
+ *   :root { --seed-chroma: 0.16; }         → calmer accent text partners
+ *
+ * The brand colour (#ff4d2a) is pinned by --seed-fill-l/-c: it is the fill in
+ * both themes and the accent in dark. It measures 3.3:1 on white, so light
+ * text and links use a deepened partner of the same hue, and every fill that
+ * carries a label uses --accent-fill with --on-accent-fill (dark ink).
  *
  * Roles (use these in components, never raw colors):
  *   --bg, --bg-2, --bg-3, --bg-deep        page grounds, darkest to lightest
  *   --bg-card, --surface, --surface-strong card and panel fills
  *   --text, --text-2, --text-3             body, secondary, tertiary text
- *   --accent (+ -strong/-vivid/-dim/-ink)   brand color and its text-safe ink
+ *   --accent (+ -strong/-vivid/-dim/-ink)   text-safe brand color and inks
+ *   --accent-fill, --on-accent-fill         brand fill and the label on it
  *   --accent-2                              secondary brand color
- *   --on-accent                             text placed on an accent fill
+ *   --on-accent                             text placed on an --accent fill
  *   --success, --warning, --danger          semantic states
  *   --shadow-ink                            drop-shadow ink; add alpha with
  *                                           color-mix()
@@ -27,45 +33,74 @@
 
 :root {
   /* ── Seeds ───────────────────────────────────────────────────────── */
-  --seed-primary-h: 158; /* emerald */
-  --seed-secondary-h: 335; /* magenta */
-  --seed-neutral-h: 250; /* hue bias of the neutrals (ink blue) */
-  --seed-chroma: 0.2; /* brand saturation, 0–0.3 */
+  --seed-primary-h: 33; /* signal orange */
+  --seed-secondary-h: 33; /* single hue: the gradient deepens into itself */
+  --seed-neutral-h: 250; /* hue bias of the neutrals (cool graphite) */
+  --seed-neutral-chroma: 0.35; /* neutral tint strength, 0 = pure greys */
+  --seed-chroma: 0.24; /* accent text partners, 0–0.3 */
+  --seed-fill-l: 0.6693; /* #ff4d2a, pinned */
+  --seed-fill-c: 0.2196;
   --seed-success-h: 155;
   --seed-warning-h: 75;
-  --seed-danger-h: 25;
+  --seed-danger-h: 10; /* crimson, kept clear of the orange brand */
 
   /* ── Roles: dark (default) ───────────────────────────────────────── */
-  --bg: oklch(0.15 0.035 var(--seed-neutral-h));
-  --bg-2: oklch(0.18 0.04 var(--seed-neutral-h));
-  --bg-3: oklch(0.23 0.045 var(--seed-neutral-h));
-  --bg-deep: oklch(0.12 0.03 var(--seed-neutral-h));
-  --bg-card: oklch(0.2 0.04 var(--seed-neutral-h));
-  --bg-card-hover: oklch(0.23 0.045 var(--seed-neutral-h));
-  --surface: oklch(0.18 0.037 var(--seed-neutral-h));
-  --surface-strong: oklch(0.22 0.042 var(--seed-neutral-h));
-  --text: oklch(0.97 0.012 var(--seed-neutral-h));
-  --text-2: oklch(0.82 0.035 var(--seed-neutral-h));
-  --text-3: oklch(0.71 0.04 var(--seed-neutral-h));
-  --accent: oklch(0.72 var(--seed-chroma) var(--seed-primary-h));
+  --bg: oklch(
+    0.15 calc(0.035 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  --bg-2: oklch(
+    0.18 calc(0.04 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  --bg-3: oklch(
+    0.23 calc(0.045 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  --bg-deep: oklch(
+    0.12 calc(0.03 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  --bg-card: oklch(
+    0.2 calc(0.04 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  --bg-card-hover: oklch(
+    0.23 calc(0.045 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  --surface: oklch(
+    0.18 calc(0.037 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  --surface-strong: oklch(
+    0.22 calc(0.042 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  --text: oklch(
+    0.97 calc(0.012 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  --text-2: oklch(
+    0.82 calc(0.035 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  --text-3: oklch(
+    0.71 calc(0.04 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  --accent: oklch(var(--seed-fill-l) var(--seed-fill-c) var(--seed-primary-h));
   --accent-strong: oklch(
-    0.81 calc(var(--seed-chroma) * 0.7) var(--seed-primary-h)
+    0.84 calc(var(--seed-chroma) * 0.72) var(--seed-primary-h)
   );
-  --accent-vivid: oklch(0.78 var(--seed-chroma) var(--seed-primary-h));
+  --accent-vivid: oklch(
+    calc(var(--seed-fill-l) + 0.05) var(--seed-fill-c) var(--seed-primary-h)
+  );
   --accent-dim: oklch(0.62 var(--seed-chroma) var(--seed-primary-h));
-  --accent-2: oklch(
-    0.82 calc(var(--seed-chroma) * 0.65) var(--seed-secondary-h)
+  --accent-2: oklch(0.6 calc(var(--seed-chroma) * 0.9) var(--seed-secondary-h));
+  --accent-fill: var(--accent);
+  --on-accent: oklch(
+    0.14 calc(0.03 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
   );
-  --on-accent: oklch(0.14 0.03 var(--seed-neutral-h));
+  --on-accent-fill: var(--on-accent);
   --success: oklch(0.78 0.16 var(--seed-success-h));
   --warning: oklch(0.82 0.15 var(--seed-warning-h));
   --danger: oklch(0.7 0.18 var(--seed-danger-h));
 
   /* Alpha tints and structural colors, derived from the roles above. */
-  --accent-glow: color-mix(in oklch, var(--accent) 24%, transparent);
-  --accent-soft: color-mix(in oklch, var(--accent) 14%, transparent);
-  --accent-subtle: color-mix(in oklch, var(--accent) 9%, transparent);
-  --accent-border: color-mix(in oklch, var(--accent) 30%, transparent);
+  --accent-glow: color-mix(in oklch, var(--accent-fill) 24%, transparent);
+  --accent-soft: color-mix(in oklch, var(--accent-fill) 14%, transparent);
+  --accent-subtle: color-mix(in oklch, var(--accent-fill) 9%, transparent);
+  --accent-border: color-mix(in oklch, var(--accent-fill) 34%, transparent);
   --accent-ink: var(--accent-strong);
   --muted: var(--text-2);
   --divider: color-mix(in oklch, var(--text) 8%, transparent);
@@ -95,33 +130,56 @@
 }
 
 [data-theme='light'] {
-  --bg: oklch(0.985 0.006 var(--seed-neutral-h));
-  --bg-2: oklch(0.966 0.014 var(--seed-neutral-h));
-  --bg-3: oklch(0.935 0.02 var(--seed-neutral-h));
-  --bg-deep: oklch(0.94 0.022 var(--seed-neutral-h));
+  --bg: oklch(
+    0.985 calc(0.006 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  --bg-2: oklch(
+    0.966 calc(0.014 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  --bg-3: oklch(
+    0.935 calc(0.02 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  --bg-deep: oklch(
+    0.94 calc(0.022 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
   --bg-card: oklch(1 0 var(--seed-neutral-h));
-  --bg-card-hover: oklch(0.977 0.01 var(--seed-neutral-h));
+  --bg-card-hover: oklch(
+    0.977 calc(0.01 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
   --surface: oklch(1 0 var(--seed-neutral-h));
-  --surface-strong: oklch(0.97 0.012 var(--seed-neutral-h));
-  --text: oklch(0.2 0.04 var(--seed-neutral-h));
-  --text-2: oklch(0.38 0.045 var(--seed-neutral-h));
-  --text-3: oklch(0.48 0.045 var(--seed-neutral-h));
-  /* Lighter grounds leave less sRGB room for chroma, so light accents scale
-     the seed down to stay in gamut (a clipped color shifts hue and contrast). */
-  --accent: oklch(0.48 calc(var(--seed-chroma) * 0.55) var(--seed-primary-h));
+  --surface-strong: oklch(
+    0.97 calc(0.012 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  --text: oklch(
+    0.2 calc(0.04 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  --text-2: oklch(
+    0.38 calc(0.045 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  --text-3: oklch(
+    0.48 calc(0.045 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
+  /* The brand fill is 3.3:1 on white, so text uses a deepened partner. */
+  --accent: oklch(0.5 calc(var(--seed-chroma) * 0.8) var(--seed-primary-h));
   --accent-strong: oklch(
-    0.43 calc(var(--seed-chroma) * 0.5) var(--seed-primary-h)
+    0.44 calc(var(--seed-chroma) * 0.7) var(--seed-primary-h)
   );
   --accent-vivid: oklch(
-    0.5 calc(var(--seed-chroma) * 0.58) var(--seed-primary-h)
+    calc(var(--seed-fill-l) + 0.05) var(--seed-fill-c) var(--seed-primary-h)
   );
   --accent-dim: oklch(
     0.4 calc(var(--seed-chroma) * 0.45) var(--seed-primary-h)
   );
   --accent-2: oklch(
-    0.5 calc(var(--seed-chroma) * 0.85) var(--seed-secondary-h)
+    0.72 calc(var(--seed-chroma) * 0.95) var(--seed-secondary-h)
+  );
+  --accent-fill: oklch(
+    var(--seed-fill-l) var(--seed-fill-c) var(--seed-primary-h)
   );
   --on-accent: oklch(1 0 var(--seed-neutral-h));
+  --on-accent-fill: oklch(
+    0.22 calc(0.03 * var(--seed-neutral-chroma)) var(--seed-neutral-h)
+  );
   --success: oklch(0.47 0.11 var(--seed-success-h));
   --warning: oklch(0.5 0.1 var(--seed-warning-h));
   --danger: oklch(0.5 0.19 var(--seed-danger-h));
@@ -136,51 +194,56 @@
   color-scheme: light;
 }
 
-/* Browsers without OKLCH get the default palette as static values. */
+/* Browsers without OKLCH get the default palette as static values, computed
+   from the OKLCH roles above with CSS Color 4 gamut mapping. */
 @supports not (color: oklch(0 0 0)) {
   :root {
-    --bg: #020c19;
-    --bg-2: #031222;
-    --bg-3: #0b1e31;
-    --bg-deep: #010610;
-    --bg-card: #071727;
-    --bg-card-hover: #0b1e31;
-    --surface: #041221;
-    --surface-strong: #0a1c2d;
-    --text: #eff6fd;
-    --text-2: #b4c6db;
-    --text-3: #8fa4ba;
-    --accent: #00c872;
-    --accent-strong: #66dc9e;
-    --accent-vivid: #00dc84;
-    --accent-dim: #00a754;
-    --accent-2: #f8a3e5;
-    --on-accent: #020a15;
+    --bg: #070c10;
+    --bg-2: #0d1218;
+    --bg-3: #171e24;
+    --bg-deep: #040609;
+    --bg-card: #11171c;
+    --bg-card-hover: #171e24;
+    --surface: #0d1217;
+    --surface-strong: #151b21;
+    --text: #f3f5f8;
+    --text-2: #bec5cc;
+    --text-3: #9ba2aa;
+    --accent: #ff4d2a;
+    --accent-strong: #ffb6a5;
+    --accent-vivid: #ff7357;
+    --accent-dim: #f03200;
+    --accent-2: #e4340c;
+    --accent-fill: #ff4d2a;
+    --on-accent: #06090d;
+    --on-accent-fill: #06090d;
     --success: #4ed589;
     --warning: #fcb442;
-    --danger: #fa6863;
+    --danger: #f86685;
   }
 
   [data-theme='light'] {
-    --bg: #f7fafe;
-    --bg-2: #edf5fd;
-    --bg-3: #e0ebf7;
-    --bg-deep: #e1edfa;
+    --bg: #f9fafb;
+    --bg-2: #f1f4f7;
+    --bg-3: #e6eaee;
+    --bg-deep: #e7ecf0;
     --bg-card: #ffffff;
-    --bg-card-hover: #f3f8fe;
+    --bg-card-hover: #f6f8fa;
     --surface: #ffffff;
-    --surface-strong: #eff6fd;
-    --text: #071727;
-    --text-2: #30445a;
-    --text-3: #4a6076;
-    --accent: #077045;
-    --accent-strong: #01603a;
-    --accent-vivid: #037649;
-    --accent-dim: #085634;
-    --accent-2: #9a3289;
+    --surface-strong: #f3f5f8;
+    --text: #11171c;
+    --text-2: #3c434b;
+    --text-3: #575e66;
+    --accent: #b42300;
+    --accent-strong: #981c00;
+    --accent-vivid: #ff7357;
+    --accent-dim: #772c1e;
+    --accent-2: #ff7458;
+    --accent-fill: #ff4d2a;
     --on-accent: #ffffff;
+    --on-accent-fill: #171b1f;
     --success: #106c3e;
     --warning: #845a0f;
-    --danger: #b71824;
+    --danger: #b4144a;
   }
 }
