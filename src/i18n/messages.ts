@@ -17,6 +17,7 @@ const en = {
   'nav.openMenu': 'Open navigation menu',
   'nav.closeMenu': 'Close navigation menu',
   'nav.home': 'Home',
+  'action.bookCall': 'Book a 15-minute call',
   'home.heading':
     'Senior React engineer for SaaS dashboards, performance and accessibility',
   'home.headingSub':
@@ -457,6 +458,7 @@ const es: Translations = {
   'nav.openMenu': 'Abrir menú de navegación',
   'nav.closeMenu': 'Cerrar menú de navegación',
   'nav.home': 'Inicio',
+  'action.bookCall': 'Reservar una llamada de 15 minutos',
   'home.heading':
     'Ingeniero React sénior especializado en paneles SaaS, rendimiento y accesibilidad',
   'home.headingSub': 'Arquitectura frontend con React, Next.js y TypeScript.',
@@ -947,6 +949,7 @@ const ar: Translations = {
   'nav.openMenu': 'فتح قائمة التنقل',
   'nav.closeMenu': 'إغلاق قائمة التنقل',
   'nav.home': 'الرئيسية',
+  'action.bookCall': 'احجز مكالمة لمدة 15 دقيقة',
   'home.heading': 'مهندس React أول متخصص في لوحات SaaS والأداء وإمكانية الوصول',
   'home.headingSub':
     'معمارية الواجهات الأمامية باستخدام React وNext.js وTypeScript.',

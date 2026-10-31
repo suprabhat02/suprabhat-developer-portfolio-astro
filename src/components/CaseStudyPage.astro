@@ -3,6 +3,7 @@ import type { CaseStudy } from '../data/caseStudies';
 import { localePrefix, type Locale } from '../i18n/config';
 import { t, type MessageKey } from '../i18n/messages';
 import CopyButton from './fx/CopyButton.astro';
+import BookingLink from './BookingLink.astro';
 import Icon from './fx/Icon.astro';
 
 interface Props {
@@ -183,6 +184,7 @@ const label = (key: MessageKey) => t(locale, key);
       <a class="button primary" href={href('/contact/')}>
         {label('caseStudy.contactCta')}
       </a>
+      <BookingLink {locale} />
     </div>
   </footer>
 </article>

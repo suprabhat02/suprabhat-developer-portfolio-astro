@@ -15,6 +15,7 @@ import { localePrefix, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
 import HomepageConversion from './HomepageConversion.astro';
 import ContactForm from './ContactForm.astro';
+import BookingLink from './BookingLink.astro';
 import Backdrop from './fx/Backdrop.astro';
 import FlipWords from './fx/FlipWords.astro';
 import Meteors from './fx/Meteors.astro';
@@ -367,6 +368,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
           </ul>
 
           <div class="hero-ctas">
+            <BookingLink {locale} class="btn btn-outline" />
             <a href="#work" class="btn btn-primary">
               {conversion.hero.primaryCta}
               <svg
@@ -1007,6 +1009,8 @@ const contactIndex = featured.length > 0 ? '14' : '13';
       />
       <div class="contact-2col">
         <div>
+          <p>{t(locale, 'page.contact.responseTime')}</p>
+          <BookingLink {locale} class="btn btn-outline" />
           <nav aria-label={t(locale, 'home.contactOptions')}>
             <ul class="contact-links-list">
               {

@@ -10,6 +10,7 @@ export interface Profile {
   about: readonly string[];
   philosophy: string;
   email: string;
+  bookingUrl?: string;
   phone: string;
   pronouns: string;
   timezone: string;
@@ -48,6 +49,8 @@ export const profile: Profile = {
   philosophy:
     'A useful interface makes the next decision clear. I start with user tasks and failure states, then shape components, data flow, accessibility, and performance around that evidence. The result should be understandable to users and maintainable by the team that owns it.',
   email: 'suprabhatkumar02@gmail.com',
+  // TODO(owner): Confirm employer approval and a booking URL before publishing.
+  bookingUrl: '',
   phone: '+91 78920 08290',
   pronouns: 'he/him',
   timezone: 'IST (UTC+5:30)',
