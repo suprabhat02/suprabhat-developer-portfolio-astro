@@ -63,6 +63,10 @@ const authorBio = getProfile(locale).lead;
 const ctaService = getArticleService(locale, slug);
 const servicesHref = `${localePrefix(locale)}/services/#${ctaService.id}`;
 const contactHref = `${localePrefix(locale)}/contact/`;
+const metaDescription =
+  slug === 'why-clean-minimal-ui-professional-website'
+    ? t(locale, 'seo.minimalUiDescription')
+    : description;
 const published = toIsoDate(pubDate);
 const modified = toIsoDate(updatedDate ?? pubDate);
 const showUpdated = updatedDate && modified !== published;
@@ -121,7 +125,6 @@ const schema = [
   {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
-    inLanguage: dateLocale,
     itemListElement: [
       {
         '@type': 'ListItem',
@@ -148,7 +151,7 @@ const schema = [
     '@type': 'BlogPosting',
     '@id': `${canonical.href}#article`,
     headline: title,
-    description,
+    description: metaDescription,
     url: canonical.href,
     image: imageUrl,
     inLanguage: dateLocale,
@@ -157,19 +160,9 @@ const schema = [
     isAccessibleForFree: true,
     datePublished: `${published}T00:00:00+05:30`,
     dateModified: `${modified}T00:00:00+05:30`,
-    author: {
-      '@type': 'Person',
-      '@id': `${SITE_URL}/#person`,
-      name: 'Suprabhat Kumar',
-      url: `${SITE_URL}/about/`,
-    },
-    publisher: {
-      '@type': 'Person',
-      '@id': `${SITE_URL}/#person`,
-      name: 'Suprabhat Kumar',
-    },
+    author: { '@id': `${SITE_URL}/#person` },
+    publisher: { '@id': `${SITE_URL}/#person` },
     mainEntityOfPage: {
-      '@type': 'WebPage',
       '@id': `${canonical.href}#webpage`,
     },
   },
@@ -184,7 +177,7 @@ const pageTitle =
 
 <BaseLayout
   title={pageTitle}
-  {description}
+  description={metaDescription}
   {locale}
   page="blog"
   path={pagePath}

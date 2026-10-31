@@ -1,6 +1,162 @@
 import { expect, test } from '@playwright/test';
 import { access, readdir, readFile } from 'node:fs/promises';
 import { getSectionPageImage, sectionPages } from '../src/data/pageSeo';
+import { getProfile, profile, profileStack } from '../src/data/profile';
+import { reactSmartCopy, reactInpChunker } from '../src/data/openSource';
+import { t } from '../src/i18n/messages';
+
+test('about identity facts and FAQ use published data in every locale', async ({
+  page,
+}) => {
+  for (const locale of ['en', 'es', 'ar'] as const) {
+    const prefix = locale === 'en' ? '' : `/${locale}`;
+    const localizedProfile = getProfile(locale);
+    await page.goto(`${prefix}/about/`);
+    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('html')).toHaveAttribute(
+      'dir',
+      locale === 'ar' ? 'rtl' : 'ltr',
+    );
+    const facts = page.locator('[data-identity-summary]');
+    await expect(facts.locator('dt')).toHaveCount(5);
+    await expect(facts.locator('p')).toHaveText(t(locale, 'identity.summary'));
+    await expect(facts).toContainText(profile.name);
+    await expect(facts).toContainText(localizedProfile.eyebrow.from);
+    for (const technology of profileStack)
+      await expect(facts).toContainText(technology);
+    for (const project of [reactSmartCopy, reactInpChunker]) {
+      await expect(facts.locator(`a[href="${project.links.docs}"]`)).toHaveText(
+        project.name,
+      );
+      await expect(
+        facts.locator(`a[href="${prefix}/work/${project.id}/"]`),
+      ).toContainText(project.name);
+    }
+    await page.goto(`${prefix}/faq/`);
+    const question = t(locale, 'faq.identity.q');
+    const answer = t(locale, 'faq.identity.a');
+    const entry = page
+      .locator('.faq-list details')
+      .filter({ hasText: question });
+    await expect(entry.locator('summary')).toHaveText(question);
+    await expect(entry.locator('p')).toHaveText(answer);
+    expect(answer).not.toBe(t(locale, 'identity.summary'));
+    const questions = await page
+      .locator('script[type="application/ld+json"]')
+      .first()
+      .evaluate((element) => {
+        const schema = JSON.parse(element.textContent ?? '{}') as {
+          '@graph': { '@type': string; mainEntity?: unknown }[];
+        };
+        return schema['@graph'].find((node) => node['@type'] === 'FAQPage')
+          ?.mainEntity;
+      });
+    expect(questions).toContainEqual({
+      '@type': 'Question',
+      name: question,
+      acceptedAnswer: { '@type': 'Answer', text: answer },
+    });
+  }
+});
+
+test('entity graphs use supported types, unique definitions and visible identity facts', async ({
+  page,
+}) => {
+  const personId = 'https://suprabhat-dev.com/#person';
+  const supportedTypes = new Set([
+    'Person',
+    'Occupation',
+    'EducationalOrganization',
+    'Place',
+    'PostalAddress',
+    'Organization',
+    'ContactPoint',
+    'WebSite',
+    'WebPage',
+    'ProfilePage',
+    'ProfessionalService',
+    'OfferCatalog',
+    'Offer',
+    'Service',
+    'SoftwareSourceCode',
+    'ItemList',
+    'ListItem',
+    'BreadcrumbList',
+    'TechArticle',
+    'BlogPosting',
+  ]);
+  const collectNodes = (value: unknown): Record<string, unknown>[] => {
+    if (Array.isArray(value)) return value.flatMap(collectNodes);
+    if (!value || typeof value !== 'object') return [];
+    const node = value as Record<string, unknown>;
+    return [node, ...Object.values(node).flatMap(collectNodes)];
+  };
+
+  for (const locale of ['en', 'es', 'ar'] as const) {
+    const prefix = locale === 'en' ? '' : `/${locale}`;
+    for (const route of [
+      '/',
+      '/about/',
+      '/work/performance-modernization/',
+      '/blog/frontend-code-review-checklist/',
+    ]) {
+      await page.goto(`${prefix}${route}`);
+      const structuredData = await page
+        .locator('script[type="application/ld+json"]')
+        .textContent();
+      const nodes = collectNodes(JSON.parse(structuredData ?? '{}'));
+      const definitions = nodes.filter(
+        (node) => node['@id'] && Object.keys(node).length > 1,
+      );
+      const definedIds = definitions.map((node) => node['@id']);
+      expect(new Set(definedIds).size).toBe(definedIds.length);
+      const people = nodes.filter((node) => node['@type'] === 'Person');
+      expect(people).toHaveLength(1);
+      expect(people[0]).toMatchObject({
+        '@id': personId,
+        name: profile.name,
+        alternateName: ['Suprabhat', 'Shubh'],
+        jobTitle: getProfile(locale).title,
+        sameAs: profile.social.map((social) => social.href),
+      });
+      await expect(
+        page.getByText(getProfile(locale).title, { exact: false }).first(),
+      ).toBeVisible();
+      if (route === '/' || route === '/about/') {
+        expect(people[0]?.knowsAbout).toEqual(profileStack);
+        for (const technology of profileStack)
+          await expect(
+            page.locator('main').getByText(technology).first(),
+          ).toBeVisible();
+      } else {
+        expect(people[0]).not.toHaveProperty('knowsAbout');
+      }
+      for (const node of nodes) {
+        if (node['@id'] && Object.keys(node).length === 1)
+          expect(definedIds).toContain(node['@id']);
+        if (typeof node['@type'] !== 'string') continue;
+        expect(supportedTypes.has(node['@type'])).toBe(true);
+        if (
+          [
+            'ProfessionalService',
+            'Service',
+            'ItemList',
+            'BreadcrumbList',
+          ].includes(node['@type'])
+        )
+          expect(node).not.toHaveProperty('inLanguage');
+        if (node['@type'] === 'ProfessionalService') {
+          expect(node).not.toHaveProperty('provider');
+          expect(node).not.toHaveProperty('serviceType');
+        }
+        if (['author', 'publisher', 'maintainer'].some((key) => key in node)) {
+          for (const key of ['author', 'publisher', 'maintainer'])
+            if (key in node) expect(node[key]).toEqual({ '@id': personId });
+        }
+      }
+    }
+  }
+});
 
 test('section share images are distinct, compact and present in all locales', async ({
   page,
@@ -192,7 +348,6 @@ test('localized structured data uses page language and alternates', async ({
   });
   expect(findSchema(spanishServices, 'ProfessionalService')).toMatchObject({
     name: 'Suprabhat Kumar - Servicios de ingeniería frontend',
-    inLanguage: 'es',
     areaServed: 'Todo el mundo',
   });
   expect(JSON.stringify(spanishServices)).toContain(
@@ -236,7 +391,7 @@ test('production SEO signals and internal links are crawlable', async ({
   await page.goto('/');
 
   await expect(page).toHaveTitle(
-    'Suprabhat Kumar | Senior React Frontend Engineer in India',
+    'Suprabhat Kumar | Frontend Engineer, React & TypeScript',
   );
 
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
@@ -535,18 +690,7 @@ test('Person schema includes public profiles and collaboration without changing 
         ),
       ).toHaveCount(1);
     }
-    expect(person?.knowsAbout, path).toEqual(
-      expect.arrayContaining([
-        'CSS3',
-        'Ant Design',
-        'Material UI',
-        'Zustand',
-        'Astro',
-        'shadcn/ui',
-        'Zod',
-        'GitHub Actions',
-      ]),
-    );
+    expect(person?.knowsAbout, path).toEqual(profileStack);
   }
 });
 
@@ -929,6 +1073,12 @@ test('all generated indexable pages have crawlable links and reciprocal language
   );
   const incoming = new Set<string>();
   for (const document of indexable) {
+    expect(document.description?.length, document.file).toBeGreaterThanOrEqual(
+      120,
+    );
+    expect(document.description?.length, document.file).toBeLessThanOrEqual(
+      155,
+    );
     expect(document.h1Count, document.file).toBe(1);
     expect(document.text, document.file).toBeTruthy();
     expect(document.dir, document.file).toBe(
@@ -962,6 +1112,30 @@ test('all generated indexable pages have crawlable links and reciprocal language
       ).toBe(true);
     }
     const canonical = new URL(document.canonical!);
+    const identityPath = canonical.pathname.replace(/^\/(es|ar)(?=\/)/, '');
+    if (
+      [
+        '/',
+        '/about/',
+        '/services/',
+        '/work/',
+        '/contact/',
+        '/blog/',
+        '/work/react-smart-copy/',
+        '/work/react-inp-chunker/',
+      ].includes(identityPath)
+    ) {
+      expect(document.description, document.file).toMatch(
+        /Suprabhat Kumar|سوبرابهات كومار/,
+      );
+    }
+    if (identityPath === '/') {
+      const locale =
+        document.lang === 'ar' ? 'ar' : document.lang === 'es' ? 'es' : 'en';
+      expect(document.title).toBe(t(locale, 'seo.homeTitle'));
+      expect(document.title.length).toBeLessThanOrEqual(60);
+      expect(document.title).toMatch(/^(Suprabhat Kumar|سوبرابهات كومار) \| /);
+    }
     const checkSchema = (value: unknown) => {
       if (Array.isArray(value)) return value.forEach(checkSchema);
       if (!value || typeof value !== 'object') return;

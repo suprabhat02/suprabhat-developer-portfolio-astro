@@ -1,8 +1,35 @@
 import type { Locale } from './config';
 import { SITE_NAME } from '../config/site';
 import { engagement } from '../data/engagement';
+import { getProfile, profile, profileStack } from '../data/profile';
+import { reactSmartCopy, reactInpChunker } from '../data/openSource';
 
 const en = {
+  'seo.homeTitle': `${profile.name} | Frontend Engineer, React & TypeScript`,
+  'seo.smartCopyDescription': `${profile.name}'s react-smart-copy: an open-source TypeScript library for React copy and paste, typed errors and screen-reader announcements.`,
+  'seo.inpChunkerDescription': `${profile.name}'s react-inp-chunker: an open-source React and TypeScript library that splits heavy work into short slices to protect INP.`,
+  'seo.designSystemDescription':
+    'An anonymized frontend case study about improving a design system with reusable React components, clearer tokens, accessibility, and UI governance.',
+  'seo.qualitySystemDescription':
+    'A frontend quality system combining typed content, accessibility checks, crawlable routes, responsive layout validation, and static build confidence.',
+  'seo.performanceDescription':
+    'An anonymized frontend case study about improving perceived speed, rendering stability, asset delivery, and Core Web Vitals for a complex product UI.',
+  'seo.minimalUiDescription':
+    'See how hierarchy, spacing, typography, focused content, and restrained interaction make professional websites easier to understand and use.',
+  'seo.homeDescription': `${profile.name} is a Senior Frontend Engineer in India, building React and TypeScript interfaces, SaaS dashboards and accessible design systems.`,
+  'seo.workDescription': `Explore ${profile.name}'s case studies on React dashboards, design systems, accessibility, web performance, localization and browser testing.`,
+  'seo.blogDescription': `Read ${profile.name}'s articles on React, frontend architecture, accessibility, performance, code review and maintainable design systems.`,
+  'seo.servicesDescription':
+    'Hire Suprabhat Kumar for React performance audits, architecture reviews, SaaS dashboards, design systems, accessibility, and website delivery.',
+  'seo.faqDescription':
+    'Answers on Suprabhat Kumar’s frontend services, project pricing, remote and international work, typical timelines, and how to start a collaboration.',
+  'identity.summary': `${profile.name} is a ${profile.title}. His main stack is ${new Intl.ListFormat('en').format(profileStack)}.`,
+  'identity.name': 'Name',
+  'identity.stack': 'Main stack',
+  'identity.libraries': 'Open-source libraries',
+  'identity.caseStudy': '{name} case study',
+  'faq.identity.q': `Who is ${profile.name}?`,
+  'faq.identity.a': `${profile.name} is a ${profile.title} and the author of ${reactSmartCopy.name} and ${reactInpChunker.name}.`,
   skip: 'Skip to main content',
   'nav.primary': 'Primary navigation',
   'nav.mobile': 'Navigation menu',
@@ -467,6 +494,30 @@ const es: Translations = {
   'nav.closeMenu': 'Cerrar menú de navegación',
   'nav.home': 'Inicio',
   'seo.sectionImageAlt': '{title} - Suprabhat Kumar',
+  'identity.summary': `${profile.name} es ${getProfile('es').title}. Su stack principal incluye ${new Intl.ListFormat('es').format(profileStack)}.`,
+  'seo.homeTitle': `${profile.name} | Ingeniero frontend, React y TypeScript`,
+  'seo.smartCopyDescription': `react-smart-copy de ${profile.name}: biblioteca TypeScript para copiar y pegar en React, con errores tipados y anuncios accesibles.`,
+  'seo.inpChunkerDescription': `react-inp-chunker de ${profile.name}: biblioteca React y TypeScript que divide tareas pesadas en franjas y cede el hilo principal para cuidar el INP.`,
+  'seo.designSystemDescription':
+    'Caso de estudio anonimizado sobre la mejora de un sistema de diseño: componentes React reutilizables, tokens claros, accesibilidad y gobernanza de la UI.',
+  'seo.qualitySystemDescription':
+    'Caso de ingeniería frontend: sistema de calidad con contenido tipado, pruebas de accesibilidad, rutas rastreables, validación responsive y build estático.',
+  'seo.performanceDescription':
+    'Caso de estudio anonimizado sobre velocidad percibida, estabilidad del renderizado, carga de recursos y Core Web Vitals en una interfaz de producto.',
+  'seo.minimalUiDescription':
+    'Por qué un diseño minimalista convierte mejor: jerarquía, espaciado, tipografía, contenido enfocado e interacción contenida en sitios profesionales.',
+  'seo.homeDescription': `${profile.name} es ingeniero frontend sénior en India. Crea interfaces con React y TypeScript, paneles SaaS y sistemas de diseño accesibles.`,
+  'seo.workDescription': `Casos de estudio de ${profile.name} sobre paneles SaaS, sistemas de diseño, rendimiento React, accesibilidad y pruebas de navegador.`,
+  'seo.blogDescription': `Artículos de ${profile.name} sobre React, arquitectura frontend, accesibilidad, rendimiento, revisión de código y sistemas de diseño.`,
+  'seo.servicesDescription': `Servicios de ${profile.name}: desarrollo SaaS, paneles de datos, React, arquitectura, sistemas de diseño, rendimiento y accesibilidad web.`,
+  'seo.faqDescription':
+    'Respuestas sobre servicios, precios, colaboración remota, plazos de proyectos frontend y revisiones de arquitectura y accesibilidad.',
+  'identity.name': 'Nombre',
+  'identity.stack': 'Stack principal',
+  'identity.libraries': 'Bibliotecas de código abierto',
+  'identity.caseStudy': 'Caso de estudio de {name}',
+  'faq.identity.q': `¿Quién es ${profile.name}?`,
+  'faq.identity.a': `${profile.name} es ${getProfile('es').title} y autor de ${reactSmartCopy.name} y ${reactInpChunker.name}.`,
   'recommendation.source': 'Ver fuente',
   'recommendation.colleague': 'Colega',
   'recommendation.manager': 'Responsable',
@@ -966,6 +1017,36 @@ const ar: Translations = {
   'nav.closeMenu': 'إغلاق قائمة التنقل',
   'nav.home': 'الرئيسية',
   'seo.sectionImageAlt': '{title} - سوبرابهات كومار',
+  'identity.summary': `${profile.name} هو ${getProfile('ar').title}. تشمل تقنياته الأساسية ${new Intl.ListFormat('ar').format(profileStack)}.`,
+  'seo.homeTitle': 'سوبرابهات كومار | مهندس واجهات أمامية، React وTypeScript',
+  'seo.smartCopyDescription':
+    'مكتبة react-smart-copy من تطوير سوبرابهات كومار تستخدم TypeScript لإدارة النسخ واللصق في React، مع أخطاء محددة الأنواع وإعلانات لقارئات الشاشة.',
+  'seo.inpChunkerDescription':
+    'مكتبة react-inp-chunker من تطوير سوبرابهات كومار تستخدم React وTypeScript لتقسيم العمل الثقيل إلى شرائح قصيرة وإعادة التحكم للخيط الرئيسي لحماية INP.',
+  'seo.designSystemDescription':
+    'دراسة حالة مُجهَّلة الهوية حول تحسين نظام تصميم بمكونات React قابلة لإعادة الاستخدام، ورموز تصميم أوضح، وإمكانية الوصول، وحوكمة الواجهة.',
+  'seo.qualitySystemDescription':
+    'دراسة حالة هندسية لنظام جودة يجمع بين محتوى محدد الأنواع، وفحوص إمكانية الوصول، ومسارات قابلة للفهرسة، واختبار التجاوب، وبناء ثابت موثوق.',
+  'seo.performanceDescription':
+    'دراسة حالة مُجهَّلة الهوية حول تحسين السرعة المحسوسة، وثبات العرض، وتحميل الموارد، وCore Web Vitals لواجهة منتج معقدة ومتعددة المسارات.',
+  'seo.minimalUiDescription':
+    'كيف تُسهم الهرمية والمسافات والطباعة والمحتوى المركّز والتفاعل المتحفَّظ في مساعدة المواقع الاحترافية على التواصل بوضوح وتحويل الزوّار بأقلّ احتكاك.',
+  'seo.homeDescription':
+    'سوبرابهات كومار مهندس واجهات أمامية أول في الهند، يبني واجهات React وTypeScript ولوحات بيانات SaaS وأنظمة تصميم متاحة وسهلة الصيانة.',
+  'seo.workDescription':
+    'دراسات حالة لسوبرابهات كومار حول لوحات بيانات SaaS وأنظمة التصميم وأداء React وإمكانية الوصول والتوطين واختبارات المتصفح وتطوير واجهات قابلة للصيانة.',
+  'seo.blogDescription':
+    'مقالات سوبرابهات كومار عن React ومعمارية الواجهات الأمامية وإمكانية الوصول وأداء الويب ومراجعة الشيفرة وأنظمة التصميم القابلة للصيانة.',
+  'seo.servicesDescription':
+    'خدمات سوبرابهات كومار: تدقيق أداء React، ومراجعات المعمارية، ولوحات بيانات SaaS، وأنظمة التصميم، وإمكانية الوصول، وتسليم مواقع الويب.',
+  'seo.faqDescription':
+    'إجابات عن الأسئلة الشائعة حول الخدمات والأسعار والتعاون عن بُعد والجداول الزمنية وكيفية بدء مشروع واجهات أمامية مع سوبرابهات كومار.',
+  'identity.name': 'الاسم',
+  'identity.stack': 'التقنيات الأساسية',
+  'identity.libraries': 'مكتبات مفتوحة المصدر',
+  'identity.caseStudy': 'دراسة حالة {name}',
+  'faq.identity.q': `من هو ${profile.name}؟`,
+  'faq.identity.a': `${profile.name} هو ${getProfile('ar').title} ومؤلف مكتبتي ${reactSmartCopy.name} و${reactInpChunker.name}.`,
   'recommendation.source': 'عرض المصدر',
   'recommendation.colleague': 'زميل في العمل',
   'recommendation.manager': 'مدير',

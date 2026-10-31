@@ -5,7 +5,11 @@ import FAQList from './FAQList.astro';
 import PageHero from './PageHero.astro';
 import PageOutro from './PageOutro.astro';
 import Icon, { type IconName } from './fx/Icon.astro';
-import { getProfile } from '../data/profile';
+import {
+  getProfile,
+  profile as canonicalProfile,
+  profileStack,
+} from '../data/profile';
 import { getCareerStats } from '../data/careerStats';
 import { heroPortraitQuality, heroPortraitWidths } from '../data/images';
 import portraitImage from '../../public/assets/images/portrait-1100.webp';
@@ -19,7 +23,11 @@ import { getSkills } from '../data/skills';
 import { getSkillLogos, getToolGroups } from '../data/tools';
 import { getCaseStudies } from '../data/caseStudies';
 import { getInternalWorkNotice, getWork } from '../data/work';
-import { isOpenSourceProjectId } from '../data/openSource';
+import {
+  isOpenSourceProjectId,
+  reactSmartCopy,
+  reactInpChunker,
+} from '../data/openSource';
 import {
   getBlogFeedHref,
   getBlogPosts,
@@ -221,6 +229,56 @@ const notFoundLinks = [
         </PageHero>
         <div class="ip-about">
           <div class="ip-prose">
+            <section aria-label={tx('page.about.glance')} data-identity-summary>
+              <p>{tx('identity.summary')}</p>
+              <dl class="ip-facts">
+                <div>
+                  <>
+                    <dt>{tx('identity.name')}</dt>
+                    <dd>{canonicalProfile.name}</dd>
+                  </>
+                </div>
+                <div>
+                  <>
+                    <dt>{tx('home.recruiterRoleLabel')}</dt>
+                    <dd>{profile.title.replace('Front-End', 'Frontend')}</dd>
+                  </>
+                </div>
+                <div>
+                  <>
+                    <dt>{tx('page.about.basedIn')}</dt>
+                    <dd>{profile.eyebrow.from}</dd>
+                  </>
+                </div>
+                <div>
+                  <>
+                    <dt>{tx('identity.stack')}</dt>
+                    <dd>
+                      {new Intl.ListFormat(dateLocale).format(profileStack)}
+                    </dd>
+                  </>
+                </div>
+                <div>
+                  <dt>{tx('identity.libraries')}</dt>
+                  <dd>
+                    <ul class="bullets">
+                      {[reactSmartCopy, reactInpChunker].map((project) => (
+                        <li>
+                          <a href={project.links.docs}>{project.name}</a>
+                          {' · '}
+                          <a href={href(`/work/${project.id}/`)}>
+                            {tx('identity.caseStudy').replace(
+                              '{name}',
+                              project.name,
+                            )}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </dd>
+                </div>
+              </dl>
+            </section>
             {profile.about.map((paragraph) => (
               <p>{paragraph}</p>
             ))}

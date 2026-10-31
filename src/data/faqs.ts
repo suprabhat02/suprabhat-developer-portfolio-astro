@@ -1,3 +1,5 @@
+import { t } from '../i18n/messages';
+
 export interface Faq {
   id: string;
   question: string;
@@ -9,6 +11,11 @@ export interface Faq {
  * cannot drift. Emit the schema only on pages that render this list.
  */
 export const faqs: readonly Faq[] = [
+  {
+    id: 'identity',
+    question: t('en', 'faq.identity.q'),
+    answer: t('en', 'faq.identity.a'),
+  },
   {
     id: 'services',
     question: 'What services do you offer?',

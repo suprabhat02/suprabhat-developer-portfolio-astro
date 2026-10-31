@@ -8,19 +8,10 @@ import {
 import { localeMeta, localePrefix, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
 
-export const getHomepageTitle = (locale: Locale) =>
-  locale === 'es'
-    ? 'Suprabhat Kumar — Ingeniero Frontend Sénior'
-    : locale === 'ar'
-      ? 'سوبرابهات كومار — مهندس واجهات أمامية أول'
-      : 'Suprabhat Kumar | Senior React Frontend Engineer in India';
+export const getHomepageTitle = (locale: Locale) => t(locale, 'seo.homeTitle');
 
 export const getHomepageDescription = (locale: Locale) =>
-  locale === 'es'
-    ? 'Ingeniero frontend sénior especializado en React y TypeScript: desarrollo de paneles SaaS, sistemas de diseño, accesibilidad y rendimiento web.'
-    : locale === 'ar'
-      ? 'مهندس واجهات أمامية أول متخصص في React وTypeScript لبناء لوحات SaaS وأنظمة التصميم والواجهات المتاحة وتحسين أداء الويب، مع التعاون عن بُعد من الهند.'
-      : 'Hire Suprabhat Kumar, a senior React and TypeScript engineer in India, for SaaS dashboards, design systems and frontend performance reviews.';
+  t(locale, 'seo.homeDescription');
 
 export const getHomepageSchema = (locale: Locale) => {
   const services = getServices(locale);
@@ -36,10 +27,7 @@ export const getHomepageSchema = (locale: Locale) => {
       description: t(locale, 'schema.serviceDescription'),
       url: pageUrl,
       image: new URL(DEFAULT_OG_IMAGE, SITE_URL).href,
-      inLanguage: language,
       areaServed: t(locale, 'schema.worldwide'),
-      provider: { '@id': `${SITE_URL}/#person` },
-      serviceType: services.map((service) => service.name),
       hasOfferCatalog: {
         '@type': 'OfferCatalog',
         name: t(locale, 'page.services.title'),
@@ -60,7 +48,7 @@ export const getHomepageSchema = (locale: Locale) => {
             ]
               .filter(Boolean)
               .join(' '),
-            inLanguage: language,
+            provider: { '@id': `${SITE_URL}/#person` },
           },
         })),
       },
@@ -72,7 +60,6 @@ export const getHomepageSchema = (locale: Locale) => {
       '@id': `${pageUrl}#problems`,
       name: problems.title,
       description: problems.lead,
-      inLanguage: language,
       itemListOrder: 'https://schema.org/ItemListUnordered',
       numberOfItems: problems.items.length,
       itemListElement: problems.items.map((item, index) => ({

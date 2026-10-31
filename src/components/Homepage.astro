@@ -954,21 +954,23 @@ const contactIndex = featured.length > 0 ? '14' : '13';
         <div class="fx-reveal">
           <ul class="faq-list" role="list">
             {
-              faqs.map((faq) => (
-                <li>
-                  <details>
-                    <summary>
-                      {t(locale, `faq.${faq.id}.q`, faq.question)}
-                      <span class="faq-icon" aria-hidden="true">
-                        +
-                      </span>
-                    </summary>
-                    <div class="faq-body">
-                      {t(locale, `faq.${faq.id}.a`, faq.answer)}
-                    </div>
-                  </details>
-                </li>
-              ))
+              faqs
+                .filter((faq) => faq.id !== 'identity')
+                .map((faq) => (
+                  <li>
+                    <details>
+                      <summary>
+                        {t(locale, `faq.${faq.id}.q`, faq.question)}
+                        <span class="faq-icon" aria-hidden="true">
+                          +
+                        </span>
+                      </summary>
+                      <div class="faq-body">
+                        {t(locale, `faq.${faq.id}.a`, faq.answer)}
+                      </div>
+                    </details>
+                  </li>
+                ))
             }
           </ul>
         </div>
