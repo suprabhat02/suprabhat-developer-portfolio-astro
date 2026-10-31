@@ -15,6 +15,7 @@ import { localePrefix, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
 import HomepageConversion from './HomepageConversion.astro';
 import ContactForm from './ContactForm.astro';
+import BookingLink from './BookingLink.astro';
 import Backdrop from './fx/Backdrop.astro';
 import FlipWords from './fx/FlipWords.astro';
 import Meteors from './fx/Meteors.astro';
@@ -300,7 +301,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
   <section
     id="home"
     class="hero"
-    aria-labelledby="hero-name"
+    aria-labelledby="hero-name hero-heading"
     data-motion-scope
     data-tap-motion
   >
@@ -325,10 +326,13 @@ const contactIndex = featured.length > 0 ? '14' : '13';
             />
           </p>
 
-          <h1 id="hero-name" class="hero-name">
+          <p id="hero-name" class="hero-name">
             {locale === 'ar' ? profile.name : 'Suprabhat Kumar'}
+          </p>
+          <h1 id="hero-heading" class="hero-heading">
+            {t(locale, 'home.heading')}
           </h1>
-          <p class="hero-sub">{conversion.hero.title}</p>
+          <p class="hero-sub">{t(locale, 'home.headingSub')}</p>
           {
             flipWords && (
               <p class="hero-flip">
@@ -364,6 +368,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
           </ul>
 
           <div class="hero-ctas">
+            <BookingLink {locale} class="btn btn-outline" />
             <a href="#work" class="btn btn-primary">
               {conversion.hero.primaryCta}
               <svg
@@ -390,7 +395,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
                   href={linkedin.href}
                   class="btn btn-ghost"
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="me noopener noreferrer"
                 >
                   LinkedIn ↗
                 </a>
@@ -883,6 +888,21 @@ const contactIndex = featured.length > 0 ? '14' : '13';
                     <div>
                       <span class="rec-name">{item.name}</span>
                       <span class="rec-role">{item.role}</span>
+                      {item.relationship && (
+                        <span class="rec-role">
+                          {t(locale, `recommendation.${item.relationship}`)}
+                        </span>
+                      )}
+                      {item.sourceUrl && (
+                        <a
+                          href={item.sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          tabindex={clone ? -1 : undefined}
+                        >
+                          {t(locale, 'recommendation.source')}
+                        </a>
+                      )}
                     </div>
                   </figcaption>
                 </figure>
@@ -1004,6 +1024,8 @@ const contactIndex = featured.length > 0 ? '14' : '13';
       />
       <div class="contact-2col">
         <div>
+          <p>{t(locale, 'page.contact.responseTime')}</p>
+          <BookingLink {locale} class="btn btn-outline" />
           <nav aria-label={t(locale, 'home.contactOptions')}>
             <ul class="contact-links-list">
               {
@@ -1014,7 +1036,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
                       class="c-link fx-glow"
                       data-glow
                       target={link.external ? '_blank' : undefined}
-                      rel={link.external ? 'noopener noreferrer' : undefined}
+                      rel={link.external ? 'me noopener noreferrer' : undefined}
                     >
                       <span class="c-icon">
                         <Icon name={link.icon} size={18} />

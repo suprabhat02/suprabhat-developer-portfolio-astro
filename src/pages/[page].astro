@@ -5,10 +5,12 @@ import { faqs } from '../data/faqs';
 import { services } from '../data/services';
 import {
   getSectionPageMeta,
+  getSectionPageImage,
   sectionPages,
   type SectionPage,
 } from '../data/pageSeo';
 import { SITE_URL, NOINDEX_PAGES } from '../config/site';
+import { t } from '../i18n/messages';
 
 export function getStaticPaths() {
   return sectionPages.map((page) => ({ params: { page }, props: { page } }));
@@ -60,6 +62,7 @@ const schema = [
         {
           '@context': 'https://schema.org',
           '@type': 'ProfessionalService',
+          '@id': `${SITE_URL}/#service`,
           name: 'Suprabhat Kumar — Frontend Engineering Services',
           url: `${SITE_URL}/services/`,
           inLanguage: language,
@@ -96,6 +99,13 @@ const schema = [
 <BaseLayout
   {title}
   {description}
+  image={getSectionPageImage(page)}
+  imageWidth={1200}
+  imageHeight={630}
+  imageAlt={t('en', 'seo.sectionImageAlt').replace(
+    '{title}',
+    t('en', `nav.${page}`),
+  )}
   page={page}
   pageType={page === 'about' ? 'ProfilePage' : 'WebPage'}
   schema={schema}

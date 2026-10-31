@@ -192,6 +192,7 @@ export default defineConfig({
         return (
           !/\/404(?:\/|\.html)?$/.test(pathname) &&
           !/\/blog\/tags\//.test(pathname) &&
+          !/\/contact\/thanks\/$/.test(pathname) &&
           !/^(?:\/(?:es|ar))?\/(?:privacy|skills)\/$/.test(pathname)
         );
       },

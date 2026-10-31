@@ -1,0 +1,21 @@
+---
+import { getProfile } from '../data/profile';
+import type { Locale } from '../i18n/config';
+import { t } from '../i18n/messages';
+
+interface Props {
+  locale: Locale;
+  class?: string;
+}
+
+const { locale, class: className = 'button' } = Astro.props;
+const { bookingUrl } = getProfile(locale);
+---
+
+{
+  bookingUrl && (
+    <a class={className} href={bookingUrl} target="_blank" rel="noopener">
+      {t(locale, 'action.bookCall')}
+    </a>
+  )
+}

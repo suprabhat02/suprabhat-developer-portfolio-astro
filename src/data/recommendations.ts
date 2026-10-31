@@ -10,6 +10,8 @@ export interface Recommendation {
   verified: boolean;
   /** Optional public source URL; direct publication consent may be recorded offline. */
   sourceUrl?: string;
+  // TODO(owner): Confirm source, consent and relationship for each quote.
+  relationship?: 'colleague' | 'manager' | 'friend' | 'family';
 }
 
 /** Wording preserved exactly. Translation consent is confirmed; native review is pending. */

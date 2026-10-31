@@ -21,7 +21,7 @@ const pages: Record<
   { nav: MessageKey; title: MessageKey; icon: IconName }
 > = {
   about: { nav: 'nav.about', title: 'page.about.title', icon: 'badge-check' },
-  skills: { nav: 'nav.skills', title: 'page.skills.title', icon: 'layers' },
+  skills: { nav: 'nav.services', title: 'page.services.title', icon: 'layers' },
   experience: {
     nav: 'nav.experience',
     title: 'page.experience.title',
@@ -42,7 +42,11 @@ const pages: Record<
       {
         related.map((id) => (
           <li>
-            <a class="po-link fx-glow" data-glow href={`${prefix}/${id}/`}>
+            <a
+              class="po-link fx-glow"
+              data-glow
+              href={`${prefix}/${id === 'skills' ? 'services' : id}/`}
+            >
               <span class="po-icon">
                 <Icon name={pages[id].icon} size={20} />
               </span>

@@ -63,7 +63,7 @@ Name tokens by purpose where possible. `--text-muted` communicates more than `--
 
 A token system is not complete until it covers interaction states. Hover, focus, active, selected, disabled, loading, and error states should feel related across the product.
 
-The [skills page](/skills/) lists the implementation technologies used for these systems.
+The [services page](/services/) describes this frontend engineering work.
 
 ## Keep state close and data boundaries explicit
 

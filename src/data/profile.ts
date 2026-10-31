@@ -1,4 +1,9 @@
 import type { Locale } from '../i18n/config';
+import {
+  X_PROFILE_URL,
+  DEV_PROFILE_URL,
+  HASHNODE_BLOG_URL,
+} from '../config/site';
 
 export interface Profile {
   name: string;
@@ -10,6 +15,7 @@ export interface Profile {
   about: readonly string[];
   philosophy: string;
   email: string;
+  bookingUrl?: string;
   phone: string;
   pronouns: string;
   timezone: string;
@@ -48,6 +54,8 @@ export const profile: Profile = {
   philosophy:
     'A useful interface makes the next decision clear. I start with user tasks and failure states, then shape components, data flow, accessibility, and performance around that evidence. The result should be understandable to users and maintainable by the team that owns it.',
   email: 'suprabhatkumar02@gmail.com',
+  // TODO(owner): Add a booking URL here when booking links should be enabled.
+  bookingUrl: '',
   phone: '+91 78920 08290',
   pronouns: 'he/him',
   timezone: 'IST (UTC+5:30)',
@@ -58,6 +66,9 @@ export const profile: Profile = {
     alt: 'Portrait of Suprabhat Kumar, Software Engineer',
   },
   social: [
+    { label: 'X', href: X_PROFILE_URL, external: true },
+    { label: 'DEV', href: DEV_PROFILE_URL, external: true },
+    { label: 'Hashnode', href: HASHNODE_BLOG_URL, external: true },
     {
       label: 'LinkedIn',
       href: 'https://www.linkedin.com/in/suprabhatkumar/',

@@ -498,6 +498,18 @@ const notFoundLinks = [
                   />
                   {item.name}
                   <span>{item.role}</span>
+                  {item.relationship && (
+                    <span>{tx(`recommendation.${item.relationship}`)}</span>
+                  )}
+                  {item.sourceUrl && (
+                    <a
+                      href={item.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {tx('recommendation.source')}
+                    </a>
+                  )}
                 </figcaption>
               </figure>
             ))}
@@ -603,7 +615,9 @@ const notFoundLinks = [
                       class="ip-channel"
                       href={channel.href}
                       target={channel.external ? '_blank' : undefined}
-                      rel={channel.external ? 'noreferrer' : undefined}
+                      rel={
+                        channel.external ? 'me noopener noreferrer' : undefined
+                      }
                     >
                       <span class="ip-channel-icon">
                         <Icon name={channel.icon} size={18} />

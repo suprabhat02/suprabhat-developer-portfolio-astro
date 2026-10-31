@@ -1,5 +1,64 @@
 import { expect, test } from '@playwright/test';
 import { access, readdir, readFile } from 'node:fs/promises';
+import { getSectionPageImage, sectionPages } from '../src/data/pageSeo';
+
+test('section share images are distinct, compact and present in all locales', async ({
+  page,
+}) => {
+  const dist = new URL('../dist/', import.meta.url);
+  const images = new Set<string>();
+  for (const section of sectionPages) {
+    const image = getSectionPageImage(section);
+    const data = await readFile(new URL(`.${image}`, dist));
+    expect(data.length).toBeLessThan(150_000);
+    images.add(image);
+    for (const prefix of ['', '/es', '/ar']) {
+      await page.goto(`${prefix}/${section}/`);
+      await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+        'content',
+        `https://suprabhat-dev.com${image}`,
+      );
+      await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute(
+        'content',
+        `https://suprabhat-dev.com${image}`,
+      );
+      await expect(
+        page.locator('meta[property="og:image:width"]'),
+      ).toHaveAttribute('content', '1200');
+      await expect(
+        page.locator('meta[property="og:image:height"]'),
+      ).toHaveAttribute('content', '630');
+      await expect(
+        page.locator('meta[property="og:image:alt"]'),
+      ).toHaveAttribute('content', /\S/);
+    }
+  }
+  expect(images.size).toBe(sectionPages.length);
+});
+
+test('localized contact thanks pages are noindex and excluded from the sitemap', async ({
+  page,
+}) => {
+  const sitemap = await readFile(
+    new URL('../dist/sitemap-0.xml', import.meta.url),
+    'utf8',
+  );
+  for (const prefix of ['', '/es', '/ar']) {
+    const path = `${prefix}/contact/thanks/`;
+    const response = await page.goto(path);
+    expect(response?.status()).toBe(200);
+    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+      'content',
+      'noindex,follow',
+    );
+    await expect(page.locator('html')).toHaveAttribute(
+      'dir',
+      prefix === '/ar' ? 'rtl' : 'ltr',
+    );
+    expect(sitemap).not.toContain(path);
+  }
+});
 
 test('case studies expose localized proof and outcomes', async ({ page }) => {
   const slugs = [
@@ -78,6 +137,7 @@ test('case studies expose localized proof and outcomes', async ({ page }) => {
       expect(Object.keys(articles[0] ?? {}).sort()).toEqual(
         [
           '@type',
+          '@id',
           'about',
           'author',
           'dateModified',
@@ -87,6 +147,7 @@ test('case studies expose localized proof and outcomes', async ({ page }) => {
           'image',
           'inLanguage',
           'mainEntityOfPage',
+          'publisher',
           'url',
         ].sort(),
       );
@@ -128,7 +189,6 @@ test('localized structured data uses page language and alternates', async ({
   });
   expect(findSchema(spanishServices, 'Person')).toMatchObject({
     jobTitle: 'Ingeniero Frontend Sénior',
-    inLanguage: 'es',
   });
   expect(findSchema(spanishServices, 'ProfessionalService')).toMatchObject({
     name: 'Suprabhat Kumar - Servicios de ingeniería frontend',
@@ -145,7 +205,6 @@ test('localized structured data uses page language and alternates', async ({
   });
   expect(findSchema(arabicFaq, 'Person')).toMatchObject({
     jobTitle: 'مهندس واجهات أمامية أول',
-    inLanguage: 'ar',
   });
   expect(findSchema(arabicFaq, 'FAQPage')).toMatchObject({
     inLanguage: 'ar',
@@ -462,6 +521,20 @@ test('Person schema includes public profiles and collaboration without changing 
       expect(person?.description, path).toContain(country);
     }
     expect(person?.homeLocation?.address.addressCountry, path).toBe('IN');
+    expect(person?.sameAs, path).toHaveLength(6);
+    const visibleProfiles = await page
+      .locator('footer .footer-profiles a[rel~="me"]')
+      .evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+    expect(visibleProfiles.sort(), path).toEqual(
+      [...(person?.sameAs ?? [])].sort(),
+    );
+    for (const href of person?.sameAs ?? []) {
+      await expect(
+        page.locator(
+          `#contact .contact-links-list a[rel~="me"][href="${href}"]`,
+        ),
+      ).toHaveCount(1);
+    }
     expect(person?.knowsAbout, path).toEqual(
       expect.arrayContaining([
         'CSS3',
@@ -536,12 +609,16 @@ test('case-study dates come from data, not the old 2026-09-06 placeholder', asyn
         .find((node) => node['@type'] === 'TechArticle');
       const where = `${dir}/${entry.name}`;
       const { datePublished = '', dateModified = '' } = article ?? {};
-      expect(datePublished, where).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-      expect(dateModified, where).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(datePublished, where).toMatch(
+        /^\d{4}-\d{2}-\d{2}T00:00:00\+05:30$/,
+      );
+      expect(dateModified, where).toMatch(
+        /^\d{4}-\d{2}-\d{2}T00:00:00\+05:30$/,
+      );
       expect(dateModified >= datePublished, where).toBe(true);
-      expect(dateModified, where).not.toBe('2026-09-06');
+      expect(dateModified.slice(0, 10), where).not.toBe('2026-09-06');
       if (!publishedOnPlaceholderDate.has(entry.name)) {
-        expect(datePublished, where).not.toBe('2026-09-06');
+        expect(datePublished.slice(0, 10), where).not.toBe('2026-09-06');
       }
       const dates = `${datePublished}/${dateModified}`;
       expect(datesBySlug.get(entry.name) ?? dates, where).toBe(dates);
@@ -626,7 +703,6 @@ test('share metadata, page types and sitemap dates follow the SEO contract', asy
       return data['@graph'] ?? [];
     });
 
-  // Article: cover alt, Open Graph article fields, date-only everywhere.
   const article = await read(
     'blog/accessibility-in-react-what-developers-skip/index.html',
   );
@@ -645,7 +721,10 @@ test('share metadata, page types and sitemap dates follow the SEO contract', asy
   ]);
   expect(
     graphOf(article).find((node) => node['@type'] === 'BlogPosting'),
-  ).toMatchObject({ datePublished: '2026-10-15', dateModified: '2026-10-19' });
+  ).toMatchObject({
+    datePublished: '2026-10-15T00:00:00+05:30',
+    dateModified: '2026-10-19T00:00:00+05:30',
+  });
 
   // The accessibility article cites its sources inline in every locale.
   for (const prefix of ['', 'es/', 'ar/']) {
@@ -822,6 +901,11 @@ test('all generated indexable pages have crawlable links and reciprocal language
           links: [...document.querySelectorAll('a[href]')].map(
             (anchor) => anchor.getAttribute('href') ?? '',
           ),
+          navigationLinks: [
+            ...document.querySelectorAll(
+              'header nav a[href], footer nav a[href]',
+            ),
+          ].map((anchor) => anchor.getAttribute('href') ?? ''),
           alternates: [...document.querySelectorAll('link[hreflang]')].map(
             (link) => ({
               lang: link.getAttribute('hreflang'),
@@ -878,6 +962,51 @@ test('all generated indexable pages have crawlable links and reciprocal language
       ).toBe(true);
     }
     const canonical = new URL(document.canonical!);
+    const checkSchema = (value: unknown) => {
+      if (Array.isArray(value)) return value.forEach(checkSchema);
+      if (!value || typeof value !== 'object') return;
+      const node = value as Record<string, unknown>;
+      if (node['@type'] === 'Person')
+        expect(node, document.file).not.toHaveProperty('inLanguage');
+      if (node['@type'] === 'ProfessionalService') {
+        expect(node['@id'], document.file).toBe(
+          'https://suprabhat-dev.com/#service',
+        );
+        if (/^\/(?:(?:es|ar)\/)?$/.test(canonical.pathname)) {
+          expect(node.image, document.file).toBe(document.ogImage);
+          expect(node, document.file).not.toHaveProperty('address');
+          expect(node, document.file).not.toHaveProperty('priceRange');
+        }
+      }
+      if (node['@type'] === 'BlogPosting' || node['@type'] === 'TechArticle') {
+        expect(node['@id'], document.file).toBe(`${canonical.href}#article`);
+        for (const key of ['datePublished', 'dateModified']) {
+          expect(node[key], document.file).toMatch(
+            /^\d{4}-\d{2}-\d{2}T00:00:00\+05:30$/,
+          );
+          expect(Number.isFinite(Date.parse(String(node[key])))).toBe(true);
+        }
+        expect(node.publisher, document.file).toMatchObject({
+          '@id': 'https://suprabhat-dev.com/#person',
+        });
+      }
+      if (node['@type'] === 'ProfilePage') {
+        expect(node.dateModified, document.file).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+        expect(node, document.file).not.toHaveProperty('dateCreated');
+      }
+      Object.values(node).forEach(checkSchema);
+    };
+    document.schemas.forEach(checkSchema);
+    for (const href of document.navigationLinks) {
+      const targetUrl = new URL(href, canonical);
+      targetUrl.hash = '';
+      const target = byCanonical.get(targetUrl.href);
+      if (!target || /\/(?:privacy)\/$/.test(targetUrl.pathname)) continue;
+      expect(
+        target.robots?.split(','),
+        `${document.file} navigation ${href}`,
+      ).not.toContain('noindex');
+    }
     for (const href of document.links) {
       const targetUrl = new URL(href, canonical);
       if (targetUrl.origin !== canonical.origin) continue;
@@ -891,6 +1020,10 @@ test('all generated indexable pages have crawlable links and reciprocal language
         continue;
       const target = byCanonical.get(targetUrl.href);
       expect(target, `${document.file} link ${href}`).toBeDefined();
+      expect(
+        targetUrl.pathname,
+        `${document.file} discovery ${href}`,
+      ).not.toMatch(/\/skills\/$/);
       if (targetUrl.href !== canonical.href) incoming.add(targetUrl.href);
       if (fragment)
         expect(target?.ids, `${document.file} anchor ${href}`).toContain(

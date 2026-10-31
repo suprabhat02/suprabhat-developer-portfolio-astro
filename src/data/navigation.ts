@@ -23,7 +23,7 @@ export interface NavItem {
 export const primaryNav: readonly NavItem[] = [
   { key: 'home', href: '/' },
   { key: 'about', href: '/about/', legacyHash: '#about' },
-  { key: 'skills', href: '/skills/', legacyHash: '#skills' },
+  { key: 'services', href: '/services/', legacyHash: '#skills' },
   { key: 'experience', href: '/experience/', legacyHash: '#experience' },
   { key: 'work', href: '/work/', legacyHash: '#work' },
   { key: 'blog', href: '/blog/' },

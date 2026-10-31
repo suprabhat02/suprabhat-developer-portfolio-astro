@@ -1,4 +1,4 @@
-import { SITE_URL } from '../config/site';
+import { DEFAULT_OG_IMAGE, SITE_URL } from '../config/site';
 import { getServices } from './services';
 import { getHomepageConversionContent } from './homepageConversion';
 import {
@@ -35,6 +35,7 @@ export const getHomepageSchema = (locale: Locale) => {
       name: t(locale, 'schema.serviceName'),
       description: t(locale, 'schema.serviceDescription'),
       url: pageUrl,
+      image: new URL(DEFAULT_OG_IMAGE, SITE_URL).href,
       inLanguage: language,
       areaServed: t(locale, 'schema.worldwide'),
       provider: { '@id': `${SITE_URL}/#person` },

@@ -22,10 +22,11 @@ test('homepage renders correct structure and passes accessibility', async ({
   // Single H1 — critical SEO requirement
   await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
-    'Suprabhat Kumar',
+    'Senior React engineer for SaaS dashboards, performance and accessibility',
   );
+  await expect(page.locator('#hero-name')).toHaveText('Suprabhat Kumar');
   await expect(page.locator('.hero-sub')).toContainText(
-    'React architecture, SaaS dashboards, and frontend performance',
+    'Frontend architecture with React, Next.js and TypeScript.',
   );
 
   // Bento hero sections
@@ -185,14 +186,7 @@ test('homepage renders correct structure and passes accessibility', async ({
     'action',
     'https://api.web3forms.com/submit',
   );
-  for (const fieldName of [
-    'name',
-    'email',
-    'project_type',
-    'budget',
-    'timeline',
-    'message',
-  ]) {
+  for (const fieldName of ['name', 'email', 'message']) {
     await expect(projectForm.locator(`[name="${fieldName}"]`)).toHaveAttribute(
       'required',
       '',
@@ -202,7 +196,7 @@ test('homepage renders correct structure and passes accessibility', async ({
   const errorSummary = projectForm.locator('[data-error-summary]');
   await expect(errorSummary).toBeVisible();
   await expect(errorSummary).toBeFocused();
-  await expect(errorSummary.locator('a')).toHaveCount(6);
+  await expect(errorSummary.locator('a')).toHaveCount(3);
 
   // No global SPA router: static pages keep navigation crawlable and avoid stale persisted shell state.
   await expect(
@@ -262,7 +256,7 @@ test('footer back-to-top and profile links meet the 24px target size', async ({
     const targets = page.locator(
       '.footer-bottom > a[href$="#main-content"], .footer-profiles a',
     );
-    await expect(targets).toHaveCount(4);
+    await expect(targets).toHaveCount(7);
     for (const box of await targets.evaluateAll((links) =>
       links.map((link) => link.getBoundingClientRect().toJSON()),
     )) {
@@ -273,7 +267,7 @@ test('footer back-to-top and profile links meet the 24px target size', async ({
       await page
         .locator('.footer-profiles a')
         .evaluateAll((links) => links.map((link) => link.getAttribute('rel'))),
-    ).toEqual(['me noopener', 'me noopener', 'me noopener']);
+    ).toEqual(Array.from({ length: 6 }, () => 'me noopener'));
   }
 });
 
