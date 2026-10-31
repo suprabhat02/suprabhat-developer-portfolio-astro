@@ -1,8 +1,17 @@
 import type { Locale } from './config';
 import { SITE_NAME } from '../config/site';
 import { engagement } from '../data/engagement';
+import { getProfile, profile, profileStack } from '../data/profile';
+import { reactSmartCopy, reactInpChunker } from '../data/openSource';
 
 const en = {
+  'identity.summary': `${profile.name} is a ${profile.title}. His main stack is ${new Intl.ListFormat('en').format(profileStack)}.`,
+  'identity.name': 'Name',
+  'identity.stack': 'Main stack',
+  'identity.libraries': 'Open-source libraries',
+  'identity.caseStudy': '{name} case study',
+  'faq.identity.q': `Who is ${profile.name}?`,
+  'faq.identity.a': `${profile.name} is a ${profile.title} and the author of ${reactSmartCopy.name} and ${reactInpChunker.name}.`,
   skip: 'Skip to main content',
   'nav.primary': 'Primary navigation',
   'nav.mobile': 'Navigation menu',
@@ -467,6 +476,13 @@ const es: Translations = {
   'nav.closeMenu': 'Cerrar menú de navegación',
   'nav.home': 'Inicio',
   'seo.sectionImageAlt': '{title} - Suprabhat Kumar',
+  'identity.summary': `${profile.name} es ${getProfile('es').title}. Su stack principal incluye ${new Intl.ListFormat('es').format(profileStack)}.`,
+  'identity.name': 'Nombre',
+  'identity.stack': 'Stack principal',
+  'identity.libraries': 'Bibliotecas de código abierto',
+  'identity.caseStudy': 'Caso de estudio de {name}',
+  'faq.identity.q': `¿Quién es ${profile.name}?`,
+  'faq.identity.a': `${profile.name} es ${getProfile('es').title} y autor de ${reactSmartCopy.name} y ${reactInpChunker.name}.`,
   'recommendation.source': 'Ver fuente',
   'recommendation.colleague': 'Colega',
   'recommendation.manager': 'Responsable',
@@ -966,6 +982,13 @@ const ar: Translations = {
   'nav.closeMenu': 'إغلاق قائمة التنقل',
   'nav.home': 'الرئيسية',
   'seo.sectionImageAlt': '{title} - سوبرابهات كومار',
+  'identity.summary': `${profile.name} هو ${getProfile('ar').title}. تشمل تقنياته الأساسية ${new Intl.ListFormat('ar').format(profileStack)}.`,
+  'identity.name': 'الاسم',
+  'identity.stack': 'التقنيات الأساسية',
+  'identity.libraries': 'مكتبات مفتوحة المصدر',
+  'identity.caseStudy': 'دراسة حالة {name}',
+  'faq.identity.q': `من هو ${profile.name}؟`,
+  'faq.identity.a': `${profile.name} هو ${getProfile('ar').title} ومؤلف مكتبتي ${reactSmartCopy.name} و${reactInpChunker.name}.`,
   'recommendation.source': 'عرض المصدر',
   'recommendation.colleague': 'زميل في العمل',
   'recommendation.manager': 'مدير',

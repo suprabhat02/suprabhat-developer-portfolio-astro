@@ -1,6 +1,63 @@
 import { expect, test } from '@playwright/test';
 import { access, readdir, readFile } from 'node:fs/promises';
 import { getSectionPageImage, sectionPages } from '../src/data/pageSeo';
+import { getProfile, profile, profileStack } from '../src/data/profile';
+import { reactSmartCopy, reactInpChunker } from '../src/data/openSource';
+import { t } from '../src/i18n/messages';
+
+test('about identity facts and FAQ use published data in every locale', async ({
+  page,
+}) => {
+  for (const locale of ['en', 'es', 'ar'] as const) {
+    const prefix = locale === 'en' ? '' : `/${locale}`;
+    const localizedProfile = getProfile(locale);
+    await page.goto(`${prefix}/about/`);
+    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('html')).toHaveAttribute(
+      'dir',
+      locale === 'ar' ? 'rtl' : 'ltr',
+    );
+    const facts = page.locator('[data-identity-summary]');
+    await expect(facts.locator('dt')).toHaveCount(5);
+    await expect(facts.locator('p')).toHaveText(t(locale, 'identity.summary'));
+    await expect(facts).toContainText(profile.name);
+    await expect(facts).toContainText(localizedProfile.eyebrow.from);
+    for (const technology of profileStack)
+      await expect(facts).toContainText(technology);
+    for (const project of [reactSmartCopy, reactInpChunker]) {
+      await expect(facts.locator(`a[href="${project.links.docs}"]`)).toHaveText(
+        project.name,
+      );
+      await expect(
+        facts.locator(`a[href="${prefix}/work/${project.id}/"]`),
+      ).toContainText(project.name);
+    }
+    await page.goto(`${prefix}/faq/`);
+    const question = t(locale, 'faq.identity.q');
+    const answer = t(locale, 'faq.identity.a');
+    const entry = page
+      .locator('.faq-list details')
+      .filter({ hasText: question });
+    await expect(entry.locator('summary')).toHaveText(question);
+    await expect(entry.locator('p')).toHaveText(answer);
+    expect(answer).not.toBe(t(locale, 'identity.summary'));
+    const questions = await page
+      .locator('script[type="application/ld+json"]')
+      .first()
+      .evaluate((element) => {
+        const schema = JSON.parse(element.textContent ?? '{}') as {
+          '@graph': { '@type': string; mainEntity?: unknown }[];
+        };
+        return schema['@graph'].find((node) => node['@type'] === 'FAQPage')
+          ?.mainEntity;
+      });
+    expect(questions).toContainEqual({
+      '@type': 'Question',
+      name: question,
+      acceptedAnswer: { '@type': 'Answer', text: answer },
+    });
+  }
+});
 
 test('section share images are distinct, compact and present in all locales', async ({
   page,

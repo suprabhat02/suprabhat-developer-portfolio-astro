@@ -1,4 +1,5 @@
 import type { Locale } from '../i18n/config';
+import { tools } from './tools';
 import {
   X_PROFILE_URL,
   DEV_PROFILE_URL,
@@ -148,3 +149,7 @@ export const getProfile = (locale: Locale): Profile => {
     },
   };
 };
+
+export const profileStack = ['React', 'Next.js', 'TypeScript'].flatMap((name) =>
+  tools.filter((tool) => tool.name === name).map((tool) => tool.name),
+);
