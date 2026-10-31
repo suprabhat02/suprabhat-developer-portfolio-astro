@@ -61,7 +61,7 @@ Based in India, Suprabhat has delivered with distributed teams in Denmark and Ch
 ## Primary pages
 
 - [Home](https://suprabhat-dev.com/): Identity, problems solved, selected work, services, experience, FAQs, and contact.
-- [About](https://suprabhat-dev.com/about/): Career arc, global collaboration, engineering approach, and contract fit.
+- [About](https://suprabhat-dev.com/about/): Career arc, global collaboration, and engineering approach.
 - [Experience](https://suprabhat-dev.com/experience/): Roles at Topsoe, Cognizant, TrueBlue, MobileCoderz, and Swaragh Technologies.
 - [Work](https://suprabhat-dev.com/work/): Anonymized and public frontend case studies.
 - [Services](https://suprabhat-dev.com/services/): Service fit, deliverables, exclusions, and working durations.
@@ -73,9 +73,9 @@ Based in India, Suprabhat has delivered with distributed teams in Denmark and Ch
   - [Why Minimal UI Improves Clarity and Conversion](https://suprabhat-dev.com/blog/why-clean-minimal-ui-professional-website/)
   - [Frontend Code Review Checklist for Safer Releases](https://suprabhat-dev.com/blog/frontend-code-review-checklist/)
   - [How to Build Scalable React UI Without Overengineering](https://suprabhat-dev.com/blog/frontend-best-practices-clean-ui/)
-- [Contact](https://suprabhat-dev.com/contact/): Qualified project enquiry form and direct email.
+- [Contact](https://suprabhat-dev.com/contact/): Enquiry form and direct email.
 
-## Contact and availability
+## Contact
 
 - Website: https://suprabhat-dev.com/
 - Email: suprabhatkumar02@gmail.com
@@ -84,12 +84,6 @@ Based in India, Suprabhat has delivered with distributed teams in Denmark and Ch
 - GitHub: https://github.com/suprabhat02
 - npm: https://www.npmjs.com/~suprabhat02
 - Timezone: IST (UTC+5:30)
-- Availability: Available now for remote freelance and part-time contracts, 24–28 hours per week, Monday–Friday
-- Market focus: Americas, United Kingdom, and Western Europe
-- Meetings: From 7:00 PM IST with 2–4 hours of real-time overlap by agreement
-- Project qualification: Scoped projects start at USD 5,000; hourly and weekly rates are not public
-- Response: Within 12–24 hours on Monday–Friday evenings
-- Discovery: Free 15–20 minute call; proposals follow within 2–3 business days
 
 ## Site and language notes
 
