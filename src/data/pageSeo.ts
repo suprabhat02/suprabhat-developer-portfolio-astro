@@ -17,6 +17,8 @@ export const sectionPages = [
   'blog',
 ] as const;
 export type SectionPage = (typeof sectionPages)[number];
+export const getSectionPageImage = (page: SectionPage) =>
+  `/images/pages/${page}-og-1200x630.jpg`;
 
 type LocalizedLocale = Exclude<Locale, 'en'>;
 

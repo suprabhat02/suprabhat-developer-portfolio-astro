@@ -132,6 +132,8 @@ const vite = await createServer({
 });
 const { getCaseStudies } = await vite.ssrLoadModule('/src/data/caseStudies.ts');
 const caseStudies = getCaseStudies('en');
+const { sectionPages, getSectionPageMeta, getSectionPageImage } =
+  await vite.ssrLoadModule('/src/data/pageSeo.ts');
 await vite.close();
 
 // Blog covers: the share image and on-page cover for every locale of each
@@ -202,6 +204,29 @@ const render = async (html, scale) => {
   await tab.close();
   return shot;
 };
+
+await mkdir('public/images/pages', { recursive: true });
+for (const section of sectionPages) {
+  const { title } = getSectionPageMeta('en', section);
+  const output = `public${getSectionPageImage(section)}`;
+  await sharp(
+    await render(
+      card({
+        eyebrow: 'SUPRABHAT KUMAR',
+        title,
+        detail: 'React · Next.js · TypeScript',
+      }),
+      1,
+    ),
+  )
+    .jpeg({ quality: 82, progressive: true, mozjpeg: true })
+    .toFile(output);
+  console.log(`Generated ${output} (1200x630).`);
+}
+if (process.argv.includes('--sections-only')) {
+  await browser.close();
+  process.exit(0);
+}
 
 await sharp(await render(defaultCard, 1))
   .jpeg({ quality: 86, progressive: true, mozjpeg: true })

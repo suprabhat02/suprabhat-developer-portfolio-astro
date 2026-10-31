@@ -1,5 +1,40 @@
 import { expect, test } from '@playwright/test';
 import { access, readdir, readFile } from 'node:fs/promises';
+import { getSectionPageImage, sectionPages } from '../src/data/pageSeo';
+
+test('section share images are distinct, compact and present in all locales', async ({
+  page,
+}) => {
+  const dist = new URL('../dist/', import.meta.url);
+  const images = new Set<string>();
+  for (const section of sectionPages) {
+    const image = getSectionPageImage(section);
+    const data = await readFile(new URL(`.${image}`, dist));
+    expect(data.length).toBeLessThan(150_000);
+    images.add(image);
+    for (const prefix of ['', '/es', '/ar']) {
+      await page.goto(`${prefix}/${section}/`);
+      await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+        'content',
+        `https://suprabhat-dev.com${image}`,
+      );
+      await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute(
+        'content',
+        `https://suprabhat-dev.com${image}`,
+      );
+      await expect(
+        page.locator('meta[property="og:image:width"]'),
+      ).toHaveAttribute('content', '1200');
+      await expect(
+        page.locator('meta[property="og:image:height"]'),
+      ).toHaveAttribute('content', '630');
+      await expect(
+        page.locator('meta[property="og:image:alt"]'),
+      ).toHaveAttribute('content', /\S/);
+    }
+  }
+  expect(images.size).toBe(sectionPages.length);
+});
 
 test('localized contact thanks pages are noindex and excluded from the sitemap', async ({
   page,
