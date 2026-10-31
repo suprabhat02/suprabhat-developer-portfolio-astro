@@ -293,7 +293,7 @@ test('production SEO signals and internal links are crawlable', async ({
   await page.goto('/');
 
   await expect(page).toHaveTitle(
-    'Suprabhat Kumar | Senior React Frontend Engineer in India',
+    'Suprabhat Kumar | Frontend Engineer, React & TypeScript',
   );
 
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
@@ -986,6 +986,12 @@ test('all generated indexable pages have crawlable links and reciprocal language
   );
   const incoming = new Set<string>();
   for (const document of indexable) {
+    expect(document.description?.length, document.file).toBeGreaterThanOrEqual(
+      120,
+    );
+    expect(document.description?.length, document.file).toBeLessThanOrEqual(
+      155,
+    );
     expect(document.h1Count, document.file).toBe(1);
     expect(document.text, document.file).toBeTruthy();
     expect(document.dir, document.file).toBe(
@@ -1019,6 +1025,30 @@ test('all generated indexable pages have crawlable links and reciprocal language
       ).toBe(true);
     }
     const canonical = new URL(document.canonical!);
+    const identityPath = canonical.pathname.replace(/^\/(es|ar)(?=\/)/, '');
+    if (
+      [
+        '/',
+        '/about/',
+        '/services/',
+        '/work/',
+        '/contact/',
+        '/blog/',
+        '/work/react-smart-copy/',
+        '/work/react-inp-chunker/',
+      ].includes(identityPath)
+    ) {
+      expect(document.description, document.file).toMatch(
+        /Suprabhat Kumar|سوبرابهات كومار/,
+      );
+    }
+    if (identityPath === '/') {
+      const locale =
+        document.lang === 'ar' ? 'ar' : document.lang === 'es' ? 'es' : 'en';
+      expect(document.title).toBe(t(locale, 'seo.homeTitle'));
+      expect(document.title.length).toBeLessThanOrEqual(60);
+      expect(document.title).toMatch(/^(Suprabhat Kumar|سوبرابهات كومار) \| /);
+    }
     const checkSchema = (value: unknown) => {
       if (Array.isArray(value)) return value.forEach(checkSchema);
       if (!value || typeof value !== 'object') return;

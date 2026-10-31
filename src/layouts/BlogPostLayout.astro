@@ -63,6 +63,10 @@ const authorBio = getProfile(locale).lead;
 const ctaService = getArticleService(locale, slug);
 const servicesHref = `${localePrefix(locale)}/services/#${ctaService.id}`;
 const contactHref = `${localePrefix(locale)}/contact/`;
+const metaDescription =
+  slug === 'why-clean-minimal-ui-professional-website'
+    ? t(locale, 'seo.minimalUiDescription')
+    : description;
 const published = toIsoDate(pubDate);
 const modified = toIsoDate(updatedDate ?? pubDate);
 const showUpdated = updatedDate && modified !== published;
@@ -148,7 +152,7 @@ const schema = [
     '@type': 'BlogPosting',
     '@id': `${canonical.href}#article`,
     headline: title,
-    description,
+    description: metaDescription,
     url: canonical.href,
     image: imageUrl,
     inLanguage: dateLocale,
@@ -184,7 +188,7 @@ const pageTitle =
 
 <BaseLayout
   title={pageTitle}
-  {description}
+  description={metaDescription}
   {locale}
   page="blog"
   path={pagePath}

@@ -46,8 +46,7 @@ const englishMeta: Record<SectionPage, { title: string; description: string }> =
     },
     work: {
       title: 'React Frontend Engineering Case Studies | Suprabhat Kumar',
-      description:
-        'Read frontend case studies on SaaS dashboards, design systems, React performance, accessibility, Astro SEO, localization, and browser testing.',
+      description: t('en', 'seo.workDescription'),
     },
     recommendations: {
       title: 'Recommendations | Suprabhat Kumar',
@@ -56,13 +55,11 @@ const englishMeta: Record<SectionPage, { title: string; description: string }> =
     },
     services: {
       title: 'React Frontend Engineering Services | Suprabhat Kumar',
-      description:
-        'Hire Suprabhat Kumar for React performance audits, architecture reviews, SaaS dashboards, design systems, accessibility, and website delivery.',
+      description: t('en', 'seo.servicesDescription'),
     },
     faq: {
       title: 'Frequently Asked Questions | Suprabhat Kumar',
-      description:
-        'Answers on Suprabhat Kumar’s frontend services, project pricing, remote and international work, typical timelines, and how to start a collaboration.',
+      description: t('en', 'seo.faqDescription'),
     },
     contact: {
       title: 'Hire Suprabhat Kumar | Senior React Frontend Engineer',
@@ -81,8 +78,7 @@ const englishMeta: Record<SectionPage, { title: string; description: string }> =
     },
     blog: {
       title: 'React and Frontend Engineering Articles | Suprabhat Kumar',
-      description:
-        'Practical React and frontend engineering guides on architecture, accessibility, performance, code review, design systems, and maintainable UI.',
+      description: t('en', 'seo.blogDescription'),
     },
   };
 
@@ -128,19 +124,18 @@ const localizedDescriptions: Record<
       'Seis años de ingeniería frontend en Topsoe, Cognizant, TrueBlue, MobileCoderz y Swaragh Technologies, con productos SaaS e interfaces empresariales.',
     tools:
       'Explora las herramientas frontend de Suprabhat Kumar: Astro, shadcn/ui, Zod y GitHub Actions, organizadas por interfaces, datos, diseño y entrega.',
-    work: 'Casos de estudio de Suprabhat Kumar sobre paneles SaaS, sistemas de diseño, rendimiento en React y accesibilidad.',
+    work: t('es', 'seo.workDescription'),
     recommendations:
       'Recomendaciones para Suprabhat Kumar de colegas de ingeniería de IA, control de calidad, plataforma, investigación UX, SEO y asuntos regulatorios.',
-    services:
-      'Servicios de ingeniería frontend: desarrollo SaaS, paneles de datos, React, sistemas de diseño, rendimiento y accesibilidad.',
-    faq: 'Respuestas a preguntas frecuentes sobre servicios, precios, colaboración remota y plazos de proyectos frontend.',
+    services: t('es', 'seo.servicesDescription'),
+    faq: t('es', 'seo.faqDescription'),
     contact:
       'Habla con Suprabhat Kumar sobre un panel React, una revisión de arquitectura, un sistema de diseño o una auditoría de rendimiento o accesibilidad.',
     accessibility:
       'Declaración de accesibilidad de suprabhat-dev.com: objetivo WCAG 2.2 AA, qué está implementado, cómo se prueba, limitaciones y cómo avisar de una barrera.',
     privacy:
       'Cómo este sitio utiliza Cloudflare Web Analytics y gestiona borradores locales del formulario y envíos mediante Web3Forms.',
-    blog: 'Artículos de ingeniería frontend: rendimiento, accesibilidad, arquitectura y entrega profesional de interfaces.',
+    blog: t('es', 'seo.blogDescription'),
   },
   ar: {
     about:
@@ -151,19 +146,18 @@ const localizedDescriptions: Record<
       'ست سنوات من خبرة سوبرابهات كومار في هندسة الواجهات الأمامية لدى Topsoe وCognizant وTrueBlue وMobileCoderz وSwaragh Technologies في منتجات SaaS.',
     tools:
       'استكشف أدوات سوبرابهات كومار: Astro وshadcn/ui وZod وGitHub Actions، مصنفة حسب أطر العمل وأنظمة الواجهات والبيانات والتصميم والتسليم.',
-    work: 'دراسات حالة في الواجهات الأمامية حول لوحات بيانات SaaS وأنظمة التصميم وأداء React وإمكانية الوصول وSEO في Astro والتوطين واختبارات المتصفح.',
+    work: t('ar', 'seo.workDescription'),
     recommendations:
       'توصيات لسوبرابهات كومار من زملاء في هندسة الذكاء الاصطناعي وضمان الجودة والمنصات وأبحاث تجربة المستخدم وSEO والشؤون التنظيمية.',
-    services:
-      'خدمات سوبرابهات كومار: تدقيق أداء React، ومراجعات المعمارية، ولوحات بيانات SaaS، وأنظمة التصميم، وإمكانية الوصول، وتسليم مواقع الويب.',
-    faq: 'إجابات عن الأسئلة الشائعة حول الخدمات والأسعار والتعاون عن بُعد والجداول الزمنية وكيفية بدء مشروع واجهات أمامية مع سوبرابهات كومار.',
+    services: t('ar', 'seo.servicesDescription'),
+    faq: t('ar', 'seo.faqDescription'),
     contact:
       'ناقش مع سوبرابهات كومار لوحة بيانات React أو مراجعة معمارية أو نظام تصميم أو تدقيقًا للأداء أو لإمكانية الوصول أو مشروع موقع ويب.',
     accessibility:
       'بيان إمكانية الوصول لموقع suprabhat-dev.com: الهدف WCAG 2.2 AA، وما هو مطبَّق، وكيف يُختبَر، والقيود المعروفة، وكيفية الإبلاغ عن أي عائق.',
     privacy:
       'كيفية استخدام هذا الموقع لـ Cloudflare Web Analytics والتعامل مع مسودات النموذج المحفوظة محليًا والرسائل المرسلة عبر Web3Forms.',
-    blog: 'أدلة عملية في React وهندسة الواجهات الأمامية حول المعمارية وإمكانية الوصول والأداء ومراجعة الشيفرة وأنظمة التصميم والواجهات القابلة للصيانة.',
+    blog: t('ar', 'seo.blogDescription'),
   },
 };
 

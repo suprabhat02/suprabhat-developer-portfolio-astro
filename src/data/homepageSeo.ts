@@ -8,19 +8,10 @@ import {
 import { localeMeta, localePrefix, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
 
-export const getHomepageTitle = (locale: Locale) =>
-  locale === 'es'
-    ? 'Suprabhat Kumar — Ingeniero Frontend Sénior'
-    : locale === 'ar'
-      ? 'سوبرابهات كومار — مهندس واجهات أمامية أول'
-      : 'Suprabhat Kumar | Senior React Frontend Engineer in India';
+export const getHomepageTitle = (locale: Locale) => t(locale, 'seo.homeTitle');
 
 export const getHomepageDescription = (locale: Locale) =>
-  locale === 'es'
-    ? 'Ingeniero frontend sénior especializado en React y TypeScript: desarrollo de paneles SaaS, sistemas de diseño, accesibilidad y rendimiento web.'
-    : locale === 'ar'
-      ? 'مهندس واجهات أمامية أول متخصص في React وTypeScript لبناء لوحات SaaS وأنظمة التصميم والواجهات المتاحة وتحسين أداء الويب، مع التعاون عن بُعد من الهند.'
-      : 'Hire Suprabhat Kumar, a senior React and TypeScript engineer in India, for SaaS dashboards, design systems and frontend performance reviews.';
+  t(locale, 'seo.homeDescription');
 
 export const getHomepageSchema = (locale: Locale) => {
   const services = getServices(locale);
