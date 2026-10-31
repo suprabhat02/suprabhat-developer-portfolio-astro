@@ -42,5 +42,5 @@ export const getCaseStudyArticleSchema = (
   dateModified: `${caseStudy.dateModified}T00:00:00+05:30`,
   inLanguage: localeMeta[locale].htmlLang,
   about: caseStudy.relatedServices,
-  mainEntityOfPage: { '@type': 'WebPage', '@id': `${url}#webpage` },
+  mainEntityOfPage: { '@id': `${url}#webpage` },
 });

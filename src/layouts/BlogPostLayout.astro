@@ -125,7 +125,6 @@ const schema = [
   {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
-    inLanguage: dateLocale,
     itemListElement: [
       {
         '@type': 'ListItem',
@@ -161,19 +160,9 @@ const schema = [
     isAccessibleForFree: true,
     datePublished: `${published}T00:00:00+05:30`,
     dateModified: `${modified}T00:00:00+05:30`,
-    author: {
-      '@type': 'Person',
-      '@id': `${SITE_URL}/#person`,
-      name: 'Suprabhat Kumar',
-      url: `${SITE_URL}/about/`,
-    },
-    publisher: {
-      '@type': 'Person',
-      '@id': `${SITE_URL}/#person`,
-      name: 'Suprabhat Kumar',
-    },
+    author: { '@id': `${SITE_URL}/#person` },
+    publisher: { '@id': `${SITE_URL}/#person` },
     mainEntityOfPage: {
-      '@type': 'WebPage',
       '@id': `${canonical.href}#webpage`,
     },
   },

@@ -27,10 +27,7 @@ export const getHomepageSchema = (locale: Locale) => {
       description: t(locale, 'schema.serviceDescription'),
       url: pageUrl,
       image: new URL(DEFAULT_OG_IMAGE, SITE_URL).href,
-      inLanguage: language,
       areaServed: t(locale, 'schema.worldwide'),
-      provider: { '@id': `${SITE_URL}/#person` },
-      serviceType: services.map((service) => service.name),
       hasOfferCatalog: {
         '@type': 'OfferCatalog',
         name: t(locale, 'page.services.title'),
@@ -51,7 +48,7 @@ export const getHomepageSchema = (locale: Locale) => {
             ]
               .filter(Boolean)
               .join(' '),
-            inLanguage: language,
+            provider: { '@id': `${SITE_URL}/#person` },
           },
         })),
       },
@@ -63,7 +60,6 @@ export const getHomepageSchema = (locale: Locale) => {
       '@id': `${pageUrl}#problems`,
       name: problems.title,
       description: problems.lead,
-      inLanguage: language,
       itemListOrder: 'https://schema.org/ItemListUnordered',
       numberOfItems: problems.items.length,
       itemListElement: problems.items.map((item, index) => ({

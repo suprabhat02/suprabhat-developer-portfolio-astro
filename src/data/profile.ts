@@ -150,6 +150,12 @@ export const getProfile = (locale: Locale): Profile => {
   };
 };
 
+// TODO(owner): Confirm other public aliases before adding them.
+export const profileAlternateNames = [
+  profile.name.split(' ')[0],
+  profile.nickname,
+].filter((name): name is string => Boolean(name));
+
 export const profileStack = ['React', 'Next.js', 'TypeScript'].flatMap((name) =>
   tools.filter((tool) => tool.name === name).map((tool) => tool.name),
 );

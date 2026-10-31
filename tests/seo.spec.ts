@@ -59,6 +59,105 @@ test('about identity facts and FAQ use published data in every locale', async ({
   }
 });
 
+test('entity graphs use supported types, unique definitions and visible identity facts', async ({
+  page,
+}) => {
+  const personId = 'https://suprabhat-dev.com/#person';
+  const supportedTypes = new Set([
+    'Person',
+    'Occupation',
+    'EducationalOrganization',
+    'Place',
+    'PostalAddress',
+    'Organization',
+    'ContactPoint',
+    'WebSite',
+    'WebPage',
+    'ProfilePage',
+    'ProfessionalService',
+    'OfferCatalog',
+    'Offer',
+    'Service',
+    'SoftwareSourceCode',
+    'ItemList',
+    'ListItem',
+    'BreadcrumbList',
+    'TechArticle',
+    'BlogPosting',
+  ]);
+  const collectNodes = (value: unknown): Record<string, unknown>[] => {
+    if (Array.isArray(value)) return value.flatMap(collectNodes);
+    if (!value || typeof value !== 'object') return [];
+    const node = value as Record<string, unknown>;
+    return [node, ...Object.values(node).flatMap(collectNodes)];
+  };
+
+  for (const locale of ['en', 'es', 'ar'] as const) {
+    const prefix = locale === 'en' ? '' : `/${locale}`;
+    for (const route of [
+      '/',
+      '/about/',
+      '/work/performance-modernization/',
+      '/blog/frontend-code-review-checklist/',
+    ]) {
+      await page.goto(`${prefix}${route}`);
+      const structuredData = await page
+        .locator('script[type="application/ld+json"]')
+        .textContent();
+      const nodes = collectNodes(JSON.parse(structuredData ?? '{}'));
+      const definitions = nodes.filter(
+        (node) => node['@id'] && Object.keys(node).length > 1,
+      );
+      const definedIds = definitions.map((node) => node['@id']);
+      expect(new Set(definedIds).size).toBe(definedIds.length);
+      const people = nodes.filter((node) => node['@type'] === 'Person');
+      expect(people).toHaveLength(1);
+      expect(people[0]).toMatchObject({
+        '@id': personId,
+        name: profile.name,
+        alternateName: ['Suprabhat', 'Shubh'],
+        jobTitle: getProfile(locale).title,
+        sameAs: profile.social.map((social) => social.href),
+      });
+      await expect(
+        page.getByText(getProfile(locale).title, { exact: false }).first(),
+      ).toBeVisible();
+      if (route === '/' || route === '/about/') {
+        expect(people[0]?.knowsAbout).toEqual(profileStack);
+        for (const technology of profileStack)
+          await expect(
+            page.locator('main').getByText(technology).first(),
+          ).toBeVisible();
+      } else {
+        expect(people[0]).not.toHaveProperty('knowsAbout');
+      }
+      for (const node of nodes) {
+        if (node['@id'] && Object.keys(node).length === 1)
+          expect(definedIds).toContain(node['@id']);
+        if (typeof node['@type'] !== 'string') continue;
+        expect(supportedTypes.has(node['@type'])).toBe(true);
+        if (
+          [
+            'ProfessionalService',
+            'Service',
+            'ItemList',
+            'BreadcrumbList',
+          ].includes(node['@type'])
+        )
+          expect(node).not.toHaveProperty('inLanguage');
+        if (node['@type'] === 'ProfessionalService') {
+          expect(node).not.toHaveProperty('provider');
+          expect(node).not.toHaveProperty('serviceType');
+        }
+        if (['author', 'publisher', 'maintainer'].some((key) => key in node)) {
+          for (const key of ['author', 'publisher', 'maintainer'])
+            if (key in node) expect(node[key]).toEqual({ '@id': personId });
+        }
+      }
+    }
+  }
+});
+
 test('section share images are distinct, compact and present in all locales', async ({
   page,
 }) => {
@@ -249,7 +348,6 @@ test('localized structured data uses page language and alternates', async ({
   });
   expect(findSchema(spanishServices, 'ProfessionalService')).toMatchObject({
     name: 'Suprabhat Kumar - Servicios de ingeniería frontend',
-    inLanguage: 'es',
     areaServed: 'Todo el mundo',
   });
   expect(JSON.stringify(spanishServices)).toContain(
@@ -592,18 +690,7 @@ test('Person schema includes public profiles and collaboration without changing 
         ),
       ).toHaveCount(1);
     }
-    expect(person?.knowsAbout, path).toEqual(
-      expect.arrayContaining([
-        'CSS3',
-        'Ant Design',
-        'Material UI',
-        'Zustand',
-        'Astro',
-        'shadcn/ui',
-        'Zod',
-        'GitHub Actions',
-      ]),
-    );
+    expect(person?.knowsAbout, path).toEqual(profileStack);
   }
 });
 

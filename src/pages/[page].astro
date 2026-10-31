@@ -25,7 +25,6 @@ const language = 'en';
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
-  inLanguage: language,
   itemListElement: [
     {
       '@type': 'ListItem',
@@ -65,8 +64,6 @@ const schema = [
           '@id': `${SITE_URL}/#service`,
           name: 'Suprabhat Kumar — Frontend Engineering Services',
           url: `${SITE_URL}/services/`,
-          inLanguage: language,
-          provider: { '@id': `${SITE_URL}/#person` },
           areaServed: 'Worldwide',
           hasOfferCatalog: {
             '@type': 'OfferCatalog',
@@ -86,7 +83,7 @@ const schema = [
                 ]
                   .filter(Boolean)
                   .join(' '),
-                inLanguage: language,
+                provider: { '@id': `${SITE_URL}/#person` },
               },
             })),
           },

@@ -35,7 +35,6 @@ const services = getServices(locale);
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
-  inLanguage: language,
   itemListElement: [
     {
       '@type': 'ListItem',
@@ -78,8 +77,6 @@ const schema = [
           '@id': `${SITE_URL}/#service`,
           name: t(locale, 'schema.serviceName'),
           url: `${SITE_URL}${localeRoot}services/`,
-          inLanguage: language,
-          provider: { '@id': `${SITE_URL}/#person` },
           areaServed: t(locale, 'schema.worldwide'),
           hasOfferCatalog: {
             '@type': 'OfferCatalog',
@@ -90,7 +87,7 @@ const schema = [
                 '@type': 'Service',
                 name: service.name,
                 description: service.description,
-                inLanguage: language,
+                provider: { '@id': `${SITE_URL}/#person` },
               },
             })),
           },
