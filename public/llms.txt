@@ -12,7 +12,7 @@ He helps product teams investigate frontend performance, review React and TypeSc
 - MobileCoderz — Frontend Developer, promoted to Senior Frontend Developer — February 2022 to November 2023
 - Swaragh Technologies — UI Developer — December 2019 to January 2022
 
-Suprabhat has delivered with distributed teams in Denmark, China, and Australia. Client-confidential work is described without private names, screenshots, data, or unverified outcomes.
+Based in India, Suprabhat has delivered with distributed teams in Denmark and China at Topsoe, Germany on the BMW project at Cognizant, and Australia and New Zealand at TrueBlue. These are collaboration locations, not personal office locations. Client-confidential work is described without private names, screenshots, data, or unverified outcomes.
 
 ## Open source
 
@@ -50,11 +50,12 @@ Suprabhat has delivered with distributed teams in Denmark, China, and Australia.
 
 ## Technologies
 
-- Frontend: React, Next.js, TypeScript, JavaScript, HTML5, CSS3, Tailwind CSS
-- State and data: Redux Toolkit, RTK Query, TanStack Query, GraphQL, REST APIs, openapi-fetch
-- Interface systems: AG Grid, Ant Design, Chakra UI, Storybook, design tokens
+- Frontend: React, Next.js, Astro, TypeScript, JavaScript, HTML5, jQuery
+- State, data and validation: Redux Toolkit, RTK Query, Zustand, TanStack Query, Zod, GraphQL, REST APIs, openapi-fetch
+- Styling and interface systems: CSS3, Sass, Tailwind CSS, shadcn/ui, AG Grid, Ant Design, Material UI, Chakra UI, design tokens
+- Design and documentation: Figma, Storybook
 - Backend and databases: Python, FastAPI, PostgreSQL, MongoDB
-- Delivery and quality: Azure DevOps, Vitest, Playwright, axe, Core Web Vitals, WCAG 2.2 AA
+- Delivery and quality: Git, GitHub Actions, Azure DevOps, Vitest, Playwright, axe, Core Web Vitals, WCAG 2.2 AA
 - Static web: Astro, localized routes, hreflang, structured data, sitemap and metadata systems
 
 ## Primary pages

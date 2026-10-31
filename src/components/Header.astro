@@ -321,7 +321,7 @@ const isActive = (item: (typeof headerNav)[number]) =>
   </div>
 </div>
 
-<script is:inline>
+<script>
   (() => {
     const closeAllDropdowns = () => {
       document.querySelectorAll('.hdr-dropdown').forEach((dropdown) => {
@@ -379,7 +379,9 @@ const isActive = (item: (typeof headerNav)[number]) =>
         const root = document.documentElement;
         const next = root.dataset.theme === 'light' ? 'dark' : 'light';
         root.dataset.theme = next;
-        const themeColor = document.querySelector('meta[name="theme-color"]');
+        const themeColor = document.querySelector<HTMLMetaElement>(
+          'meta[name="theme-color"]',
+        );
         const themeColorValue = themeColor?.dataset[next];
         if (themeColor && themeColorValue) themeColor.content = themeColorValue;
         syncThemeButtons();
@@ -425,7 +427,9 @@ const isActive = (item: (typeof headerNav)[number]) =>
         return;
       }
       const focusable = Array.from(
-        mobileMenu.querySelectorAll('a[href], button:not([disabled])'),
+        mobileMenu.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled])',
+        ),
       );
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
@@ -447,7 +451,7 @@ const isActive = (item: (typeof headerNav)[number]) =>
         .map((link) =>
           document.getElementById(link.getAttribute('data-section-link') || ''),
         )
-        .filter(Boolean);
+        .filter((section): section is HTMLElement => section !== null);
       if (!sectionLinks.length || !sections.length) return;
 
       const setActiveLink = (activeId = sections[0]?.id) => {
@@ -464,7 +468,7 @@ const isActive = (item: (typeof headerNav)[number]) =>
 
       if (!('IntersectionObserver' in window)) return;
 
-      const visibleSections = new Map();
+      const visibleSections = new Map<string, number>();
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
@@ -474,17 +478,20 @@ const isActive = (item: (typeof headerNav)[number]) =>
             );
           });
 
-          const activeSection = sections.reduce((current, section) => {
-            const sectionRatio = visibleSections.get(section.id) ?? 0;
-            const currentRatio = current
-              ? (visibleSections.get(current.id) ?? 0)
-              : -1;
+          const activeSection = sections.reduce<HTMLElement | null>(
+            (current, section) => {
+              const sectionRatio = visibleSections.get(section.id) ?? 0;
+              const currentRatio = current
+                ? (visibleSections.get(current.id) ?? 0)
+                : -1;
 
-            if (sectionRatio <= 0) return current;
-            if (sectionRatio > currentRatio) return section;
+              if (sectionRatio <= 0) return current;
+              if (sectionRatio > currentRatio) return section;
 
-            return current;
-          }, null);
+              return current;
+            },
+            null,
+          );
 
           if (activeSection) setActiveLink(activeSection.id);
         },

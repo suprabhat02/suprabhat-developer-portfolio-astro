@@ -169,9 +169,13 @@
  * The original animates `background-position`, which repaints every
  * frame. Here both layers tile seamlessly (every stripe period divides
  * its tile), the blended layer moves by exactly one shared tile width with
- * `transform`, and the blur, skew and mask stay static.
+ * `transform`, and the blur and mask stay static. Each layer carries the
+ * skew itself: skewing the blurred, masked container delayed first paint by
+ * up to two seconds in Lighthouse. Layers share the container's height, so
+ * the skew origin and the result are unchanged.
  */
 .fx-aurora-bg {
+  --au-skew: -10deg;
   --au-stripe: var(--bg);
   --au-stripes: repeating-linear-gradient(
     90deg,
@@ -192,11 +196,11 @@
   );
   position: absolute;
   inset: -2rem -12rem;
+  max-block-size: 64rem;
   overflow: hidden;
   overflow: clip;
   opacity: var(--au-opacity, 0.62);
   filter: blur(12px);
-  transform: skewX(-10deg);
   mask-image: radial-gradient(
     ellipse 95% 110% at 100% 0%,
     #000 18%,
@@ -205,7 +209,7 @@
 }
 
 [dir='rtl'] .fx-aurora-bg {
-  transform: skewX(10deg);
+  --au-skew: 10deg;
   mask-image: radial-gradient(
     ellipse 95% 110% at 0% 0%,
     #000 18%,
@@ -219,7 +223,7 @@
   [dir='rtl'] .fx-aurora-bg {
     opacity: calc(var(--au-opacity, 0.62) * 0.75);
     mask-image: radial-gradient(
-      ellipse 120% 38% at 50% 0%,
+      ellipse 120% 48rem at 50% 0%,
       #000 10%,
       transparent 80%
     );
@@ -232,6 +236,7 @@
   left: 0;
   background-image: var(--au-stripes), var(--au-colors);
   background-repeat: repeat-x;
+  transform: skewX(var(--au-skew));
 }
 
 .fx-aurora-base {
@@ -247,8 +252,28 @@
     600px 100%,
     450px 100%;
   mix-blend-mode: difference;
-  will-change: transform;
-  animation: fx-aurora-flow 70s linear infinite;
+}
+
+/* Attached on first engagement (motion.ts sets data-engaged): even paused,
+   the animation promotes this ~3,000px blended layer, which delayed first
+   paint. The first keyframe equals the static skew, so it starts seamlessly
+   and later pauses in place rather than snapping back. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero[data-engaged] .fx-aurora-flow {
+    animation: fx-aurora-flow 70s linear infinite;
+    animation-play-state: paused;
+  }
+
+  .hero[data-engaged]:is(:focus-within, [data-active]) .fx-aurora-flow {
+    animation-play-state: running;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .hero[data-engaged]:has(.hero-content:hover, .hero-portrait-wrap:hover)
+    .fx-aurora-flow {
+    animation-play-state: running;
+  }
 }
 
 [data-theme='light'] .fx-aurora-bg {
@@ -261,8 +286,11 @@
 }
 
 @keyframes fx-aurora-flow {
+  from {
+    transform: skewX(var(--au-skew));
+  }
   to {
-    transform: translate3d(-1800px, 0, 0);
+    transform: skewX(var(--au-skew)) translate3d(-1800px, 0, 0);
   }
 }
 
@@ -308,7 +336,7 @@
 
 /* ── Card spotlight border (Aceternity "Card Spotlight") ──────────────────── */
 /* `--mx/--my` are written by src/scripts/motion.ts on fine pointers. Cards
-   stay calm: one pointer-lit hairline, no interior wash and no tilt. */
+  use one pointer-lit hairline without an interior wash. */
 
 .fx-glow {
   position: relative;
@@ -416,13 +444,18 @@
 /* ── Flip words (Aceternity "Flip Words") ───────────────────────────── */
 /* A clipped slot column. Hidden words are clipped, never transparent. */
 
+.fx-flip-wrap {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
 .fx-flip {
-  --flip-line: 1.3em;
-  display: inline-block;
+  --flip-line: 1.5em;
+  display: block;
   height: var(--flip-line);
   overflow: hidden;
   overflow: clip;
-  vertical-align: bottom;
 }
 
 .fx-flip-track {
@@ -431,6 +464,8 @@
 }
 
 .fx-flip-track > span {
+  display: flex;
+  align-items: center;
   height: var(--flip-line);
   line-height: var(--flip-line);
   white-space: nowrap;

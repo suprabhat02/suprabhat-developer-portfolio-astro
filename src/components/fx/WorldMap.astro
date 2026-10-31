@@ -1,0 +1,367 @@
+---
+import { Buffer } from 'node:buffer';
+import { Picture } from 'astro:assets';
+import avatarImage from '../../../public/assets/images/suprabhat.webp';
+import { GLOBE_GRID, GLOBE_LAND_MASK } from '../../data/globeLand';
+import { getProfile } from '../../data/profile';
+import type { Locale } from '../../i18n/config';
+import { t } from '../../i18n/messages';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const profile = getProfile(locale);
+const project = (latitude: number, longitude: number) => ({
+  x: ((longitude + 180) * 800) / 360,
+  y: ((90 - latitude) * 400) / 180,
+});
+const mask = Buffer.from(GLOBE_LAND_MASK, 'base64');
+const land: string[] = [];
+// Integer tenths keep relative moves exact, so every dot stays where the
+// absolute 0.1-precision coordinates put it.
+const tenths = (value: number) => Math.round(value * 10);
+const decimal = (value: number) => String(value / 10);
+let previous: { x: number; y: number } | null = null;
+for (let row = 0; row < GLOBE_GRID.rows; row += 2) {
+  const latitude = 90 - (row + 0.5) * GLOBE_GRID.step;
+  if (latitude < -56) continue;
+  for (let column = 0; column < GLOBE_GRID.cols; column += 2) {
+    const cell = row * GLOBE_GRID.cols + column;
+    if (!((mask[cell >> 3] ?? 0) & (1 << (cell & 7)))) continue;
+    const longitude = -180 + (column + 0.5) * GLOBE_GRID.step;
+    const projected = project(latitude, longitude);
+    const point = { x: tenths(projected.x), y: tenths(projected.y) };
+    land.push(
+      previous
+        ? `m${decimal(point.x - previous.x)} ${decimal(point.y - previous.y)}h0`
+        : `M${decimal(point.x)} ${decimal(point.y)}h0`,
+    );
+    previous = point;
+  }
+}
+
+const home = { ...project(28.6, 77.4), label: t(locale, 'globe.home') };
+const destinations = [
+  { ...project(56, 10), label: t(locale, 'worldMap.denmark') },
+  { ...project(35, 104), label: t(locale, 'worldMap.china') },
+  { ...project(51, 10), label: t(locale, 'worldMap.germany') },
+  { ...project(-25, 134), label: t(locale, 'worldMap.australia') },
+  { ...project(-41, 174), label: t(locale, 'worldMap.newZealand') },
+];
+const curves = destinations.map((point) => {
+  const start = { x: +home.x.toFixed(1), y: +home.y.toFixed(1) };
+  const control = {
+    x: +((home.x + point.x) / 2).toFixed(1),
+    y: +(Math.min(home.y, point.y) - 48).toFixed(1),
+  };
+  const end = { x: +point.x.toFixed(1), y: +point.y.toFixed(1) };
+  return { start, control, end };
+});
+const routes = curves.map(
+  ({ start, control, end }) =>
+    `M${start.x} ${start.y} Q${control.x} ${control.y} ${end.x} ${end.y}`,
+);
+
+// Packets move with a composited transform instead of `offset-distance`.
+// Stops sit at equal arc length (as offset-distance does), every 5%.
+const PACKET_STOPS = 20;
+const packetStyles = curves.map(({ start, control, end }, index) => {
+  const at = (t: number) => ({
+    x: (1 - t) ** 2 * start.x + 2 * (1 - t) * t * control.x + t ** 2 * end.x,
+    y: (1 - t) ** 2 * start.y + 2 * (1 - t) * t * control.y + t ** 2 * end.y,
+  });
+  const samples = 2000;
+  const lengths = [0];
+  let last = at(0);
+  for (let step = 1; step <= samples; step += 1) {
+    const next = at(step / samples);
+    lengths.push(
+      lengths[step - 1]! + Math.hypot(next.x - last.x, next.y - last.y),
+    );
+    last = next;
+  }
+  const total = lengths[samples]!;
+  const stops = Array.from({ length: PACKET_STOPS + 1 }, (_, stop) => {
+    const target = (total * stop) / PACKET_STOPS;
+    const step = lengths.findIndex((length) => length >= target);
+    const before = Math.max(step - 1, 0);
+    const span = lengths[step]! - lengths[before]!;
+    const t =
+      (before + (span ? (target - lengths[before]!) / span : 0)) / samples;
+    const point = at(t);
+    return `--p${stop}:${point.x.toFixed(2)}px,${point.y.toFixed(2)}px`;
+  });
+  return `${stops.join(';')};--route-delay:${index * -3.5}s`;
+});
+---
+
+<figure class="world-map" data-motion-scope>
+  <svg
+    class="world-map-canvas"
+    viewBox="0 15 800 330"
+    width="800"
+    height="330"
+    role="img"
+    aria-label={t(locale, 'worldMap.label')}
+    data-land-points={land.length}
+  >
+    <path class="world-map-land" d={land.join('')}></path>
+    {
+      routes.map((route, index) => (
+        <g>
+          <path class="world-map-route" d={route} />
+          <circle
+            class="world-map-packet"
+            r="2.5"
+            style={packetStyles[index]}
+          />
+        </g>
+      ))
+    }
+    {
+      [home, ...destinations].map((point) => (
+        <g>
+          <circle class="world-map-halo" cx={point.x} cy={point.y} r="7" />
+          <circle class="world-map-pin" cx={point.x} cy={point.y} r="3" />
+        </g>
+      ))
+    }
+  </svg>
+  <figcaption class="world-map-caption">
+    <div class="world-map-person">
+      <Picture
+        src={avatarImage}
+        formats={['avif', 'webp']}
+        fallbackFormat="webp"
+        widths={[52, 104]}
+        sizes="52px"
+        width={52}
+        height={52}
+        alt=""
+        loading="lazy"
+        decoding="async"
+      />
+      <div>
+        <strong>{profile.name}</strong>
+        <span>{profile.eyebrow.from}</span>
+      </div>
+    </div>
+    <ul class="world-map-locations" role="list">
+      {[home, ...destinations].map((point) => <li>{point.label}</li>)}
+    </ul>
+  </figcaption>
+</figure>
+
+<style>
+  .world-map {
+    min-width: 0;
+    margin: 0;
+  }
+
+  .world-map-canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 80 / 33;
+    overflow: visible;
+    direction: ltr;
+  }
+
+  .world-map-land {
+    fill: none;
+    stroke: color-mix(in oklch, var(--text) 28%, transparent);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+  }
+
+  .world-map-route {
+    fill: none;
+    stroke: var(--accent-fill);
+    stroke-width: 1.2;
+    stroke-opacity: 0.65;
+  }
+
+  .world-map-pin,
+  .world-map-packet {
+    fill: var(--accent-fill);
+  }
+
+  .world-map-packet {
+    transform: translate(var(--p0));
+  }
+
+  .world-map-halo {
+    fill: var(--accent-subtle);
+    stroke: var(--accent-fill);
+    stroke-width: 0.7;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .world-map-caption {
+    display: grid;
+    gap: 1.5rem;
+    margin-block-start: 1.25rem;
+    padding-block-start: 1.5rem;
+    border-block-start: 1px solid var(--border);
+  }
+
+  .world-map-person {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .world-map-person :global(picture) {
+    display: block;
+    flex: none;
+  }
+
+  .world-map-person :global(img) {
+    display: block;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .world-map-person strong,
+  .world-map-person span {
+    display: block;
+  }
+
+  .world-map-person strong {
+    color: var(--text);
+    font-size: 1rem;
+    font-weight: 650;
+  }
+
+  .world-map-person span {
+    margin-block-start: 0.25rem;
+    color: var(--text-2);
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
+
+  .world-map-locations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--text-2);
+    font-size: 0.8rem;
+  }
+
+  .world-map-locations li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .world-map-locations li::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent-fill);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .world-map-packet {
+      animation: world-map-travel 7s linear infinite;
+      animation-delay: var(--route-delay);
+    }
+
+    .world-map-halo {
+      animation: world-map-pulse 4s ease-out infinite;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .world-map-packet {
+      display: none;
+    }
+  }
+
+  @keyframes world-map-travel {
+    0% {
+      transform: translate(var(--p0));
+    }
+    5% {
+      transform: translate(var(--p1));
+    }
+    10% {
+      transform: translate(var(--p2));
+    }
+    15% {
+      transform: translate(var(--p3));
+    }
+    20% {
+      transform: translate(var(--p4));
+    }
+    25% {
+      transform: translate(var(--p5));
+    }
+    30% {
+      transform: translate(var(--p6));
+    }
+    35% {
+      transform: translate(var(--p7));
+    }
+    40% {
+      transform: translate(var(--p8));
+    }
+    45% {
+      transform: translate(var(--p9));
+    }
+    50% {
+      transform: translate(var(--p10));
+    }
+    55% {
+      transform: translate(var(--p11));
+    }
+    60% {
+      transform: translate(var(--p12));
+    }
+    65% {
+      transform: translate(var(--p13));
+    }
+    70% {
+      transform: translate(var(--p14));
+    }
+    75% {
+      transform: translate(var(--p15));
+    }
+    80% {
+      transform: translate(var(--p16));
+    }
+    85% {
+      transform: translate(var(--p17));
+    }
+    90% {
+      transform: translate(var(--p18));
+    }
+    95% {
+      transform: translate(var(--p19));
+    }
+    100% {
+      transform: translate(var(--p20));
+    }
+  }
+
+  @keyframes world-map-pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.8;
+    }
+    70% {
+      transform: scale(1.8);
+      opacity: 0;
+    }
+  }
+</style>

@@ -80,6 +80,7 @@ export const experience: readonly Position[] = [
       'Developed new features for the BMW Group internal analytics dashboard using React.js, TypeScript, AG Grid, and Ant Design.',
       'Built data-dense AG Grid views for large enterprise datasets and integrated GraphQL and REST APIs over MongoDB, handling asynchronous, loading, and error states.',
       'Ensured cross-browser and cross-device compatibility; participated in Agile sprints and peer code reviews.',
+      'Collaborated with teams in Germany on the BMW project at Cognizant.',
     ],
   },
   {
@@ -94,6 +95,7 @@ export const experience: readonly Position[] = [
       'Improved application delivery with code splitting, lazy loading, and clearer state management.',
       'Integrated REST APIs and implemented responsive, cross-browser interfaces.',
       'Applied WCAG accessibility practices to production web workflows.',
+      'Collaborated with offshore colleagues in Australia and New Zealand at TrueBlue.',
     ],
   },
   {
@@ -164,6 +166,7 @@ const localizedExperience: Partial<
         'Desarrollé nuevas funcionalidades para el panel interno de analítica de BMW Group con React.js, TypeScript, AG Grid y Ant Design.',
         'Construí vistas AG Grid con alta densidad de datos para grandes conjuntos empresariales e integré API GraphQL y REST sobre MongoDB, gestionando estados asíncronos, de carga y de error.',
         'Aseguré compatibilidad entre navegadores y dispositivos; participé en sprints Agile y revisiones de código entre pares.',
+        'Colaboré con equipos en Alemania en el proyecto de BMW en Cognizant.',
       ],
     },
     trueblue: {
@@ -175,6 +178,7 @@ const localizedExperience: Partial<
       bullets: [
         'Implementé actualizaciones de UI adaptables para experiencias web.',
         'Integré componentes y aseguré un comportamiento de UI coherente.',
+        'Colaboré con colegas en Australia y Nueva Zelanda en TrueBlue.',
       ],
     },
     mobilecoderz: {
@@ -236,6 +240,7 @@ const localizedExperience: Partial<
         'طورت ميزات جديدة للوحة التحليلات الداخلية الخاصة بـ BMW Group باستخدام React.js وTypeScript وAG Grid وAnt Design.',
         'أنشأت عروض AG Grid كثيفة البيانات لمجموعات بيانات مؤسسية كبيرة ودمجت واجهات GraphQL وREST مع MongoDB، مع معالجة الحالات غير المتزامنة والتحميل والأخطاء.',
         'ضمنت التوافق بين المتصفحات والأجهزة وشاركت في دورات Agile ومراجعات الشيفرة مع الزملاء.',
+        'تعاونت مع فرق في ألمانيا في مشروع BMW لدى Cognizant.',
       ],
     },
     trueblue: {
@@ -247,6 +252,7 @@ const localizedExperience: Partial<
       bullets: [
         'نفذت تحديثات واجهة متجاوبة لتجارب الويب.',
         'دمجت المكونات وضمنت سلوكًا متسقًا للواجهة.',
+        'تعاونت مع زملاء في أستراليا ونيوزيلندا لدى TrueBlue.',
       ],
     },
     mobilecoderz: {

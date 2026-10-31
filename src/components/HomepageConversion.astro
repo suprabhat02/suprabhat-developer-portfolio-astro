@@ -8,6 +8,7 @@ import Meteors from './fx/Meteors.astro';
 import SectionHeader from './fx/SectionHeader.astro';
 import Icon, { type IconName } from './fx/Icon.astro';
 import LiveScene from './fx/LiveScene.astro';
+import WorldMap from './fx/WorldMap.astro';
 import OpenSourceSpotlight from './OpenSourceSpotlight.astro';
 import { isOpenSourceProjectId } from '../data/openSource';
 
@@ -50,11 +51,6 @@ const visualFor = (index: number): ProblemVisual =>
   cycle(problemVisuals, index);
 /** Icons follow item order, which is identical in every locale. */
 const approachIcons: NonEmpty<IconName> = ['search', 'layers', 'badge-check'];
-const collaborationIcons: NonEmpty<IconName> = [
-  'message',
-  'flag',
-  'git-pull-request',
-];
 const pad = (value: number) => String(value).padStart(2, '0');
 ---
 
@@ -291,6 +287,7 @@ const pad = (value: number) => String(value).padStart(2, '0');
   class="section section-alt conversion-section"
   aria-labelledby="approach-title"
 >
+  <Backdrop pattern="dots" />
   <div class="wrap">
     <SectionHeader
       index="04"
@@ -335,21 +332,27 @@ const pad = (value: number) => String(value).padStart(2, '0');
       titleId="collaboration-title"
       lead={content.collaboration.lead}
     />
-    <div class="conversion-grid conversion-grid--three">
+    <div class="collaboration-layout">
+      <WorldMap {locale} />
       {
         content.collaboration.items.map((item, index) => (
           <article
-            class="conversion-card conversion-card--compact collab-card fx-live fx-glow fx-card-gradient fx-reveal"
+            class:list={[
+              'collaboration-note fx-live fx-glow fx-card-gradient',
+              {
+                'collaboration-note--lead': index === 0,
+                'collaboration-note--wide': index === 2,
+              },
+            ]}
             data-glow
           >
             <LiveScene scene={item.visual} />
-            <div class="collab-head">
-              <span class="collab-icon">
-                <Icon name={cycle(collaborationIcons, index)} size={20} />
-              </span>
-              <h3>{item.title}</h3>
+            <div class="collaboration-note-copy">
+              <div class="collab-head">
+                <h3>{item.title}</h3>
+              </div>
+              <p>{item.body}</p>
             </div>
-            <p>{item.body}</p>
           </article>
         ))
       }

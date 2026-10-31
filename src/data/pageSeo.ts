@@ -30,7 +30,7 @@ const englishMeta: Record<SectionPage, { title: string; description: string }> =
     skills: {
       title: 'Frontend Engineering Skills | Suprabhat Kumar',
       description:
-        'React, Next.js, TypeScript, HTML5, Bootstrap 5, TanStack Query, GraphQL, MongoDB, design systems and data UI expertise.',
+        'Frontend skills in React, TypeScript, Astro, shadcn/ui and Zod, spanning accessible UI systems, data validation and delivery with GitHub Actions.',
     },
     experience: {
       title: 'Frontend Engineering Experience | Suprabhat Kumar',
@@ -40,7 +40,7 @@ const englishMeta: Record<SectionPage, { title: string; description: string }> =
     tools: {
       title: 'Frontend Tools and Stack | Suprabhat Kumar',
       description:
-        'The tools used to design, build and maintain production frontend systems, including HTML5, TanStack Query, GraphQL, Bootstrap 5 and MongoDB.',
+        'Explore Suprabhat Kumar’s frontend stack: Astro, shadcn/ui, Zod and GitHub Actions, grouped by frameworks, UI systems, data, design and delivery.',
     },
     work: {
       title: 'React Frontend Engineering Case Studies | Suprabhat Kumar',
@@ -121,11 +121,11 @@ const localizedDescriptions: Record<
     about:
       'Perfil de Suprabhat Kumar, ingeniero frontend sénior especializado en interfaces SaaS rápidas, accesibles y mantenibles.',
     skills:
-      'Competencias de ingeniería frontend de Suprabhat Kumar: React, Next.js, TypeScript, TanStack Query, GraphQL, MongoDB, sistemas de diseño y accesibilidad.',
+      'Competencias frontend de Suprabhat Kumar: React, TypeScript, Astro, shadcn/ui y Zod para interfaces accesibles y entrega con GitHub Actions.',
     experience:
       'Seis años de ingeniería frontend en Topsoe, Cognizant, TrueBlue, MobileCoderz y Swaragh Technologies, con productos SaaS e interfaces empresariales.',
     tools:
-      'Herramientas y tecnologías que utiliza Suprabhat Kumar para crear productos frontend rápidos y escalables, como TanStack Query, GraphQL y MongoDB.',
+      'Explora las herramientas frontend de Suprabhat Kumar: Astro, shadcn/ui, Zod y GitHub Actions, organizadas por interfaces, datos, diseño y entrega.',
     work: 'Casos de estudio de Suprabhat Kumar sobre paneles SaaS, sistemas de diseño, rendimiento en React y accesibilidad.',
     recommendations:
       'Recomendaciones para Suprabhat Kumar de colegas de ingeniería de IA, control de calidad, plataforma, investigación UX, SEO y asuntos regulatorios.',
@@ -144,11 +144,11 @@ const localizedDescriptions: Record<
     about:
       'تعرّف على مسيرة سوبرابهات كومار الممتدة ست سنوات في الواجهات الأمامية: بوابات SaaS ولوحات تحكم مؤسسية ومعمارية React وإمكانية الوصول والعمل مع فرق عالمية.',
     skills:
-      'مهارات سوبرابهات كومار في هندسة الواجهات الأمامية: React وNext.js وTypeScript وTanStack Query وGraphQL وMongoDB وأنظمة التصميم وإمكانية الوصول.',
+      'مهارات سوبرابهات كومار في هندسة الواجهات الأمامية: React وTypeScript وAstro وshadcn/ui وZod لبناء واجهات متاحة والتسليم باستخدام GitHub Actions.',
     experience:
       'ست سنوات من خبرة سوبرابهات كومار في هندسة الواجهات الأمامية لدى Topsoe وCognizant وTrueBlue وMobileCoderz وSwaragh Technologies في منتجات SaaS.',
     tools:
-      'الأدوات والتقنيات التي يستخدمها سوبرابهات كومار لإنشاء منتجات واجهات أمامية سريعة وقابلة للتوسع، بما في ذلك TanStack Query وGraphQL وMongoDB.',
+      'استكشف أدوات سوبرابهات كومار: Astro وshadcn/ui وZod وGitHub Actions، مصنفة حسب أطر العمل وأنظمة الواجهات والبيانات والتصميم والتسليم.',
     work: 'دراسات حالة في الواجهات الأمامية حول لوحات بيانات SaaS وأنظمة التصميم وأداء React وإمكانية الوصول وSEO في Astro والتوطين واختبارات المتصفح.',
     recommendations:
       'توصيات لسوبرابهات كومار من زملاء في هندسة الذكاء الاصطناعي وضمان الجودة والمنصات وأبحاث تجربة المستخدم وSEO والشؤون التنظيمية.',

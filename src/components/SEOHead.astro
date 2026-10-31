@@ -54,7 +54,10 @@ const schemaJson = schema && JSON.stringify(schema).replaceAll('<', '\\u003c');
 <title>{title}</title>
 <meta name="description" content={description} />
 <meta name="author" content="Suprabhat Kumar" />
-<meta name="robots" content={noindex ? 'noindex,follow' : 'index,follow'} />
+<meta
+  name="robots"
+  content={noindex ? 'noindex,follow' : 'index,follow,max-image-preview:large'}
+/>
 {!hideCanonical && <link rel="canonical" href={canonical} />}
 <meta property="og:type" content={ogType} />
 <meta property="og:site_name" content="Suprabhat Kumar" />

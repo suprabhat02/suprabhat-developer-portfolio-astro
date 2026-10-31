@@ -13,7 +13,7 @@ test('locale fallback and contact state are explicit', async ({ page }) => {
   await expect(page.locator('.brand')).toHaveAttribute('href', '/ar/');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
     'content',
-    'index,follow',
+    'index,follow,max-image-preview:large',
   );
 
   await page.goto('/es/');
@@ -48,7 +48,7 @@ test('locale fallback and contact state are explicit', async ({ page }) => {
   await page.goto('/recommendations/');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
     'content',
-    'index,follow',
+    'index,follow,max-image-preview:large',
   );
   await expect(page.locator('blockquote')).toHaveCount(6);
   await expect(page.locator('main')).toContainText('Sonu Gagan Karn');
@@ -333,8 +333,8 @@ test('tools page groups every tool exactly once in every locale', async ({
     await page.goto(`${prefix}/tools/`);
     await expect(page.locator('main h1')).toHaveCount(1);
     await expect(page.locator('main .lead')).toHaveText(/\S{20,}|\S+ \S+/);
-    await expect(page.locator('.tool-group h2')).toHaveCount(5);
-    await expect(page.locator('.tool-practice')).toHaveCount(5);
+    await expect(page.locator('.tool-group h2')).toHaveCount(6);
+    await expect(page.locator('.tool-practice')).toHaveCount(6);
     if (prefix === '') {
       const words = await page
         .locator('main')
@@ -347,15 +347,27 @@ test('tools page groups every tool exactly once in every locale', async ({
       expect(words).toBeGreaterThanOrEqual(250);
     }
     const names = await page.locator('.tool-grid li span').allTextContents();
-    expect(names, prefix || '/en').toHaveLength(20);
-    expect(new Set(names).size, prefix || '/en').toBe(20);
+    expect(names, prefix || '/en').toHaveLength(28);
+    expect(new Set(names).size, prefix || '/en').toBe(28);
+    expect(names, prefix || '/en').toEqual(
+      expect.arrayContaining([
+        'CSS3',
+        'Ant Design',
+        'Material UI',
+        'Zustand',
+        'Astro',
+        'shadcn/ui',
+        'Zod',
+        'GitHub Actions',
+      ]),
+    );
     await expect(page.locator('.tool-closing a')).toHaveAttribute(
       'href',
       `${prefix}/work/`,
     );
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
       'content',
-      'index,follow',
+      'index,follow,max-image-preview:large',
     );
   }
 });

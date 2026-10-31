@@ -118,6 +118,10 @@ test('homepage renders correct structure and passes accessibility', async ({
     'HTML5',
     'GraphQL',
     'MongoDB',
+    'CSS3',
+    'Ant Design',
+    'Material UI',
+    'Zustand',
   ]) {
     await expect(
       page.locator('#tools .tm-grid > .tm-item .tm-chip', {
@@ -125,9 +129,11 @@ test('homepage renders correct structure and passes accessibility', async ({
       }),
     ).toHaveCount(1);
   }
-  await expect(page.locator('#skills img')).toHaveCount(0);
+  expect(await page.locator('#skills img').count()).toBeGreaterThan(0);
+  await expect(page.locator('#skills img:not([alt=""])')).toHaveCount(0);
   for (const skill of [
-    'HTML5 + CSS3 + Sass',
+    'HTML5',
+    'CSS3 + Sass',
     'TanStack Query',
     'GraphQL',
     'Bootstrap 5',
@@ -165,7 +171,8 @@ test('homepage renders correct structure and passes accessibility', async ({
     .evaluateAll((images) =>
       images.map((image) => (image as HTMLImageElement).src),
     );
-  await expect(page.locator('#tools .tm-item')).toHaveCount(20);
+  await expect(page.locator('#tools .tm-item')).toHaveCount(28);
+  await expect(page.locator('#tools .tm-group')).toHaveCount(6);
   await expect(page.locator('#tools .tm-track')).toHaveCount(0);
   for (const iconUrl of technologyIconUrls) {
     expect((await page.request.get(iconUrl)).status()).toBe(200);
@@ -304,7 +311,7 @@ test('accessibility statement is complete, dated and axe-clean in every locale',
     }
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
       'content',
-      'index,follow',
+      'index,follow,max-image-preview:large',
     );
     const description = await page
       .locator('meta[name="description"]')

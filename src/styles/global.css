@@ -123,7 +123,6 @@ textarea {
     0 0 0 1px color-mix(in oklch, var(--accent) 6%, transparent);
   -webkit-backdrop-filter: blur(28px) saturate(1.8) brightness(0.95);
   backdrop-filter: blur(28px) saturate(1.8) brightness(0.95);
-  animation: header-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
   transition:
     background 180ms ease,
     border-color 180ms ease,
@@ -1030,23 +1029,47 @@ main {
 [data-theme='dark'] .tool-grid img.invert {
   filter: invert(1);
 }
+.tool-groups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem;
+}
 .tool-group {
-  margin-top: 3rem;
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 4;
+  gap: 0.75rem;
+  padding-block-start: 1.5rem;
+  border-block-start: 1px solid var(--line);
 }
 .tool-group h2 {
-  margin-bottom: 0.5rem;
-  font-size: clamp(1.35rem, 3vw, 1.75rem);
-  line-height: 1.2;
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.5;
 }
 .tool-group p {
+  margin: 0;
   max-width: 68ch;
   color: var(--muted);
 }
 .tool-group .tool-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
   margin-block: 1.25rem 0;
 }
 .tool-closing {
+  grid-column: 1 / -1;
   margin-top: 3rem;
+}
+@media (max-width: 1000px) {
+  .tool-groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .tool-groups {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 .accessibility-reviewed {
   margin-top: 2.5rem;
@@ -2334,6 +2357,7 @@ main {
 }
 
 .xp-dot {
+  position: relative;
   width: 14px;
   height: 14px;
   border: 2px solid var(--accent-border);
@@ -2342,12 +2366,21 @@ main {
   box-shadow: 0 0 0 6px var(--bg);
 }
 
-.xp-item--current .xp-dot {
-  border-color: var(--accent);
+/* The lit state, cross-faded with opacity so scrolling stays composited. */
+.xp-dot::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
   background: var(--accent);
   box-shadow:
     0 0 0 6px var(--bg),
     0 0 22px 4px var(--accent-glow);
+  opacity: 0;
+}
+
+.xp-item--current .xp-dot::after {
+  opacity: 1;
 }
 
 .xp-sticky {
@@ -2406,6 +2439,16 @@ main {
   text-wrap: balance;
 }
 
+.xp-card--progression .xp-card-head {
+  gap: 0.85rem;
+  padding-block-end: 1.75rem;
+  border-block-end: 1px solid var(--border);
+}
+
+.xp-card--progression .xp-title {
+  font-size: 1.65rem;
+}
+
 /* Location, mode and tenure read as one quiet line, not a row of pills. */
 .xp-chips {
   display: flex;
@@ -2456,7 +2499,7 @@ main {
 /* Promotions: one ladder, newest first. Each role is a step on a single
    rail; the newest step is lit and the rail fades toward the first role. */
 .xp-roles {
-  --xp-step-gap: 2rem;
+  --xp-step-gap: 2.25rem;
   --xp-node: 0.72rem;
   --xp-node-y: 0.42rem;
   display: grid;
@@ -2470,7 +2513,18 @@ main {
 .xp-role {
   position: relative;
   display: grid;
-  gap: 0.9rem;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+  align-items: start;
+  gap: 1.75rem;
+}
+
+.xp-role + .xp-role {
+  padding-block-start: 1.75rem;
+  border-block-start: 1px solid var(--border);
+}
+
+.xp-role + .xp-role::before {
+  margin-block-start: 1.75rem;
 }
 
 .xp-role::before {
@@ -2497,7 +2551,7 @@ main {
   position: absolute;
   inset-inline-start: calc(-2rem + 1px + var(--xp-node) / 2 - 1px);
   top: calc(var(--xp-node-y) + var(--xp-node));
-  bottom: calc(-1 * var(--xp-step-gap) - var(--xp-node-y));
+  bottom: calc(-1 * var(--xp-step-gap) - var(--xp-node-y) - 1.75rem);
   width: 2px;
   border-radius: var(--radius-pill);
   background: linear-gradient(
@@ -2507,23 +2561,21 @@ main {
 }
 
 .xp-role-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.35rem 0.85rem;
+  display: grid;
+  justify-items: start;
+  gap: 0.65rem;
 }
 
 .xp-card .xp-role-title {
   margin: 0;
   color: var(--text);
-  font-size: 1.05rem;
+  font-size: 1.2rem;
   line-height: 1.35;
 }
 
 .xp-role-dates {
-  margin-inline-start: auto;
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+  line-height: 1.7;
 }
 
 .promo-badge {
@@ -2533,12 +2585,19 @@ main {
   color: var(--accent);
   font-size: 0.7rem;
   font-weight: 750;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
 .promo-badge svg {
   flex: none;
+}
+
+@media (max-width: 1100px) {
+  .xp-role {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.1rem;
+  }
 }
 
 @media (max-width: 560px) {
@@ -2588,7 +2647,7 @@ main {
 
     /* Longhands only: see the scroll-linked note in motion.css. */
     .xp-rail-fill,
-    .xp-dot,
+    .xp-dot::after,
     .xp-card {
       animation-timing-function: linear;
       animation-fill-mode: both;
@@ -2606,7 +2665,7 @@ main {
       view-timeline-inset: 50%;
     }
 
-    .xp-dot {
+    .xp-dot::after {
       animation-name: xp-dot-on;
       animation-timeline: --xp-item;
       animation-range: cover 0% cover 2%;
@@ -2631,11 +2690,7 @@ main {
 
 @keyframes xp-dot-on {
   to {
-    border-color: var(--accent);
-    background: var(--accent);
-    box-shadow:
-      0 0 0 6px var(--bg),
-      0 0 22px 4px var(--accent-glow);
+    opacity: 1;
   }
 }
 
@@ -2748,22 +2803,19 @@ main {
   opacity: 0.25;
 }
 
-/* Frame card: a quiet hairline with neutral viewfinder corners that close
-   into a full frame on engagement, plus an optional grid-pattern fill. The
+/* Frame card: fixed corners that turn accent on
+  engagement, plus an optional grid-pattern fill. The
    corners are a real rounded border revealed by a corner mask, so they follow
    the card's radius exactly. The doubled class outranks `.grid article`. */
-@property --frame-len {
-  syntax: '<length-percentage>';
-  inherits: false;
-  initial-value: 18px;
-}
-
 .fx-card-gradient.fx-card-gradient {
+  --frame-len: 18px;
   --gc-fill: var(--surface-strong);
   --gc-pattern: none;
-  --gc-edge: color-mix(in oklch, var(--text) 10%, transparent);
   position: relative;
   border: var(--card-border-width) solid transparent;
+  box-shadow:
+    0 3px 5px -3px color-mix(in oklch, var(--shadow-ink) 32%, transparent),
+    0 18px 35px -22px color-mix(in oklch, var(--shadow-ink) 48%, transparent);
   background:
     var(--gc-pattern) padding-box,
     linear-gradient(
@@ -2772,8 +2824,11 @@ main {
         transparent 45%
       )
       padding-box,
-    linear-gradient(var(--gc-fill), var(--gc-fill)) padding-box,
-    linear-gradient(var(--gc-edge), var(--gc-edge)) border-box;
+    linear-gradient(var(--gc-fill), var(--gc-fill)) padding-box;
+}
+
+.fx-card-gradient.fx-card-gradient:is(:hover, :focus-within, [data-active]) {
+  border-color: transparent;
 }
 
 .fx-card-gradient.fx-card-gradient::before {
@@ -2793,20 +2848,19 @@ main {
       no-repeat,
     linear-gradient(#000 0 0) right bottom / var(--frame-len) var(--frame-len)
       no-repeat;
-  transition: --frame-len 560ms cubic-bezier(0.65, 0, 0.35, 1);
+  transition: border-color 220ms ease;
 }
 
 .fx-card-gradient.fx-card-gradient:is(:focus-within, [data-active])::before {
-  --frame-len: calc(50% + 1px);
+  border-color: var(--accent-fill);
 }
 
 @media (hover: hover) {
   .fx-card-gradient.fx-card-gradient:hover::before {
-    --frame-len: calc(50% + 1px);
+    border-color: var(--accent-fill);
   }
 }
 
-/* The frame is the card's one interaction; the pointer hairline stays off. */
 .fx-card-gradient.fx-glow::after {
   display: none;
 }
@@ -2814,6 +2868,19 @@ main {
 @media (prefers-reduced-motion: reduce) {
   .fx-card-gradient.fx-card-gradient::before {
     transition: none;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .fx-card-gradient.fx-card-gradient {
+    transform: perspective(1000px) rotateX(calc(var(--py, 0) * -8deg))
+      rotateY(calc(var(--px, 0) * 8deg)) translateY(var(--depth-lift, 0px));
+    transition: transform 500ms var(--fx-ease-out);
+  }
+
+  .fx-card-gradient.fx-card-gradient[data-parallax] {
+    --depth-lift: -6px;
+    transition-duration: 140ms;
   }
 }
 

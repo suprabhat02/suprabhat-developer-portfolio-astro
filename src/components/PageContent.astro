@@ -16,7 +16,7 @@ import OpenSourceSpotlight from './OpenSourceSpotlight.astro';
 import ExperienceTimeline from './ExperienceTimeline.astro';
 import { getServices } from '../data/services';
 import { getSkills } from '../data/skills';
-import { getToolGroups } from '../data/tools';
+import { getSkillLogos, getToolGroups } from '../data/tools';
 import { getCaseStudies } from '../data/caseStudies';
 import { getInternalWorkNotice, getWork } from '../data/work';
 import { isOpenSourceProjectId } from '../data/openSource';
@@ -102,31 +102,6 @@ const socialIcons: Record<string, IconName> = {
   GitHub: 'github',
   npm: 'package',
 };
-// Local technology logos for the stack list; ordered by where they appear.
-const techLogos: readonly [RegExp, string, boolean?][] = [
-  [/\bReact\b(?! Bootstrap)/, 'react'],
-  [/Next\.js/, 'nextjs', true],
-  [/TypeScript/, 'typescript'],
-  [/HTML5/, 'html5'],
-  [/Sass/, 'sass'],
-  [/Tailwind/, 'tailwindcss'],
-  [/Bootstrap/, 'bootstrap5'],
-  [/\bGit\b/, 'git'],
-  [/Redux/, 'redux'],
-  [/TanStack/, 'tanstack'],
-  [/GraphQL/, 'graphql'],
-  [/MongoDB/, 'mongodb'],
-];
-const logosFor = (item: string) =>
-  techLogos
-    .map(([pattern, name, invert]) => ({
-      index: item.search(pattern),
-      src: `/assets/techicons/${name}.svg`,
-      invert: invert === true,
-    }))
-    .filter((logo) => logo.index >= 0)
-    .sort((a, b) => a.index - b.index)
-    .slice(0, 2);
 const contactChannels = [
   {
     href: `mailto:${profile.email}`,
@@ -312,6 +287,7 @@ const notFoundLinks = [
             {skillGroups.map((group, index) => (
               <article
                 class="fx-glow fx-card-gradient fx-card-grid fx-reveal"
+                data-skill-group={group.id}
                 data-glow
               >
                 <span class="card-index" aria-hidden="true">
@@ -320,7 +296,7 @@ const notFoundLinks = [
                 <h3>{group.heading}</h3>
                 <ul class="ip-tech">
                   {group.items.map((item) => {
-                    const logos = logosFor(item);
+                    const logos = getSkillLogos(item);
                     return (
                       <li>
                         <span class="ip-tech-logos">
@@ -396,7 +372,7 @@ const notFoundLinks = [
           title={tx('page.tools.title')}
           lead={tx('page.tools.intro')}
         />
-        <div>
+        <div class="tool-groups">
           {getToolGroups().map((group) => (
             <div class="tool-group">
               <h2>{tx(`page.tools.group.${group.id}.title`)}</h2>

@@ -79,7 +79,7 @@ const en = {
   'home.statCapabilities': 'Full-stack capabilities',
   'home.statRemote': 'Remote collaboration',
   'home.aboutStatement':
-    'Suprabhat Kumar, also known as Shubh, is a Senior Front-End Engineer with 6+ years building SaaS portals, enterprise dashboards, design systems, and accessible websites. Based in Noida Extension, with delivery experience across teams in Denmark, China, and Australia.',
+    'Suprabhat Kumar, also known as Shubh, is a Senior Front-End Engineer with 6+ years building SaaS portals, enterprise dashboards, design systems, and accessible websites. Based in Noida Extension, India, with delivery experience across teams in Denmark, China, Germany, Australia, and New Zealand.',
   'home.experienceCta': 'Explore experience',
   'home.expertiseLead':
     'Senior frontend support where architecture, data, accessibility, and performance meet.',
@@ -168,18 +168,23 @@ const en = {
   'page.tools.group.languages.title': 'Languages and frameworks',
   'page.tools.group.languages.description':
     'The base of every interface I ship: semantic markup, typed components, and server and client rendering.',
-  'page.tools.group.data.title': 'Data and state',
+  'page.tools.group.data.title': 'State, data and validation',
   'page.tools.group.data.description':
     'Predictable state, cached server data and typed API boundaries for data-heavy dashboards.',
   'page.tools.group.styling.title': 'Styling and design systems',
   'page.tools.group.styling.description':
     'From design handoff to documented, reusable components.',
-  'page.tools.group.backend.title': 'Backend, data and cloud',
+  'page.tools.group.backend.title': 'Backend and databases',
   'page.tools.group.backend.description':
     'Used for full-stack features alongside the frontend.',
-  'page.tools.group.workflow.title': 'Workflow and maintenance',
+  'page.tools.group.design.title': 'Design and documentation',
+  'page.tools.group.design.description':
+    'Design handoff and component documentation.',
+  'page.tools.group.design.practice':
+    'Design files and component stories support consistent reviews of reusable interfaces.',
+  'page.tools.group.workflow.title': 'Delivery and workflow',
   'page.tools.group.workflow.description':
-    'Version control, legacy codebases and AI-assisted drafting and review.',
+    'Version control, CI/CD, cloud delivery and AI-assisted drafting and review.',
   'page.tools.group.languages.practice':
     'In practice: data-intensive React and TypeScript interfaces at Topsoe, including a self-service portal built with Next.js 16 and React 19. Earlier roles used HTML, CSS, JavaScript and React for responsive, cross-browser interfaces.',
   'page.tools.group.data.practice':
@@ -203,6 +208,13 @@ const en = {
   'globe.label':
     'Globe showing remote collaboration from India with teams in North America, Europe, the Middle East and Asia-Pacific',
   'globe.home': 'India',
+  'worldMap.label':
+    'World map showing collaboration from India with teams in Denmark, China, Germany, Australia and New Zealand',
+  'worldMap.denmark': 'Denmark',
+  'worldMap.china': 'China',
+  'worldMap.germany': 'Germany',
+  'worldMap.australia': 'Australia',
+  'worldMap.newZealand': 'New Zealand',
   'page.services.lead':
     'Focused engagements to improve a React product, data-heavy interface, design system, or public website.',
   'service.fit': 'Best for',
@@ -504,7 +516,7 @@ const es: Translations = {
   'home.statCapabilities': 'Capacidades full stack',
   'home.statRemote': 'Colaboración remota',
   'home.aboutStatement':
-    'Ingeniero de software frontend con más de 6 años creando plataformas SaaS de alto rendimiento, paneles empresariales y sistemas de UI intensivos en datos. Especializado en React, TypeScript y Redux Toolkit, con capacidad full stack mediante FastAPI y PostgreSQL.',
+    'Ingeniero de software frontend con más de 6 años creando plataformas SaaS de alto rendimiento, paneles empresariales y sistemas de UI intensivos en datos. Especializado en React, TypeScript y Redux Toolkit, con capacidad full stack mediante FastAPI y PostgreSQL. Con base en Noida Extension, India, y experiencia de colaboración con equipos en Dinamarca, China, Alemania, Australia y Nueva Zelanda.',
   'home.experienceCta': 'Explorar experiencia',
   'home.expertiseLead':
     'Capacidad full stack, especializado en interfaces de alto rendimiento con API rápidas y seguras mediante tipos.',
@@ -631,18 +643,23 @@ const es: Translations = {
   'page.tools.group.languages.title': 'Lenguajes y frameworks',
   'page.tools.group.languages.description':
     'La base de cada interfaz que desarrollo: marcado semántico, componentes tipados y renderizado en el servidor y en el cliente.',
-  'page.tools.group.data.title': 'Datos y estado',
+  'page.tools.group.data.title': 'Estado, datos y validación',
   'page.tools.group.data.description':
     'Estado predecible, datos del servidor en caché y contratos de API tipados para paneles con muchos datos.',
   'page.tools.group.styling.title': 'Estilos y sistemas de diseño',
   'page.tools.group.styling.description':
     'Del traspaso del diseño al código: componentes documentados y reutilizables.',
-  'page.tools.group.backend.title': 'Backend, datos y nube',
+  'page.tools.group.backend.title': 'Backend y bases de datos',
   'page.tools.group.backend.description':
     'Para desarrollar funcionalidades full-stack además del frontend.',
-  'page.tools.group.workflow.title': 'Flujo de trabajo y mantenimiento',
+  'page.tools.group.design.title': 'Diseño y documentación',
+  'page.tools.group.design.description':
+    'Entrega de diseños y documentación de componentes.',
+  'page.tools.group.design.practice':
+    'Los archivos de diseño y las historias de componentes facilitan revisiones coherentes de interfaces reutilizables.',
+  'page.tools.group.workflow.title': 'Entrega y flujo de trabajo',
   'page.tools.group.workflow.description':
-    'Control de versiones, mantenimiento de código heredado y redacción y revisión asistidas por IA.',
+    'Control de versiones, CI/CD, entrega en la nube y redacción y revisión asistidas por IA.',
   'page.tools.group.languages.practice':
     'En la práctica: interfaces React y TypeScript con gran volumen de datos en Topsoe, incluido un portal de autoservicio creado con Next.js 16 y React 19. En puestos anteriores usé HTML, CSS, JavaScript y React para interfaces adaptables y compatibles con distintos navegadores.',
   'page.tools.group.data.practice':
@@ -666,6 +683,13 @@ const es: Translations = {
   'globe.label':
     'Globo que muestra la colaboración remota desde India con equipos de Norteamérica, Europa, Oriente Medio y Asia-Pacífico',
   'globe.home': 'India',
+  'worldMap.label':
+    'Mapa del mundo que muestra la colaboración desde India con equipos en Dinamarca, China, Alemania, Australia y Nueva Zelanda',
+  'worldMap.denmark': 'Dinamarca',
+  'worldMap.china': 'China',
+  'worldMap.germany': 'Alemania',
+  'worldMap.australia': 'Australia',
+  'worldMap.newZealand': 'Nueva Zelanda',
   'page.services.lead':
     'Colaboraciones concretas para mejorar un producto React, una interfaz con muchos datos, un sistema de diseño o un sitio web público.',
   'service.fit': 'Ideal para',
@@ -976,7 +1000,7 @@ const ar: Translations = {
   'home.statCapabilities': 'قدرات full stack',
   'home.statRemote': 'تعاون عن بُعد',
   'home.aboutStatement':
-    'مهندس برمجيات للواجهات الأمامية بخبرة تزيد على 6 سنوات في بناء منصات SaaS عالية الأداء ولوحات تحكم مؤسسية وأنظمة واجهات كثيفة البيانات. أتخصص في React وTypeScript وRedux Toolkit، مع خبرة شاملة عبر FastAPI وPostgreSQL.',
+    'مهندس برمجيات للواجهات الأمامية بخبرة تزيد على 6 سنوات في بناء منصات SaaS عالية الأداء ولوحات تحكم مؤسسية وأنظمة واجهات كثيفة البيانات. أتخصص في React وTypeScript وRedux Toolkit، مع خبرة شاملة عبر FastAPI وPostgreSQL. أقيم في نويدا إكستنشن بالهند، ولدي خبرة في التعاون مع فرق في الدنمارك والصين وألمانيا وأستراليا ونيوزيلندا.',
   'home.experienceCta': 'استكشف الخبرة',
   'home.expertiseLead':
     'خبرة شاملة مع تخصص في واجهات أمامية عالية الأداء مدعومة بواجهات API سريعة وآمنة الأنواع.',
@@ -1094,18 +1118,22 @@ const ar: Translations = {
   'page.tools.group.languages.title': 'اللغات وأُطر العمل',
   'page.tools.group.languages.description':
     'أساس كل واجهة أبنيها: ترميز دلالي، ومكونات محددة الأنواع، وعرض على جانب الخادم والعميل.',
-  'page.tools.group.data.title': 'البيانات والحالة',
+  'page.tools.group.data.title': 'الحالة والبيانات والتحقق',
   'page.tools.group.data.description':
     'حالة يمكن التنبؤ بها، وبيانات خادم مخزنة مؤقتًا، وعقود API محددة الأنواع للوحات البيانات الكثيفة.',
   'page.tools.group.styling.title': 'التنسيق وأنظمة التصميم',
   'page.tools.group.styling.description':
     'من تسليم التصميم إلى مكونات موثقة قابلة لإعادة الاستخدام.',
-  'page.tools.group.backend.title': 'الخلفية والبيانات والسحابة',
+  'page.tools.group.backend.title': 'الخلفية وقواعد البيانات',
   'page.tools.group.backend.description':
     'لبناء ميزات full-stack إلى جانب الواجهة الأمامية.',
-  'page.tools.group.workflow.title': 'سير العمل والصيانة',
+  'page.tools.group.design.title': 'التصميم والتوثيق',
+  'page.tools.group.design.description': 'تسليم التصاميم وتوثيق المكونات.',
+  'page.tools.group.design.practice':
+    'تساعد ملفات التصميم وقصص المكونات على مراجعة الواجهات القابلة لإعادة الاستخدام بصورة متسقة.',
+  'page.tools.group.workflow.title': 'التسليم وسير العمل',
   'page.tools.group.workflow.description':
-    'التحكم في الإصدارات، وقواعد الشيفرة القديمة، والصياغة والمراجعة بمساعدة الذكاء الاصطناعي.',
+    'التحكم في الإصدارات، وCI/CD، والتسليم عبر السحابة، والصياغة والمراجعة بمساعدة الذكاء الاصطناعي.',
   'page.tools.group.languages.practice':
     'عمليًا: واجهات React وTypeScript كثيفة البيانات في Topsoe، منها بوابة خدمة ذاتية مبنية باستخدام Next.js 16 وReact 19. وفي أدوار سابقة استخدمت HTML وCSS وJavaScript وReact لبناء واجهات متجاوبة تعمل عبر المتصفحات.',
   'page.tools.group.data.practice':
@@ -1129,6 +1157,13 @@ const ar: Translations = {
   'globe.label':
     'كرة أرضية تُظهر التعاون عن بُعد من الهند مع فرق في أمريكا الشمالية وأوروبا والشرق الأوسط وآسيا والمحيط الهادئ',
   'globe.home': 'الهند',
+  'worldMap.label':
+    'خريطة العالم تُظهر التعاون من الهند مع فرق في الدنمارك والصين وألمانيا وأستراليا ونيوزيلندا',
+  'worldMap.denmark': 'الدنمارك',
+  'worldMap.china': 'الصين',
+  'worldMap.germany': 'ألمانيا',
+  'worldMap.australia': 'أستراليا',
+  'worldMap.newZealand': 'نيوزيلندا',
   'page.services.lead':
     'خدمات مركزة لتحسين منتج React أو واجهة كثيفة البيانات أو نظام تصميم أو موقع ويب عام.',
   'service.fit': 'مناسب لـ',
