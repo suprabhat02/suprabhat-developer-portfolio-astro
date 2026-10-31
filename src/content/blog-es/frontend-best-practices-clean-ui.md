@@ -63,7 +63,7 @@ Nombra los tokens por propósito cuando sea posible. `--text-muted` comunica má
 
 Un sistema de tokens no está completo hasta que cubre los estados de interacción. Hover, focus, active, selected, disabled, loading y error deben sentirse relacionados a lo largo del producto.
 
-La [página de habilidades](/es/skills/) enumera las tecnologías utilizadas para implementar estos sistemas.
+La [página de servicios](/es/services/) describe este trabajo de ingeniería frontend.
 
 ## Mantén el estado cerca y los límites de datos explícitos
 

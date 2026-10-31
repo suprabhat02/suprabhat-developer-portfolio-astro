@@ -822,6 +822,11 @@ test('all generated indexable pages have crawlable links and reciprocal language
           links: [...document.querySelectorAll('a[href]')].map(
             (anchor) => anchor.getAttribute('href') ?? '',
           ),
+          navigationLinks: [
+            ...document.querySelectorAll(
+              'header nav a[href], footer nav a[href]',
+            ),
+          ].map((anchor) => anchor.getAttribute('href') ?? ''),
           alternates: [...document.querySelectorAll('link[hreflang]')].map(
             (link) => ({
               lang: link.getAttribute('hreflang'),
@@ -878,6 +883,16 @@ test('all generated indexable pages have crawlable links and reciprocal language
       ).toBe(true);
     }
     const canonical = new URL(document.canonical!);
+    for (const href of document.navigationLinks) {
+      const targetUrl = new URL(href, canonical);
+      targetUrl.hash = '';
+      const target = byCanonical.get(targetUrl.href);
+      if (!target || /\/(?:privacy)\/$/.test(targetUrl.pathname)) continue;
+      expect(
+        target.robots?.split(','),
+        `${document.file} navigation ${href}`,
+      ).not.toContain('noindex');
+    }
     for (const href of document.links) {
       const targetUrl = new URL(href, canonical);
       if (targetUrl.origin !== canonical.origin) continue;
@@ -891,6 +906,10 @@ test('all generated indexable pages have crawlable links and reciprocal language
         continue;
       const target = byCanonical.get(targetUrl.href);
       expect(target, `${document.file} link ${href}`).toBeDefined();
+      expect(
+        targetUrl.pathname,
+        `${document.file} discovery ${href}`,
+      ).not.toMatch(/\/skills\/$/);
       if (targetUrl.href !== canonical.href) incoming.add(targetUrl.href);
       if (fragment)
         expect(target?.ids, `${document.file} anchor ${href}`).toContain(
