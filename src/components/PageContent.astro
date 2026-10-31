@@ -498,6 +498,18 @@ const notFoundLinks = [
                   />
                   {item.name}
                   <span>{item.role}</span>
+                  {item.relationship && (
+                    <span>{tx(`recommendation.${item.relationship}`)}</span>
+                  )}
+                  {item.sourceUrl && (
+                    <a
+                      href={item.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {tx('recommendation.source')}
+                    </a>
+                  )}
                 </figcaption>
               </figure>
             ))}

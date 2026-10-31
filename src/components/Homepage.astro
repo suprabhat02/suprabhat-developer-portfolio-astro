@@ -888,6 +888,21 @@ const contactIndex = featured.length > 0 ? '14' : '13';
                     <div>
                       <span class="rec-name">{item.name}</span>
                       <span class="rec-role">{item.role}</span>
+                      {item.relationship && (
+                        <span class="rec-role">
+                          {t(locale, `recommendation.${item.relationship}`)}
+                        </span>
+                      )}
+                      {item.sourceUrl && (
+                        <a
+                          href={item.sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          tabindex={clone ? -1 : undefined}
+                        >
+                          {t(locale, 'recommendation.source')}
+                        </a>
+                      )}
                     </div>
                   </figcaption>
                 </figure>
