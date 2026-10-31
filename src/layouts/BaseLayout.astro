@@ -10,13 +10,10 @@ import PalettePicker from '../components/fx/PalettePicker.astro';
 import { getProfile } from '../data/profile';
 import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
 import {
-  DEV_PROFILE_URL,
-  HASHNODE_BLOG_URL,
   SITE_DESCRIPTION,
   SITE_NAME,
   SITE_URL,
   CLOUDFLARE_ANALYTICS_TOKEN,
-  X_PROFILE_URL,
 } from '../config/site';
 import { getBlogFeedHref, getBlogFeedMeta } from '../data/blog';
 import { t } from '../i18n/messages';
@@ -131,7 +128,11 @@ const pageSchema = {
   isPartOf: { '@id': `${SITE_URL}/#website` },
   about: { '@id': `${SITE_URL}/#person` },
   ...(pageType === 'ProfilePage'
-    ? { mainEntity: { '@id': `${SITE_URL}/#person` } }
+    ? {
+        mainEntity: { '@id': `${SITE_URL}/#person` },
+        dateModified: new Date().toISOString().slice(0, 10),
+        // TODO(owner): Confirm the actual ProfilePage dateCreated before adding it.
+      }
     : {}),
 };
 const pageSchemaWithAlternates = !showAlternates
@@ -167,15 +168,7 @@ const combinedSchema = {
       image: `${SITE_URL}${profile.portrait.src}`,
       email: profile.email,
       telephone: profile.phone,
-      inLanguage: meta.htmlLang,
-      sameAs: [
-        ...new Set([
-          ...profile.social.map((item) => item.href),
-          X_PROFILE_URL,
-          DEV_PROFILE_URL,
-          HASHNODE_BLOG_URL,
-        ]),
-      ],
+      sameAs: profile.social.map((item) => item.href),
       homeLocation: {
         '@type': 'Place',
         name: 'Noida Extension, Uttar Pradesh, India',

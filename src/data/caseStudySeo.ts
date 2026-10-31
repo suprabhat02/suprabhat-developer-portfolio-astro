@@ -14,11 +14,13 @@ export const getCaseStudyArticleSchema = (
 ) => ({
   '@context': 'https://schema.org',
   '@type': 'TechArticle',
+  '@id': `${url}#article`,
   headline: caseStudy.title,
   description: caseStudy.description,
   url,
   image: `${SITE_URL}${getCaseStudyOgImage(caseStudy.slug)}`,
   author: { '@id': `${SITE_URL}/#person` },
+  publisher: { '@id': `${SITE_URL}/#person` },
   datePublished: caseStudy.datePublished,
   dateModified: caseStudy.dateModified,
   inLanguage: localeMeta[locale].htmlLang,

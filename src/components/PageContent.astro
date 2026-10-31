@@ -615,7 +615,9 @@ const notFoundLinks = [
                       class="ip-channel"
                       href={channel.href}
                       target={channel.external ? '_blank' : undefined}
-                      rel={channel.external ? 'noreferrer' : undefined}
+                      rel={
+                        channel.external ? 'me noopener noreferrer' : undefined
+                      }
                     >
                       <span class="ip-channel-icon">
                         <Icon name={channel.icon} size={18} />

@@ -1,4 +1,9 @@
 import type { Locale } from '../i18n/config';
+import {
+  X_PROFILE_URL,
+  DEV_PROFILE_URL,
+  HASHNODE_BLOG_URL,
+} from '../config/site';
 
 export interface Profile {
   name: string;
@@ -61,6 +66,9 @@ export const profile: Profile = {
     alt: 'Portrait of Suprabhat Kumar, Software Engineer',
   },
   social: [
+    { label: 'X', href: X_PROFILE_URL, external: true },
+    { label: 'DEV', href: DEV_PROFILE_URL, external: true },
+    { label: 'Hashnode', href: HASHNODE_BLOG_URL, external: true },
     {
       label: 'LinkedIn',
       href: 'https://www.linkedin.com/in/suprabhatkumar/',

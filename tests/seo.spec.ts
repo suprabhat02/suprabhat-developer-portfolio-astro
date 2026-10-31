@@ -102,6 +102,7 @@ test('case studies expose localized proof and outcomes', async ({ page }) => {
       expect(Object.keys(articles[0] ?? {}).sort()).toEqual(
         [
           '@type',
+          '@id',
           'about',
           'author',
           'dateModified',
@@ -111,6 +112,7 @@ test('case studies expose localized proof and outcomes', async ({ page }) => {
           'image',
           'inLanguage',
           'mainEntityOfPage',
+          'publisher',
           'url',
         ].sort(),
       );
@@ -152,7 +154,6 @@ test('localized structured data uses page language and alternates', async ({
   });
   expect(findSchema(spanishServices, 'Person')).toMatchObject({
     jobTitle: 'Ingeniero Frontend Sénior',
-    inLanguage: 'es',
   });
   expect(findSchema(spanishServices, 'ProfessionalService')).toMatchObject({
     name: 'Suprabhat Kumar - Servicios de ingeniería frontend',
@@ -169,7 +170,6 @@ test('localized structured data uses page language and alternates', async ({
   });
   expect(findSchema(arabicFaq, 'Person')).toMatchObject({
     jobTitle: 'مهندس واجهات أمامية أول',
-    inLanguage: 'ar',
   });
   expect(findSchema(arabicFaq, 'FAQPage')).toMatchObject({
     inLanguage: 'ar',
@@ -486,6 +486,20 @@ test('Person schema includes public profiles and collaboration without changing 
       expect(person?.description, path).toContain(country);
     }
     expect(person?.homeLocation?.address.addressCountry, path).toBe('IN');
+    expect(person?.sameAs, path).toHaveLength(6);
+    const visibleProfiles = await page
+      .locator('footer .footer-profiles a[rel~="me"]')
+      .evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+    expect(visibleProfiles.sort(), path).toEqual(
+      [...(person?.sameAs ?? [])].sort(),
+    );
+    for (const href of person?.sameAs ?? []) {
+      await expect(
+        page.locator(
+          `#contact .contact-links-list a[rel~="me"][href="${href}"]`,
+        ),
+      ).toHaveCount(1);
+    }
     expect(person?.knowsAbout, path).toEqual(
       expect.arrayContaining([
         'CSS3',
@@ -907,6 +921,29 @@ test('all generated indexable pages have crawlable links and reciprocal language
       ).toBe(true);
     }
     const canonical = new URL(document.canonical!);
+    const checkSchema = (value: unknown) => {
+      if (Array.isArray(value)) return value.forEach(checkSchema);
+      if (!value || typeof value !== 'object') return;
+      const node = value as Record<string, unknown>;
+      if (node['@type'] === 'Person')
+        expect(node, document.file).not.toHaveProperty('inLanguage');
+      if (node['@type'] === 'ProfessionalService')
+        expect(node['@id'], document.file).toBe(
+          'https://suprabhat-dev.com/#service',
+        );
+      if (node['@type'] === 'BlogPosting' || node['@type'] === 'TechArticle') {
+        expect(node['@id'], document.file).toBe(`${canonical.href}#article`);
+        expect(node.publisher, document.file).toMatchObject({
+          '@id': 'https://suprabhat-dev.com/#person',
+        });
+      }
+      if (node['@type'] === 'ProfilePage') {
+        expect(node.dateModified, document.file).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+        expect(node, document.file).not.toHaveProperty('dateCreated');
+      }
+      Object.values(node).forEach(checkSchema);
+    };
+    document.schemas.forEach(checkSchema);
     for (const href of document.navigationLinks) {
       const targetUrl = new URL(href, canonical);
       targetUrl.hash = '';
