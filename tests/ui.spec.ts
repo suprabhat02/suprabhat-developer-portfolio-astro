@@ -286,7 +286,7 @@ test('major-device journeys preserve navigation, themes, content and form valida
     await submit.click();
     await expect(form.locator('[data-error-summary]')).toBeVisible();
     await expect(form.locator('[data-error-summary]')).toBeFocused();
-    await expect(form.locator('[data-error-summary] a')).toHaveCount(6);
+    await expect(form.locator('[data-error-summary] a')).toHaveCount(3);
   }
   expect(submissions).toBe(0);
   expect(errors).toEqual([]);

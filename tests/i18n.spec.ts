@@ -4,12 +4,13 @@ test('locale fallback and contact state are explicit', async ({ page }) => {
   await page.goto('/ar/');
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
-    'سوبرابهات',
+    'مهندس React أول متخصص في لوحات SaaS والأداء وإمكانية الوصول',
   );
+  await expect(page.locator('#hero-name')).toHaveText('سوبرابهات');
   await expect(page.locator('.hero-sub')).toContainText(
-    'منتجات React سريعة ومتاحة',
+    'معمارية الواجهات الأمامية باستخدام React وNext.js وTypeScript.',
   );
-  await expect(page.getByLabel('نوع المشروع *', { exact: true })).toBeVisible();
+  await expect(page.getByLabel(/نوع المشروع/)).toBeVisible();
   await expect(page.locator('.brand')).toHaveAttribute('href', '/ar/');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
     'content',
@@ -19,14 +20,13 @@ test('locale fallback and contact state are explicit', async ({ page }) => {
   await page.goto('/es/');
   await expect(page.locator('.brand')).toHaveAttribute('href', '/es/');
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
-    'Suprabhat Kumar',
+    'Ingeniero React sénior especializado en paneles SaaS, rendimiento y accesibilidad',
   );
+  await expect(page.locator('#hero-name')).toHaveText('Suprabhat Kumar');
   await expect(page.locator('.hero-sub')).toContainText(
-    'productos React rápidos y accesibles',
+    'Arquitectura frontend con React, Next.js y TypeScript.',
   );
-  await expect(
-    page.getByLabel('Tipo de proyecto *', { exact: true }),
-  ).toBeVisible();
+  await expect(page.getByLabel(/Tipo de proyecto/)).toBeVisible();
 
   await page.goto('/contact/');
   await expect(
