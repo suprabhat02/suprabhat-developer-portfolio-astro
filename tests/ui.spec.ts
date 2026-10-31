@@ -873,6 +873,24 @@ test('hero uses the aurora backdrop and a plain-text name', async ({
   page,
   isMobile,
 }) => {
+  // The hero engages on the first pointer or focus event that reaches it.
+  // Browsers can emit such events on their own after a navigation (a
+  // synthetic pointer move at the last known position, for example), and
+  // that varies by browser build and runner speed. Hold those events back
+  // until the idle assertions are done, then interact for real.
+  await page.addInitScript(() => {
+    const gate = window as Window & { __holdEngagement?: boolean };
+    gate.__holdEngagement = true;
+    for (const type of ['pointerover', 'pointerdown', 'focusin']) {
+      window.addEventListener(
+        type,
+        (event) => {
+          if (gate.__holdEngagement) event.stopImmediatePropagation();
+        },
+        true,
+      );
+    }
+  });
   for (const prefix of ['', '/es', '/ar']) {
     // Playwright keeps the virtual pointer position across navigations, and
     // (0, 0) sits on the hero itself. Park the pointer outside the viewport
@@ -911,6 +929,11 @@ test('hero uses the aurora backdrop and a plain-text name', async ({
     // Idle: a static first frame, so no large blended animation layer is
     // promoted before first paint.
     await expect(flow).toHaveCSS('animation-name', 'none');
+    await expect(hero).not.toHaveAttribute('data-engaged', '');
+    await page.evaluate(() => {
+      (window as Window & { __holdEngagement?: boolean }).__holdEngagement =
+        false;
+    });
     if (isMobile) {
       await hero.locator('.hero-name').tap();
       await expect(hero).toHaveAttribute('data-active', '');
