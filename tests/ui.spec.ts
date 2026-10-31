@@ -874,6 +874,12 @@ test('hero uses the aurora backdrop and a plain-text name', async ({
   isMobile,
 }) => {
   for (const prefix of ['', '/es', '/ar']) {
+    // Playwright keeps the virtual pointer position across navigations, and
+    // (0, 0) sits on the hero itself. Park the pointer outside the viewport
+    // first, otherwise the previous locale's hover/tap fires pointerover on
+    // the freshly loaded hero and engages the aurora before the idle
+    // assertion below runs.
+    await page.mouse.move(-10, -10);
     await page.goto(`${prefix}/`);
     const hero = page.locator('#home');
     await expect(page.locator('.site-header')).toHaveCSS(
@@ -905,7 +911,7 @@ test('hero uses the aurora backdrop and a plain-text name', async ({
     await expect(hero).toHaveAttribute('data-engaged', '');
     await expect(flow).toHaveCSS('animation-name', 'fx-aurora-flow');
     await expect(flow).toHaveCSS('animation-play-state', 'running');
-    await page.mouse.move(0, 0);
+    await page.mouse.move(-10, -10);
     await hero.locator('a.btn').first().focus();
     await expect(flow).toHaveCSS('animation-play-state', 'running');
     await page.emulateMedia({ reducedMotion: 'reduce' });
