@@ -23,16 +23,10 @@ export const faqs: readonly Faq[] = [
       'I offer frontend performance audits, React and TypeScript architecture reviews, SaaS dashboard development, design system engineering, WCAG 2.2 AA accessibility audits, and complete website design and development.',
   },
   {
-    id: 'pricing',
-    question: 'How do you price projects?',
-    answer:
-      'Pricing depends on scope, access, and timeline. After reviewing a short brief, I define the deliverables, exclusions, schedule, and fixed quote before work begins.',
-  },
-  {
     id: 'remote',
     question: 'Do you take on international or remote work?',
     answer:
-      'Yes. I am based in Noida Extension, India, on IST (UTC+5:30) and am available now for remote freelance and part-time contracts. I reserve 24–28 hours per week and arrange 2–4 hours of real-time overlap with teams in the Americas, United Kingdom, and Western Europe.',
+      'Yes. I am based in Noida Extension, India, on IST (UTC+5:30), and work remotely with teams in the Americas, United Kingdom, and Western Europe, with 2–4 hours of agreed real-time overlap.',
   },
   {
     id: 'timeline',
@@ -44,6 +38,6 @@ export const faqs: readonly Faq[] = [
     id: 'start',
     question: 'How do we start a collaboration?',
     answer:
-      'Send the problem, product context, timeline, and budget range through the contact form. I will review the fit and reply with questions or a proposed scope and next step.',
+      'Send the problem, product context, and timeline through the contact form. I will review it and reply with questions or a next step.',
   },
 ] as const;

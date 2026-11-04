@@ -67,13 +67,12 @@ interface HomepageConversionContent {
 const content: Record<Locale, HomepageConversionContent> = {
   en: {
     hero: {
-      eyebrow: 'Senior Front-End Engineer · Remote contracts · India',
+      eyebrow: 'Senior Front-End Engineer · India',
       title: 'React architecture, SaaS dashboards, and frontend performance',
       lead: 'I help SaaS teams build accessible React products, data-heavy dashboards, and frontend systems they can maintain.',
       primaryCta: 'View case studies',
       secondaryCta: 'Discuss your frontend work',
-      trustLine:
-        '24–28 hours weekly · Americas and Europe overlap · Available now',
+      trustLine: 'IST (UTC+5:30) · Americas and Europe overlap · Async-first',
     },
     work: {
       eyebrow: 'Featured case studies',
@@ -262,7 +261,7 @@ const content: Record<Locale, HomepageConversionContent> = {
     collaboration: {
       eyebrow: 'Remote collaboration',
       title: 'Delivery stays visible across time zones',
-      lead: 'Based in Noida Extension on IST (UTC+5:30), with 24–28 hours of weekly capacity and 2–4 hours of agreed real-time overlap for teams in the Americas, United Kingdom, and Western Europe.',
+      lead: 'Based in Noida Extension on IST (UTC+5:30), with 2–4 hours of agreed real-time overlap for teams in the Americas, United Kingdom, and Western Europe.',
       items: [
         {
           title: 'Async by default',
@@ -383,7 +382,7 @@ const content: Record<Locale, HomepageConversionContent> = {
       durationLabel: 'Duración',
       items: [
         {
-          title: 'Proyecto freelance definido',
+          title: 'Proyecto frontend React definido',
           visual: 'pipeline',
           body: 'Una funcionalidad, dashboard, parte de un sistema de diseño o modernización delimitada.',
           fit: 'Equipos con un resultado y responsable claros',
@@ -397,7 +396,7 @@ const content: Record<Locale, HomepageConversionContent> = {
           fit: 'Equipos que necesitan capacidad frontend sénior',
           deliverables:
             'Entrega incremental, revisiones, actualizaciones y transferencia',
-          duration: 'Capacidad y plazo por confirmar',
+          duration: 'Según el alcance de cada revisión',
         },
         {
           title: 'Auditoría técnica',
@@ -442,7 +441,7 @@ const content: Record<Locale, HomepageConversionContent> = {
     collaboration: {
       eyebrow: 'Colaboración remota',
       title: 'El trabajo permanece visible entre zonas horarias',
-      lead: 'Trabajo desde India y estoy preparado para colaboración remota. El solapamiento y la capacidad semanal se confirman antes del proyecto.',
+      lead: 'Trabajo desde India, en horario IST, con horas de tarde que se solapan con equipos de América y Europa.',
       items: [
         {
           title: 'Asíncrono por defecto',
@@ -561,7 +560,7 @@ const content: Record<Locale, HomepageConversionContent> = {
       durationLabel: 'المدة',
       items: [
         {
-          title: 'مشروع مستقل محدد',
+          title: 'مشروع واجهة أمامية React محدد',
           visual: 'pipeline',
           body: 'ميزة أو لوحة بيانات أو جزء من نظام تصميم أو مبادرة تحديث محددة.',
           fit: 'فرق لديها نتيجة ومسؤول واضحان',
@@ -574,7 +573,7 @@ const content: Record<Locale, HomepageConversionContent> = {
           body: 'تسليم واجهات مستمر إلى جانب فريق منتج قائم.',
           fit: 'فرق تحتاج خبرة واجهات أولى',
           deliverables: 'تسليم تدريجي ومراجعات وتحديثات ونقل معرفة',
-          duration: 'السعة والمدة تحتاجان تأكيدًا',
+          duration: 'حسب نطاق كل مراجعة',
         },
         {
           title: 'تدقيق تقني',
@@ -618,7 +617,7 @@ const content: Record<Locale, HomepageConversionContent> = {
     collaboration: {
       eyebrow: 'التعاون عن بُعد',
       title: 'يبقى العمل واضحًا عبر المناطق الزمنية',
-      lead: 'أعمل من الهند ومجهز للتعاون عن بُعد. يُتفق على ساعات التداخل والسعة الأسبوعية قبل بدء العمل.',
+      lead: 'أعمل من الهند بتوقيت IST، مع ساعات مسائية تتداخل مع فرق في الأمريكتين وأوروبا.',
       items: [
         {
           title: 'غير متزامن افتراضيًا',

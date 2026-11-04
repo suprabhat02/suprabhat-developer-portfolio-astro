@@ -275,6 +275,21 @@ textarea {
 .desktop-nav a::after {
   display: none;
 }
+/* The current page gets a bar as well as the colour, so it never relies on
+   colour alone and stays distinct from hover. Centred with auto margins so it
+   mirrors correctly in RTL. */
+.desktop-nav a[aria-current='page']::after {
+  content: '';
+  display: block;
+  position: absolute;
+  inset-block-end: 2px;
+  inset-inline: 0;
+  inline-size: 1rem;
+  block-size: 2px;
+  margin-inline: auto;
+  border-radius: 2px;
+  background: currentColor;
+}
 .desktop-nav a:hover,
 .desktop-nav a.active,
 .desktop-nav a[aria-current='page'] {
@@ -474,6 +489,17 @@ textarea {
 .mob-menu a:hover {
   color: var(--accent);
   background: var(--accent-subtle);
+}
+.mob-menu a[aria-current='page'] {
+  color: var(--accent);
+  background: var(--accent-subtle);
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 0.3em;
+}
+[data-theme='light'] .mob-menu a:hover,
+[data-theme='light'] .mob-menu a[aria-current='page'] {
+  color: var(--accent-strong);
 }
 .mob-close {
   position: absolute;
@@ -1158,6 +1184,10 @@ main {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
 }
+/* A row left with a single field (the budget field was removed) spans the width. */
+.form-row > .f-field:only-child {
+  grid-column: 1 / -1;
+}
 .form-section {
   display: grid;
   gap: 1rem;
@@ -1704,6 +1734,17 @@ main {
   color: var(--muted);
   text-decoration: none;
   text-transform: capitalize;
+}
+.footer-grid nav a:hover {
+  color: var(--text);
+}
+.footer-grid nav a[aria-current='page'] {
+  color: var(--text);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
 }
 .footer-profiles {
   display: flex;
@@ -2897,7 +2938,9 @@ main {
   --gc-fill: var(--bg);
 }
 
-/* Open-source spotlight card */
+/* Open-source spotlight card.
+   Text rules are scoped under .oss-card so they outrank the homepage margin
+   reset (.homepage-shell :where(h1, h2, h3, h4, p, ...) { margin: 0 }). */
 .oss-card {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
@@ -2908,7 +2951,7 @@ main {
   box-shadow: 0 30px 80px -40px var(--accent-glow);
 }
 
-.oss-eyebrow {
+.oss-card .oss-eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -2920,7 +2963,7 @@ main {
   text-transform: uppercase;
 }
 
-.oss-title {
+.oss-card .oss-title {
   margin: 0 0 0.6rem;
   color: var(--text);
   font-size: clamp(1.75rem, 4vw, 2.6rem);
@@ -2929,14 +2972,14 @@ main {
   line-height: 1.1;
 }
 
-.oss-tagline {
+.oss-card .oss-tagline {
   margin: 0 0 1rem;
   color: var(--text);
   font-size: clamp(1rem, 1.8vw, 1.15rem);
   font-weight: 650;
 }
 
-.oss-description {
+.oss-card .oss-description {
   margin: 0 0 1.5rem;
   color: var(--text-2);
   line-height: 1.75;

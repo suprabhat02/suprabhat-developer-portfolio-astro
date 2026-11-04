@@ -346,18 +346,6 @@
   font-size: 0.75rem;
 }
 
-.hero-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.32rem 0.8rem;
-  border: 2px solid color-mix(in oklch, var(--success) 40%, transparent);
-  border-radius: var(--radius-pill);
-  background: color-mix(in oklch, var(--success) 10%, transparent);
-  color: var(--text);
-  font-weight: 700;
-}
-
 .hero-eyebrow-text {
   font-weight: 650;
   letter-spacing: 0.08em;

@@ -155,7 +155,7 @@ const combinedSchema = {
       },
       contactPoint: {
         '@type': 'ContactPoint',
-        contactType: 'Freelance project enquiries',
+        contactType: 'Enquiries',
         email: profile.email,
         telephone: profile.phone,
         availableLanguage: ['English'],
@@ -296,7 +296,7 @@ const combinedSchema = {
       }
       <slot />
     </main>
-    <Footer {locale} />
+    <Footer {locale} {page} />
     <button
       type="button"
       class="btt"

@@ -39,7 +39,6 @@ const formClass =
       data-error-name={t(locale, 'form.errorName')}
       data-error-email={t(locale, 'form.errorEmail')}
       data-error-project-type={t(locale, 'form.errorProjectType')}
-      data-error-budget={t(locale, 'form.errorBudget')}
       data-error-timeline={t(locale, 'form.errorTimeline')}
       data-error-message={t(locale, 'form.errorMessage')}
       data-error-summary={t(locale, 'form.errorSummary')}
@@ -174,32 +173,6 @@ const formClass =
         </div>
 
         <div class="form-row">
-          <div class="f-field">
-            <label class="f-label" for={fieldId('budget')}>
-              {t(locale, 'form.budget')}{' '}
-              <span class="f-optional">{t(locale, 'form.optional')}</span>
-            </label>
-            <select
-              class="f-input"
-              id={fieldId('budget')}
-              name="budget"
-              aria-describedby={fieldId('budget-error')}
-            >
-              <option value="" disabled selected>
-                {t(locale, 'form.chooseBudget')}
-              </option>
-              <option value="fixed-audit">
-                {t(locale, 'form.budgetAudit')}
-              </option>
-              <option value="5k-15k">{t(locale, 'form.budget5k15k')}</option>
-              <option value="15k-30k">{t(locale, 'form.budget15k30k')}</option>
-              <option value="30k-plus">
-                {t(locale, 'form.budget30kPlus')}
-              </option>
-              <option value="not-sure">{t(locale, 'form.notSure')}</option>
-            </select>
-            <span class="f-error" id={fieldId('budget-error')} />
-          </div>
           <div class="f-field">
             <label class="f-label" for={fieldId('timeline')}>
               {t(locale, 'form.timeline')}{' '}
@@ -380,7 +353,6 @@ const formClass =
           { name: 'name', error: form.dataset.errorName },
           { name: 'email', error: form.dataset.errorEmail },
           { name: 'project_type', error: form.dataset.errorProjectType },
-          { name: 'budget', error: form.dataset.errorBudget },
           { name: 'timeline', error: form.dataset.errorTimeline },
           { name: 'message', error: form.dataset.errorMessage },
         ];
