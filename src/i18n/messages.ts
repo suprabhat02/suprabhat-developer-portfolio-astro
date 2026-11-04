@@ -25,6 +25,8 @@ const en = {
     'Answers on Suprabhat Kumar’s frontend services, project pricing, remote and international work, typical timelines, and how to start a collaboration.',
   'identity.summary': `${profile.name} is a ${profile.title}. His main stack is ${new Intl.ListFormat('en').format(profileStack)}.`,
   'identity.name': 'Name',
+  'identity.aka': 'Also known as',
+  'identity.handle': 'Username',
   'identity.stack': 'Main stack',
   'identity.libraries': 'Open-source libraries',
   'identity.caseStudy': '{name} case study',
@@ -504,6 +506,8 @@ const es: Translations = {
   'seo.faqDescription':
     'Respuestas sobre servicios, precios, colaboración remota, plazos de proyectos frontend y revisiones de arquitectura y accesibilidad.',
   'identity.name': 'Nombre',
+  'identity.aka': 'También conocido como',
+  'identity.handle': 'Nombre de usuario',
   'identity.stack': 'Stack principal',
   'identity.libraries': 'Bibliotecas de código abierto',
   'identity.caseStudy': 'Caso de estudio de {name}',
@@ -1020,6 +1024,8 @@ const ar: Translations = {
   'seo.faqDescription':
     'إجابات عن الأسئلة الشائعة حول الخدمات والأسعار والتعاون عن بُعد والجداول الزمنية وكيفية بدء مشروع واجهات أمامية مع سوبرابهات كومار.',
   'identity.name': 'الاسم',
+  'identity.aka': 'يُعرف أيضًا باسم',
+  'identity.handle': 'اسم المستخدم',
   'identity.stack': 'التقنيات الأساسية',
   'identity.libraries': 'مكتبات مفتوحة المصدر',
   'identity.caseStudy': 'دراسة حالة {name}',

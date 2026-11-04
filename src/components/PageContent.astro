@@ -8,6 +8,9 @@ import Icon, { type IconName } from './fx/Icon.astro';
 import {
   getProfile,
   profile as canonicalProfile,
+  profileAlternateNames,
+  profileHandle,
+  profileHandlePlatforms,
   profileStack,
 } from '../data/profile';
 import { getCareerStats } from '../data/careerStats';
@@ -235,6 +238,23 @@ const notFoundLinks = [
                     <dt>{tx('identity.name')}</dt>
                     <dd>{canonicalProfile.name}</dd>
                   </>
+                </div>
+                <div>
+                  <dt>{tx('identity.aka')}</dt>
+                  <dd>
+                    {new Intl.ListFormat(dateLocale).format(
+                      profileAlternateNames,
+                    )}
+                  </dd>
+                </div>
+                <div>
+                  <dt>{tx('identity.handle')}</dt>
+                  <dd>
+                    <span dir="ltr">{profileHandle}</span>
+                    {` (${new Intl.ListFormat(dateLocale).format(
+                      profileHandlePlatforms,
+                    )})`}
+                  </dd>
                 </div>
                 <div>
                   <>

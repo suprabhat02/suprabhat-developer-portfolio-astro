@@ -150,11 +150,25 @@ export const getProfile = (locale: Locale): Profile => {
   };
 };
 
-// TODO(owner): Confirm other public aliases before adding them.
+/** Other names the owner uses publicly (owner-confirmed). */
+export const profileOtherNames = ['Suprabhat Karn'] as const;
+
+// TODO(owner): Confirm other public aliases (for example "shubh02") before
+// adding them; only names actually in use belong here.
 export const profileAlternateNames = [
   profile.name.split(' ')[0],
   profile.nickname,
+  ...profileOtherNames,
 ].filter((name): name is string => Boolean(name));
+
+/**
+ * The username shared across developer profiles, read from the profile URLs
+ * themselves so it can never drift from the links that are published.
+ */
+export const profileHandle = 'suprabhat02';
+export const profileHandlePlatforms = profile.social
+  .filter(({ href }) => new RegExp(`[/~]${profileHandle}/?$`).test(href))
+  .map(({ label }) => label);
 
 export const profileStack = ['React', 'Next.js', 'TypeScript'].flatMap((name) =>
   tools.filter((tool) => tool.name === name).map((tool) => tool.name),

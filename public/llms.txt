@@ -78,6 +78,8 @@ Based in India, Suprabhat has delivered with distributed teams in Denmark and Ch
 ## Contact
 
 - Website: https://suprabhat-dev.com/
+- Also known as: Suprabhat, Shubh, Suprabhat Karn
+- Username: suprabhat02 (GitHub, npm, DEV)
 - Email: suprabhatkumar02@gmail.com
 - Phone: +91 78920 08290
 - LinkedIn: https://www.linkedin.com/in/suprabhatkumar/
