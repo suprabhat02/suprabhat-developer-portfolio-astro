@@ -18,7 +18,7 @@ test('about identity facts and FAQ use published data in every locale', async ({
       locale === 'ar' ? 'rtl' : 'ltr',
     );
     const facts = page.locator('[data-identity-summary]');
-    await expect(facts.locator('dt')).toHaveCount(5);
+    await expect(facts.locator('dt')).toHaveCount(7);
     await expect(facts.locator('p')).toHaveText(t(locale, 'identity.summary'));
     await expect(facts).toContainText(profile.name);
     await expect(facts).toContainText(localizedProfile.eyebrow.from);
@@ -115,7 +115,7 @@ test('entity graphs use supported types, unique definitions and visible identity
       expect(people[0]).toMatchObject({
         '@id': personId,
         name: profile.name,
-        alternateName: ['Suprabhat', 'Shubh'],
+        alternateName: ['Suprabhat', 'Shubh', 'Suprabhat Karn'],
         jobTitle: getProfile(locale).title,
         sameAs: profile.social.map((social) => social.href),
       });

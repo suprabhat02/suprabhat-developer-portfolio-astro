@@ -138,41 +138,40 @@ const formClass =
 
       <fieldset class="form-section">
         <legend>{t(locale, 'form.projectFit')}</legend>
-        <div class="f-field">
-          <label class="f-label" for={fieldId('project-type')}>
-            {t(locale, 'form.projectType')}{' '}
-            <span class="f-optional">{t(locale, 'form.optional')}</span>
-          </label>
-          <select
-            class="f-input"
-            id={fieldId('project-type')}
-            name="project_type"
-            aria-describedby={fieldId('project-type-error')}
-          >
-            <option value="" disabled selected>
-              {t(locale, 'form.chooseProjectType')}
-            </option>
-            <option value="product-frontend">
-              {t(locale, 'form.projectProduct')}
-            </option>
-            <option value="design-system">
-              {t(locale, 'form.projectDesignSystem')}
-            </option>
-            <option value="performance-accessibility">
-              {t(locale, 'form.projectPerformance')}
-            </option>
-            <option value="technical-consulting">
-              {t(locale, 'form.projectConsulting')}
-            </option>
-            <option value="website-development">
-              {t(locale, 'form.projectWebsite')}
-            </option>
-            <option value="other">{t(locale, 'form.projectOther')}</option>
-          </select>
-          <span class="f-error" id={fieldId('project-type-error')} />
-        </div>
-
         <div class="form-row">
+          <div class="f-field">
+            <label class="f-label" for={fieldId('project-type')}>
+              {t(locale, 'form.projectType')}{' '}
+              <span class="f-optional">{t(locale, 'form.optional')}</span>
+            </label>
+            <select
+              class="f-input"
+              id={fieldId('project-type')}
+              name="project_type"
+              aria-describedby={fieldId('project-type-error')}
+            >
+              <option value="" disabled selected>
+                {t(locale, 'form.chooseProjectType')}
+              </option>
+              <option value="product-frontend">
+                {t(locale, 'form.projectProduct')}
+              </option>
+              <option value="design-system">
+                {t(locale, 'form.projectDesignSystem')}
+              </option>
+              <option value="performance-accessibility">
+                {t(locale, 'form.projectPerformance')}
+              </option>
+              <option value="technical-consulting">
+                {t(locale, 'form.projectConsulting')}
+              </option>
+              <option value="website-development">
+                {t(locale, 'form.projectWebsite')}
+              </option>
+              <option value="other">{t(locale, 'form.projectOther')}</option>
+            </select>
+            <span class="f-error" id={fieldId('project-type-error')} />
+          </div>
           <div class="f-field">
             <label class="f-label" for={fieldId('timeline')}>
               {t(locale, 'form.timeline')}{' '}

@@ -1182,11 +1182,10 @@ main {
 .form-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* Labels can wrap to two lines (Arabic, narrow widths); aligning to the
+     end keeps the inputs of one row on the same line. */
+  align-items: end;
   gap: 1rem;
-}
-/* A row left with a single field (the budget field was removed) spans the width. */
-.form-row > .f-field:only-child {
-  grid-column: 1 / -1;
 }
 .form-section {
   display: grid;

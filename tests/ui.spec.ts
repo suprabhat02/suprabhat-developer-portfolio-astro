@@ -1241,3 +1241,25 @@ test('open-source cards keep their text stack spaced', async ({ page }) => {
     expect(gaps.facts).toBeGreaterThanOrEqual(16);
   }
 });
+
+test('contact form project selects share one aligned row', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'The row stacks to one column on narrow screens.');
+  for (const prefix of ['', '/es', '/ar']) {
+    await page.goto(`${prefix}/contact/`);
+    const form = page.locator('#contact-form');
+    test.skip((await form.count()) === 0, 'Form renders only with a key.');
+    const boxes = await Promise.all(
+      ['project_type', 'timeline'].map((name) =>
+        form.locator(`[name="${name}"]`).boundingBox(),
+      ),
+    );
+    const [type, timeline] = boxes;
+    expect(type && timeline, prefix).toBeTruthy();
+    if (!type || !timeline) continue;
+    expect(Math.abs(type.y - timeline.y), prefix).toBeLessThan(1);
+    expect(Math.abs(type.width - timeline.width), prefix).toBeLessThan(1);
+  }
+});
