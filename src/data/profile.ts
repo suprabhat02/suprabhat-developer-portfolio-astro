@@ -150,16 +150,26 @@ export const getProfile = (locale: Locale): Profile => {
   };
 };
 
-/** Other names the owner uses publicly (owner-confirmed). */
-export const profileOtherNames = ['Suprabhat Karn'] as const;
+/**
+ * Names people may search for that the owner wants matched in search, but
+ * not shown on the page: the public name is always "Suprabhat Kumar".
+ * Used only in the Person schema's alternateName.
+ */
+export const profileSearchOnlyNames = ['Suprabhat Karn'] as const;
 
 // TODO(owner): Confirm other public aliases (for example "shubh02") before
 // adding them; only names actually in use belong here.
-export const profileAlternateNames = [
+/** Names shown on the page ("Also known as"). */
+export const profileVisibleAliases = [
   profile.name.split(' ')[0],
   profile.nickname,
-  ...profileOtherNames,
 ].filter((name): name is string => Boolean(name));
+
+/** Person schema alternateName: visible aliases plus search-only names. */
+export const profileAlternateNames = [
+  ...profileVisibleAliases,
+  ...profileSearchOnlyNames,
+];
 
 /**
  * The username shared across developer profiles, read from the profile URLs

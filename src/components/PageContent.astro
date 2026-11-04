@@ -8,7 +8,7 @@ import Icon, { type IconName } from './fx/Icon.astro';
 import {
   getProfile,
   profile as canonicalProfile,
-  profileAlternateNames,
+  profileVisibleAliases,
   profileHandle,
   profileHandlePlatforms,
   profileStack,
@@ -243,7 +243,7 @@ const notFoundLinks = [
                   <dt>{tx('identity.aka')}</dt>
                   <dd>
                     {new Intl.ListFormat(dateLocale).format(
-                      profileAlternateNames,
+                      profileVisibleAliases,
                     )}
                   </dd>
                 </div>

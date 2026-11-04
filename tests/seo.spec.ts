@@ -1,7 +1,12 @@
 import { expect, test } from '@playwright/test';
 import { access, readdir, readFile } from 'node:fs/promises';
 import { getSectionPageImage, sectionPages } from '../src/data/pageSeo';
-import { getProfile, profile, profileStack } from '../src/data/profile';
+import {
+  getProfile,
+  profile,
+  profileSearchOnlyNames,
+  profileStack,
+} from '../src/data/profile';
 import { reactSmartCopy, reactInpChunker } from '../src/data/openSource';
 import { t } from '../src/i18n/messages';
 
@@ -21,6 +26,9 @@ test('about identity facts and FAQ use published data in every locale', async ({
     await expect(facts.locator('dt')).toHaveCount(7);
     await expect(facts.locator('p')).toHaveText(t(locale, 'identity.summary'));
     await expect(facts).toContainText(profile.name);
+    // Search-only names stay in the schema, never on the page.
+    for (const name of profileSearchOnlyNames)
+      expect(await page.locator('body').innerText()).not.toContain(name);
     await expect(facts).toContainText(localizedProfile.eyebrow.from);
     for (const technology of profileStack)
       await expect(facts).toContainText(technology);
