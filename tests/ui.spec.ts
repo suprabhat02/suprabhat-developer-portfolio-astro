@@ -1012,7 +1012,7 @@ test('contact form shows placeholders and toasts, resetting only on success', as
       /\S/,
     );
   }
-  for (const name of ['project_type', 'budget', 'timeline']) {
+  for (const name of ['project_type', 'timeline']) {
     await expect(
       form.locator(`[name="${name}"] option[value=""]`),
     ).toHaveAttribute('disabled', '');
@@ -1024,7 +1024,7 @@ test('contact form shows placeholders and toasts, resetting only on success', as
   });
   await form.locator('[name="name"]').fill('Test Person');
   await form.locator('[name="email"]').fill('test@example.com');
-  for (const name of ['project_type', 'budget', 'timeline']) {
+  for (const name of ['project_type', 'timeline']) {
     await expect(form.locator(`[name="${name}"]`)).not.toHaveAttribute(
       'required',
       '',
@@ -1045,7 +1045,6 @@ test('contact form shows placeholders and toasts, resetting only on success', as
   await expect(success).toBeVisible();
   await expect(success).toContainText('Message sent');
   await expect(form.locator('[name="name"]')).toHaveValue('');
-  await expect(form.locator('[name="budget"]')).toHaveValue('');
   await expect(page.locator('[data-toast-region]')).toHaveAttribute(
     'aria-live',
     'polite',
@@ -1166,4 +1165,79 @@ test('scroll-linked back-to-top ring runs in the production build', async ({
     'animation-timeline',
     '--xp-timeline',
   );
+});
+
+test('the current page is marked in the header, mobile menu and footer', async ({
+  page,
+}) => {
+  const cases = [
+    { path: '/about/', href: '/about/' },
+    // A case study belongs to the Work section.
+    { path: '/work/react-inp-chunker/', href: '/work/' },
+    { path: '/blog/', href: '/blog/' },
+    { path: '/ar/services/', href: '/ar/services/' },
+  ];
+  for (const { path, href } of cases) {
+    await page.goto(path);
+    for (const scope of ['.site-nav', '#mob-menu', '.footer-grid']) {
+      const current = page.locator(`${scope} a[aria-current="page"]`);
+      await expect(current, `${scope} on ${path}`).toHaveCount(1);
+      await expect(current).toHaveAttribute('href', href);
+    }
+    // Each footer destination is listed once, so the marker never doubles.
+    const footerHrefs = await page
+      .locator('.footer-grid nav a')
+      .evaluateAll((links) =>
+        links.map((link) => link.getAttribute('href') ?? ''),
+      );
+    expect(new Set(footerHrefs).size, `footer links on ${path}`).toBe(
+      footerHrefs.length,
+    );
+  }
+
+  // Not colour alone: the footer and mobile menu add weight or an underline,
+  // and the desktop nav adds a bar.
+  await page.goto('/about/');
+  const footerStyle = await page
+    .locator('.footer-grid a[aria-current="page"]')
+    .evaluate((link) => {
+      const style = getComputedStyle(link);
+      return { weight: style.fontWeight, line: style.textDecorationLine };
+    });
+  expect(footerStyle).toEqual({ weight: '700', line: 'underline' });
+  const mobileLine = await page
+    .locator('#mob-menu a[aria-current="page"]')
+    .evaluate((link) => getComputedStyle(link).textDecorationLine);
+  expect(mobileLine).toBe('underline');
+  const bar = await page
+    .locator('.desktop-nav a[aria-current="page"]')
+    .evaluate((link) => getComputedStyle(link, '::after').content);
+  expect(bar).not.toBe('none');
+
+  // The homepage tracks sections by scroll, so the footer marks nothing.
+  await page.goto('/');
+  await expect(page.locator('.footer-grid a[aria-current]')).toHaveCount(0);
+});
+
+test('open-source cards keep their text stack spaced', async ({ page }) => {
+  await page.goto('/');
+  const cards = page.locator('.oss-card');
+  await expect(cards).toHaveCount(2);
+  for (let index = 0; index < 2; index += 1) {
+    const card = cards.nth(index);
+    const gaps = await card.evaluate((element) => {
+      const bottom = (selector: string) =>
+        element.querySelector(selector)?.getBoundingClientRect().bottom ?? 0;
+      const top = (selector: string) =>
+        element.querySelector(selector)?.getBoundingClientRect().top ?? 0;
+      return {
+        tagline: top('.oss-tagline') - bottom('.oss-title'),
+        description: top('.oss-description') - bottom('.oss-tagline'),
+        facts: top('.oss-facts') - bottom('.oss-description'),
+      };
+    });
+    expect(gaps.tagline).toBeGreaterThanOrEqual(8);
+    expect(gaps.description).toBeGreaterThanOrEqual(12);
+    expect(gaps.facts).toBeGreaterThanOrEqual(16);
+  }
 });

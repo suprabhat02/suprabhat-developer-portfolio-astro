@@ -62,7 +62,7 @@ const englishMeta: Record<SectionPage, { title: string; description: string }> =
       description: t('en', 'seo.faqDescription'),
     },
     contact: {
-      title: 'Hire Suprabhat Kumar | Senior React Frontend Engineer',
+      title: 'Contact Suprabhat Kumar | Senior React Frontend Engineer',
       description:
         'Discuss a React dashboard, architecture review, design system, performance audit, accessibility audit, or website project with Suprabhat Kumar.',
     },

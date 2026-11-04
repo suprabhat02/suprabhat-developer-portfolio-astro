@@ -12,14 +12,21 @@ import { getProfile } from '../data/profile';
 import BrandWordmark from '../assets/brand/logo-wordmark-inline.svg';
 interface Props {
   locale: Locale;
+  /** Page key from the layout; matches a nav key for the current section. */
+  page?: string;
 }
-const { locale } = Astro.props;
+const { locale, page } = Astro.props;
 const displayName = getProfile(locale).name;
 const prefix = localePrefix(locale);
 const href = (path: string) => `${prefix}${path}` || '/';
 const rssHref = getBlogFeedHref(locale);
 const navLabel = (key: NavKey) => t(locale, `nav.${key}`);
 const profiles = getProfile(locale).social;
+const current = (key: NavKey) => (page === key ? 'page' : undefined);
+// Services is already listed under Navigate; keep one link per page so the
+// current-page marker never appears twice.
+const navigateKeys = new Set(primaryNav.slice(1).map((item) => item.key));
+const moreLinks = moreNav.filter((item) => !navigateKeys.has(item.key));
 ---
 
 <footer class="site-footer">
@@ -42,22 +49,28 @@ const profiles = getProfile(locale).social;
     </div>
     <nav aria-label={t(locale, 'footer.siteLinks')}>
       <strong>{t(locale, 'footer.navigate')}</strong>{
-        primaryNav
-          .slice(1)
-          .map((item) => <a href={href(item.href)}>{navLabel(item.key)}</a>)
+        primaryNav.slice(1).map((item) => (
+          <a href={href(item.href)} aria-current={current(item.key)}>
+            {navLabel(item.key)}
+          </a>
+        ))
       }
     </nav>
     <nav aria-label={t(locale, 'footer.moreLinks')}>
       <strong>{t(locale, 'footer.more')}</strong>{
-        moreNav.map((item) => (
-          <a href={href(item.href)}>{navLabel(item.key)}</a>
+        moreLinks.map((item) => (
+          <a href={href(item.href)} aria-current={current(item.key)}>
+            {navLabel(item.key)}
+          </a>
         ))
       }
     </nav>
     <nav aria-label={t(locale, 'footer.legalLinks')}>
       <strong>{t(locale, 'footer.legal')}</strong>{
         footerLegalNav.map((item) => (
-          <a href={href(item.href)}>{navLabel(item.key)}</a>
+          <a href={href(item.href)} aria-current={current(item.key)}>
+            {navLabel(item.key)}
+          </a>
         ))
       }<a href={rssHref} aria-label={t(locale, 'footer.rss')}>RSS</a>
       <a
