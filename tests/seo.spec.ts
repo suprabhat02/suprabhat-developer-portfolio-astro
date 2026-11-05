@@ -1305,3 +1305,20 @@ test('react-inp-chunker case study and both libraries meet the SEO contract', as
     }
   }
 });
+
+test('no image ships a bare alt attribute that crawlers read as missing', async () => {
+  const dist = new URL('../dist/', import.meta.url);
+  const htmlFiles = (await readdir(dist, { recursive: true })).filter((file) =>
+    file.endsWith('.html'),
+  );
+  for (const file of htmlFiles) {
+    const html = await readFile(
+      new URL(file.replaceAll('\\', '/'), dist),
+      'utf-8',
+    );
+    const bare = (html.match(/<img\b[^>]*>/g) ?? []).filter((tag) =>
+      /\salt(?=[\s>/])/.test(tag),
+    );
+    expect(bare, file).toEqual([]);
+  }
+});
