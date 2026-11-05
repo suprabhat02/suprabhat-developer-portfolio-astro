@@ -1,5 +1,5 @@
 ---
-import { DEFAULT_OG_IMAGE } from '../config/site';
+import { DEFAULT_OG_IMAGE, SEARCH_VERIFICATION } from '../config/site';
 
 interface Props {
   title: string;
@@ -85,6 +85,11 @@ const schemaJson = schema && JSON.stringify(schema).replaceAll('<', '\\u003c');
       ))}
     </>
   )
+}
+{
+  Object.entries(SEARCH_VERIFICATION)
+    .filter(([, token]) => token)
+    .map(([name, token]) => <meta {name} content={token} />)
 }
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:creator" content="@SuprabhatKarn97" />
