@@ -12,12 +12,12 @@ export const CLOUDFLARE_ANALYTICS_TOKEN = '27bc314498e7483b9b68e3bc43df19c8';
  * Search-engine ownership verification tokens (meta-tag method, so no DNS
  * change is needed). Empty values render nothing. Google and Bing are
  * already verified; add the others' codes from their webmaster consoles.
- * TODO(owner): paste the Yandex Webmaster code here.
+ * Yandex is also verified by public/yandex_<code>.html; keep both in place.
  */
 export const SEARCH_VERIFICATION = {
   'google-site-verification': '',
   'msvalidate.01': '',
-  'yandex-verification': '',
+  'yandex-verification': '5c76423c9b9e243d',
 } as const satisfies Record<string, string>;
 export const HASHNODE_BLOG_URL = 'https://suprabhatkumar.hashnode.dev';
 // Pages too thin to index yet; also excluded from the sitemap.

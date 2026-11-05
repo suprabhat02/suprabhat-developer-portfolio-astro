@@ -950,6 +950,12 @@ test('share metadata, page types and sitemap dates follow the SEO contract', asy
   );
 });
 
+/** Ownership-verification files served verbatim from public/. */
+const isVerificationFile = (path: string) =>
+  /^(?:yandex_[0-9a-f]+|google[0-9a-f]+|BingSiteAuth)\.(?:html|xml)$/.test(
+    path,
+  );
+
 test('indexable HTML pages have unique titles and canonical sitemap entries', async () => {
   const dist = new URL('../dist/', import.meta.url);
   const htmlFiles = (await readdir(dist, { recursive: true })).filter((file) =>
@@ -972,6 +978,8 @@ test('indexable HTML pages have unique titles and canonical sitemap entries', as
 
   for (const file of htmlFiles) {
     const path = file.replaceAll('\\', '/');
+    // Search-engine ownership files are not pages.
+    if (isVerificationFile(path)) continue;
     const html = await readFile(new URL(path, dist), 'utf-8');
     const is404 = /(?:^|\/)404(?:\.html|\/index\.html)$/.test(path);
     const title = html.match(/<title>([\s\S]*?)<\/title>/i)?.[1]?.trim();
