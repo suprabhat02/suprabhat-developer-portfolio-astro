@@ -170,6 +170,11 @@ const blogCovers = [
     detail: 'Skills, signals and interview questions',
   },
   {
+    slug: 'react-inp-benchmark',
+    title: 'React INP Benchmark',
+    detail: 'Chunking vs startTransition vs scheduler.yield',
+  },
+  {
     slug: 'why-clean-minimal-ui-professional-website',
     title: 'Why Minimal UI Works',
     detail: 'Clarity, hierarchy and conversion',

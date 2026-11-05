@@ -1639,6 +1639,27 @@ main {
   color: var(--muted);
   font-size: 0.875rem;
 }
+.prose figure img {
+  border-radius: var(--radius-card);
+}
+.prose table {
+  inline-size: 100%;
+  margin-block: 1.5rem;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.prose :is(th, td) {
+  padding: 0.6rem 0.75rem;
+  border-block-end: 1px solid var(--line);
+  text-align: start;
+  vertical-align: top;
+}
+.prose th {
+  color: var(--text);
+}
+.prose td {
+  color: var(--muted);
+}
 /* Self-scoring checklist: a CSS counter tallies ticked boxes, no script. */
 .scorecard {
   counter-reset: score;
@@ -2191,6 +2212,9 @@ main {
   text-decoration-color: currentColor;
 }
 .prose :not(pre) > code {
+  /* Code stays left to right, isolated from surrounding Arabic text. */
+  direction: ltr;
+  unicode-bidi: isolate;
   padding: 0.1em 0.4em;
   border: 1px solid var(--accent-border);
   border-radius: var(--radius-small);

@@ -317,6 +317,7 @@ const articleServiceIds: Readonly<Record<string, ServiceId>> = {
   'frontend-best-practices-clean-ui': 'architecture-review',
   'frontend-code-review-checklist': 'architecture-review',
   'hiring-senior-frontend-engineer': 'defined-frontend-project',
+  'react-inp-benchmark': 'performance-audit',
   'why-clean-minimal-ui-professional-website': 'website-delivery',
 };
 
