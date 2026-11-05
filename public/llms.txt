@@ -66,6 +66,7 @@ Based in India, Suprabhat has delivered with distributed teams in Denmark and Ch
 - [Work](https://suprabhat-dev.com/work/): Anonymized and public frontend case studies.
 - [Services](https://suprabhat-dev.com/services/): Service fit, deliverables, exclusions, and working durations.
 - [Blog](https://suprabhat-dev.com/blog/): Practical frontend engineering articles.
+  - [React INP Benchmark: Chunking vs startTransition vs scheduler.yield](https://suprabhat-dev.com/blog/react-inp-benchmark/)
   - [Accessibility in React: What Most Developers Skip](https://suprabhat-dev.com/blog/accessibility-in-react-what-developers-skip/)
   - [Cloud Web Interface Design: Best Practices for Scalable, Accessible UIs](https://suprabhat-dev.com/blog/cloud-web-interface-design-best-practices/)
   - [Clean UI Design Principles Every Frontend Engineer Should Know](https://suprabhat-dev.com/blog/clean-ui-design-principles-frontend/)
