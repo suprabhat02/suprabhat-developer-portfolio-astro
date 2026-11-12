@@ -87,6 +87,10 @@ export const cssSpecificityWars = {
   },
 } as const satisfies OpenSourceProject;
 
+/** Canonical JSON-LD @id the lab uses, so both sites describe one entity. */
+export const CSS_SPECIFICITY_WARS_ENTITY_ID: `${typeof cssSpecificityWars.links.live}#app` =
+  'https://lab.suprabhat-dev.com/specificity/#app';
+
 const openSourceProjects: Record<OpenSourceProjectId, OpenSourceProject> = {
   'react-smart-copy': reactSmartCopy,
   'react-inp-chunker': reactInpChunker,
@@ -1306,14 +1310,14 @@ export const getCssSpecificityWarsSchema = (
   locale: Locale,
 ) => ({
   '@type': 'WebApplication',
-  '@id': `${siteUrl}/#${cssSpecificityWars.id}`,
+  '@id': CSS_SPECIFICITY_WARS_ENTITY_ID,
   name: cssSpecificityWars.name,
   description: cssSpecificityWarsCopy[locale].description,
   url: cssSpecificityWars.links.live,
   inLanguage: 'en',
   applicationCategory: 'DeveloperApplication',
   isAccessibleForFree: true,
-  offers: { '@type': 'Offer', price: 0 },
+  offers: { '@type': 'Offer', price: 0, priceCurrency: 'USD' },
   author: { '@id': `${siteUrl}/#person` },
   maintainer: { '@id': `${siteUrl}/#person` },
   hasPart: {
@@ -1326,7 +1330,7 @@ export const getCssSpecificityWarsSchema = (
     license: 'https://opensource.org/licenses/MIT',
     author: { '@id': `${siteUrl}/#person` },
     maintainer: { '@id': `${siteUrl}/#person` },
-    isPartOf: { '@id': `${siteUrl}/#${cssSpecificityWars.id}` },
+    isPartOf: { '@id': CSS_SPECIFICITY_WARS_ENTITY_ID },
   },
 });
 
