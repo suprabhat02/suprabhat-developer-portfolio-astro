@@ -2,6 +2,12 @@
 import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
 import { getProfile } from '../data/profile';
+import {
+  labNav,
+  navHref as destinationHref,
+  navHrefLang,
+  type NavDestination,
+} from '../data/navigation';
 import BrandWordmark from '../assets/brand/logo-wordmark-inline.svg';
 import BrandMark from '../assets/brand/logo-mark-inline.svg';
 
@@ -36,7 +42,14 @@ const languageSwitchAria = (next: Locale) =>
   t(locale, `language.switch.${next}`);
 const switchToLightTheme = t(locale, 'theme.switchLight');
 const switchToDarkTheme = t(locale, 'theme.switchDark');
-const headerNav = [
+type HeaderNavItem = NavDestination & {
+  key: string;
+  pageKey?: string;
+  section?: string;
+  label: string;
+  desktop?: boolean;
+};
+const headerNav: readonly HeaderNavItem[] = [
   {
     key: 'home',
     pageKey: 'home',
@@ -86,11 +99,12 @@ const headerNav = [
     section: '#contact',
     label: t(locale, 'nav.contact'),
   },
+  { ...labNav, label: t(locale, 'nav.lab'), desktop: false },
 ] as const;
 const navHref = (item: (typeof headerNav)[number]) =>
-  page === 'home' && item.key !== 'expertise'
+  !item.external && page === 'home' && item.key !== 'expertise' && item.section
     ? item.section
-    : localHref(item.href);
+    : destinationHref(item, locale);
 const isActive = (item: (typeof headerNav)[number]) =>
   page === item.pageKey || (page === 'home' && item.key === 'home');
 ---
@@ -119,20 +133,23 @@ const isActive = (item: (typeof headerNav)[number]) =>
       <span class="nav-pill" aria-hidden="true"></span>
       <ul>
         {
-          headerNav.map((item) => (
-            <li>
-              <a
-                href={navHref(item)}
-                class:list={{ active: isActive(item) }}
-                aria-current={isActive(item) ? 'page' : undefined}
-                data-section-link={
-                  page === 'home' ? item.section.slice(1) : undefined
-                }
-              >
-                {item.label}
-              </a>
-            </li>
-          ))
+          headerNav
+            .filter((item) => item.desktop !== false)
+            .map((item) => (
+              <li>
+                <a
+                  href={navHref(item)}
+                  hreflang={navHrefLang(item, locale)}
+                  class:list={{ active: isActive(item) }}
+                  aria-current={isActive(item) ? 'page' : undefined}
+                  data-section-link={
+                    page === 'home' ? item.section?.slice(1) : undefined
+                  }
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
         }
       </ul>
     </nav>
@@ -300,6 +317,7 @@ const isActive = (item: (typeof headerNav)[number]) =>
     headerNav.map((item) => (
       <a
         href={navHref(item)}
+        hreflang={navHrefLang(item, locale)}
         aria-current={isActive(item) ? 'page' : undefined}
       >
         {item.label}

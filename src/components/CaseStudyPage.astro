@@ -43,26 +43,35 @@ const label = (key: MessageKey) => t(locale, key);
     {
       caseStudy.project && (
         <div class="case-study-project fx-glow" data-glow>
-          <div
-            class="case-study-install"
-            role="group"
-            aria-label={caseStudy.project.installLabel}
-          >
-            <code dir="ltr">
-              <span aria-hidden="true">$ </span>
-              {caseStudy.project.install}
-            </code>
-            <CopyButton
-              value={caseStudy.project.install}
-              label={label('copy.installLabel')}
-              {locale}
-            />
-          </div>
+          {caseStudy.project.kind === 'package' && (
+            <div
+              class="case-study-install"
+              role="group"
+              aria-label={caseStudy.project.installLabel}
+            >
+              <code dir="ltr">
+                <span aria-hidden="true">$ </span>
+                {caseStudy.project.install}
+              </code>
+              <CopyButton
+                value={caseStudy.project.install}
+                label={label('copy.installLabel')}
+                {locale}
+              />
+            </div>
+          )}
           <nav aria-label={caseStudy.project.linksLabel}>
             <ul class="case-study-project-links">
               {caseStudy.project.links.map((link) => (
                 <li>
-                  <a href={link.href} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={link.href}
+                    hreflang={
+                      link.language !== locale ? link.language : undefined
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     {link.label}
                     <Icon name="arrow-up-right" size={14} />
                   </a>

@@ -1,4 +1,5 @@
 import type { Locale } from '../i18n/config';
+import { cssSpecificityWars, cssSpecificityWarsCopy } from './openSource';
 
 export interface WorkItem {
   id: string;
@@ -15,6 +16,14 @@ export interface WorkItem {
  */
 export const internalWorkNotice =
   'Internal work — described without client names, screenshots, or confidential detail.';
+
+const labWork = (locale: Locale): WorkItem => ({
+  id: cssSpecificityWars.id,
+  kind: 'open-source',
+  title: cssSpecificityWars.name,
+  summary: cssSpecificityWarsCopy[locale].description,
+  tags: ['CSS', 'TypeScript', 'Astro 7'],
+});
 
 export const work: readonly WorkItem[] = [
   {
@@ -33,6 +42,7 @@ export const work: readonly WorkItem[] = [
       'Authored and maintain an open-source React and TypeScript library that chunks heavy synchronous work and yields to the main thread to protect Interaction to Next Paint (INP).',
     tags: ['Open source', 'React', 'TypeScript', 'INP'],
   },
+  labWork('en'),
   {
     id: 'analytics-command-center',
     title: 'Analytics command center',
@@ -100,6 +110,7 @@ const localizedWork: Partial<Record<Locale, readonly WorkItem[]>> = {
         'Creé y mantengo una biblioteca de React y TypeScript de código abierto que divide el trabajo síncrono pesado y cede el hilo principal para proteger Interaction to Next Paint (INP).',
       tags: ['Código abierto', 'React', 'TypeScript', 'INP'],
     },
+    labWork('es'),
     {
       id: 'analytics-command-center',
       title: 'Centro de control analítico',
@@ -160,6 +171,7 @@ const localizedWork: Partial<Record<Locale, readonly WorkItem[]>> = {
         'ألّفت وأصون مكتبة React وTypeScript مفتوحة المصدر تقسم العمل المتزامن الثقيل وتعيد التحكم إلى الخيط الرئيسي لحماية مؤشر Interaction to Next Paint (INP).',
       tags: ['مفتوح المصدر', 'React', 'TypeScript', 'INP'],
     },
+    labWork('ar'),
     {
       id: 'analytics-command-center',
       title: 'مركز تحكم للتحليلات',

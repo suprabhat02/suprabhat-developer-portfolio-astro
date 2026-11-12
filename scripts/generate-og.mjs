@@ -1,5 +1,6 @@
 import { mkdir, readdir, readFile } from 'node:fs/promises';
 import process from 'node:process';
+import { parseArgs } from 'node:util';
 import { chromium } from '@playwright/test';
 import sharp from 'sharp';
 import { createServer } from 'vite';
@@ -131,7 +132,16 @@ const vite = await createServer({
   optimizeDeps: { noDiscovery: true },
 });
 const { getCaseStudies } = await vite.ssrLoadModule('/src/data/caseStudies.ts');
-const caseStudies = getCaseStudies('en');
+const { values: options } = parseArgs({
+  options: {
+    'sections-only': { type: 'boolean' },
+    'case-study': { type: 'string' },
+  },
+});
+const caseStudies = getCaseStudies('en').filter(
+  (study) => !options['case-study'] || study.slug === options['case-study'],
+);
+if (!caseStudies.length) throw new Error('Unknown case-study slug');
 const { sectionPages, getSectionPageMeta, getSectionPageImage } =
   await vite.ssrLoadModule('/src/data/pageSeo.ts');
 await vite.close();
@@ -211,7 +221,7 @@ const render = async (html, scale) => {
 };
 
 await mkdir('public/images/pages', { recursive: true });
-for (const section of sectionPages) {
+for (const section of options['case-study'] ? [] : sectionPages) {
   const { title } = getSectionPageMeta('en', section);
   const output = `public${getSectionPageImage(section)}`;
   await sharp(
@@ -228,15 +238,17 @@ for (const section of sectionPages) {
     .toFile(output);
   console.log(`Generated ${output} (1200x630).`);
 }
-if (process.argv.includes('--sections-only')) {
+if (options['sections-only']) {
   await browser.close();
   process.exit(0);
 }
 
-await sharp(await render(defaultCard, 1))
-  .jpeg({ quality: 86, progressive: true, mozjpeg: true })
-  .toFile('public/assets/images/og-image.jpg');
-console.log('Generated public/assets/images/og-image.jpg (1200x630).');
+if (!options['case-study']) {
+  await sharp(await render(defaultCard, 1))
+    .jpeg({ quality: 86, progressive: true, mozjpeg: true })
+    .toFile('public/assets/images/og-image.jpg');
+  console.log('Generated public/assets/images/og-image.jpg (1200x630).');
+}
 
 await mkdir('public/images/work', { recursive: true });
 for (const { slug, title, tags } of caseStudies) {
@@ -250,6 +262,11 @@ for (const { slug, title, tags } of caseStudies) {
     .png({ compressionLevel: 9, palette: true })
     .toFile(output);
   console.log(`Generated ${output} (1200x630).`);
+}
+
+if (options['case-study']) {
+  await browser.close();
+  process.exit(0);
 }
 
 await mkdir('public/images/blog', { recursive: true });

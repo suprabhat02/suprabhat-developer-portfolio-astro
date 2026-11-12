@@ -87,6 +87,7 @@ test('entity graphs use supported types, unique definitions and visible identity
     'Offer',
     'Service',
     'SoftwareSourceCode',
+    'WebApplication',
     'ItemList',
     'ListItem',
     'BreadcrumbList',
@@ -161,6 +162,54 @@ test('entity graphs use supported types, unique definitions and visible identity
           for (const key of ['author', 'publisher', 'maintainer'])
             if (key in node) expect(node[key]).toEqual({ '@id': personId });
         }
+      }
+    }
+  }
+});
+
+test('Lab application schema links free web tool to source and the existing person', async ({
+  page,
+}) => {
+  const site = 'https://suprabhat-dev.com';
+  for (const prefix of ['', '/es', '/ar']) {
+    for (const route of ['/', '/work/css-specificity-wars/']) {
+      await page.goto(`${prefix}${route}`);
+      const schema = JSON.parse(
+        (await page
+          .locator('script[type="application/ld+json"]')
+          .textContent()) ?? '{}',
+      ) as { '@graph': Record<string, unknown>[] };
+      const application = schema['@graph'].find(
+        (node) => node['@type'] === 'WebApplication',
+      );
+      expect(application).toMatchObject({
+        '@id': `${site}/#css-specificity-wars`,
+        url: 'https://lab.suprabhat-dev.com/specificity/',
+        inLanguage: 'en',
+        applicationCategory: 'DeveloperApplication',
+        isAccessibleForFree: true,
+        offers: { '@type': 'Offer', price: 0 },
+        author: { '@id': `${site}/#person` },
+        maintainer: { '@id': `${site}/#person` },
+        hasPart: {
+          '@type': 'SoftwareSourceCode',
+          '@id': `${site}/#css-specificity-wars-source`,
+          codeRepository: 'https://github.com/suprabhat02/lab-suprabhat',
+          license: 'https://opensource.org/licenses/MIT',
+          author: { '@id': `${site}/#person` },
+          maintainer: { '@id': `${site}/#person` },
+          isPartOf: { '@id': `${site}/#css-specificity-wars` },
+        },
+      });
+      if (route !== '/') {
+        await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+          'href',
+          `${site}${prefix}${route}`,
+        );
+        await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+          'content',
+          `${site}/images/work/css-specificity-wars-og-1200x630.png`,
+        );
       }
     }
   }
@@ -777,7 +826,7 @@ test('case-study dates come from data, not the old 2026-09-06 placeholder', asyn
       datesBySlug.set(entry.name, dates);
     }
   }
-  expect(datesBySlug.size).toBe(8);
+  expect(datesBySlug.size).toBe(9);
 });
 
 test('every case study shares its own built image, not the default', async () => {
@@ -791,7 +840,7 @@ test('every case study shares its own built image, not the default', async () =>
       ),
     )
   ).flat();
-  expect(pages).toHaveLength(24);
+  expect(pages).toHaveLength(27);
 
   for (const path of pages) {
     const html = await readFile(new URL(path, dist), 'utf-8');

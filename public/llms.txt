@@ -28,6 +28,16 @@ Based in India, Suprabhat has delivered with distributed teams in Denmark and Ch
   - Case study: https://suprabhat-dev.com/work/react-inp-chunker/
   - Install: npm install react-inp-chunker
 
+- [Suprabhat Lab](https://lab.suprabhat-dev.com/): free, open frontend tools and explainers. No sign-up, tracking, or cookies. English only for now.
+  - Source: https://github.com/suprabhat02/lab-suprabhat (MIT license)
+- [CSS Specificity Wars](https://lab.suprabhat-dev.com/specificity/): the lab's first tool compares CSS selectors and explains which wins. Per-selector scores and per-part breakdowns, nesting expansion, a seven-step cascade resolver that marks the deciding step, fix suggestions using :where(), @layer, and !important as a last resort, and shareable links.
+  - Source: https://github.com/suprabhat02/lab-suprabhat (MIT license)
+  - Case study: https://suprabhat-dev.com/work/css-specificity-wars/
+  - Stack: Astro 7, strict TypeScript, modern CSS with @layer, no UI framework; pure TypeScript engine with no DOM dependency.
+  - Verified 12 November 2026: scoring checked against 40 Selectors Level 4 reference selectors and edge cases after comparing four libraries; 197 unit tests; end-to-end and axe accessibility tests in Chromium, Firefox, and WebKit.
+  - Verified 12 November 2026: 2.3 KB of gzipped JavaScript before interaction; build-time default result works without JavaScript; PageSpeed Insights 100 on mobile and desktop.
+  - Hosting: GitHub Pages, deployed with GitHub Actions and no stored secrets.
+
 ## Problems solved
 
 - React modernization: untangle components that mix data fetching, state, and layout; outcome is an incremental migration plan with clear component and state boundaries, shipped without a feature freeze.

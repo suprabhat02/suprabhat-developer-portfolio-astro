@@ -4,6 +4,7 @@ import {
   additionalCaseStudyProof,
 } from './additionalCaseStudies';
 import {
+  getCssSpecificityWarsCaseStudy,
   reactInpChunkerCaseStudy,
   reactInpChunkerProof,
   reactSmartCopyCaseStudy,
@@ -33,15 +34,17 @@ export interface CaseStudyProof {
 export interface CaseStudyLink {
   label: string;
   href: string;
+  language?: Locale;
 }
 
 /** Public project resources, present only for open-source work. */
-export interface CaseStudyProject {
-  install: string;
-  installLabel: string;
+export type CaseStudyProject = {
   linksLabel: string;
   links: readonly CaseStudyLink[];
-}
+} & (
+  | { kind: 'package'; install: string; installLabel: string }
+  | { kind: 'web-tool'; install?: never; installLabel?: never }
+);
 
 export interface CaseStudy {
   slug: string;
@@ -1494,6 +1497,7 @@ export const caseStudies: readonly CaseStudy[] = [
   ...additionalCaseStudies.en.map((caseStudy) => withProof(caseStudy, 'en')),
   withProof(reactSmartCopyCaseStudy.en, 'en'),
   withProof(reactInpChunkerCaseStudy.en, 'en'),
+  getCssSpecificityWarsCaseStudy('en'),
 ] as const;
 
 const localizedCaseStudies: Record<Locale, readonly CaseStudy[]> = {
@@ -1504,6 +1508,7 @@ const localizedCaseStudies: Record<Locale, readonly CaseStudy[]> = {
     ...additionalCaseStudies.en.map((caseStudy) => withProof(caseStudy, 'en')),
     withProof(reactSmartCopyCaseStudy.en, 'en'),
     withProof(reactInpChunkerCaseStudy.en, 'en'),
+    getCssSpecificityWarsCaseStudy('en'),
   ],
   es: [
     withProof(analyticsCommandCenter.es, 'es'),
@@ -1512,6 +1517,7 @@ const localizedCaseStudies: Record<Locale, readonly CaseStudy[]> = {
     ...additionalCaseStudies.es.map((caseStudy) => withProof(caseStudy, 'es')),
     withProof(reactSmartCopyCaseStudy.es, 'es'),
     withProof(reactInpChunkerCaseStudy.es, 'es'),
+    getCssSpecificityWarsCaseStudy('es'),
   ],
   ar: [
     withProof(analyticsCommandCenter.ar, 'ar'),
@@ -1520,6 +1526,7 @@ const localizedCaseStudies: Record<Locale, readonly CaseStudy[]> = {
     ...additionalCaseStudies.ar.map((caseStudy) => withProof(caseStudy, 'ar')),
     withProof(reactSmartCopyCaseStudy.ar, 'ar'),
     withProof(reactInpChunkerCaseStudy.ar, 'ar'),
+    getCssSpecificityWarsCaseStudy('ar'),
   ],
 };
 

@@ -3,6 +3,8 @@ import {
   footerLegalNav,
   moreNav,
   primaryNav,
+  navHref,
+  navHrefLang,
   type NavKey,
 } from '../data/navigation';
 import { getBlogFeedHref } from '../data/blog';
@@ -50,7 +52,11 @@ const moreLinks = moreNav.filter((item) => !navigateKeys.has(item.key));
     <nav aria-label={t(locale, 'footer.siteLinks')}>
       <strong>{t(locale, 'footer.navigate')}</strong>{
         primaryNav.slice(1).map((item) => (
-          <a href={href(item.href)} aria-current={current(item.key)}>
+          <a
+            href={navHref(item, locale)}
+            hreflang={navHrefLang(item, locale)}
+            aria-current={current(item.key)}
+          >
             {navLabel(item.key)}
           </a>
         ))
@@ -59,7 +65,11 @@ const moreLinks = moreNav.filter((item) => !navigateKeys.has(item.key));
     <nav aria-label={t(locale, 'footer.moreLinks')}>
       <strong>{t(locale, 'footer.more')}</strong>{
         moreLinks.map((item) => (
-          <a href={href(item.href)} aria-current={current(item.key)}>
+          <a
+            href={navHref(item, locale)}
+            hreflang={navHrefLang(item, locale)}
+            aria-current={current(item.key)}
+          >
             {navLabel(item.key)}
           </a>
         ))
@@ -68,7 +78,11 @@ const moreLinks = moreNav.filter((item) => !navigateKeys.has(item.key));
     <nav aria-label={t(locale, 'footer.legalLinks')}>
       <strong>{t(locale, 'footer.legal')}</strong>{
         footerLegalNav.map((item) => (
-          <a href={href(item.href)} aria-current={current(item.key)}>
+          <a
+            href={navHref(item, locale)}
+            hreflang={navHrefLang(item, locale)}
+            aria-current={current(item.key)}
+          >
             {navLabel(item.key)}
           </a>
         ))
