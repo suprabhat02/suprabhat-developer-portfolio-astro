@@ -171,6 +171,7 @@ test('Lab application schema links free web tool to source and the existing pers
   page,
 }) => {
   const site = 'https://suprabhat-dev.com';
+  const labAppId = 'https://lab.suprabhat-dev.com/specificity/#app';
   for (const prefix of ['', '/es', '/ar']) {
     for (const route of ['/', '/work/css-specificity-wars/']) {
       await page.goto(`${prefix}${route}`);
@@ -183,12 +184,12 @@ test('Lab application schema links free web tool to source and the existing pers
         (node) => node['@type'] === 'WebApplication',
       );
       expect(application).toMatchObject({
-        '@id': `${site}/#css-specificity-wars`,
+        '@id': labAppId,
         url: 'https://lab.suprabhat-dev.com/specificity/',
         inLanguage: 'en',
         applicationCategory: 'DeveloperApplication',
         isAccessibleForFree: true,
-        offers: { '@type': 'Offer', price: 0 },
+        offers: { '@type': 'Offer', price: 0, priceCurrency: 'USD' },
         author: { '@id': `${site}/#person` },
         maintainer: { '@id': `${site}/#person` },
         hasPart: {
@@ -198,7 +199,7 @@ test('Lab application schema links free web tool to source and the existing pers
           license: 'https://opensource.org/licenses/MIT',
           author: { '@id': `${site}/#person` },
           maintainer: { '@id': `${site}/#person` },
-          isPartOf: { '@id': `${site}/#css-specificity-wars` },
+          isPartOf: { '@id': labAppId },
         },
       });
       if (route !== '/') {
