@@ -1,5 +1,87 @@
 import { expect, test } from '@playwright/test';
 
+test('Lab navigation fits requested widths and respects external destinations', async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(90_000);
+  for (const locale of ['en', 'es', 'ar']) {
+    const prefix = locale === 'en' ? '' : `/${locale}`;
+    for (const width of [320, 768, 1024, 1280, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(`${prefix}/`);
+      await page.evaluate(() => document.fonts.ready);
+      const labLinks = page.locator('a[href="https://lab.suprabhat-dev.com/"]');
+      await expect(labLinks).toHaveCount(2);
+      for (const link of await labLinks.all()) {
+        await expect(link).not.toHaveAttribute('target', '_blank');
+        if (locale !== 'en')
+          await expect(link).toHaveAttribute('hreflang', 'en');
+        await expect(link).not.toHaveAttribute('aria-current');
+      }
+      const layout = await page.evaluate(() => {
+        const elements = [
+          '.site-header .brand',
+          '.desktop-nav',
+          '.header-controls',
+        ]
+          .map((selector) =>
+            document.querySelector(selector)!.getBoundingClientRect(),
+          )
+          .filter((bounds) => bounds.width > 0)
+          .sort((first, second) => first.left - second.left);
+        const brand = document
+          .querySelector('.site-header .brand')!
+          .getBoundingClientRect();
+        const controls = document
+          .querySelector('.header-controls')!
+          .getBoundingClientRect();
+        return {
+          overflow: document.documentElement.scrollWidth > innerWidth,
+          separated: elements.every(
+            (bounds, index) =>
+              index === 0 || bounds.left >= elements[index - 1]!.right - 1,
+          ),
+          contained: elements.every(
+            (bounds) => bounds.left >= 0 && bounds.right <= innerWidth,
+          ),
+          mirrored:
+            document.documentElement.dir === 'rtl'
+              ? brand.left > controls.left
+              : brand.left < controls.left,
+          footerDirection: getComputedStyle(
+            document.querySelector('.footer-grid')!,
+          ).direction,
+        };
+      });
+      expect(layout, `${locale} ${width}`).toEqual({
+        overflow: false,
+        separated: true,
+        contained: true,
+        mirrored: true,
+        footerDirection: locale === 'ar' ? 'rtl' : 'ltr',
+      });
+      if (await page.locator('#mob-btn').isVisible()) {
+        await page.locator('#mob-btn').click();
+        await expect(
+          page.locator('#mob-menu a[href="https://lab.suprabhat-dev.com/"]'),
+        ).toBeVisible();
+        await page.screenshot({
+          path: testInfo.outputPath(`lab-menu-${locale}-${width}.png`),
+          animations: 'disabled',
+        });
+        await page.locator('#mob-close').click();
+      } else {
+        await expect(
+          page.locator('.desktop-nav a[href="https://lab.suprabhat-dev.com/"]'),
+        ).toHaveCount(0);
+        await page.screenshot({
+          path: testInfo.outputPath(`lab-header-${locale}-${width}.png`),
+        });
+      }
+    }
+  }
+});
+
 test('locale fallback and contact state are explicit', async ({ page }) => {
   await page.goto('/ar/');
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');

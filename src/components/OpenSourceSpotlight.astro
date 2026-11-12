@@ -30,13 +30,25 @@ const {
 const project = getOpenSourceProject(projectId);
 const copy = getOpenSourceCopy(locale, projectId);
 const externalLinks = [
-  { href: project.links.docs, label: copy.docsLabel, icon: 'book-open' },
+  {
+    href: project.kind === 'package' ? project.links.docs : project.links.live,
+    label: copy.docsLabel,
+    icon: 'book-open',
+  },
   {
     href: project.links.repository,
     label: copy.repositoryLabel,
     icon: 'github',
   },
-  { href: project.links.npm, label: copy.npmLabel, icon: 'package' },
+  ...(project.kind === 'package'
+    ? [
+        {
+          href: project.links.npm,
+          label: copy.npmLabel,
+          icon: 'package' as const,
+        },
+      ]
+    : []),
 ] as const;
 const titleId = `oss-${project.id}-title`;
 ---
@@ -68,40 +80,53 @@ const titleId = `oss-${project.id}-title`;
   </div>
 
   <div class="oss-side">
-    <div
-      class="oss-terminal"
-      role="group"
-      aria-label={`${copy.installLabel}: ${project.name}`}
-      dir="ltr"
-    >
-      <div class="oss-terminal-bar" aria-hidden="true">
-        <span class="oss-light oss-light--close"></span>
-        <span class="oss-light oss-light--min"></span>
-        <span class="oss-light oss-light--max"></span>
-        <span class="oss-terminal-title">{project.name} — zsh</span>
-      </div>
-      <div class="oss-terminal-body">
-        <code
-          ><span class="oss-path" aria-hidden="true">~</span><span
-            class="oss-prompt"
-            aria-hidden="true">%</span
-          >{project.install}<span class="oss-cursor" aria-hidden="true"
-          ></span></code
+    {
+      project.kind === 'package' && (
+        <div
+          class="oss-terminal"
+          role="group"
+          aria-label={`${copy.installLabel}: ${project.name}`}
+          dir="ltr"
         >
-        <CopyButton
-          value={project.install}
-          label={`${t(locale, 'copy.installLabel')} ${project.name}`}
-          {locale}
-        />
-      </div>
-    </div>
+          <div class="oss-terminal-bar" aria-hidden="true">
+            <span class="oss-light oss-light--close" />
+            <span class="oss-light oss-light--min" />
+            <span class="oss-light oss-light--max" />
+            <span class="oss-terminal-title">{project.name} — zsh</span>
+          </div>
+          <div class="oss-terminal-body">
+            <code>
+              <span class="oss-prompt" aria-hidden="true">
+                %
+              </span>
+              {project.install}
+              <span class="oss-cursor" aria-hidden="true" />
+            </code>
+            <CopyButton
+              value={project.install}
+              label={`${t(locale, 'copy.installLabel')} ${project.name}`}
+              {locale}
+            />
+          </div>
+        </div>
+      )
+    }
 
     <nav class="oss-links" aria-label={`${copy.linksLabel}: ${project.name}`}>
       <ul>
         {
           externalLinks.map((link) => (
             <li>
-              <a href={link.href} target="_blank" rel="noopener noreferrer">
+              <a
+                href={link.href}
+                hreflang={
+                  project.kind === 'web-tool' && locale !== 'en'
+                    ? 'en'
+                    : undefined
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Icon name={link.icon} size={18} />
                 <span>{link.label}</span>
                 <Icon name="arrow-up-right" size={14} class="oss-external" />

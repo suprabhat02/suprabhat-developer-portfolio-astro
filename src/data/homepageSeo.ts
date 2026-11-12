@@ -2,6 +2,7 @@ import { DEFAULT_OG_IMAGE, SITE_URL } from '../config/site';
 import { getServices } from './services';
 import { getHomepageConversionContent } from './homepageConversion';
 import {
+  getCssSpecificityWarsSchema,
   getReactInpChunkerSchema,
   getReactSmartCopySchema,
 } from './openSource';
@@ -55,6 +56,7 @@ export const getHomepageSchema = (locale: Locale) => {
     },
     getReactSmartCopySchema(SITE_URL, language, locale),
     getReactInpChunkerSchema(SITE_URL, language, locale),
+    getCssSpecificityWarsSchema(SITE_URL, locale),
     {
       '@type': 'ItemList',
       '@id': `${pageUrl}#problems`,

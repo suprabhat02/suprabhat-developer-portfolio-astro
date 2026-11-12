@@ -401,7 +401,7 @@ test('open-source spotlights link both libraries and copy their install commands
       const cards = page.locator(
         path === `${prefix}/` ? '#work .oss-card' : '.oss-card',
       );
-      await expect(cards).toHaveCount(libraries.length);
+      await expect(cards).toHaveCount(libraries.length + 1);
       for (const library of libraries) {
         const card = page.locator(`.oss-card[data-project="${library}"]`);
         await expect(card).toBeVisible();
@@ -445,6 +445,78 @@ test('open-source spotlights link both libraries and copy their install commands
     expect(structuredData).toContain(
       `"codeRepository":"https://github.com/suprabhat02/${library}"`,
     );
+  }
+});
+
+test('Lab web tool has localized cards and accessible case studies without package controls', async ({
+  page,
+}, testInfo) => {
+  test.setTimeout(90_000);
+  for (const locale of ['en', 'es', 'ar']) {
+    const prefix = locale === 'en' ? '' : `/${locale}`;
+    for (const width of [320, 1280]) {
+      await page.setViewportSize({ width, height: 900 });
+      for (const route of ['/', '/work/']) {
+        await page.goto(`${prefix}${route}`);
+        const card = page.locator('[data-project="css-specificity-wars"]');
+        await expect(card).toBeVisible();
+        await expect(
+          card.locator('.oss-terminal, .copy-btn, a[href*="npmjs.com"]'),
+        ).toHaveCount(0);
+        await expect(
+          card.locator(`a[href="${prefix}/work/css-specificity-wars/"]`),
+        ).toHaveCount(1);
+        const live = card.locator(
+          'a[href="https://lab.suprabhat-dev.com/specificity/"]',
+        );
+        await expect(live).toBeVisible();
+        if (locale !== 'en')
+          await expect(live).toHaveAttribute('hreflang', 'en');
+        await scrollToVisible(card);
+        const mirrored = await card.evaluate((element) => {
+          const copy = element
+            .querySelector('.oss-copy')!
+            .getBoundingClientRect();
+          const side = element
+            .querySelector('.oss-side')!
+            .getBoundingClientRect();
+          return (
+            Math.abs(copy.top - side.top) > 2 ||
+            (document.documentElement.dir === 'rtl'
+              ? copy.left > side.left
+              : copy.left < side.left)
+          );
+        });
+        expect(mirrored).toBe(true);
+        if (route === '/work/')
+          await card.screenshot({
+            path: testInfo.outputPath(`lab-card-${locale}-${width}.png`),
+            animations: 'disabled',
+          });
+      }
+      await page.goto(`${prefix}/work/css-specificity-wars/`);
+      await expect(page.locator('h1')).toHaveText('CSS Specificity Wars');
+      await expect(
+        page.locator(
+          '.case-study-install, .case-study-project .copy-btn, .case-study-project a[href*="npmjs.com"]',
+        ),
+      ).toHaveCount(0);
+      await expect(page.locator('html')).toHaveAttribute(
+        'dir',
+        locale === 'ar' ? 'rtl' : 'ltr',
+      );
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBe(true);
+      await page.screenshot({
+        path: testInfo.outputPath(`lab-study-${locale}-${width}.png`),
+        fullPage: true,
+        animations: 'disabled',
+      });
+    }
+    expect((await axe(page).analyze()).violations).toEqual([]);
   }
 });
 
@@ -1222,8 +1294,8 @@ test('the current page is marked in the header, mobile menu and footer', async (
 test('open-source cards keep their text stack spaced', async ({ page }) => {
   await page.goto('/');
   const cards = page.locator('.oss-card');
-  await expect(cards).toHaveCount(2);
-  for (let index = 0; index < 2; index += 1) {
+  await expect(cards).toHaveCount(3);
+  for (let index = 0; index < 3; index += 1) {
     const card = cards.nth(index);
     const gaps = await card.evaluate((element) => {
       const bottom = (selector: string) =>

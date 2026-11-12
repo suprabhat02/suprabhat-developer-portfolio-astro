@@ -11,25 +11,41 @@ import type {
  * a release changes them.
  */
 
-export interface OpenSourceLinks {
-  readonly docs: string;
-  readonly repository: string;
-  readonly npm: string;
-}
+export type OpenSourceProjectId =
+  'react-smart-copy' | 'react-inp-chunker' | 'css-specificity-wars';
 
-export type OpenSourceProjectId = 'react-smart-copy' | 'react-inp-chunker';
-
-export interface OpenSourceProject {
+interface OpenSourceBase {
   readonly id: OpenSourceProjectId;
   readonly name: string;
-  readonly install: string;
   readonly license: 'MIT';
   readonly language: 'TypeScript';
   readonly runtime: string;
-  readonly links: OpenSourceLinks;
 }
 
-export const reactSmartCopy: OpenSourceProject = {
+export type OpenSourceProject = OpenSourceBase &
+  (
+    | {
+        readonly kind: 'package';
+        readonly install: string;
+        readonly links: {
+          readonly docs: string;
+          readonly repository: string;
+          readonly npm: string;
+        };
+      }
+    | {
+        readonly kind: 'web-tool';
+        readonly install?: never;
+        readonly links: {
+          readonly live: string;
+          readonly repository: string;
+          readonly npm?: never;
+        };
+      }
+  );
+
+export const reactSmartCopy = {
+  kind: 'package',
   id: 'react-smart-copy',
   name: 'react-smart-copy',
   install: 'npm install react-smart-copy',
@@ -41,9 +57,10 @@ export const reactSmartCopy: OpenSourceProject = {
     repository: 'https://github.com/suprabhat02/react-smart-copy',
     npm: 'https://www.npmjs.com/package/react-smart-copy',
   },
-} as const;
+} as const satisfies OpenSourceProject;
 
-export const reactInpChunker: OpenSourceProject = {
+export const reactInpChunker = {
+  kind: 'package',
   id: 'react-inp-chunker',
   name: 'react-inp-chunker',
   install: 'npm install react-inp-chunker',
@@ -57,9 +74,23 @@ export const reactInpChunker: OpenSourceProject = {
   },
 } as const;
 
+export const cssSpecificityWars = {
+  id: 'css-specificity-wars',
+  kind: 'web-tool',
+  name: 'CSS Specificity Wars',
+  license: 'MIT',
+  language: 'TypeScript',
+  runtime: 'Web browser',
+  links: {
+    live: 'https://lab.suprabhat-dev.com/specificity/',
+    repository: 'https://github.com/suprabhat02/lab-suprabhat',
+  },
+} as const satisfies OpenSourceProject;
+
 const openSourceProjects: Record<OpenSourceProjectId, OpenSourceProject> = {
   'react-smart-copy': reactSmartCopy,
   'react-inp-chunker': reactInpChunker,
+  'css-specificity-wars': cssSpecificityWars,
 };
 
 export const isOpenSourceProjectId = (id: string): id is OpenSourceProjectId =>
@@ -218,9 +249,95 @@ export const getOpenSourceCopy = (
   locale: Locale,
   id: OpenSourceProjectId = 'react-smart-copy',
 ): OpenSourceCopy =>
-  id === 'react-inp-chunker'
-    ? reactInpChunkerCopy[locale]
-    : openSourceCopy[locale];
+  id === 'css-specificity-wars'
+    ? cssSpecificityWarsCopy[locale]
+    : id === 'react-inp-chunker'
+      ? reactInpChunkerCopy[locale]
+      : openSourceCopy[locale];
+
+export const cssSpecificityWarsCopy = {
+  en: {
+    ...openSourceCopy.en,
+    eyebrow: 'Open source · Web tool',
+    tagline: 'Compare CSS selectors and understand which wins',
+    description:
+      'CSS Specificity Wars compares selectors, explains specificity and the cascade, expands nesting, and suggests fixes with shareable results.',
+    facts: [
+      'Selector scores with per-part breakdowns; nesting expansion shows what & becomes',
+      'Seven cascade steps: origin and importance, shadow context, inline style, @layer, specificity, @scope proximity, and order of appearance; the deciding step is marked',
+      'Fix suggestions: :where(), @layer, then !important as a last resort',
+      'Shareable links',
+    ],
+    docsLabel: 'Open tool (English)',
+    meta: 'MIT · Astro 7 · TypeScript · CSS',
+    lab: 'Suprabhat Lab offers free, open frontend tools and explainers. No sign-up, tracking, or cookies. English only for now. CSS Specificity Wars is its first tool.',
+    engine:
+      'Built with Astro 7, strict TypeScript, and plain modern CSS using @layer, without a UI framework. The engine is pure TypeScript with no DOM dependency.',
+    verification:
+      'As of 12 November 2026: selector scoring was checked against 40 reference selectors from Selectors Level 4 and edge cases. Four libraries were tested before one was chosen. There are 197 unit tests, plus end-to-end and axe accessibility tests in Chromium, Firefox, and WebKit.',
+    performance:
+      'As of 12 November 2026: the tool page loads 2.3 KB of gzipped JavaScript before interaction. Its default result is rendered at build time and works without JavaScript. PageSpeed Insights scores are 100 on mobile and desktop.',
+    delivery:
+      'The MIT-licensed source is public on GitHub. GitHub Pages hosts the site; GitHub Actions deploys it with no stored secrets.',
+    contextTitle: 'The lab',
+    implementationTitle: 'Selectors and the cascade',
+    verificationTitle: 'Verification and delivery',
+  },
+  es: {
+    ...openSourceCopy.es,
+    eyebrow: 'Código abierto · Herramienta web',
+    tagline: 'Compara selectores CSS y entiende cuál gana',
+    description:
+      'CSS Specificity Wars compara selectores, explica la especificidad y la cascada, expande el anidamiento y propone soluciones con resultados compartibles.',
+    facts: [
+      'Puntuaciones desglosadas por componente del selector; la expansión del anidamiento muestra en qué se convierte &',
+      'Siete pasos de la cascada: origen e importancia, contexto de sombra, estilo en línea, @layer, especificidad, proximidad de @scope y orden de aparición; se señala el paso decisivo',
+      'Soluciones sugeridas: :where(), @layer y, como último recurso, !important',
+      'Enlaces para compartir resultados',
+    ],
+    docsLabel: 'Abrir herramienta (en inglés)',
+    meta: 'MIT · Astro 7 · TypeScript · CSS',
+    lab: 'Suprabhat Lab ofrece herramientas frontend y explicaciones gratuitas y abiertas. Sin registro, seguimiento ni cookies. Por ahora, solo en inglés. CSS Specificity Wars es su primera herramienta.',
+    engine:
+      'Desarrollada con Astro 7, TypeScript estricto y CSS moderno con @layer, sin framework de interfaz. El motor es TypeScript puro y no depende del DOM.',
+    verification:
+      'A 12 de noviembre de 2026: la puntuación se comprobó con 40 selectores de referencia de Selectors Level 4 y casos límite. Se probaron cuatro bibliotecas antes de elegir una. Hay 197 pruebas unitarias, además de pruebas de extremo a extremo y de accesibilidad con axe en Chromium, Firefox y WebKit.',
+    performance:
+      'A 12 de noviembre de 2026: la página carga 2,3 KB de JavaScript comprimido con gzip antes de interactuar. El resultado inicial se genera durante el build y funciona sin JavaScript. PageSpeed Insights obtiene 100 en móvil y escritorio.',
+    delivery:
+      'El código fuente, con licencia MIT, es público en GitHub. El sitio se aloja en GitHub Pages y se despliega con GitHub Actions, sin secretos almacenados.',
+    contextTitle: 'El laboratorio',
+    implementationTitle: 'Selectores y cascada',
+    verificationTitle: 'Verificación y despliegue',
+  },
+  ar: {
+    ...openSourceCopy.ar,
+    eyebrow: 'مفتوح المصدر · أداة ويب',
+    tagline: 'قارن محددات CSS وافهم أيها يفوز ولماذا',
+    description:
+      'تقارن أداة CSS Specificity Wars المحددات، وتشرح الخصوصية والتتالي، وتوسّع التداخل، وتقترح حلولًا مع نتائج قابلة للمشاركة عبر الروابط.',
+    facts: [
+      'درجات للمحددات مع تفصيل كل جزء؛ يوضح توسيع التداخل ما يتحول إليه الرمز &',
+      'سبع خطوات للتتالي: المصدر والأهمية، وسياق الظل، والنمط المضمن، و\u2066@layer\u2069، والخصوصية، وقرب \u2066@scope\u2069، وترتيب الظهور؛ مع تحديد الخطوة الحاسمة',
+      'حلول مقترحة: \u2066:where()\u2069 ثم \u2066@layer\u2069 ثم \u2066!important\u2069 كحل أخير',
+      'روابط لمشاركة النتائج',
+    ],
+    docsLabel: 'افتح الأداة (بالإنجليزية)',
+    meta: 'MIT · Astro 7 · TypeScript · CSS',
+    lab: 'يقدم Suprabhat Lab أدوات وشروحات مجانية ومفتوحة للواجهات الأمامية. بلا تسجيل أو تتبع أو ملفات تعريف ارتباط. متاح بالإنجليزية فقط حاليًا. CSS Specificity Wars هي أداته الأولى.',
+    engine:
+      'بُنيت باستخدام Astro 7 وTypeScript الصارم وCSS الحديث مع \u2066@layer\u2069، دون إطار عمل للواجهة. المحرك مكتوب بلغة TypeScript الخالصة ولا يعتمد على DOM.',
+    verification:
+      'حتى 12 نوفمبر 2026: جرى التحقق من حساب الدرجات باستخدام 40 محددًا مرجعيًا من مواصفة Selectors Level 4 وحالات حدية. اختُبرت أربع مكتبات قبل اختيار إحداها. هناك 197 اختبار وحدة، إضافة إلى اختبارات شاملة واختبارات إمكانية الوصول باستخدام axe في Chromium وFirefox وWebKit.',
+    performance:
+      'حتى 12 نوفمبر 2026: تحمّل صفحة الأداة 2.3 كيلوبايت من JavaScript المضغوط باستخدام gzip قبل التفاعل. تُولَّد النتيجة الافتراضية وقت البناء وتعمل دون JavaScript. تبلغ درجات PageSpeed Insights مئة على الهاتف وسطح المكتب.',
+    delivery:
+      'الشيفرة المصدرية متاحة علنًا على GitHub بترخيص MIT. يستضيف GitHub Pages الموقع، ويتولى GitHub Actions نشره دون أسرار مخزنة.',
+    contextTitle: 'المختبر',
+    implementationTitle: 'المحددات والتتالي',
+    verificationTitle: 'التحقق والنشر',
+  },
+} as const;
 
 type CaseStudyBase = Omit<CaseStudy, 'proof'>;
 
@@ -228,13 +345,25 @@ const projectLinks = (
   project: OpenSourceProject,
   copy: OpenSourceCopy,
 ): CaseStudyProject => ({
-  install: project.install,
-  installLabel: copy.installLabel,
+  ...(project.kind === 'package'
+    ? {
+        kind: project.kind,
+        install: project.install,
+        installLabel: copy.installLabel,
+      }
+    : { kind: project.kind }),
   linksLabel: copy.linksLabel,
   links: [
-    { label: copy.docsLabel, href: project.links.docs },
+    {
+      label: copy.docsLabel,
+      href:
+        project.kind === 'package' ? project.links.docs : project.links.live,
+      ...(project.kind === 'web-tool' ? { language: 'en' as const } : {}),
+    },
     { label: copy.repositoryLabel, href: project.links.repository },
-    { label: copy.npmLabel, href: project.links.npm },
+    ...(project.kind === 'package'
+      ? [{ label: copy.npmLabel, href: project.links.npm }]
+      : []),
   ],
 });
 
@@ -1061,9 +1190,60 @@ export const reactInpChunkerProof: Record<Locale, readonly CaseStudyProof[]> = {
   ],
 };
 
+export const getCssSpecificityWarsCaseStudy = (locale: Locale): CaseStudy => {
+  const copy = cssSpecificityWarsCopy[locale];
+  const base = reactInpChunkerCaseStudy[locale];
+  return {
+    slug: cssSpecificityWars.id,
+    datePublished: '2026-11-12',
+    dateModified: '2026-11-12',
+    title: cssSpecificityWars.name,
+    seoTitle: `${cssSpecificityWars.name} | ${copy.eyebrow}`,
+    description: copy.description,
+    eyebrow: copy.eyebrow,
+    summary: copy.tagline,
+    confidentialityNote: copy.lab,
+    meta: [
+      ...base.meta
+        .slice(0, 1)
+        .map((item) => ({ ...item, value: copy.eyebrow })),
+      ...base.meta.slice(1, 2),
+      ...base.meta.slice(3, 4).map((item) => ({ ...item, value: copy.meta })),
+    ],
+    tags: ['CSS', 'TypeScript', 'Astro 7'],
+    proof: reactInpChunkerProof[locale].map((panel) => ({
+      ...panel,
+      items:
+        panel.id === 'role'
+          ? base.meta.slice(1, 2).map((item) => item.value)
+          : panel.id === 'constraints'
+            ? [copy.engine]
+            : [copy.facts[2]],
+    })),
+    sections: [
+      { id: 'context', heading: copy.contextTitle, body: [copy.description] },
+      {
+        id: 'implementation',
+        heading: copy.implementationTitle,
+        body: [copy.engine],
+        bullets: copy.facts,
+      },
+      {
+        id: 'verification',
+        heading: copy.verificationTitle,
+        body: [copy.verification, copy.delivery],
+      },
+    ],
+    outcomes: [copy.performance],
+    nextSteps: [copy.docsLabel, copy.repositoryLabel],
+    relatedServices: ['CSS', 'TypeScript'],
+    project: projectLinks(cssSpecificityWars, copy),
+  };
+};
+
 /** SoftwareSourceCode JSON-LD for a project (no @context; the layout adds it). */
 const getOpenSourceSchema = (
-  project: OpenSourceProject,
+  project: Extract<OpenSourceProject, { kind: 'package' }>,
   copy: OpenSourceCopy,
   details: { runtimePlatform: string; keywords: string },
   siteUrl: string,
@@ -1121,12 +1301,44 @@ export const getReactInpChunkerSchema = (
   );
 
 /** The project schema for an open-source case-study slug, if it has one. */
+export const getCssSpecificityWarsSchema = (
+  siteUrl: string,
+  locale: Locale,
+) => ({
+  '@type': 'WebApplication',
+  '@id': `${siteUrl}/#${cssSpecificityWars.id}`,
+  name: cssSpecificityWars.name,
+  description: cssSpecificityWarsCopy[locale].description,
+  url: cssSpecificityWars.links.live,
+  inLanguage: 'en',
+  applicationCategory: 'DeveloperApplication',
+  isAccessibleForFree: true,
+  offers: { '@type': 'Offer', price: 0 },
+  author: { '@id': `${siteUrl}/#person` },
+  maintainer: { '@id': `${siteUrl}/#person` },
+  hasPart: {
+    '@type': 'SoftwareSourceCode',
+    '@id': `${siteUrl}/#${cssSpecificityWars.id}-source`,
+    name: cssSpecificityWars.name,
+    url: cssSpecificityWars.links.repository,
+    codeRepository: cssSpecificityWars.links.repository,
+    programmingLanguage: 'TypeScript',
+    license: 'https://opensource.org/licenses/MIT',
+    author: { '@id': `${siteUrl}/#person` },
+    maintainer: { '@id': `${siteUrl}/#person` },
+    isPartOf: { '@id': `${siteUrl}/#${cssSpecificityWars.id}` },
+  },
+});
+
 export const getOpenSourceSchemaForSlug = (
   slug: string,
   siteUrl: string,
   language: string,
   locale: Locale,
 ) => {
+  if (slug === cssSpecificityWars.id) {
+    return getCssSpecificityWarsSchema(siteUrl, locale);
+  }
   if (slug === reactSmartCopy.id) {
     return getReactSmartCopySchema(siteUrl, language, locale);
   }
