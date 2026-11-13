@@ -1,6 +1,6 @@
 # Suprabhat Kumar (Shubh) — Senior Front-End Engineer
 
-Suprabhat Kumar, also known as Shubh, is a Senior Front-End Engineer and web designer based in Noida Extension, Uttar Pradesh, India. He uses he/him pronouns and has more than six years of experience building SaaS portals, enterprise dashboards, design systems, accessible interfaces, and static websites.
+Suprabhat Kumar, also known as Shubh, is a Senior Front-End Engineer and web designer based in Noida, Uttar Pradesh, India. He uses he/him pronouns and has more than six years of experience building SaaS portals, enterprise dashboards, design systems, accessible interfaces, and static websites.
 
 He helps product teams investigate frontend performance, review React and TypeScript architecture, build data-heavy SaaS dashboards, engineer design systems, audit accessibility against WCAG 2.2 AA criteria, and design and develop complete websites. His work emphasizes maintainable component and state boundaries, resilient data states, keyboard and assistive-technology access, browser testing, and measured performance.
 
@@ -92,7 +92,6 @@ Based in India, Suprabhat has delivered with distributed teams in Denmark and Ch
 - Also known as: Suprabhat, Shubh
 - Username: suprabhat02 (GitHub, npm, DEV)
 - Email: suprabhatkumar02@gmail.com
-- Phone: +91 78920 08290
 - LinkedIn: https://www.linkedin.com/in/suprabhatkumar/
 - GitHub: https://github.com/suprabhat02
 - npm: https://www.npmjs.com/~suprabhat02

@@ -261,7 +261,7 @@ const content: Record<Locale, HomepageConversionContent> = {
     collaboration: {
       eyebrow: 'Remote collaboration',
       title: 'Delivery stays visible across time zones',
-      lead: 'Based in Noida Extension on IST (UTC+5:30), with 2–4 hours of agreed real-time overlap for teams in the Americas, United Kingdom, and Western Europe.',
+      lead: 'Based in Noida on IST (UTC+5:30), with 2–4 hours of agreed real-time overlap for teams in the Americas, United Kingdom, and Western Europe.',
       items: [
         {
           title: 'Async by default',

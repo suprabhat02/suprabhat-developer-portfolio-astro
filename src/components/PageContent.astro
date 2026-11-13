@@ -121,13 +121,6 @@ const contactChannels = [
     icon: 'mail' as IconName,
     external: false,
   },
-  {
-    href: `tel:${profile.phone.replace(/\s/g, '')}`,
-    label: tx('page.contact.phone'),
-    value: profile.phone,
-    icon: 'message' as IconName,
-    external: false,
-  },
   ...profile.social.map((item) => ({
     href: item.href,
     label: item.label,

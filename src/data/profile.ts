@@ -17,7 +17,6 @@ export interface Profile {
   philosophy: string;
   email: string;
   bookingUrl?: string;
-  phone: string;
   pronouns: string;
   timezone: string;
   portrait: { src: string; width: number; height: number; alt: string };
@@ -43,10 +42,10 @@ export const profile: Profile = {
   eyebrow: {
     role: 'Senior Front-End Engineer',
     availability: 'Remote · evening overlap with the Americas and Europe',
-    from: 'Noida Extension, India · IST (UTC+5:30)',
+    from: 'Noida, India · IST (UTC+5:30)',
   },
   about: [
-    'I am Suprabhat Kumar, also known as Shubh, a Senior Front-End Engineer and web designer based in Noida Extension, India. Over six years, I have built SaaS portals, enterprise dashboards, component libraries, and public websites with React, Next.js, and TypeScript. I currently work as a Software Engineer III at Topsoe, where I develop data-intensive interfaces and full-stack features with distributed teams in Denmark and China.',
+    'I am Suprabhat Kumar, also known as Shubh, a Senior Front-End Engineer and web designer based in Noida, India. Over six years, I have built SaaS portals, enterprise dashboards, component libraries, and public websites with React, Next.js, and TypeScript. I currently work as a Software Engineer III at Topsoe, where I develop data-intensive interfaces and full-stack features with distributed teams in Denmark and China.',
     'My career began with UI development at Swaragh Technologies, followed by frontend roles at MobileCoderz, TrueBlue, and Cognizant. At MobileCoderz, I moved into a senior frontend role, mentored developers, and contributed to architecture reviews. At Cognizant, I developed features for BMW Group’s internal analytics dashboard using React, TypeScript, AG Grid, and Ant Design, collaborating with teams in Germany. At TrueBlue, I collaborated daily with a research and development team in Australia and worked with offshore colleagues in New Zealand. That progression taught me how to work across product constraints, time zones, and codebases at different stages of maturity.',
     'I specialize in the parts of frontend work that become difficult as products grow: data-heavy dashboards, state and API boundaries, reusable component systems, rendering performance, and accessible interaction. My regular stack includes Redux Toolkit, RTK Query, TanStack Query, AG Grid, Storybook, FastAPI, and PostgreSQL. I choose tools after understanding the user task, data flow, failure states, and maintenance cost rather than treating a framework as the solution.',
     'My working approach is direct: clarify the decision an interface supports, model loading and error states before the ideal path, build the smallest maintainable system, and verify it with type checks, browser tests, accessibility review, and performance measurement. Written decisions and progress updates keep remote work visible without filling calendars with status meetings.',
@@ -57,7 +56,6 @@ export const profile: Profile = {
   email: 'suprabhatkumar02@gmail.com',
   // TODO(owner): Add a booking URL here when booking links should be enabled.
   bookingUrl: '',
-  phone: '+91 78920 08290',
   pronouns: 'he/him',
   timezone: 'IST (UTC+5:30)',
   portrait: {
@@ -93,10 +91,10 @@ const profileTranslations: Partial<Record<Locale, ProfileTranslation>> = {
     eyebrow: {
       role: 'Ingeniero Frontend Sénior',
       availability: 'Remoto · solapamiento de tarde con América y Europa',
-      from: 'Noida Extension, India · IST (UTC+5:30)',
+      from: 'Noida, India · IST (UTC+5:30)',
     },
     about: [
-      'Soy Suprabhat Kumar, también conocido como Shubh, ingeniero frontend sénior y diseñador web con base en Noida Extension, India. Durante seis años he creado portales SaaS, paneles empresariales, bibliotecas de componentes y sitios web públicos con React, Next.js y TypeScript. Actualmente trabajo como Software Engineer III en Topsoe, donde desarrollo interfaces con gran volumen de datos y funcionalidades full-stack junto a equipos distribuidos en Dinamarca y China.',
+      'Soy Suprabhat Kumar, también conocido como Shubh, ingeniero frontend sénior y diseñador web con base en Noida, India. Durante seis años he creado portales SaaS, paneles empresariales, bibliotecas de componentes y sitios web públicos con React, Next.js y TypeScript. Actualmente trabajo como Software Engineer III en Topsoe, donde desarrollo interfaces con gran volumen de datos y funcionalidades full-stack junto a equipos distribuidos en Dinamarca y China.',
       'Mi carrera comenzó con desarrollo de UI en Swaragh Technologies y continuó con puestos frontend en MobileCoderz, TrueBlue y Cognizant. En MobileCoderz pasé a un puesto frontend sénior, orienté a otros desarrolladores y participé en revisiones de arquitectura. En Cognizant desarrollé funciones para el panel interno de analítica de BMW Group con React, TypeScript, AG Grid y Ant Design, colaborando con equipos en Alemania. En TrueBlue colaboré a diario con el equipo de investigación y desarrollo en Australia y trabajé con colegas en Nueva Zelanda. Esa trayectoria me enseñó a trabajar con distintas restricciones de producto, zonas horarias y bases de código en diferentes etapas de madurez.',
       'Me especializo en las partes del trabajo frontend que se complican a medida que un producto crece: paneles con muchos datos, límites entre estado y API, sistemas de componentes reutilizables, rendimiento de renderizado e interacción accesible. Mi stack habitual incluye Redux Toolkit, RTK Query, TanStack Query, AG Grid, Storybook, FastAPI y PostgreSQL. Elijo las herramientas después de entender la tarea del usuario, el flujo de datos, los estados de error y el coste de mantenimiento, en lugar de tratar un framework como la solución.',
       'Mi forma de trabajar es directa: aclarar qué decisión apoya una interfaz, modelar los estados de carga y error antes del camino ideal, construir el sistema mantenible más pequeño posible y verificarlo con comprobación de tipos, pruebas en navegador, revisión de accesibilidad y medición de rendimiento. Las decisiones por escrito y los avances documentados mantienen visible el trabajo remoto sin llenar el calendario de reuniones de seguimiento.',
@@ -114,10 +112,10 @@ const profileTranslations: Partial<Record<Locale, ProfileTranslation>> = {
     eyebrow: {
       role: 'مهندس واجهات أمامية أول',
       availability: 'عن بُعد · تداخل مسائي مع الأمريكتين وأوروبا',
-      from: 'نويدا إكستنشن، الهند · IST (UTC+5:30)',
+      from: 'نويدا، الهند · IST (UTC+5:30)',
     },
     about: [
-      'أنا سوبرابهات كومار، وأُعرف أيضًا باسم Shubh، مهندس واجهات أمامية أول ومصمم مواقع مقيم في نويدا إكستنشن بالهند. على مدى ست سنوات، بنيت بوابات SaaS ولوحات تحكم مؤسسية ومكتبات مكونات ومواقع عامة باستخدام React وNext.js وTypeScript. أعمل حاليًا بمنصب Software Engineer III في Topsoe، حيث أطوّر واجهات كثيفة البيانات وميزات full-stack مع فرق موزعة في الدنمارك والصين.',
+      'أنا سوبرابهات كومار، وأُعرف أيضًا باسم Shubh، مهندس واجهات أمامية أول ومصمم مواقع مقيم في نويدا بالهند. على مدى ست سنوات، بنيت بوابات SaaS ولوحات تحكم مؤسسية ومكتبات مكونات ومواقع عامة باستخدام React وNext.js وTypeScript. أعمل حاليًا بمنصب Software Engineer III في Topsoe، حيث أطوّر واجهات كثيفة البيانات وميزات full-stack مع فرق موزعة في الدنمارك والصين.',
       'بدأت مسيرتي في تطوير واجهات المستخدم لدى Swaragh Technologies، ثم انتقلت إلى أدوار الواجهات الأمامية لدى MobileCoderz وTrueBlue وCognizant. في MobileCoderz انتقلت إلى دور أول في الواجهات الأمامية، ووجّهت مطورين آخرين وشاركت في مراجعات المعمارية. في Cognizant طورت ميزات للوحة التحليلات الداخلية الخاصة بـ BMW Group باستخدام React وTypeScript وAG Grid وAnt Design، بالتعاون مع فرق في ألمانيا. وفي TrueBlue تعاونت يوميًا مع فريق البحث والتطوير في أستراليا وعملت مع زملاء في نيوزيلندا. علّمتني هذه المسيرة العمل عبر قيود المنتجات والمناطق الزمنية وقواعد الشيفرة في مراحل نضج مختلفة.',
       'أتخصص في جوانب عمل الواجهات الأمامية التي تزداد صعوبة مع نمو المنتج: لوحات البيانات الكثيفة، والحدود بين الحالة وواجهات API، وأنظمة المكونات القابلة لإعادة الاستخدام، وأداء العرض، والتفاعل المتاح للجميع. تشمل أدواتي المعتادة Redux Toolkit وRTK Query وTanStack Query وAG Grid وStorybook وFastAPI وPostgreSQL. أختار الأدوات بعد فهم مهمة المستخدم وتدفق البيانات وحالات الخطأ وتكلفة الصيانة، بدلًا من التعامل مع إطار العمل على أنه الحل.',
       'أسلوبي في العمل مباشر: أوضّح القرار الذي تدعمه الواجهة، وأصمم حالات التحميل والخطأ قبل المسار المثالي، وأبني أصغر نظام قابل للصيانة، ثم أتحقق منه بفحص الأنواع واختبارات المتصفح ومراجعة إمكانية الوصول وقياس الأداء. القرارات المكتوبة وتحديثات التقدم تُبقي العمل عن بُعد واضحًا دون ملء التقويم باجتماعات المتابعة.',

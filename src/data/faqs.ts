@@ -26,7 +26,7 @@ export const faqs: readonly Faq[] = [
     id: 'remote',
     question: 'Do you take on international or remote work?',
     answer:
-      'Yes. I am based in Noida Extension, India, on IST (UTC+5:30), and work remotely with teams in the Americas, United Kingdom, and Western Europe, with 2–4 hours of agreed real-time overlap.',
+      'Yes. I am based in Noida, India, on IST (UTC+5:30), and work remotely with teams in the Americas, United Kingdom, and Western Europe, with 2–4 hours of agreed real-time overlap.',
   },
   {
     id: 'timeline',
