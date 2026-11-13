@@ -121,7 +121,7 @@ const en = {
   'home.statCapabilities': 'Full-stack capabilities',
   'home.statRemote': 'Remote collaboration',
   'home.aboutStatement':
-    'Suprabhat Kumar, also known as Shubh, is a Senior Front-End Engineer with 6+ years building SaaS portals, enterprise dashboards, design systems, and accessible websites. Based in Noida Extension, India, with delivery experience across teams in Denmark, China, Germany, Australia, and New Zealand.',
+    'Suprabhat Kumar, also known as Shubh, is a Senior Front-End Engineer with 6+ years building SaaS portals, enterprise dashboards, design systems, and accessible websites. Based in Noida, India, with delivery experience across teams in Denmark, China, Germany, Australia, and New Zealand.',
   'home.experienceCta': 'Explore experience',
   'home.expertiseLead':
     'Senior frontend support where architecture, data, accessibility, and performance meet.',
@@ -159,7 +159,6 @@ const en = {
   'page.contact.linkedin': 'Contact on LinkedIn',
   'page.contact.termsTitle': 'How engagements work',
   'page.contact.directTitle': 'Direct contact',
-  'page.contact.phone': 'Phone',
   'home.contactForm': 'Project enquiry form',
   'home.email': 'Email',
   'home.preferEmail': 'Prefer email?',
@@ -588,7 +587,7 @@ const es: Translations = {
   'home.statCapabilities': 'Capacidades full stack',
   'home.statRemote': 'Colaboración remota',
   'home.aboutStatement':
-    'Ingeniero de software frontend con más de 6 años creando plataformas SaaS de alto rendimiento, paneles empresariales y sistemas de UI intensivos en datos. Especializado en React, TypeScript y Redux Toolkit, con capacidad full stack mediante FastAPI y PostgreSQL. Con base en Noida Extension, India, y experiencia de colaboración con equipos en Dinamarca, China, Alemania, Australia y Nueva Zelanda.',
+    'Ingeniero de software frontend con más de 6 años creando plataformas SaaS de alto rendimiento, paneles empresariales y sistemas de UI intensivos en datos. Especializado en React, TypeScript y Redux Toolkit, con capacidad full stack mediante FastAPI y PostgreSQL. Con base en Noida, India, y experiencia de colaboración con equipos en Dinamarca, China, Alemania, Australia y Nueva Zelanda.',
   'home.experienceCta': 'Explorar experiencia',
   'home.expertiseLead':
     'Capacidad full stack, especializado en interfaces de alto rendimiento con API rápidas y seguras mediante tipos.',
@@ -630,7 +629,6 @@ const es: Translations = {
   'page.contact.linkedin': 'Contactar por LinkedIn',
   'page.contact.termsTitle': 'Cómo funcionan los proyectos',
   'page.contact.directTitle': 'Contacto directo',
-  'page.contact.phone': 'Teléfono',
   'home.contactForm': 'Formulario de contacto',
   'home.email': 'Correo electrónico',
   'home.preferEmail': '¿Prefieres correo?',
@@ -1104,7 +1102,7 @@ const ar: Translations = {
   'home.statCapabilities': 'قدرات full stack',
   'home.statRemote': 'تعاون عن بُعد',
   'home.aboutStatement':
-    'مهندس برمجيات للواجهات الأمامية بخبرة تزيد على 6 سنوات في بناء منصات SaaS عالية الأداء ولوحات تحكم مؤسسية وأنظمة واجهات كثيفة البيانات. أتخصص في React وTypeScript وRedux Toolkit، مع خبرة شاملة عبر FastAPI وPostgreSQL. أقيم في نويدا إكستنشن بالهند، ولدي خبرة في التعاون مع فرق في الدنمارك والصين وألمانيا وأستراليا ونيوزيلندا.',
+    'مهندس برمجيات للواجهات الأمامية بخبرة تزيد على 6 سنوات في بناء منصات SaaS عالية الأداء ولوحات تحكم مؤسسية وأنظمة واجهات كثيفة البيانات. أتخصص في React وTypeScript وRedux Toolkit، مع خبرة شاملة عبر FastAPI وPostgreSQL. أقيم في نويدا بالهند، ولدي خبرة في التعاون مع فرق في الدنمارك والصين وألمانيا وأستراليا ونيوزيلندا.',
   'home.experienceCta': 'استكشف الخبرة',
   'home.expertiseLead':
     'خبرة شاملة مع تخصص في واجهات أمامية عالية الأداء مدعومة بواجهات API سريعة وآمنة الأنواع.',
@@ -1142,7 +1140,6 @@ const ar: Translations = {
   'page.contact.linkedin': 'التواصل عبر LinkedIn',
   'page.contact.termsTitle': 'كيف تسير المشاريع',
   'page.contact.directTitle': 'تواصل مباشر',
-  'page.contact.phone': 'الهاتف',
   'home.contactForm': 'نموذج التواصل',
   'home.email': 'البريد الإلكتروني',
   'home.preferEmail': 'تفضل البريد الإلكتروني؟',
