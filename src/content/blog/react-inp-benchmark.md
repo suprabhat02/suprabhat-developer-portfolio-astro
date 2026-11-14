@@ -34,7 +34,7 @@ Each run clicks **Score 20,000 rows**, then clicks a second button 50 ms later, 
 <img src="/images/blog/react-inp-benchmark/demo-chunker.webp" alt="The same benchmark app with the react-inp-chunker version selected, described as useChunkedTask(rows, scoreRow) with 5 ms slices that yield with scheduler.yield()." width="1200" height="1004" loading="lazy" decoding="async" />
 </figure>
 
-The numbers below come from headless Chromium 141 on a 2-core cloud VM with 4x CPU throttling: 30 runs per version after 3 warm-up runs. Absolute values depend on the machine. The [benchmark folder](https://github.com/suprabhat02/react-inp-chunker/tree/main/bench/inp-demo) has the code, the method and every raw sample, so you can run it on yours.
+The numbers below come from headless Chromium 141 on a 2-core cloud VM with 4x CPU throttling: 30 runs per version after 3 warm-up runs. Absolute values depend on the machine. The [benchmark folder](https://github.com/suprabhat02/react-inp-chunker/tree/01e722263eac3636cbe16b49e95a1a3a02d1ae82/bench/inp-demo) has the code, the method and every raw sample, so you can run it on yours. The results are for react-inp-chunker 0.4.0, measured on 5 November 2026, and the links point to that exact commit so they keep matching the numbers.
 
 ## Results
 
@@ -64,9 +64,9 @@ Transitions help when the cost is spread across many components, such as a large
 
 Yielding is not free. Every slice hands the main thread back to the browser, and the work only resumes when the browser schedules it again, so the same work finishes later. The synchronous version showed its results after a median of 339 ms. The time-sliced versions took 534 ms with react-inp-chunker, 660 ms with hand-written `scheduler.yield()`, and 714 ms with `setTimeout`.
 
-`setTimeout` is the slowest because browsers clamp nested timers: once timers are nested several levels deep, `setTimeout(fn, 0)` waits at least 4 ms. With 5 ms slices of work, a 4 ms minimum wait after each slice adds up quickly. [`scheduler.yield()`](https://developer.mozilla.org/en-US/docs/Web/API/Scheduler/yield) is built for this case: the work resumes ahead of other queued tasks.
+`setTimeout` was the slowest here, and the likely reason is that browsers clamp nested timers: once timers are nested several levels deep, `setTimeout(fn, 0)` waits at least 4 ms. With 5 ms slices of work, a 4 ms minimum wait after each slice adds up quickly. This benchmark did not isolate that cause, so treat it as the probable explanation, not a measured one. [`scheduler.yield()`](https://developer.mozilla.org/en-US/docs/Web/API/Scheduler/yield) is built for this case: the work resumes ahead of other queued tasks.
 
-The gap between react-inp-chunker and hand-written `scheduler.yield()` looks large in a chart of medians, but it is within run-to-run noise here; the individual runs of the two versions overlap widely (see [results.json](https://github.com/suprabhat02/react-inp-chunker/blob/main/bench/inp-demo/results/results.json)). This benchmark does not show either one finishing faster. The claim it supports is narrower: the library gives the same responsiveness as a hand-written `scheduler.yield()` loop, without writing and maintaining that loop yourself.
+The gap between react-inp-chunker and hand-written `scheduler.yield()` looks large in a chart of medians, but it is within run-to-run noise here; the individual runs of the two versions overlap widely (see [results.json](https://github.com/suprabhat02/react-inp-chunker/blob/01e722263eac3636cbe16b49e95a1a3a02d1ae82/bench/inp-demo/results/results.json)). This benchmark does not show either one finishing faster. The claim it supports is narrower: the library gives the same responsiveness as a hand-written `scheduler.yield()` loop, without writing and maintaining that loop yourself.
 
 One more limit shows up in the longest frame. The final sort of 20,000 results is still one block of work, so the longest frame stays at a median of 121 ms with `scheduler.yield()` and 127 ms with react-inp-chunker; the `setTimeout` version's median was 65 ms. Slicing only helps with the work you slice.
 
@@ -133,7 +133,7 @@ To see what your users experience, collect INP in the field, for example with th
 
 ## Run it yourself
 
-The [benchmark README](https://github.com/suprabhat02/react-inp-chunker/tree/main/bench/inp-demo) has the full method. From a clone of the repository:
+The [benchmark README](https://github.com/suprabhat02/react-inp-chunker/tree/01e722263eac3636cbe16b49e95a1a3a02d1ae82/bench/inp-demo) has the full method. From a clone of the repository:
 
 ```bash
 cd bench/inp-demo
