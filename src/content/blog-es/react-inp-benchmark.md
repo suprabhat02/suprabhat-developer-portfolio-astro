@@ -34,7 +34,7 @@ Cada ejecución pulsa **Score 20,000 rows** y, 50 ms después, pulsa un segundo 
 <img src="/images/blog/react-inp-benchmark/demo-chunker.webp" alt="La misma aplicación del benchmark con la versión react-inp-chunker seleccionada, descrita como useChunkedTask(rows, scoreRow) con franjas de 5 ms que ceden con scheduler.yield()." width="1200" height="1004" loading="lazy" decoding="async" />
 </figure>
 
-Los números proceden de Chromium 141 en modo headless, en una máquina virtual en la nube con 2 núcleos y la CPU ralentizada 4x: 30 ejecuciones por versión tras 3 de calentamiento. Los valores absolutos dependen de la máquina. La [carpeta del benchmark](https://github.com/suprabhat02/react-inp-chunker/tree/main/bench/inp-demo) contiene el código, el método y todas las muestras, para que puedas ejecutarlo en la tuya.
+Los números proceden de Chromium 141 en modo headless, en una máquina virtual en la nube con 2 núcleos y la CPU ralentizada 4x: 30 ejecuciones por versión tras 3 de calentamiento. Los valores absolutos dependen de la máquina. La [carpeta del benchmark](https://github.com/suprabhat02/react-inp-chunker/tree/01e722263eac3636cbe16b49e95a1a3a02d1ae82/bench/inp-demo) contiene el código, el método y todas las muestras, para que puedas ejecutarlo en la tuya. Los resultados corresponden a react-inp-chunker 0.4.0, medidos el 5 de noviembre de 2026, y los enlaces apuntan a esa versión exacta del código para que sigan coincidiendo con los números.
 
 ## Resultados
 
@@ -64,9 +64,9 @@ Las transiciones ayudan cuando el coste se reparte entre muchos componentes, por
 
 Ceder el hilo no es gratis. Cada franja devuelve el hilo principal al navegador, y el trabajo solo continúa cuando el navegador vuelve a programarlo, así que el mismo trabajo termina más tarde. La versión síncrona mostró sus resultados tras una mediana de 339 ms. Las versiones troceadas tardaron 534 ms con react-inp-chunker, 660 ms con `scheduler.yield()` escrito a mano y 714 ms con `setTimeout`.
 
-`setTimeout` es la más lenta porque los navegadores limitan los temporizadores anidados: cuando hay varios niveles de anidación, `setTimeout(fn, 0)` espera al menos 4 ms. Con franjas de 5 ms de trabajo, una espera mínima de 4 ms tras cada franja se acumula rápido. [`scheduler.yield()`](https://developer.mozilla.org/en-US/docs/Web/API/Scheduler/yield) está pensado para este caso: el trabajo se reanuda antes que otras tareas en cola.
+`setTimeout` fue la más lenta aquí, y lo más probable es que se deba a que los navegadores limitan los temporizadores anidados: cuando hay varios niveles de anidación, `setTimeout(fn, 0)` espera al menos 4 ms. Con franjas de 5 ms de trabajo, una espera mínima de 4 ms tras cada franja se acumula rápido. Este benchmark no aisló esa causa, así que es la explicación probable, no una medida. [`scheduler.yield()`](https://developer.mozilla.org/en-US/docs/Web/API/Scheduler/yield) está pensado para este caso: el trabajo se reanuda antes que otras tareas en cola.
 
-La diferencia entre react-inp-chunker y `scheduler.yield()` escrito a mano parece grande en un gráfico de medianas, pero aquí está dentro del ruido entre ejecuciones: las ejecuciones individuales de ambas versiones se solapan ampliamente (consulta [results.json](https://github.com/suprabhat02/react-inp-chunker/blob/main/bench/inp-demo/results/results.json)). Este benchmark no demuestra que ninguna de las dos termine antes. Lo que sí respalda es una afirmación más acotada: la biblioteca ofrece la misma capacidad de respuesta que un bucle con `scheduler.yield()` escrito a mano, sin que tengas que escribir ni mantener ese bucle.
+La diferencia entre react-inp-chunker y `scheduler.yield()` escrito a mano parece grande en un gráfico de medianas, pero aquí está dentro del ruido entre ejecuciones: las ejecuciones individuales de ambas versiones se solapan ampliamente (consulta [results.json](https://github.com/suprabhat02/react-inp-chunker/blob/01e722263eac3636cbe16b49e95a1a3a02d1ae82/bench/inp-demo/results/results.json)). Este benchmark no demuestra que ninguna de las dos termine antes. Lo que sí respalda es una afirmación más acotada: la biblioteca ofrece la misma capacidad de respuesta que un bucle con `scheduler.yield()` escrito a mano, sin que tengas que escribir ni mantener ese bucle.
 
 El frame más largo muestra un límite más. La ordenación final de 20.000 resultados sigue siendo un único bloque de trabajo, así que el frame más largo se queda en una mediana de 121 ms con `scheduler.yield()` y de 127 ms con react-inp-chunker; en la versión con `setTimeout`, la mediana fue de 65 ms. Trocear solo ayuda con el trabajo que troceas.
 
@@ -133,7 +133,7 @@ Para saber qué experimentan tus usuarios, recoge el INP en campo, por ejemplo c
 
 ## Ejecútalo tú mismo
 
-El [README del benchmark](https://github.com/suprabhat02/react-inp-chunker/tree/main/bench/inp-demo) describe el método completo. Desde un clon del repositorio:
+El [README del benchmark](https://github.com/suprabhat02/react-inp-chunker/tree/01e722263eac3636cbe16b49e95a1a3a02d1ae82/bench/inp-demo) describe el método completo. Desde un clon del repositorio:
 
 ```bash
 cd bench/inp-demo
