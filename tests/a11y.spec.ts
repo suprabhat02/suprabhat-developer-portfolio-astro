@@ -253,10 +253,8 @@ test('footer back-to-top and profile links meet the 24px target size', async ({
   await page.setViewportSize({ width: 360, height: 800 });
   for (const path of ['/', '/es/', '/ar/']) {
     await page.goto(path);
-    const targets = page.locator(
-      '.footer-bottom > a[href$="#main-content"], .footer-profiles a',
-    );
-    await expect(targets).toHaveCount(7);
+    const targets = page.locator('.footer-bottom > a, .footer-profiles a');
+    await expect(targets).toHaveCount(8);
     for (const box of await targets.evaluateAll((links) =>
       links.map((link) => link.getBoundingClientRect().toJSON()),
     )) {
@@ -268,6 +266,25 @@ test('footer back-to-top and profile links meet the 24px target size', async ({
         .locator('.footer-profiles a')
         .evaluateAll((links) => links.map((link) => link.getAttribute('rel'))),
     ).toEqual(Array.from({ length: 6 }, () => 'me noopener'));
+  }
+});
+
+test('footer offers the Google preferred-source link in every locale', async ({
+  page,
+}) => {
+  for (const [path, text] of [
+    ['/', 'Add as a preferred source on Google'],
+    ['/es/', 'Añadir como fuente preferida en Google'],
+    ['/ar/', 'أضف الموقع كمصدر مفضّل في Google'],
+  ] as const) {
+    await page.goto(path);
+    const link = page.locator('footer a[data-preferred-source]');
+    await expect(link).toHaveText(text);
+    await expect(link).toHaveAttribute(
+      'href',
+      'https://www.google.com/preferences/source?q=suprabhat-dev.com',
+    );
+    await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   }
 });
 

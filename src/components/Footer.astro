@@ -8,6 +8,7 @@ import {
   type NavKey,
 } from '../data/navigation';
 import { getBlogFeedHref } from '../data/blog';
+import { GOOGLE_PREFERRED_SOURCE_URL } from '../config/site';
 import { localePrefix, type Locale } from '../i18n/config';
 import { t } from '../i18n/messages';
 import { getProfile } from '../data/profile';
@@ -103,8 +104,11 @@ const moreLinks = moreNav.filter((item) => !navigateKeys.has(item.key));
     }
   </div>
   <div class="wrap footer-bottom">
-    <span>© {new Date().getFullYear()} {displayName}</span><a
-      href="#main-content">{t(locale, 'action.top')}</a
-    >
+    <span>© {new Date().getFullYear()} {displayName}</span>
+    <a
+      href={GOOGLE_PREFERRED_SOURCE_URL}
+      rel="noopener noreferrer"
+      data-preferred-source>{t(locale, 'footer.preferredSource')}</a
+    ><a href="#main-content">{t(locale, 'action.top')}</a>
   </div>
 </footer>
