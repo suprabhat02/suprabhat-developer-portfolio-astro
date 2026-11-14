@@ -19,6 +19,12 @@ export const SEARCH_VERIFICATION = {
   'msvalidate.01': '',
   'yandex-verification': '5c76423c9b9e243d',
 } as const satisfies Record<string, string>;
+/**
+ * Opens Google's "preferred sources" picker with this site pre-filled, so a
+ * visitor can add it in two taps. A plain link: no script, no tracking, and the
+ * host is derived from SITE_URL so it cannot drift from the canonical domain.
+ */
+export const GOOGLE_PREFERRED_SOURCE_URL = `https://www.google.com/preferences/source?q=${new URL(SITE_URL).hostname}`;
 export const HASHNODE_BLOG_URL = 'https://suprabhatkumar.hashnode.dev';
 // Pages too thin to index yet; also excluded from the sitemap.
 export const NOINDEX_PAGES = ['privacy', 'skills'] as const;
