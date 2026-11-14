@@ -1212,6 +1212,46 @@ test('long page and article headings wrap instead of clipping', async ({
   }
 });
 
+test('inner-page titles never split a word that fits their box', async ({
+  page,
+}) => {
+  // The widest unbreakable run (the browser breaks at spaces and hyphens) must
+  // fit the title's own width at every size, in every locale.
+  const paths = [
+    '/blog/react-inp-benchmark/',
+    '/es/blog/react-inp-benchmark/',
+    '/ar/blog/react-inp-benchmark/',
+    '/blog/frontend-best-practices-clean-ui/',
+    '/es/blog/accessibility-in-react-what-developers-skip/',
+    '/work/react-inp-chunker/',
+    '/es/work/performance-modernization/',
+    '/ar/work/react-smart-copy/',
+  ];
+  for (const width of [320, 390, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const path of paths) {
+      await page.goto(path);
+      await page.evaluate(() => document.fonts.ready);
+      const tooWide = await page.locator('main h1').evaluate((heading) => {
+        const style = getComputedStyle(heading);
+        const probe = document.createElement('span');
+        probe.style.cssText = `position:absolute;visibility:hidden;white-space:nowrap;font:${style.font};letter-spacing:${style.letterSpacing}`;
+        document.body.append(probe);
+        const wide = (heading.textContent ?? '')
+          .trim()
+          .split(/[\s-]+/)
+          .filter((run) => {
+            probe.textContent = run;
+            return probe.getBoundingClientRect().width > heading.clientWidth;
+          });
+        probe.remove();
+        return wide;
+      });
+      expect(tooWide, `${path} at ${width}px`).toEqual([]);
+    }
+  }
+});
+
 test('scroll-linked back-to-top ring runs in the production build', async ({
   page,
 }) => {

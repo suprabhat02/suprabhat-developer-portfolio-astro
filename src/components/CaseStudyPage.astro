@@ -5,6 +5,7 @@ import { t, type MessageKey } from '../i18n/messages';
 import CopyButton from './fx/CopyButton.astro';
 import BookingLink from './BookingLink.astro';
 import Icon from './fx/Icon.astro';
+import { headingFitStyle } from '../lib/headingFit';
 
 interface Props {
   caseStudy: CaseStudy;
@@ -30,7 +31,7 @@ const label = (key: MessageKey) => t(locale, key);
     </nav>
 
     <p class="eyebrow">{caseStudy.eyebrow}</p>
-    <h1>{caseStudy.title}</h1>
+    <h1 style={headingFitStyle(caseStudy.title)}>{caseStudy.title}</h1>
     <p class="lead">{caseStudy.summary}</p>
 
     <aside class="case-study-note" aria-labelledby="case-study-note-title">
@@ -210,7 +211,7 @@ const label = (key: MessageKey) => t(locale, key);
   }
 
   .case-study-hero h1 {
-    max-width: 15ch;
+    max-width: 24ch;
   }
 
   .case-study-breadcrumb ol {

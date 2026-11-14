@@ -637,15 +637,24 @@ main {
   line-height: 0.92;
   max-width: 12ch;
 }
+/* Inner-page titles: one fluid scale, capped by the longest unbreakable word.
+   --h1-run is that word's length, set per page by headingFitStyle(); the box
+   is the width the title can use. The cap keeps a word that fits from being
+   split mid-word, and the ceiling keeps long titles from filling the screen. */
 .page h1,
 .article-page h1 {
-  font-size: clamp(2.8rem, 7vw, 5.6rem);
-  max-width: 18ch;
+  --h1-box: min(1180px, 100vw - 2.5rem);
+  --h1-fit: calc(var(--h1-box) / (var(--h1-run, 8) * 0.64));
+  font-size: clamp(1.6rem, min(1.1rem + 2.6vw, var(--h1-fit)), 3.5rem);
+  line-height: 1.05;
+  max-width: 24ch;
   overflow-wrap: break-word;
-  hyphens: auto;
+  hyphens: manual;
 }
 .article-page h1 {
-  font-size: clamp(2.2rem, 7vw, 5.6rem);
+  --h1-box: min(760px, 100vw - 2.5rem);
+  max-width: none;
+  font-size: clamp(1.6rem, min(1.1rem + 2.6vw, var(--h1-fit)), 3rem);
 }
 /* Arabic script has tall ascenders and deep descenders; the tight Latin
    display leading makes lines collide and clips text-gradient glyphs. */
