@@ -12,6 +12,9 @@ server-rendered.
 ```
 src/styles/motion.css        effect primitives (fx-*), keyframes, reduced-motion fallbacks
 src/scripts/motion.ts        pointer and scroll enhancements, loaded once by BaseLayout
+src/components/Carousel.astro  horizontal scroll-snap carousel (see "Carousel")
+src/styles/carousel.css      carousel track, controls and progress rail
+src/scripts/carousel.ts      carousel buttons and counter, loaded on demand
 src/components/fx/
   Backdrop.astro             grid or dot background, spotlight beams, aurora blobs
   FlipWords.astro            CSS slot-machine word rotation with a stable screen-reader label
@@ -136,6 +139,36 @@ Scenes are drawn from a small paint vocabulary (`.t`, `.fa`, `.fb`, `.fok`,
   the way to the shade (green turns olive, orange turns purple).
 - Never tween `fill` on a lit element: a gradient cannot interpolate. Fade
   `opacity` instead, as `lv-paint` does.
+
+## Carousel
+
+`src/components/Carousel.astro` turns a long card grid into one horizontal row.
+The homepage services section uses it.
+
+- **Content is untouched.** Every slide is in the HTML and in the accessibility
+  tree. Nothing is cloned, hidden or rendered late, so search engines and screen
+  readers read it like a plain list.
+- **Scrolling is native.** The track is a CSS scroll-snap container
+  (`src/styles/carousel.css`). Touch, trackpad and keyboard focus work with no
+  JavaScript, and the browser scrolls on the compositor.
+- **The script is optional.** `src/scripts/carousel.ts` (about 1.2 KB gzipped) is
+  fetched by `motion.ts` only when a carousel comes near the viewport. It adds
+  the previous/next buttons, the counter and the progress fallback. Until then
+  the buttons are invisible but keep their space, so nothing shifts.
+- **Progress rail.** Driven by a named scroll timeline where supported, and by
+  one custom property per frame elsewhere. It only ever animates `translate`.
+- **RTL.** Layout uses logical properties; the script reads the track's
+  direction, so "next" always moves towards the inline end.
+
+Rules when using it:
+
+- Put `<Carousel>` directly inside a full-width section, outside `.wrap`. It
+  insets itself by the page gutter and lets slides run to the screen edge.
+- Do not put `fx-reveal` on slides. Inside a scroll container `view()` binds to
+  the track, not the page. Put the reveal on the carousel itself.
+- Keep `animation-*` longhands in separate rules (see the pitfall above); the
+  minifier otherwise drops the scroll timeline.
+- Slide width is `--cx-slide`; change it per breakpoint in `carousel.css`.
 
 ## Adding an effect to a card
 

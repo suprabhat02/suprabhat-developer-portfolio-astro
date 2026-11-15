@@ -4,6 +4,7 @@ import type { WorkItem } from '../data/work';
 import { getHomepageConversionContent } from '../data/homepageConversion';
 import { t } from '../i18n/messages';
 import Backdrop from './fx/Backdrop.astro';
+import Carousel from './Carousel.astro';
 import Meteors from './fx/Meteors.astro';
 import SectionHeader from './fx/SectionHeader.astro';
 import Icon, { type IconName } from './fx/Icon.astro';
@@ -243,43 +244,49 @@ const pad = (value: number) => String(value).padStart(2, '0');
       titleId="engagements-title"
       lead={content.engagements.lead}
     />
-    <div class="conversion-grid conversion-grid--two">
-      {
-        content.engagements.items.map((item, index) => (
-          <article
-            class="conversion-card engagement-card fx-live fx-glow fx-card-gradient fx-reveal"
-            data-glow
-          >
-            <LiveScene scene={item.visual} />
-            <span class="engagement-index" aria-hidden="true">
-              {pad(index + 1)}
-            </span>
-            <h3>{item.title}</h3>
-            <p>{item.body}</p>
-            <dl>
-              <div>
-                <dt>{content.engagements.fitLabel}</dt>
-                <dd>{item.fit}</dd>
-              </div>
-              <div>
-                <dt>{content.engagements.deliverablesLabel}</dt>
-                <dd>{item.deliverables}</dd>
-              </div>
-              <div>
-                <dt>{content.engagements.durationLabel}</dt>
-                <dd>
-                  <span class="duration-pill">{item.duration}</span>
-                </dd>
-              </div>
-            </dl>
-            <a href="#contact">
-              {content.hero.secondaryCta} <span aria-hidden="true">→</span>
-            </a>
-          </article>
-        ))
-      }
-    </div>
   </div>
+  <Carousel
+    id="engagements-track"
+    class="fx-reveal"
+    label={content.engagements.eyebrow}
+    count={content.engagements.items.length}
+    {locale}
+  >
+    {
+      content.engagements.items.map((item, index) => (
+        <article
+          class="conversion-card engagement-card fx-live fx-glow fx-card-gradient"
+          data-glow
+        >
+          <LiveScene scene={item.visual} />
+          <span class="engagement-index" aria-hidden="true">
+            {pad(index + 1)}
+          </span>
+          <h3>{item.title}</h3>
+          <p>{item.body}</p>
+          <dl>
+            <div>
+              <dt>{content.engagements.fitLabel}</dt>
+              <dd>{item.fit}</dd>
+            </div>
+            <div>
+              <dt>{content.engagements.deliverablesLabel}</dt>
+              <dd>{item.deliverables}</dd>
+            </div>
+            <div>
+              <dt>{content.engagements.durationLabel}</dt>
+              <dd>
+                <span class="duration-pill">{item.duration}</span>
+              </dd>
+            </div>
+          </dl>
+          <a href="#contact">
+            {content.hero.secondaryCta} <span aria-hidden="true">→</span>
+          </a>
+        </article>
+      ))
+    }
+  </Carousel>
 </section>
 
 <section
