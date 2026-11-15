@@ -14,6 +14,9 @@
  *   (level with its last line), between the heading and the cards otherwise.
  * - `size="wide"` shows one slide at a time with a slice of the next, for
  *   large feature cards; the default fits two or more cards on wide screens.
+ * - `desktop="grid"` keeps the row on phones and tablets but lays the slides
+ *   out as a three-column grid from 1041px, where they all fit; the controls
+ *   are then removed in CSS, with or without script.
  * - The track spans its section edge to edge and is inset by the page
  *   gutter, so slides line up with `.wrap` and run off the screen edge.
  *   Place it as a direct child of a full-width section, outside `.wrap`.
@@ -35,6 +38,13 @@ interface Props {
   locale: Locale;
   /** `cards`: several slides in view. `wide`: one large slide at a time. */
   size?: 'cards' | 'wide';
+  /** From 1041px: `row` keeps scrolling, `grid` shows every slide at once. */
+  desktop?: 'row' | 'grid';
+  /**
+   * Set when the slides hold no links or buttons: the track then takes
+   * keyboard focus, so it can be scrolled with the arrow keys.
+   */
+  focusable?: boolean;
   class?: string;
   /** Classes for the scrolling track, e.g. a scroll reveal. */
   trackClass?: string;
@@ -46,6 +56,8 @@ const {
   count,
   locale,
   size = 'cards',
+  desktop = 'row',
+  focusable = false,
   class: className,
   trackClass,
 } = Astro.props;
@@ -53,7 +65,11 @@ const pad = (value: number) => String(value).padStart(2, '0');
 ---
 
 <div
-  class:list={['cx', { 'cx--wide': size === 'wide' }, className]}
+  class:list={[
+    'cx',
+    { 'cx--wide': size === 'wide', 'cx--grid': desktop === 'grid' },
+    className,
+  ]}
   data-carousel
 >
   <div class="wrap cx-head">
@@ -98,6 +114,8 @@ const pad = (value: number) => String(value).padStart(2, '0');
     {id}
     role="group"
     aria-label={label}
+    tabindex={focusable ? 0 : undefined}
+    data-carousel-focusable={focusable ? '' : undefined}
     data-carousel-track
   >
     <slot />
