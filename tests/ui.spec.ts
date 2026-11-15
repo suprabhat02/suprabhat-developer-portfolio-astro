@@ -1212,6 +1212,35 @@ test('long page and article headings wrap instead of clipping', async ({
   }
 });
 
+test('scene artwork is lit by one shared set of gradients', async ({
+  page,
+}) => {
+  for (const path of ['/', '/ar/']) {
+    await page.goto(path);
+    // One definition per page: scenes share it instead of repeating ids.
+    await expect(page.locator('#lv-g-a')).toHaveCount(1);
+    const ids = await page
+      .locator('.lv-defs [id]')
+      .evaluateAll((nodes) => nodes.map((node) => node.id));
+    expect(new Set(ids).size, path).toBe(ids.length);
+    for (const id of ids) {
+      await expect(page.locator(`[id="${id}"]`), `${path} #${id}`).toHaveCount(
+        1,
+      );
+    }
+    // The paint really resolves to the gradient, with a flat colour behind it.
+    const fill = await page
+      .locator('.lv-scene .fa')
+      .first()
+      .evaluate((node) => getComputedStyle(node).fill);
+    expect(fill, path).toContain('lv-g-a');
+    await expect(page.locator('.lv-defs')).toHaveAttribute(
+      'aria-hidden',
+      'true',
+    );
+  }
+});
+
 test('inner-page titles never split a word that fits their box', async ({
   page,
 }) => {

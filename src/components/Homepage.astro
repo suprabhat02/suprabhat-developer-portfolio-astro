@@ -24,6 +24,7 @@ import TextReveal from './fx/TextReveal.astro';
 import ExperienceTimeline from './ExperienceTimeline.astro';
 import Icon, { type IconName } from './fx/Icon.astro';
 import LiveScene from './fx/LiveScene.astro';
+import SceneDefs from './fx/SceneDefs.astro';
 import Globe from './fx/Globe.astro';
 import type { SceneName } from './fx/scenes';
 import { getHomepageConversionContent } from '../data/homepageConversion';
@@ -297,6 +298,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
 ---
 
 <div class="homepage-shell">
+  <SceneDefs />
   <!-- ── HERO ─────────────────────────────────────────────── -->
   <section
     id="home"

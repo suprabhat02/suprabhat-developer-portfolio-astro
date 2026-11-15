@@ -1,0 +1,83 @@
+---
+/**
+ * Shared paint for every `LiveScene` on a page: lit gradients that give the
+ * flat scene vocabulary (`.t`, `.fa`, `.fb`, …) a top-left key light, a rim
+ * highlight and a soft glow. Render it once, before the first scene.
+ *
+ * - The gradients live in one zero-size SVG so 20+ scenes share them instead
+ *   of each inlining its own `<defs>` (and duplicating ids).
+ * - The rules that point at them are inline on purpose: a `url(#id)` in an
+ *   external stylesheet is resolved against the stylesheet in some browsers,
+ *   so it must be declared in the document itself. Every paint carries a flat
+ *   fallback colour, and scenes.css alone still renders the flat look.
+ * - Stop colours are theme tokens (see `.lv-defs` in scenes.css), so the
+ *   gradients follow light/dark and any palette change.
+ */
+const linear = [
+  ['a', 0.7],
+  ['b', 0.7],
+  ['ok', 0.7],
+  ['tx', 0.4],
+  ['as', 0.5],
+  ['bs', 0.5],
+  ['tile', 0.25],
+  ['edge', 0],
+] as const;
+---
+
+<svg class="lv-defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    {
+      linear.map(([name, lean]) => (
+        <linearGradient id={`lv-g-${name}`} x1="0" y1="0" x2={lean} y2="1">
+          <stop class={`lv-s-${name}-1`} offset="0" />
+          <stop class={`lv-s-${name}-2`} offset="1" />
+        </linearGradient>
+      ))
+    }
+    {
+      ['a', 'b', 'ok'].map((name) => (
+        <radialGradient id={`lv-g-glow-${name}`}>
+          <stop class={`lv-s-glow-${name}`} offset="0" />
+          <stop class={`lv-s-glow-${name}`} offset="1" stop-opacity="0" />
+        </radialGradient>
+      ))
+    }
+  </defs>
+</svg>
+<style is:inline>
+  :root .lv-scene .fa {
+    --paint: url(#lv-g-a) var(--sc-a);
+  }
+  :root .lv-scene .fb {
+    --paint: url(#lv-g-b) var(--sc-b);
+  }
+  :root .lv-scene .fok {
+    --paint: url(#lv-g-ok) var(--sc-ok);
+  }
+  :root .lv-scene .ftx {
+    --paint: url(#lv-g-tx) var(--text);
+  }
+  :root .lv-scene .fas {
+    --paint: url(#lv-g-as) var(--sc-a-soft);
+  }
+  :root .lv-scene .fbs {
+    --paint: url(#lv-g-bs) var(--sc-b-soft);
+  }
+  :root .lv-scene .t {
+    fill: url(#lv-g-tile) var(--sc-tile);
+    stroke: url(#lv-g-edge) var(--sc-edge);
+  }
+  :root .lv-scene .lv-gem {
+    fill: url(#lv-g-a) var(--sc-a);
+  }
+  :root .lv-scene .lv-glow-a {
+    fill: url(#lv-g-glow-a) transparent;
+  }
+  :root .lv-scene .lv-glow-b {
+    fill: url(#lv-g-glow-b) transparent;
+  }
+  :root .lv-scene .lv-glow-ok {
+    fill: url(#lv-g-glow-ok) transparent;
+  }
+</style>
