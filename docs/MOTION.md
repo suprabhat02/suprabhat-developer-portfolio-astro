@@ -131,6 +131,17 @@ Scenes are drawn from a small paint vocabulary (`.t`, `.fa`, `.fb`, `.fok`,
   stylesheet against the stylesheet, not the page.
 - `Raised.astro` gives an object thickness: a shaded lip, an opaque backing and
   the lit face, in one group so it animates as a single body.
+- Corner radii come from one scale in `LiveScene.astro` (`R.frame` 12,
+  `R.panel` 10, `R.tile` 6, `R.chip` 4); pills use half their height. An
+  outline traced around a tile uses `roundedRectPath` with the tile's radius,
+  and a focus ring uses `ringAround`, so it follows the control's corners.
+- An outline, ring or connector sits in the same `.lv-l` layer as the shape it
+  belongs to; in different layers the two drift apart under parallax.
+- A translucent node that a line passes behind needs a `.lv-base` circle under
+  it, or the line shows through.
+- A bar that fills is a round-capped `<line class="lv-bar">` animated with
+  `stroke-dashoffset` (`k-mark`, `k-fill`, `k-progress`). Scaling a rounded
+  rectangle flattens its ends.
 - `.lv-glow-a|b|ok` pools light behind a focal object, `.lv-spec` is a glint on
   a sphere, `.lv-shadow` is a contact shadow. All are static shapes.
 - No SVG `filter` is used for depth. Gradients are painted once; a filter would

@@ -420,8 +420,21 @@
   stroke-width: 1;
 }
 
-.lv-scene .lv-gate {
-  fill: var(--sc-ok);
+/* A bar drawn as a round-capped stroke, so its ends stay round while it
+   fills (scaling a rounded rectangle would flatten them). `--bar` is its
+   thickness. */
+.lv-scene .lv-bar {
+  stroke-width: var(--bar, 8);
+}
+
+/* Blueprint outline traced around a tile before it is painted. */
+.lv-scene .lv-outline {
+  stroke-width: 1.5;
+}
+
+/* A ring drawn on the control's own edge, for tightly packed controls. */
+.lv-scene .lv-focus--tight {
+  stroke-width: 2;
 }
 
 .lv-scene .lv-gem {
@@ -486,10 +499,7 @@
     0 10px 30px -18px var(--accent-glow);
 }
 
-.lv-scene .k-progress,
-.lv-scene .k-shrink,
-.lv-scene .k-mark,
-.lv-scene .k-fill {
+.lv-scene .k-shrink {
   transform-origin: 0% 50%;
 }
 
@@ -611,6 +621,10 @@
 .lv-scene .k-sweep {
   --lv-anim: lv-sweep;
   animation-timing-function: ease-in-out;
+}
+.lv-scene .k-wave-out {
+  --lv-anim: lv-wave-out;
+  transform-origin: 0% 50%;
 }
 
 /* Per-scene pacing: the step is the gap between beats of the story. */
@@ -1048,14 +1062,17 @@
 @keyframes lv-mark {
   0%,
   100% {
-    transform: none;
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 0;
   }
   4%,
   60% {
-    transform: scaleX(0);
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 1;
   }
   76% {
-    transform: none;
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 0;
   }
 }
 
@@ -1076,16 +1093,19 @@
 @keyframes lv-fill {
   0%,
   100% {
-    transform: none;
-    fill: var(--sc-ok);
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 0;
+    stroke: var(--sc-ok);
   }
   5% {
-    transform: scaleX(0.04);
-    fill: var(--warning);
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 0.96;
+    stroke: var(--warning);
   }
   70% {
-    transform: none;
-    fill: var(--sc-ok);
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 0;
+    stroke: var(--sc-ok);
   }
 }
 
@@ -1105,13 +1125,16 @@
 @keyframes lv-progress {
   0%,
   100% {
-    transform: none;
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 0;
   }
   4% {
-    transform: scaleX(0);
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 1;
   }
   76% {
-    transform: none;
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 0;
   }
 }
 
@@ -1134,6 +1157,23 @@
   }
   50% {
     transform: skewY(-9deg) scaleX(0.92);
+  }
+}
+
+/* Sound waves leave the speaker one after another and fade as they go. */
+@keyframes lv-wave-out {
+  0%,
+  100% {
+    transform: none;
+    opacity: 0;
+  }
+  5% {
+    transform: none;
+    opacity: 0.9;
+  }
+  36% {
+    transform: translateX(10px) scale(1.25);
+    opacity: 0;
   }
 }
 
