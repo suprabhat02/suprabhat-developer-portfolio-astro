@@ -822,6 +822,18 @@
   margin-block-start: 1.75rem;
 }
 
+/* Client work below the open-source carousel. */
+.work-more {
+  margin-block-start: clamp(1.25rem, 3vw, 2.25rem);
+}
+
+/* Slides share the row's height and are spaced by the track; a shorter
+   card keeps its content together at the top. */
+.cx-track > .oss-card {
+  align-content: start;
+  margin-block-end: 0;
+}
+
 /* Work cards (3D + spotlight) */
 .work-card {
   display: flex;
@@ -2502,6 +2514,11 @@ textarea.f-input {
 }
 
 @media (max-width: 860px) {
+  /* Stacked cards: drop the decorative panel so three fit in less scroll. */
+  .work-card-media {
+    display: none;
+  }
+
   .conversion-grid--three,
   .conversion-grid--two,
   .articles-grid,

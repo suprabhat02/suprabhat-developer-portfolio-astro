@@ -143,7 +143,8 @@ Scenes are drawn from a small paint vocabulary (`.t`, `.fa`, `.fb`, `.fok`,
 ## Carousel
 
 `src/components/Carousel.astro` turns a long card grid into one horizontal row.
-The homepage services section uses it.
+The homepage uses it for the open-source work (`size="wide"`: one large card
+at a time) and for the services (several cards in view).
 
 - **Content is untouched.** Every slide is in the HTML and in the accessibility
   tree. Nothing is cloned, hidden or rendered late, so search engines and screen
@@ -162,6 +163,9 @@ The homepage services section uses it.
   CSS); below that they sit between the heading and the cards.
 - **Progress rail.** Driven by a named scroll timeline where supported, and by
   one custom property per frame elsewhere. It only ever animates `translate`.
+  The script writes that property, and the thumb's size, on the thumb itself,
+  and writes the counter and button states only when they change, so a scroll
+  frame never restyles the slides or re-lays out the controls.
 - **RTL.** Layout uses logical properties; the script reads the track's
   direction, so "next" always moves towards the inline end.
 
@@ -174,6 +178,8 @@ Rules when using it:
 - Keep `animation-*` longhands in separate rules (see the pitfall above); the
   minifier otherwise drops the scroll timeline.
 - Slide width is `--cx-slide`; change it per breakpoint in `carousel.css`.
+- A component that carries its own `fx-reveal` needs a way to turn it off as
+  a slide (see the `reveal` prop of `OpenSourceSpotlight.astro`).
 
 ## Adding an effect to a card
 

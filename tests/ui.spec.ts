@@ -1405,7 +1405,13 @@ test('contact form project selects share one aligned row', async ({
   }
 });
 
-test('services carousel keeps every card reachable and never widens the page', async ({
+/** Homepage sections that show their cards in a carousel. */
+const carouselSections = [
+  { id: 'work', minimumSlides: 2 },
+  { id: 'engagements', minimumSlides: 4 },
+] as const;
+
+test('carousels keep every card reachable and never widen the page', async ({
   page,
 }) => {
   test.slow();
@@ -1413,131 +1419,183 @@ test('services carousel keeps every card reachable and never widens the page', a
     for (const width of [360, 768, 1280]) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(`${prefix}/`);
-      const carousel = page.locator('#engagements [data-carousel]');
-      const track = carousel.locator('[data-carousel-track]');
-      const label = `${prefix || '/en'} at ${width}px`;
-      await scrollToVisible(track);
-      await expect(carousel, label).toHaveAttribute('data-ready', '');
+      for (const { id, minimumSlides } of carouselSections) {
+        const carousel = page.locator(`#${id} [data-carousel]`);
+        const track = carousel.locator('[data-carousel-track]');
+        const label = `#${id} on ${prefix || '/en'} at ${width}px`;
+        await scrollToVisible(track);
+        await expect(carousel, label).toHaveAttribute('data-ready', '');
 
-      // Every service stays in the document for crawlers and screen readers.
-      const cards = track.locator('> article');
-      const total = await cards.count();
-      expect(total, label).toBeGreaterThanOrEqual(4);
-      await expect(cards.locator('h3'), label).toHaveCount(total);
-      await expect(carousel.locator('.cx-count'), label).toContainText(
-        String(total).padStart(2, '0'),
-      );
+        // Every service stays in the document for crawlers and screen readers.
+        const cards = track.locator('> article');
+        const total = await cards.count();
+        expect(total, label).toBeGreaterThanOrEqual(minimumSlides);
+        await expect(cards.locator('h3'), label).toHaveCount(total);
+        await expect(carousel.locator('.cx-count'), label).toContainText(
+          String(total).padStart(2, '0'),
+        );
 
-      const state = () =>
-        page.evaluate(() => {
-          const scroller = document.querySelector<HTMLElement>(
-            '#engagements [data-carousel-track]',
-          );
-          const root = document.documentElement;
-          if (!scroller) throw new Error('Carousel track is missing.');
-          return {
-            pageOverflow: root.scrollWidth - root.clientWidth,
-            offset: Math.abs(scroller.scrollLeft),
-            max: scroller.scrollWidth - scroller.clientWidth,
-            scrollbar: scroller.offsetHeight - scroller.clientHeight,
-          };
-        });
+        const state = () =>
+          page.evaluate((section) => {
+            const scroller = document.querySelector<HTMLElement>(
+              `#${section} [data-carousel-track]`,
+            );
+            const root = document.documentElement;
+            if (!scroller) throw new Error('Carousel track is missing.');
+            return {
+              pageOverflow: root.scrollWidth - root.clientWidth,
+              offset: Math.abs(scroller.scrollLeft),
+              max: scroller.scrollWidth - scroller.clientWidth,
+              scrollbar: scroller.offsetHeight - scroller.clientHeight,
+            };
+          }, id);
 
-      const start = await state();
-      expect(start.pageOverflow, label).toBeLessThanOrEqual(0);
-      expect(start.scrollbar, label).toBe(0);
-      expect(start.max, label).toBeGreaterThan(0);
+        const start = await state();
+        expect(start.pageOverflow, label).toBeLessThanOrEqual(0);
+        expect(start.scrollbar, label).toBe(0);
+        expect(start.max, label).toBeGreaterThan(0);
 
-      const previous = carousel.locator('[data-carousel-step="-1"]');
-      const next = carousel.locator('[data-carousel-step="1"]');
-      await expect(previous, label).toHaveAttribute('aria-disabled', 'true');
-      await expect(next, label).toHaveAttribute('aria-disabled', 'false');
+        const previous = carousel.locator('[data-carousel-step="-1"]');
+        const next = carousel.locator('[data-carousel-step="1"]');
+        await expect(previous, label).toHaveAttribute('aria-disabled', 'true');
+        await expect(next, label).toHaveAttribute('aria-disabled', 'false');
 
-      // "Next" walks to the last card without skipping one or overshooting.
-      for (let step = 0; step < total; step += 1) {
-        if ((await next.getAttribute('aria-disabled')) === 'true') break;
-        const before = (await state()).offset;
-        await next.click();
+        // "Next" walks to the last card without skipping one or overshooting.
+        for (let step = 0; step < total; step += 1) {
+          if ((await next.getAttribute('aria-disabled')) === 'true') break;
+          const before = (await state()).offset;
+          await next.click();
+          await expect
+            .poll(async () => (await state()).offset, { message: label })
+            .toBeGreaterThan(before);
+        }
+        await expect(next, label).toHaveAttribute('aria-disabled', 'true');
+        await expect(previous, label).toHaveAttribute('aria-disabled', 'false');
+        await expect(
+          carousel.locator('[data-carousel-current]'),
+          label,
+        ).toHaveText(String(total).padStart(2, '0'));
+        const lastCard = await cards.last().boundingBox();
+        expect(lastCard, label).not.toBeNull();
+        if (lastCard) {
+          expect(lastCard.x, label).toBeGreaterThanOrEqual(0);
+          expect(lastCard.x + lastCard.width, label).toBeLessThanOrEqual(width);
+        }
+        const end = await state();
+        expect(end.max - end.offset, label).toBeLessThan(2);
+        expect(end.pageOverflow, label).toBeLessThanOrEqual(0);
+
+        await previous.click();
         await expect
           .poll(async () => (await state()).offset, { message: label })
-          .toBeGreaterThan(before);
+          .toBeLessThan(end.offset - 1);
       }
-      await expect(next, label).toHaveAttribute('aria-disabled', 'true');
-      await expect(previous, label).toHaveAttribute('aria-disabled', 'false');
-      await expect(
-        carousel.locator('[data-carousel-current]'),
-        label,
-      ).toHaveText(String(total).padStart(2, '0'));
-      const lastCard = await cards.last().boundingBox();
-      expect(lastCard, label).not.toBeNull();
-      if (lastCard) {
-        expect(lastCard.x, label).toBeGreaterThanOrEqual(0);
-        expect(lastCard.x + lastCard.width, label).toBeLessThanOrEqual(width);
-      }
-      const end = await state();
-      expect(end.max - end.offset, label).toBeLessThan(2);
-      expect(end.pageOverflow, label).toBeLessThanOrEqual(0);
-
-      await previous.click();
-      await expect
-        .poll(async () => (await state()).offset, { message: label })
-        .toBeLessThan(end.offset - 1);
     }
   }
 });
 
-test('services carousel shows its controls before the cards', async ({
-  page,
-}) => {
+test('carousels show their controls before the cards', async ({ page }) => {
   test.slow();
   for (const prefix of ['', '/es', '/ar']) {
     for (const width of [360, 768, 1040, 1041, 1280, 1920]) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(`${prefix}/`);
-      const label = `${prefix || '/en'} at ${width}px`;
-      const carousel = page.locator('#engagements [data-carousel]');
-      await scrollToVisible(carousel.locator('.cx-controls'));
-      await expect(carousel, label).toHaveAttribute('data-ready', '');
-      const boxes = await page.evaluate(() => {
-        const box = (selector: string) => {
-          const node = document.querySelector(`#engagements ${selector}`);
-          if (!node) throw new Error(`${selector} is missing.`);
-          const { top, bottom, left, right } = node.getBoundingClientRect();
-          return { top, bottom, left, right };
-        };
-        return {
-          lead: box('.s-lead'),
-          controls: box('.cx-controls'),
-          track: box('[data-carousel-track] > article'),
-          wrap: box('.cx-head'),
-          overflow:
-            document.documentElement.scrollWidth -
-            document.documentElement.clientWidth,
-        };
-      });
-      const { lead, controls, track, wrap } = boxes;
-      expect(boxes.overflow, label).toBeLessThanOrEqual(0);
-      // Always above the cards and inside the page grid.
-      expect(controls.bottom, label).toBeLessThanOrEqual(track.top);
-      expect(controls.left, label).toBeGreaterThanOrEqual(wrap.left - 0.5);
-      expect(controls.right, label).toBeLessThanOrEqual(wrap.right + 0.5);
-      if (width >= 1041) {
-        // Beside the lead, level with its last line, never touching it.
-        expect(Math.abs(controls.bottom - lead.bottom), label).toBeLessThan(1);
-        const gap =
-          prefix === '/ar'
-            ? lead.left - controls.right
-            : controls.left - lead.right;
-        expect(gap, label).toBeGreaterThanOrEqual(24);
-      } else {
-        expect(controls.top, label).toBeGreaterThanOrEqual(lead.bottom);
+      for (const { id } of carouselSections) {
+        const label = `#${id} on ${prefix || '/en'} at ${width}px`;
+        const carousel = page.locator(`#${id} [data-carousel]`);
+        await scrollToVisible(carousel.locator('.cx-controls'));
+        await expect(carousel, label).toHaveAttribute('data-ready', '');
+        const boxes = await page.evaluate((section) => {
+          const box = (selector: string) => {
+            const node = document.querySelector(`#${section} ${selector}`);
+            if (!node) throw new Error(`${selector} is missing.`);
+            const { top, bottom, left, right } = node.getBoundingClientRect();
+            return { top, bottom, left, right };
+          };
+          return {
+            // The heading's last paragraph: the lead, or a note under it.
+            lead: box('.section-head > p:last-of-type'),
+            controls: box('.cx-controls'),
+            track: box('[data-carousel-track] > article'),
+            wrap: box('.cx-head'),
+            overflow:
+              document.documentElement.scrollWidth -
+              document.documentElement.clientWidth,
+          };
+        }, id);
+        const { lead, controls, track, wrap } = boxes;
+        expect(boxes.overflow, label).toBeLessThanOrEqual(0);
+        // Always above the cards and inside the page grid.
+        expect(controls.bottom, label).toBeLessThanOrEqual(track.top);
+        expect(controls.left, label).toBeGreaterThanOrEqual(wrap.left - 0.5);
+        expect(controls.right, label).toBeLessThanOrEqual(wrap.right + 0.5);
+        if (width >= 1041) {
+          // Beside the lead, level with its last line, never touching it.
+          expect(Math.abs(controls.bottom - lead.bottom), label).toBeLessThan(
+            1,
+          );
+          const gap =
+            prefix === '/ar'
+              ? lead.left - controls.right
+              : controls.left - lead.right;
+          expect(gap, label).toBeGreaterThanOrEqual(24);
+        } else {
+          expect(controls.top, label).toBeGreaterThanOrEqual(lead.bottom);
+        }
+        for (const button of await carousel.locator('.cx-btn').all()) {
+          await expect(button, label).toBeVisible();
+        }
+        await expect(carousel.locator('.cx-count'), label).toBeVisible();
       }
-      for (const button of await carousel.locator('.cx-btn').all()) {
-        await expect(button, label).toBeVisible();
-      }
-      await expect(carousel.locator('.cx-count'), label).toBeVisible();
     }
   }
+});
+
+test('scrolling a carousel within one slide writes nothing to its controls', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const carousel = page.locator('#engagements [data-carousel]');
+  await scrollToVisible(carousel.locator('[data-carousel-track]'));
+  await expect(carousel).toHaveAttribute('data-ready', '');
+  // A scroll frame must not touch the DOM unless the counter or a button
+  // state changes: needless writes re-lay out the rail and make it flicker.
+  const writes = await page.evaluate(async () => {
+    const root = document.querySelector<HTMLElement>(
+      '#engagements [data-carousel]',
+    );
+    const scroller = root?.querySelector<HTMLElement>('[data-carousel-track]');
+    const controls = root?.querySelector('.cx-controls');
+    if (!root || !scroller || !controls) throw new Error('Carousel missing.');
+    const frame = () =>
+      new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
+    scroller.style.scrollSnapType = 'none';
+    scroller.scrollLeft = 4;
+    await frame();
+    await frame();
+    let count = 0;
+    const observer = new MutationObserver((records) => {
+      count += records.length;
+    });
+    const options = {
+      attributes: true,
+      childList: true,
+      characterData: true,
+      subtree: true,
+    };
+    observer.observe(controls, options);
+    observer.observe(root, { attributes: true });
+    for (const left of [8, 12, 16, 20]) {
+      scroller.scrollLeft = left;
+      await frame();
+      await frame();
+    }
+    count += observer.takeRecords().length;
+    observer.disconnect();
+    return count;
+  });
+  expect(writes).toBe(0);
 });
 
 test('services carousel scrolls a focused card into view without script', async ({
