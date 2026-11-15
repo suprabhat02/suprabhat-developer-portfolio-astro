@@ -121,7 +121,7 @@
      the gradient to OKLab interpolation, so this is plain sRGB channels:
      rgb(var(--highlight) / <alpha>). White in both themes. */
   --highlight: 255 255 255;
-  --header-fill: color-mix(in oklch, var(--bg) 80%, transparent);
+  --header-fill: color-mix(in oklch, var(--bg-3) 55%, transparent);
   /* macOS window controls (decorative, same in both themes). */
   --window-close: oklch(0.7 0.19 25);
   --window-minimize: oklch(0.83 0.16 80);
