@@ -155,6 +155,11 @@ The homepage services section uses it.
   fetched by `motion.ts` only when a carousel comes near the viewport. It adds
   the previous/next buttons, the counter and the progress fallback. Until then
   the buttons are invisible but keep their space, so nothing shifts.
+- **Controls come first.** The rail, counter and buttons sit above the track,
+  so the row reads as sideways-scrolling before the cards do. Pass the section
+  heading in the `header` slot: from 1041px the controls sit at the inline end
+  of the heading, level with its last line (the lead is kept clear of them in
+  CSS); below that they sit between the heading and the cards.
 - **Progress rail.** Driven by a named scroll timeline where supported, and by
   one custom property per frame elsewhere. It only ever animates `translate`.
 - **RTL.** Layout uses logical properties; the script reads the track's
@@ -165,7 +170,7 @@ Rules when using it:
 - Put `<Carousel>` directly inside a full-width section, outside `.wrap`. It
   insets itself by the page gutter and lets slides run to the screen edge.
 - Do not put `fx-reveal` on slides. Inside a scroll container `view()` binds to
-  the track, not the page. Put the reveal on the carousel itself.
+  the track, not the page. Put the reveal on the track with `trackClass`.
 - Keep `animation-*` longhands in separate rules (see the pitfall above); the
   minifier otherwise drops the scroll timeline.
 - Slide width is `--cx-slide`; change it per breakpoint in `carousel.css`.
