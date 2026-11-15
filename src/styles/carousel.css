@@ -8,7 +8,8 @@
  *   are supported it is driven by the track's own scroll position with no
  *   script at all; elsewhere the script writes one custom property per frame.
  * - Nothing here changes layout after first paint: the controls keep their
- *   space before the script marks the carousel ready.
+ *   space before the script marks the carousel ready, and their place beside
+ *   or below the heading is decided by CSS alone.
  */
 
 .cx {
@@ -26,10 +27,6 @@
 @media (min-width: 700px) {
   .cx {
     --cx-slide: calc((100% - var(--cx-gap)) / 1.6);
-  }
-
-  .cx-rail {
-    max-width: 14rem;
   }
 }
 
@@ -64,14 +61,51 @@
   scroll-snap-align: start;
 }
 
-/* ── Controls ───────────────────────────────────────────────────────── */
+/* ── Heading and controls ───────────────────────────────────────────── */
+
+/* The heading and the controls share one grid. Stacked by default; on wide
+   screens both sit in the same cell, the controls at its inline end and
+   level with the heading's last line (see the media query below). */
+.cx-head {
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 2rem);
+  margin-block-end: clamp(2rem, 5vw, 3.5rem);
+}
+
+/* The grid's gap and end margin space the heading here. */
+.cx-head > .section-head {
+  margin-block-end: 0;
+}
 
 .cx-controls {
-  position: relative;
   display: flex;
   align-items: center;
-  gap: clamp(1rem, 3vw, 2rem);
-  margin-block-start: clamp(1.5rem, 3vw, 2.25rem);
+  gap: clamp(1rem, 3vw, 1.5rem);
+}
+
+@media (min-width: 1041px) {
+  .cx-head {
+    /* Fixed, so the lead can be kept clear of the controls without script. */
+    --cx-controls-size: 21rem;
+  }
+
+  .cx-head > * {
+    grid-area: 1 / 1;
+  }
+
+  .cx-head > .section-head {
+    max-width: none;
+  }
+
+  .cx-head .s-lead {
+    max-width: min(62ch, calc(100% - var(--cx-controls-size) - 2.5rem));
+  }
+
+  .cx-controls {
+    align-self: end;
+    justify-self: end;
+    inline-size: var(--cx-controls-size);
+  }
 }
 
 .cx-nav {
@@ -152,8 +186,6 @@
 .cx-rail {
   position: relative;
   flex: 1;
-  /* Short on phones, so the counter stays clear of the back-to-top button. */
-  max-width: 6rem;
   height: 2px;
   border-radius: 1px;
   background: var(--border-strong);

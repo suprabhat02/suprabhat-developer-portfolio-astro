@@ -1486,6 +1486,60 @@ test('services carousel keeps every card reachable and never widens the page', a
   }
 });
 
+test('services carousel shows its controls before the cards', async ({
+  page,
+}) => {
+  test.slow();
+  for (const prefix of ['', '/es', '/ar']) {
+    for (const width of [360, 768, 1040, 1041, 1280, 1920]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(`${prefix}/`);
+      const label = `${prefix || '/en'} at ${width}px`;
+      const carousel = page.locator('#engagements [data-carousel]');
+      await scrollToVisible(carousel.locator('.cx-controls'));
+      await expect(carousel, label).toHaveAttribute('data-ready', '');
+      const boxes = await page.evaluate(() => {
+        const box = (selector: string) => {
+          const node = document.querySelector(`#engagements ${selector}`);
+          if (!node) throw new Error(`${selector} is missing.`);
+          const { top, bottom, left, right } = node.getBoundingClientRect();
+          return { top, bottom, left, right };
+        };
+        return {
+          lead: box('.s-lead'),
+          controls: box('.cx-controls'),
+          track: box('[data-carousel-track] > article'),
+          wrap: box('.cx-head'),
+          overflow:
+            document.documentElement.scrollWidth -
+            document.documentElement.clientWidth,
+        };
+      });
+      const { lead, controls, track, wrap } = boxes;
+      expect(boxes.overflow, label).toBeLessThanOrEqual(0);
+      // Always above the cards and inside the page grid.
+      expect(controls.bottom, label).toBeLessThanOrEqual(track.top);
+      expect(controls.left, label).toBeGreaterThanOrEqual(wrap.left - 0.5);
+      expect(controls.right, label).toBeLessThanOrEqual(wrap.right + 0.5);
+      if (width >= 1041) {
+        // Beside the lead, level with its last line, never touching it.
+        expect(Math.abs(controls.bottom - lead.bottom), label).toBeLessThan(1);
+        const gap =
+          prefix === '/ar'
+            ? lead.left - controls.right
+            : controls.left - lead.right;
+        expect(gap, label).toBeGreaterThanOrEqual(24);
+      } else {
+        expect(controls.top, label).toBeGreaterThanOrEqual(lead.bottom);
+      }
+      for (const button of await carousel.locator('.cx-btn').all()) {
+        await expect(button, label).toBeVisible();
+      }
+      await expect(carousel.locator('.cx-count'), label).toBeVisible();
+    }
+  }
+});
+
 test('services carousel scrolls a focused card into view without script', async ({
   browser,
 }) => {
