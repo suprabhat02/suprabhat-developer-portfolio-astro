@@ -103,6 +103,10 @@ src/scripts/motion.ts              pointer/scroll/tap enhancements, loaded by
 src/scripts/globe.ts               canvas globe (reads theme via DOM probe,
                                     since Canvas2D can't parse light-dark())
 src/scripts/toast.ts               toast system (portfolio:toast CustomEvent)
+src/components/Carousel.astro      scroll-snap carousel (homepage services)
+src/styles/carousel.css            carousel track, controls, progress rail
+src/scripts/carousel.ts            carousel buttons/counter, lazy-loaded by
+                                    motion.ts (see docs/MOTION.md "Carousel")
 
 docs/README.md                     setup/build/translation/deploy overview
 docs/THEMING.md                    how the token system works
