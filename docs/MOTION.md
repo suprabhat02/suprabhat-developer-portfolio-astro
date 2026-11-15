@@ -18,6 +18,9 @@ src/components/fx/
   Meteors.astro              deterministic meteor shower
   SectionHeader.astro        numbered eyebrow, h2 title, lead, optional slot
   TextReveal.astro           scroll-linked word brightening
+  LiveScene.astro            animated SVG mini-scenes for living cards
+  SceneDefs.astro            shared lit gradients for every scene on a page
+  Raised.astro               a scene object with a lit top face and a shaded lip
 ```
 
 ## Aceternity mapping
@@ -110,6 +113,29 @@ Lighthouse metric while looking harmless.
 After the fixes, homepage idle main-thread time is ~17 ms per 5 s (4 ms with
 every animation disabled), and no layout shift is recorded in repeated
 throttled RTL loads.
+
+## Scene materials
+
+Scenes are drawn from a small paint vocabulary (`.t`, `.fa`, `.fb`, `.fok`,
+`.fas`, `.fbs`, `.ftx`). Depth comes from light, not from a 3D runtime:
+
+- `SceneDefs.astro` renders one zero-size SVG of gradients per page and the
+  inline rules that point the vocabulary at them. Each fill runs from a lit
+  top-left to a shaded bottom-right; tiles get a bright upper rim. Render it
+  once, before the first `LiveScene`. Without it, scenes fall back to the flat
+  colours in `scenes.css`, because every paint is `url(#id) <colour>`.
+- The rules are inline because some browsers resolve `url(#id)` in an external
+  stylesheet against the stylesheet, not the page.
+- `Raised.astro` gives an object thickness: a shaded lip, an opaque backing and
+  the lit face, in one group so it animates as a single body.
+- `.lv-glow-a|b|ok` pools light behind a focal object, `.lv-spec` is a glint on
+  a sphere, `.lv-shadow` is a contact shadow. All are static shapes.
+- No SVG `filter` is used for depth. Gradients are painted once; a filter would
+  be re-rasterised on every animated frame.
+- Stop colours are tokens mixed in `oklab`. Mixing in `oklch` swings the hue on
+  the way to the shade (green turns olive, orange turns purple).
+- Never tween `fill` on a lit element: a gradient cannot interpolate. Fade
+  `opacity` instead, as `lv-paint` does.
 
 ## Adding an effect to a card
 

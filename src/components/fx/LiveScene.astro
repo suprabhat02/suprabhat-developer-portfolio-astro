@@ -16,6 +16,7 @@
  *   `transform`.
  */
 import type { SceneName } from './scenes';
+import Raised from './Raised.astro';
 import '../../styles/scenes.css';
 
 interface Props {
@@ -55,8 +56,11 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
             <circle class="fb lv-head k k-travel" cx="46" cy="60" r="5" />
           </g>
           <g class="lv-l" style="--d:1">
+            <circle class="lv-glow-a" cx="274" cy="60" r="34" />
             {[46, 122, 198, 274].map((x, i) => (
               <g transform={`translate(${x} 60)`}>
+                <circle class="lv-lip" cy="3" r="15" />
+                <circle class="lv-base" r="15" />
                 <circle class="t k k-stage" style={`--i:${i}`} r="15" />
                 <path
                   class="sb k k-tick"
@@ -68,10 +72,19 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
             ))}
           </g>
           <g class="lv-l" style="--d:1.5" transform="translate(274 26)">
-            <g class="k k-drop">
-              <rect class="fas" x="-11" y="-9" width="22" height="18" rx="4" />
+            <Raised
+              class="k k-drop"
+              x={-11}
+              y={-9}
+              w={22}
+              h={18}
+              rx={4}
+              tone="fas"
+              lift={3}
+              lip="var(--sc-a)"
+            >
               <path class="sa" d="M-11 -2h22M0 -9v7" />
-            </g>
+            </Raised>
           </g>
         </>
       )
@@ -103,6 +116,8 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
             ))}
           </g>
           <g class="lv-l" style="--d:1.3" transform="translate(258 60)">
+            <circle class="lv-glow-ok" r="52" />
+            <circle class="t" r="25" />
             <circle class="ln lv-track" r="32" />
             <circle
               class="lv-ring k k-score"
@@ -151,7 +166,9 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
             ].map(([x, y]) => (
               <circle class="t" cx={x} cy={y} r="9" />
             ))}
+            <circle class="lv-glow-a" cx="160" cy="60" r="34" />
             <circle class="fa" cx="160" cy="60" r="12" />
+            <ellipse class="lv-spec" cx="156" cy="55" rx="4" ry="2.4" />
             <circle class="lv-risk k k-fix" cx="268" cy="88" r="9" />
           </g>
           <g class="lv-l" style="--d:1.4">
@@ -196,7 +213,11 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
               style={`--d:${1.2 + i * 0.2}`}
               transform={`translate(${x} 60)`}
             >
+              <ellipse class="lv-shadow" cy="31" rx="20" ry="3" />
+              <circle class="lv-lip" cy="4" r="24" />
+              <circle class="lv-base" r="24" />
               <circle class="t" r="24" />
+              <path class="ln" d="M0 -20v3M20 0h-3M0 20v-3M-20 0h3" />
               <line
                 class="sa k k-spin"
                 style={`--i:${i * 3}`}
@@ -246,6 +267,7 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
             />
           </g>
           <g class="lv-l" style="--d:1.4" transform="translate(296 22)">
+            <circle class="lv-glow-a" r="22" />
             <circle class="fa k k-pop" r="5" />
             <circle class="sa lv-halo k k-ping" r="5" />
           </g>
@@ -273,12 +295,15 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
           <g class="lv-l" style="--d:1.2">
             {['fa', 'fb', 'fok', 'ftx'].map((tone, i) => (
               <g transform={`translate(48 ${26 + i * 24})`}>
-                <circle class={`${tone} k k-beat`} style={`--i:${i}`} r="10" />
+                <g class="k k-beat" style={`--i:${i}`}>
+                  <circle class={tone} r="10" />
+                  <ellipse class="lv-spec" cx="-3" cy="-4" rx="3.4" ry="2" />
+                </g>
               </g>
             ))}
           </g>
           <g class="lv-l" style="--d:.9">
-            <rect class="t" x="150" y="20" width="148" height="82" rx="12" />
+            <Raised x={150} y={20} w={148} h={82} rx={12} tone="t" lift={5} />
             <circle
               class="fa k k-paint"
               style="--i:0"
@@ -329,8 +354,16 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
       scene === 'a11y' && (
         <>
           <g class="lv-l" style="--d:.6">
-            <rect class="fas" x="34" y="56" width="70" height="26" rx="9" />
-            <rect class="t" x="122" y="56" width="92" height="26" rx="7" />
+            <Raised
+              x={34}
+              y={56}
+              w={70}
+              h={26}
+              rx={9}
+              tone="fas"
+              lip="var(--sc-a)"
+            />
+            <Raised x={122} y={56} w={92} h={26} rx={7} tone="t" />
             <line class="sb" x1="134" y1="62" x2="134" y2="76" />
             <rect class="t" x="232" y="60" width="18" height="18" rx="5" />
             <rect
@@ -393,7 +426,7 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
       scene === 'browser' && (
         <>
           <g class="lv-l" style="--d:.4">
-            <rect class="t" x="28" y="8" width="264" height="104" rx="12" />
+            <Raised x={28} y={8} w={264} h={100} rx={12} tone="t" lift={5} />
             <line class="ln" x1="28" y1="26" x2="292" y2="26" />
             {[42, 54, 66].map((x) => (
               <circle class="ftx lv-dim" cx={x} cy="17" r="3" />
@@ -411,9 +444,9 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
             {[
               ['fas', 42, 36, 146, 28],
               ['fbs', 198, 36, 80, 28],
-              ['t', 42, 72, 74, 30],
-              ['t', 124, 72, 74, 30],
-              ['t', 206, 72, 72, 30],
+              ['t', 42, 70, 74, 28],
+              ['t', 124, 70, 74, 28],
+              ['t', 206, 70, 72, 28],
             ].map(([tone, x, y, w, h], i) => (
               <rect
                 class={`${tone} k k-rise`}
@@ -426,7 +459,7 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
               />
             ))}
           </g>
-          <g class="lv-l" style="--d:1.6" transform="translate(236 84)">
+          <g class="lv-l" style="--d:1.6" transform="translate(236 82)">
             <path
               class="lv-cursor k k-cursor"
               d="M0 0V15L4.5 11L8 18L10.5 17L7 10H12Z"
@@ -439,7 +472,7 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
       scene === 'scan' && (
         <>
           <g class="lv-l" style="--d:.5">
-            <rect class="t" x="36" y="12" width="128" height="96" rx="10" />
+            <Raised x={36} y={12} w={128} h={94} rx={10} tone="t" lift={5} />
             {[28, 42, 56, 70, 84].map((y, i) => (
               <rect
                 class="ftx lv-faint"
@@ -512,21 +545,34 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
     {
       scene === 'stack' && (
         <>
+          <g class="lv-l" style="--d:.3">
+            <ellipse class="lv-shadow" cx="132" cy="112" rx="58" ry="6" />
+          </g>
           {[
-            ['fas', 84, 1.4],
-            ['fbs', 62, 1],
-            ['fa', 40, 0.6],
-          ].map(([tone, y, d], i) => (
+            ['fas', 84, 1.4, 'var(--sc-a)'],
+            ['fbs', 62, 1, 'var(--sc-b)'],
+            ['fa', 40, 0.6, 'var(--sc-a)'],
+          ].map(([tone, y, d, lip], i) => (
             <g
               class="lv-l"
               style={`--d:${d}`}
               transform={`translate(132 ${y})`}
             >
-              <polygon
-                class={`${tone} lv-plane k k-layer`}
-                style={`--i:${i};--ty:${(i - 1) * 22}px`}
-                points="0,-18 62,0 0,18 -62,0"
-              />
+              <g
+                class="k k-layer"
+                style={`--i:${i};--ty:${(i - 1) * 22}px;--paint-lip:${lip}`}
+              >
+                <polygon class="lv-lip" points="-62,0 0,18 0,25 -62,7" />
+                <polygon
+                  class="lv-lip lv-lip--far"
+                  points="0,18 62,0 62,7 0,25"
+                />
+                <polygon class="lv-base" points="0,-18 62,0 0,18 -62,0" />
+                <polygon
+                  class={`${tone} lv-plane`}
+                  points="0,-18 62,0 0,18 -62,0"
+                />
+              </g>
             </g>
           ))}
           <g class="lv-l" style="--d:.8">
@@ -738,6 +784,7 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
             ))}
           </g>
           <g class="lv-l" style="--d:1.4" transform="translate(250 84)">
+            <circle class="lv-glow-a" r="28" />
             <circle class="fa k k-pop" style="--i:6" r="9" />
             <circle class="sa lv-halo k k-ping" style="--i:6" r="9" />
             <g transform="translate(0 -40)">
@@ -771,16 +818,34 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
             />
           </g>
           <g class="lv-l" style="--d:.9" transform="translate(40 60)">
-            <g class="k k-pop" style="--i:3">
-              <rect class="fas" x="-20" y="-16" width="40" height="32" rx="8" />
+            <Raised
+              class="k k-pop"
+              style="--i:3"
+              x={-20}
+              y={-16}
+              w={40}
+              h={32}
+              rx={8}
+              tone="fas"
+              lip="var(--sc-a)"
+            >
               <path class="sa lv-thick" d="M-8 -5l-6 5 6 5M8 -5l6 5-6 5" />
-            </g>
+            </Raised>
           </g>
           <g class="lv-l" style="--d:.9" transform="translate(280 60)">
-            <g class="k k-pop" style="--i:5">
-              <rect class="fbs" x="-20" y="-16" width="40" height="32" rx="8" />
+            <Raised
+              class="k k-pop"
+              style="--i:5"
+              x={-20}
+              y={-16}
+              w={40}
+              h={32}
+              rx={8}
+              tone="fbs"
+              lip="var(--sc-b)"
+            >
               <path class="sb lv-thick" d="M-8 0h16M0 -8v16" />
-            </g>
+            </Raised>
           </g>
           <g transform="translate(160 60)">
             {[0, 60, -60].map((angle, i) => (
@@ -800,8 +865,12 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
               </g>
             ))}
             <g class="lv-l" style="--d:1.6">
+              <circle class="lv-glow-b" r="34" />
               <circle class="lv-halo k k-ping" r="10" />
-              <circle class="fb k k-beat" r="10" />
+              <g class="k k-beat">
+                <circle class="fb" r="10" />
+                <ellipse class="lv-spec" cx="-3" cy="-4" rx="3.6" ry="2.1" />
+              </g>
             </g>
           </g>
         </>
@@ -873,7 +942,7 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
       scene === 'components' && (
         <>
           <g class="lv-l" style="--d:.4">
-            <rect class="t" x="150" y="6" width="142" height="100" rx="12" />
+            <Raised x={150} y={6} w={142} h={98} rx={12} tone="t" lift={5} />
             <line class="ln" x1="150" y1="28" x2="292" y2="28" />
             {[164, 176, 188].map((x) => (
               <circle class="ftx lv-dim" cx={x} cy="17" r="3" />
@@ -927,16 +996,20 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
       scene === 'server' && (
         <>
           <g class="lv-l" style="--d:.5" transform="translate(50 60)">
-            <rect class="t" x="-26" y="-40" width="52" height="80" rx="10" />
+            <ellipse class="lv-shadow" cy="50" rx="24" ry="3.5" />
+            <Raised x={-26} y={-40} w={52} h={80} rx={10} tone="t" lift={5} />
             {[-24, -6, 12].map((y, i) => (
-              <rect
-                class={i % 2 ? 'fbs' : 'fas'}
-                x="-18"
-                y={y}
-                width="36"
-                height="12"
-                rx="4"
-              />
+              <>
+                <rect
+                  class={i % 2 ? 'fbs' : 'fas'}
+                  x="-18"
+                  y={y}
+                  width="36"
+                  height="12"
+                  rx="4"
+                />
+                <circle class="lv-led" cx="12" cy={y + 6} r="1.6" />
+              </>
             ))}
           </g>
           <g class="lv-l" style="--d:.5">
@@ -1099,18 +1172,18 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
         <>
           <g class="lv-l" style="--d:.5">
             {[28, 60, 92, 124].map((x) => (
-              <rect class="t" x={x} y="46" width="28" height="24" rx="6" />
+              <Raised x={x} y={42} w={28} h={24} rx={6} tone="t" />
             ))}
-            <rect class="t" x="28" y="78" width="88" height="20" rx="6" />
-            <rect class="t" x="192" y="40" width="100" height="40" rx="10" />
+            <Raised x={28} y={76} w={88} h={20} rx={6} tone="t" />
+            <Raised x={192} y={38} w={100} h={40} rx={10} tone="t" lift={5} />
           </g>
           <g class="lv-l" style="--d:1">
             {[
-              [28, 46, 28, 24],
-              [60, 46, 28, 24],
-              [92, 46, 28, 24],
-              [124, 46, 28, 24],
-              [28, 78, 88, 20],
+              [28, 42, 28, 24],
+              [60, 42, 28, 24],
+              [92, 42, 28, 24],
+              [124, 42, 28, 24],
+              [28, 76, 88, 20],
             ].map(([x, y, w, h], i) => (
               <rect
                 class="lv-focus k k-focus"
@@ -1123,7 +1196,7 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
               />
             ))}
           </g>
-          <g class="lv-l" style="--d:1.3" transform="translate(242 60)">
+          <g class="lv-l" style="--d:1.3" transform="translate(242 58)">
             <circle class="lv-okbg" r="13" />
             <path
               class="ok k k-tick"
@@ -1156,6 +1229,7 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
             ))}
           </g>
           <g class="lv-l" style="--d:1">
+            <circle class="lv-glow-a" cx="42" cy="60" r="30" />
             <circle class="fa k k-pop" style="--i:0" cx="42" cy="60" r="11" />
             {[
               [112, 32],
@@ -1191,16 +1265,16 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
       scene === 'bridge' && (
         <>
           <g class="lv-l" style="--d:.5">
-            <rect class="t" x="90" y="10" width="140" height="36" rx="10" />
-            <rect class="t" x="90" y="86" width="140" height="36" rx="10" />
-            <line class="ln" x1="160" y1="46" x2="160" y2="86" />
+            <Raised x={90} y={10} w={140} h={36} rx={10} tone="t" />
+            <Raised x={90} y={84} w={140} h={36} rx={10} tone="t" />
+            <line class="ln" x1="160" y1="50" x2="160" y2="84" />
           </g>
           <g class="lv-l" style="--d:.9">
             {[
               ['fas', 108, 23],
               ['fbs', 154, 23],
-              ['fas', 108, 101],
-              ['fbs', 154, 101],
+              ['fas', 108, 99],
+              ['fbs', 154, 99],
             ].map(([tone, x, y]) => (
               <rect
                 class={tone as string}
@@ -1215,13 +1289,13 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
           <g class="lv-l" style="--d:1.2">
             <path
               class="sb lv-packet k k-packet"
-              d="M160 46V86"
+              d="M160 50V84"
               pathLength="1"
             />
             <path
               class="sa lv-packet k k-packet"
               style="--i:6"
-              d="M160 86V46"
+              d="M160 84V50"
               pathLength="1"
             />
           </g>
@@ -1232,7 +1306,7 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
       scene === 'canvas' && (
         <>
           <g class="lv-l" style="--d:.4">
-            <rect class="t" x="26" y="10" width="268" height="100" rx="12" />
+            <Raised x={26} y={10} w={268} h={98} rx={12} tone="t" lift={5} />
           </g>
           <g class="lv-l" style="--d:.8">
             {[
@@ -1283,23 +1357,25 @@ const rectPath = (x: number, y: number, w: number, h: number) =>
           </g>
           <g class="lv-l" style="--d:1">
             {[
-              ['fa', 55, 56],
-              ['fb', 115, 56],
-              ['fok', 175, 56],
-              ['fas', 235, 56],
-              ['fa', 55, 96],
-              ['fb', 115, 96],
-              ['fok', 175, 96],
-              ['fbs', 235, 96],
-            ].map(([tone, x, y], i) => (
-              <rect
-                class={`${tone as string} k k-rise`}
+              ['fa', 55, 56, 'var(--sc-a)'],
+              ['fb', 115, 56, 'var(--sc-b)'],
+              ['fok', 175, 56, 'var(--sc-ok)'],
+              ['fas', 235, 56, 'var(--sc-a)'],
+              ['fa', 55, 96, 'var(--sc-a)'],
+              ['fb', 115, 96, 'var(--sc-b)'],
+              ['fok', 175, 96, 'var(--sc-ok)'],
+              ['fbs', 235, 96, 'var(--sc-b)'],
+            ].map(([tone, x, y, lip], i) => (
+              <Raised
+                class="k k-rise"
                 style={`--i:${i}`}
                 x={(x as number) - 16}
-                y={(y as number) - 16}
-                width="32"
-                height="32"
-                rx="8"
+                y={(y as number) - 18}
+                w={32}
+                h={32}
+                rx={8}
+                tone={tone as string}
+                lip={lip as string}
               />
             ))}
           </g>

@@ -41,14 +41,25 @@
   overflow: clip;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-control);
+  /* A small stage: key light from the upper left, a faint floor glow, the
+     dot grid fading out toward the edges. Static paint only. */
   background:
-    radial-gradient(var(--fx-grid-dot) 1px, transparent 1.4px) 0 0 / 14px 14px,
-    linear-gradient(
-      180deg,
-      color-mix(in oklch, var(--accent) 7%, transparent),
+    radial-gradient(
+      120% 90% at 18% -10%,
+      color-mix(in oklch, var(--text) 9%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      70% 55% at 50% 108%,
+      color-mix(in oklch, var(--accent) 13%, transparent),
       transparent 70%
     ),
-    color-mix(in oklch, var(--bg) 60%, transparent);
+    radial-gradient(var(--fx-grid-dot) 1px, transparent 1.4px) 0 0 / 14px 14px,
+    color-mix(in oklch, var(--bg) 66%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, var(--text) 9%, transparent),
+    inset 0 -18px 28px -22px
+      color-mix(in oklch, var(--shadow-ink) 70%, transparent);
   contain: layout paint;
   transition:
     border-color 300ms ease,
@@ -197,6 +208,7 @@
 }
 
 .lv-scene .lv-dim {
+  --lv-o: 0.45;
   opacity: 0.45;
 }
 
@@ -234,6 +246,114 @@
 
 .lv-scene .lv-okbg {
   fill: color-mix(in oklch, var(--success) 16%, transparent);
+}
+
+/* ── Lit paint (gradients declared in SceneDefs.astro) ─────────────── */
+/* Each fill runs from a lit top-left to a shaded bottom-right, tiles get a
+   bright upper rim, and glows fade to nothing. Colours are tokens only, and
+   mixed in oklab: oklch would swing the hue on the way to the shade. */
+
+.lv-defs {
+  position: absolute;
+  pointer-events: none;
+}
+
+.lv-defs .lv-s-a-1 {
+  stop-color: color-mix(
+    in oklab,
+    var(--accent-vivid) 80%,
+    rgb(var(--highlight))
+  );
+}
+.lv-defs .lv-s-a-2 {
+  stop-color: color-mix(in oklab, var(--accent) 80%, var(--shadow-ink));
+}
+.lv-defs .lv-s-b-1 {
+  stop-color: color-mix(in oklab, var(--text-2) 78%, rgb(var(--highlight)));
+}
+.lv-defs .lv-s-b-2 {
+  stop-color: color-mix(in oklab, var(--text-2) 68%, var(--shadow-ink));
+}
+.lv-defs .lv-s-ok-1 {
+  stop-color: color-mix(in oklab, var(--success) 80%, rgb(var(--highlight)));
+}
+.lv-defs .lv-s-ok-2 {
+  stop-color: color-mix(in oklab, var(--success) 74%, var(--shadow-ink));
+}
+.lv-defs .lv-s-tx-1 {
+  stop-color: var(--text);
+}
+.lv-defs .lv-s-tx-2 {
+  stop-color: color-mix(in oklab, var(--text) 62%, var(--bg));
+}
+.lv-defs .lv-s-as-1 {
+  stop-color: color-mix(in oklab, var(--accent-vivid) 56%, transparent);
+}
+.lv-defs .lv-s-as-2 {
+  stop-color: color-mix(in oklab, var(--accent) 16%, transparent);
+}
+.lv-defs .lv-s-bs-1 {
+  stop-color: color-mix(in oklab, var(--text-2) 44%, transparent);
+}
+.lv-defs .lv-s-bs-2 {
+  stop-color: color-mix(in oklab, var(--text-2) 12%, transparent);
+}
+.lv-defs .lv-s-tile-1 {
+  stop-color: color-mix(in oklab, var(--text) 15%, transparent);
+}
+.lv-defs .lv-s-tile-2 {
+  stop-color: color-mix(in oklab, var(--text) 3%, transparent);
+}
+.lv-defs .lv-s-edge-1 {
+  stop-color: color-mix(in oklab, var(--text) 46%, transparent);
+}
+.lv-defs .lv-s-edge-2 {
+  stop-color: color-mix(in oklab, var(--text) 7%, transparent);
+}
+.lv-defs .lv-s-glow-a {
+  stop-color: var(--accent-vivid);
+}
+.lv-defs .lv-s-glow-b {
+  stop-color: var(--text-2);
+}
+.lv-defs .lv-s-glow-ok {
+  stop-color: var(--success);
+}
+
+/* Soft light pooled behind a focal object; never animated. */
+.lv-scene :is(.lv-glow-a, .lv-glow-b, .lv-glow-ok) {
+  fill: none;
+  opacity: 0.42;
+}
+
+/* The shaded underside of a raised object (key cap, slab, swatch), and the
+   opaque backing that stops it showing through a translucent top face. */
+.lv-scene .lv-lip {
+  fill: color-mix(in oklab, var(--bg) 58%, var(--paint-lip, var(--text)));
+}
+
+.lv-scene .lv-base {
+  fill: color-mix(in oklab, var(--bg) 94%, var(--text));
+}
+
+/* The far side of an isometric slab catches less light. */
+.lv-scene .lv-lip--far {
+  fill: color-mix(in oklab, var(--bg) 74%, var(--paint-lip, var(--text)));
+}
+
+/* Specular glint on a sphere or glossy face. */
+.lv-scene .lv-spec {
+  fill: rgb(var(--highlight) / 0.55);
+}
+
+/* Contact shadow on the floor under a floating object. */
+.lv-scene .lv-shadow {
+  fill: color-mix(in oklab, var(--shadow-ink) 55%, transparent);
+}
+
+/* Small status light. */
+.lv-scene .lv-led {
+  fill: var(--sc-ok);
 }
 
 /* ── Scene-specific statics ───────────────────────────────────────── */
@@ -361,6 +481,7 @@
 :is(.fx-live:hover, .fx-live:focus-within, .fx-live[data-active]) .lv-scene {
   border-color: var(--accent-border);
   box-shadow:
+    inset 0 1px 0 color-mix(in oklch, var(--text) 12%, transparent),
     inset 0 0 40px -14px var(--accent-glow),
     0 10px 30px -18px var(--accent-glow);
 }
@@ -834,15 +955,17 @@
   }
 }
 
+/* Fades the lit fill in rather than tweening `fill`, which cannot
+   interpolate to a gradient. */
 @keyframes lv-paint {
   0%,
   22%,
   100% {
-    fill: var(--paint);
+    opacity: var(--lv-o, 1);
   }
   3%,
   14% {
-    fill: var(--sc-tile);
+    opacity: 0.14;
   }
 }
 
@@ -998,11 +1121,9 @@
   24%,
   100% {
     transform: none;
-    fill: var(--sc-a);
   }
   15% {
     transform: scale(1.45);
-    fill: var(--sc-b);
   }
 }
 
