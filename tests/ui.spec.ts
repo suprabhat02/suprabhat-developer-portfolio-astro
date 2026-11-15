@@ -1404,3 +1404,103 @@ test('contact form project selects share one aligned row', async ({
     expect(Math.abs(type.width - timeline.width), prefix).toBeLessThan(1);
   }
 });
+
+test('services carousel keeps every card reachable and never widens the page', async ({
+  page,
+}) => {
+  test.slow();
+  for (const prefix of ['', '/ar']) {
+    for (const width of [360, 768, 1280]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(`${prefix}/`);
+      const carousel = page.locator('#engagements [data-carousel]');
+      const track = carousel.locator('[data-carousel-track]');
+      const label = `${prefix || '/en'} at ${width}px`;
+      await scrollToVisible(track);
+      await expect(carousel, label).toHaveAttribute('data-ready', '');
+
+      // Every service stays in the document for crawlers and screen readers.
+      const cards = track.locator('> article');
+      const total = await cards.count();
+      expect(total, label).toBeGreaterThanOrEqual(4);
+      await expect(cards.locator('h3'), label).toHaveCount(total);
+      await expect(carousel.locator('.cx-count'), label).toContainText(
+        String(total).padStart(2, '0'),
+      );
+
+      const state = () =>
+        page.evaluate(() => {
+          const scroller = document.querySelector<HTMLElement>(
+            '#engagements [data-carousel-track]',
+          );
+          const root = document.documentElement;
+          if (!scroller) throw new Error('Carousel track is missing.');
+          return {
+            pageOverflow: root.scrollWidth - root.clientWidth,
+            offset: Math.abs(scroller.scrollLeft),
+            max: scroller.scrollWidth - scroller.clientWidth,
+            scrollbar: scroller.offsetHeight - scroller.clientHeight,
+          };
+        });
+
+      const start = await state();
+      expect(start.pageOverflow, label).toBeLessThanOrEqual(0);
+      expect(start.scrollbar, label).toBe(0);
+      expect(start.max, label).toBeGreaterThan(0);
+
+      const previous = carousel.locator('[data-carousel-step="-1"]');
+      const next = carousel.locator('[data-carousel-step="1"]');
+      await expect(previous, label).toHaveAttribute('aria-disabled', 'true');
+      await expect(next, label).toHaveAttribute('aria-disabled', 'false');
+
+      // "Next" walks to the last card without skipping one or overshooting.
+      for (let step = 0; step < total; step += 1) {
+        if ((await next.getAttribute('aria-disabled')) === 'true') break;
+        const before = (await state()).offset;
+        await next.click();
+        await expect
+          .poll(async () => (await state()).offset, { message: label })
+          .toBeGreaterThan(before);
+      }
+      await expect(next, label).toHaveAttribute('aria-disabled', 'true');
+      await expect(previous, label).toHaveAttribute('aria-disabled', 'false');
+      await expect(
+        carousel.locator('[data-carousel-current]'),
+        label,
+      ).toHaveText(String(total).padStart(2, '0'));
+      const lastCard = await cards.last().boundingBox();
+      expect(lastCard, label).not.toBeNull();
+      if (lastCard) {
+        expect(lastCard.x, label).toBeGreaterThanOrEqual(0);
+        expect(lastCard.x + lastCard.width, label).toBeLessThanOrEqual(width);
+      }
+      const end = await state();
+      expect(end.max - end.offset, label).toBeLessThan(2);
+      expect(end.pageOverflow, label).toBeLessThanOrEqual(0);
+
+      await previous.click();
+      await expect
+        .poll(async () => (await state()).offset, { message: label })
+        .toBeLessThan(end.offset - 1);
+    }
+  }
+});
+
+test('services carousel scrolls a focused card into view without script', async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    javaScriptEnabled: false,
+    viewport: { width: 1280, height: 900 },
+  });
+  const page = await context.newPage();
+  await page.goto('/');
+  const track = page.locator('#engagements [data-carousel-track]');
+  const lastLink = track.locator('> article > a').last();
+  await scrollToVisible(track);
+  await lastLink.focus();
+  await expect(lastLink).toBeInViewport();
+  // Controls that need script stay hidden but keep their space.
+  await expect(page.locator('#engagements .cx-nav')).toBeHidden();
+  await context.close();
+});

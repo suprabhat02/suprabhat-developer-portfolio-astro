@@ -1,0 +1,81 @@
+---
+/**
+ * Horizontal carousel: a native scroll-snap track with previous/next
+ * buttons, a progress rail and a position counter.
+ *
+ * - Every slide stays in the document and in the accessibility tree; nothing
+ *   is hidden, cloned or lazy-rendered, so crawlers and screen readers get
+ *   the same content as a plain list.
+ * - Scrolling is the browser's own (touch, trackpad, keyboard focus), so it
+ *   works before and without JavaScript. `src/scripts/carousel.ts` only adds
+ *   the buttons, the counter and a progress fallback.
+ * - The track spans its section edge to edge and is inset by the page
+ *   gutter, so slides line up with `.wrap` and run off the screen edge.
+ *   Place it as a direct child of a full-width section, outside `.wrap`.
+ *
+ * Usage: the default slot's direct children are the slides.
+ */
+import type { Locale } from '../i18n/config';
+import { t } from '../i18n/messages';
+import '../styles/carousel.css';
+
+interface Props {
+  /** Unique id for the scrolling track (referenced by the buttons). */
+  id: string;
+  /** Accessible name of the slide group, e.g. the section's eyebrow. */
+  label: string;
+  /** Number of slides, shown in the counter. */
+  count: number;
+  locale: Locale;
+  class?: string;
+}
+
+const { id, label, count, locale, class: className } = Astro.props;
+const pad = (value: number) => String(value).padStart(2, '0');
+---
+
+<div class:list={['cx', className]} data-carousel>
+  <div
+    class="cx-track"
+    {id}
+    role="group"
+    aria-label={label}
+    data-carousel-track
+  >
+    <slot />
+  </div>
+  <div class="wrap cx-controls">
+    <div class="cx-nav">
+      <button
+        type="button"
+        class="cx-btn"
+        aria-controls={id}
+        aria-label={`${t(locale, 'carousel.previous')}: ${label}`}
+        aria-disabled="true"
+        data-carousel-step="-1"
+      >
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="m14.5 6-6 6 6 6"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="cx-btn"
+        aria-controls={id}
+        aria-label={`${t(locale, 'carousel.next')}: ${label}`}
+        data-carousel-step="1"
+      >
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="m9.5 6 6 6-6 6"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="cx-rail" aria-hidden="true">
+      <span class="cx-thumb"></span>
+    </div>
+    <p class="cx-count" aria-hidden="true">
+      <span data-carousel-current>{pad(1)}</span>
+      <span class="cx-count-total">/ {pad(count)}</span>
+    </p>
+  </div>
+</div>

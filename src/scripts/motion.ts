@@ -112,14 +112,18 @@ function initParallax(): Cleanup {
 
   document.addEventListener('pointermove', onMove, { passive: true });
   document.documentElement.addEventListener('pointerleave', onLeaveDocument);
-  window.addEventListener('scroll', onLeaveDocument, { passive: true });
+  // Captured, so a carousel scrolling under the pointer also resets the card.
+  window.addEventListener('scroll', onLeaveDocument, {
+    passive: true,
+    capture: true,
+  });
   window.addEventListener('resize', onLeaveDocument, { passive: true });
   window.addEventListener('blur', onLeaveDocument);
   media.reducedMotion.addEventListener('change', onLeaveDocument);
   media.finePointer.addEventListener('change', onLeaveDocument);
   return () => {
     onLeaveDocument();
-    window.removeEventListener('scroll', onLeaveDocument);
+    window.removeEventListener('scroll', onLeaveDocument, { capture: true });
     window.removeEventListener('resize', onLeaveDocument);
     window.removeEventListener('blur', onLeaveDocument);
     media.reducedMotion.removeEventListener('change', onLeaveDocument);
@@ -481,6 +485,38 @@ function initLazyGlobes(): Cleanup {
   };
 }
 
+/* ── Carousels: fetch the controls only when one approaches the viewport ─ */
+/*
+ * A carousel scrolls natively without this (see scripts/carousel.ts), so the
+ * controls can wait until the reader is close to one.
+ */
+
+function initLazyCarousels(): Cleanup {
+  const roots = document.querySelectorAll<HTMLElement>('[data-carousel]');
+  if (!roots.length || !('IntersectionObserver' in window)) {
+    return () => undefined;
+  }
+  const unmounts: Cleanup[] = [];
+  const observer = new IntersectionObserver(
+    (entries) =>
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        observer.unobserve(entry.target);
+        import('./carousel')
+          .then(({ mountCarousels }) =>
+            unmounts.push(mountCarousels([entry.target as HTMLElement])),
+          )
+          .catch((error: unknown) => console.error(error));
+      }),
+    { rootMargin: '600px 0px' },
+  );
+  roots.forEach((root) => observer.observe(root));
+  return () => {
+    observer.disconnect();
+    unmounts.forEach((unmount) => unmount());
+  };
+}
+
 /* ── Toasts: render requests from any script (see scripts/toast.ts) ── */
 
 function initToasts(): Cleanup {
@@ -509,6 +545,7 @@ const initializers: ReadonlyArray<() => Cleanup> = [
   initLiveScenes,
   initHeroEngagement,
   initLazyGlobes,
+  initLazyCarousels,
   initToasts,
 ];
 

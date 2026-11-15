@@ -1,0 +1,235 @@
+/**
+ * Carousel (see src/components/Carousel.astro).
+ *
+ * Performance contract:
+ * - The track is a native scroll container, so scrolling and snapping run on
+ *   the compositor. No transform-driven sliding, no cloned slides.
+ * - The progress thumb moves with `translate` only. Where scroll timelines
+ *   are supported it is driven by the track's own scroll position with no
+ *   script at all; elsewhere the script writes one custom property per frame.
+ * - Nothing here changes layout after first paint: the controls keep their
+ *   space before the script marks the carousel ready.
+ */
+
+.cx {
+  /* Same inset as `.wrap`, so slides start on the page grid. */
+  --cx-gutter: max(1.25rem, calc((100% - 1180px) / 2));
+  --cx-gap: clamp(1rem, 2.4vw, 1.75rem);
+  /* One slide and a clear slice of the next on phones. */
+  --cx-slide: 88%;
+  /* Room inside the clipped track for the cards' hover lift and shadow. */
+  --cx-pad-top: 1rem;
+  --cx-pad-bottom: 2.75rem;
+  timeline-scope: --cx-scroll;
+}
+
+@media (min-width: 700px) {
+  .cx {
+    --cx-slide: calc((100% - var(--cx-gap)) / 1.6);
+  }
+
+  .cx-rail {
+    max-width: 14rem;
+  }
+}
+
+@media (min-width: 1041px) {
+  .cx {
+    --cx-slide: calc((100% - 2 * var(--cx-gap)) / 2.2);
+  }
+}
+
+.cx-track {
+  display: flex;
+  gap: var(--cx-gap);
+  margin-block: calc(var(--cx-pad-top) * -1) calc(var(--cx-pad-bottom) * -1);
+  padding-block: var(--cx-pad-top) var(--cx-pad-bottom);
+  padding-inline: var(--cx-gutter);
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--cx-gutter);
+  scroll-timeline: --cx-scroll inline;
+  scrollbar-width: none;
+}
+
+.cx-track::-webkit-scrollbar {
+  display: none;
+}
+
+.cx-track > * {
+  flex: 0 0 var(--cx-slide);
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+/* ── Controls ───────────────────────────────────────────────────────── */
+
+.cx-controls {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2rem);
+  margin-block-start: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.cx-nav {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.cx-btn {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--surface-strong);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease,
+    opacity 180ms ease;
+}
+
+.cx-btn svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: translate 220ms var(--fx-ease-out);
+}
+
+[dir='rtl'] .cx-btn svg {
+  scale: -1 1;
+}
+
+.cx-btn[aria-disabled='true'] {
+  opacity: 0.38;
+  cursor: default;
+}
+
+@media (hover: hover) {
+  .cx-btn:not([aria-disabled='true']):hover {
+    border-color: var(--accent-border);
+    background: var(--accent-subtle);
+  }
+
+  .cx-btn:not([aria-disabled='true']):hover svg {
+    translate: calc(var(--cx-nudge) * var(--cx-dir, 1)) 0;
+  }
+}
+
+.cx-btn[data-carousel-step='-1'] {
+  --cx-nudge: -2px;
+}
+
+.cx-btn[data-carousel-step='1'] {
+  --cx-nudge: 2px;
+}
+
+[dir='rtl'] .cx {
+  --cx-dir: -1;
+}
+
+.cx-btn:not([aria-disabled='true']):active {
+  scale: 0.94;
+}
+
+/* Until the script is ready, or when every slide already fits, the buttons
+   and counter keep their space but stay out of sight and out of reach. */
+.cx:not([data-ready]) :is(.cx-nav, .cx-count),
+.cx[data-static] .cx-controls {
+  visibility: hidden;
+}
+
+.cx-rail {
+  position: relative;
+  flex: 1;
+  /* Short on phones, so the counter stays clear of the back-to-top button. */
+  max-width: 6rem;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--border-strong);
+  container-type: inline-size;
+  overflow: clip;
+}
+
+.cx-thumb {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  /* The share of the track that is on screen; refined by the script. */
+  width: var(--cx-view, 30%);
+  border-radius: inherit;
+  background: var(--accent-fill);
+  /* Script-driven position, used only where scroll timelines are missing. */
+  translate: calc(var(--cx-progress, 0) * (100cqi - 100%) * var(--cx-dir, 1)) 0;
+}
+
+/* Longhands in separate rules: the CSS minifier folds `animation-timeline`
+   into an `animation` shorthand that browsers reject (see motion.css). */
+@supports (animation-timeline: scroll()) and (timeline-scope: --cx-scroll) {
+  .cx-thumb {
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: --cx-scroll;
+  }
+
+  .cx-thumb {
+    animation-name: cx-thumb;
+  }
+
+  [dir='rtl'] .cx-thumb {
+    animation-name: cx-thumb-rtl;
+  }
+}
+
+@keyframes cx-thumb {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: calc(100cqi - 100%) 0;
+  }
+}
+
+@keyframes cx-thumb-rtl {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: calc(100% - 100cqi) 0;
+  }
+}
+
+.cx-count {
+  display: inline-flex;
+  gap: 0.45em;
+  color: var(--text-2);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+}
+
+.cx-count [data-carousel-current] {
+  color: var(--text);
+  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cx-btn,
+  .cx-btn svg {
+    transition: none;
+  }
+
+  .cx-btn:active {
+    scale: none;
+  }
+}
