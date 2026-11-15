@@ -19,6 +19,11 @@ interface Props {
   project: OpenSourceProjectId;
   caseStudyHref: string;
   headingLevel?: 'h2' | 'h3';
+  /**
+   * Scroll reveal on the card. Turn off inside a carousel, where the reveal
+   * belongs on the track (see docs/MOTION.md "Carousel").
+   */
+  reveal?: boolean;
 }
 
 const {
@@ -26,6 +31,7 @@ const {
   project: projectId,
   caseStudyHref,
   headingLevel: Heading = 'h3',
+  reveal = true,
 } = Astro.props;
 const project = getOpenSourceProject(projectId);
 const copy = getOpenSourceCopy(locale, projectId);
@@ -54,7 +60,7 @@ const titleId = `oss-${project.id}-title`;
 ---
 
 <article
-  class="oss-card fx-glow fx-card-gradient fx-reveal"
+  class:list={['oss-card fx-glow fx-card-gradient', { 'fx-reveal': reveal }]}
   aria-labelledby={titleId}
   data-project={project.id}
   data-glow

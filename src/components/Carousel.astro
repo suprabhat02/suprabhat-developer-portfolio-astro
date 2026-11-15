@@ -12,6 +12,8 @@
  * - The controls sit above the track, so a reader sees that the row scrolls
  *   sideways before reaching the cards: beside the heading on wide screens
  *   (level with its last line), between the heading and the cards otherwise.
+ * - `size="wide"` shows one slide at a time with a slice of the next, for
+ *   large feature cards; the default fits two or more cards on wide screens.
  * - The track spans its section edge to edge and is inset by the page
  *   gutter, so slides line up with `.wrap` and run off the screen edge.
  *   Place it as a direct child of a full-width section, outside `.wrap`.
@@ -31,21 +33,34 @@ interface Props {
   /** Number of slides, shown in the counter. */
   count: number;
   locale: Locale;
+  /** `cards`: several slides in view. `wide`: one large slide at a time. */
+  size?: 'cards' | 'wide';
   class?: string;
   /** Classes for the scrolling track, e.g. a scroll reveal. */
   trackClass?: string;
 }
 
-const { id, label, count, locale, class: className, trackClass } = Astro.props;
+const {
+  id,
+  label,
+  count,
+  locale,
+  size = 'cards',
+  class: className,
+  trackClass,
+} = Astro.props;
 const pad = (value: number) => String(value).padStart(2, '0');
 ---
 
-<div class:list={['cx', className]} data-carousel>
+<div
+  class:list={['cx', { 'cx--wide': size === 'wide' }, className]}
+  data-carousel
+>
   <div class="wrap cx-head">
     <slot name="header" />
     <div class="cx-controls">
       <div class="cx-rail" aria-hidden="true">
-        <span class="cx-thumb"></span>
+        <span class="cx-thumb" data-carousel-thumb></span>
       </div>
       <p class="cx-count" aria-hidden="true">
         <span data-carousel-current>{pad(1)}</span>

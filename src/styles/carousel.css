@@ -24,6 +24,11 @@
   timeline-scope: --cx-scroll;
 }
 
+/* One large slide at a time, with a slice of the next. */
+.cx--wide {
+  --cx-pad-bottom: 4rem;
+}
+
 @media (min-width: 700px) {
   .cx {
     --cx-slide: calc((100% - var(--cx-gap)) / 1.6);
@@ -33,6 +38,12 @@
 @media (min-width: 1041px) {
   .cx {
     --cx-slide: calc((100% - 2 * var(--cx-gap)) / 2.2);
+  }
+}
+
+@media (min-width: 700px) {
+  .cx--wide {
+    --cx-slide: 90%;
   }
 }
 
@@ -97,7 +108,9 @@
     max-width: none;
   }
 
-  .cx-head .s-lead {
+  /* Every paragraph of the heading (lead, notes) stays clear of the
+     controls; the eyebrow and title sit above them. */
+  .cx-head .section-head > p {
     max-width: min(62ch, calc(100% - var(--cx-controls-size) - 2.5rem));
   }
 
@@ -190,7 +203,6 @@
   border-radius: 1px;
   background: var(--border-strong);
   container-type: inline-size;
-  overflow: clip;
 }
 
 .cx-thumb {
@@ -201,6 +213,8 @@
   width: var(--cx-view, 30%);
   border-radius: inherit;
   background: var(--accent-fill);
+  /* Own layer: the thumb only ever moves, it never repaints the rail. */
+  will-change: translate;
   /* Script-driven position, used only where scroll timelines are missing. */
   translate: calc(var(--cx-progress, 0) * (100cqi - 100%) * var(--cx-dir, 1)) 0;
 }

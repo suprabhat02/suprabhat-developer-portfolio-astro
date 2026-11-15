@@ -60,8 +60,16 @@ const pad = (value: number) => String(value).padStart(2, '0');
   class="section conversion-section"
   aria-labelledby="featured-work-title"
 >
-  <div class="wrap">
+  <Carousel
+    id="work-track"
+    size="wide"
+    trackClass="fx-reveal"
+    label={content.work.eyebrow}
+    count={openSourceIds.length}
+    {locale}
+  >
     <SectionHeader
+      slot="header"
       index="01"
       eyebrow={content.work.eyebrow}
       title={content.work.title}
@@ -76,9 +84,12 @@ const pad = (value: number) => String(value).padStart(2, '0');
           {locale}
           project={id}
           caseStudyHref={pageHref(`/work/${id}/`)}
+          reveal={false}
         />
       ))
     }
+  </Carousel>
+  <div class="wrap work-more">
     <div class="conversion-grid conversion-grid--three">
       {
         featuredWork.map((item, index) => (

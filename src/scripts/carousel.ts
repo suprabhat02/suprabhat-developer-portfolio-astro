@@ -8,7 +8,10 @@
  *   unsupported.
  *
  * Layout is measured only when the carousel is resized, never while
- * scrolling: the scroll handler reads `scrollLeft` and writes once per frame.
+ * scrolling: the scroll handler reads `scrollLeft` and writes once per frame,
+ * and only what changed. Values the thumb needs are written on the thumb
+ * itself, so a scroll frame never restyles the slides or re-lays out the
+ * controls (which made the rail flicker in Safari).
  */
 
 type Cleanup = () => void;
@@ -50,6 +53,11 @@ function mountCarousel(root: HTMLElement): Cleanup {
     root.querySelectorAll<HTMLButtonElement>('[data-carousel-step]'),
   );
   const current = root.querySelector<HTMLElement>('[data-carousel-current]');
+  const thumb = root.querySelector<HTMLElement>('[data-carousel-thumb]');
+  /** Last values written to the DOM, so unchanged frames write nothing. */
+  let shownSeen = '';
+  let shownProgress = '';
+  const shownDisabled = new WeakMap<HTMLButtonElement, boolean>();
   let metrics: Metrics | null = null;
   let frame = 0;
   /** Where a button press is heading, while that scroll is still running. */
@@ -66,6 +74,8 @@ function mountCarousel(root: HTMLElement): Cleanup {
     const [first, second] = slides;
     if (!first) {
       metrics = null;
+      // Nothing to scroll through: keep the controls out of sight.
+      root.toggleAttribute('data-static', true);
       return;
     }
     const styles = getComputedStyle(track);
@@ -87,7 +97,7 @@ function mountCarousel(root: HTMLElement): Cleanup {
       count: slides.length,
     };
     root.toggleAttribute('data-static', metrics.max < EDGE_TOLERANCE);
-    root.style.setProperty(
+    thumb?.style.setProperty(
       '--cx-view',
       `${clamp((track.clientWidth / track.scrollWidth) * 100, 8, 100)}%`,
     );
@@ -105,17 +115,24 @@ function mountCarousel(root: HTMLElement): Cleanup {
     const seen = atEnd
       ? count
       : clamp(Math.floor((position + view - slide + 1) / stride) + 1, 1, count);
-    if (current) current.textContent = pad(seen);
+    const label = pad(seen);
+    if (current && label !== shownSeen) {
+      current.textContent = label;
+      shownSeen = label;
+    }
     buttons.forEach((button) => {
       const disabled =
         Number(button.dataset.carouselStep) < 0 ? atStart : atEnd;
+      if (shownDisabled.get(button) === disabled) return;
       button.setAttribute('aria-disabled', String(disabled));
+      shownDisabled.set(button, disabled);
     });
-    if (!hasScrollTimeline) {
-      root.style.setProperty(
-        '--cx-progress',
-        (max > 0 ? clamp(position / max, 0, 1) : 0).toFixed(4),
-      );
+    if (!hasScrollTimeline && thumb) {
+      const progress = (max > 0 ? clamp(position / max, 0, 1) : 0).toFixed(4);
+      if (progress !== shownProgress) {
+        thumb.style.setProperty('--cx-progress', progress);
+        shownProgress = progress;
+      }
     }
   };
 
@@ -182,6 +199,9 @@ function mountCarousel(root: HTMLElement): Cleanup {
     track.removeEventListener('wheel', settle);
     root.removeEventListener('click', onClick);
     root.removeAttribute('data-ready');
+    root.removeAttribute('data-static');
+    thumb?.style.removeProperty('--cx-view');
+    thumb?.style.removeProperty('--cx-progress');
   };
 }
 
