@@ -40,7 +40,7 @@ src/components/fx/
 | Card Hover Effect        | `.fx-hover-group` + `.fx-hover-pill` + `data-hover-group` | Engagements, skills table                |
 | Flip Words               | `FlipWords.astro`                                         | Hero                                     |
 | Infinite Moving Cards    | `.fx-marquee` + `.fx-marquee-track`                       | Keyword strip, recommendations           |
-| Bento Grid               | `.bento-grid` with CSS mini-visuals                       | Problems section                         |
+| Bento Grid               | `.bento-card` with CSS mini-visuals                       | Problems section                         |
 | Timeline / Tracing Beam  | `ExperienceTimeline.astro` (`.xp-rail` + `.xp-rail-fill`) | Experience (homepage and `/experience/`) |
 | Text Reveal              | `TextReveal.astro`                                        | About statement                          |
 | Focus Cards              | `.fx-focus-group` + `.fx-focus-item`                      | Featured articles                        |
@@ -144,7 +144,8 @@ Scenes are drawn from a small paint vocabulary (`.t`, `.fa`, `.fb`, `.fok`,
 
 `src/components/Carousel.astro` turns a long card grid into one horizontal row.
 The homepage uses it for the open-source work (`size="wide"`: one large card
-at a time) and for the services (several cards in view).
+at a time), the problems (`desktop="grid"`: a row on phones and tablets, a
+three-column grid from 1041px) and the services (several cards in view).
 
 - **Content is untouched.** Every slide is in the HTML and in the accessibility
   tree. Nothing is cloned, hidden or rendered late, so search engines and screen
@@ -178,6 +179,12 @@ Rules when using it:
 - Keep `animation-*` longhands in separate rules (see the pitfall above); the
   minifier otherwise drops the scroll timeline.
 - Slide width is `--cx-slide`; change it per breakpoint in `carousel.css`.
+- Use `desktop="grid"` only when every slide fits a three-column grid. The
+  switch is CSS only: the track stops being a scroll container and the
+  controls are removed, so it looks the same with and without script.
+- Pass `focusable` when the slides hold no links or buttons. Keyboard users
+  can then focus the track and scroll it with the arrow keys (WCAG 2.1.1);
+  the script removes that tab stop whenever nothing scrolls.
 - A component that carries its own `fx-reveal` needs a way to turn it off as
   a slide (see the `reveal` prop of `OpenSourceSpotlight.astro`).
 

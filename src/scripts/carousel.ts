@@ -67,6 +67,15 @@ function mountCarousel(root: HTMLElement): Cleanup {
   /** Scroll distance from the start edge, positive in both directions. */
   const offset = (): number => Math.abs(track.scrollLeft);
 
+  /** A track that takes focus to be scrolled gives it up when nothing scrolls. */
+  const focusable = track.hasAttribute('data-carousel-focusable');
+  const setStatic = (isStatic: boolean) => {
+    root.toggleAttribute('data-static', isStatic);
+    if (!focusable) return;
+    if (isStatic) track.removeAttribute('tabindex');
+    else track.setAttribute('tabindex', '0');
+  };
+
   const measure = () => {
     const slides = Array.from(track.children).filter(
       (child): child is HTMLElement => child instanceof HTMLElement,
@@ -75,7 +84,7 @@ function mountCarousel(root: HTMLElement): Cleanup {
     if (!first) {
       metrics = null;
       // Nothing to scroll through: keep the controls out of sight.
-      root.toggleAttribute('data-static', true);
+      setStatic(true);
       return;
     }
     const styles = getComputedStyle(track);
@@ -96,7 +105,7 @@ function mountCarousel(root: HTMLElement): Cleanup {
       max: Math.max(0, track.scrollWidth - track.clientWidth),
       count: slides.length,
     };
-    root.toggleAttribute('data-static', metrics.max < EDGE_TOLERANCE);
+    setStatic(metrics.max < EDGE_TOLERANCE);
     thumb?.style.setProperty(
       '--cx-view',
       `${clamp((track.clientWidth / track.scrollWidth) * 100, 8, 100)}%`,
@@ -200,6 +209,7 @@ function mountCarousel(root: HTMLElement): Cleanup {
     root.removeEventListener('click', onClick);
     root.removeAttribute('data-ready');
     root.removeAttribute('data-static');
+    if (focusable) track.setAttribute('tabindex', '0');
     thumb?.style.removeProperty('--cx-view');
     thumb?.style.removeProperty('--cx-progress');
   };

@@ -143,103 +143,109 @@ const pad = (value: number) => String(value).padStart(2, '0');
   aria-labelledby="problems-title"
 >
   <Backdrop pattern="dots" />
-  <div class="wrap">
+  <Carousel
+    id="problems-track"
+    desktop="grid"
+    focusable
+    trackClass="fx-reveal"
+    label={content.problems.eyebrow}
+    count={content.problems.items.length}
+    {locale}
+  >
     <SectionHeader
+      slot="header"
       index="02"
       eyebrow={content.problems.eyebrow}
       title={content.problems.title}
       titleId="problems-title"
       lead={content.problems.lead}
     />
-    <div class="bento-grid">
-      {
-        content.problems.items.map((item, index) => (
-          <article
-            class:list={[
-              'conversion-card',
-              'conversion-card--compact',
-              'bento-card',
-              `bento-card--${visualFor(index)}`,
-              'fx-glow',
-              'fx-card-gradient',
-              'fx-reveal',
-            ]}
-            data-glow
+    {
+      content.problems.items.map((item, index) => (
+        <article
+          class:list={[
+            'conversion-card',
+            'conversion-card--compact',
+            'bento-card',
+            `bento-card--${visualFor(index)}`,
+            'fx-glow',
+            'fx-card-gradient',
+          ]}
+          data-glow
+        >
+          <div
+            class:list={['bento-visual', `bento-visual--${visualFor(index)}`]}
+            aria-hidden="true"
           >
-            <div
-              class:list={['bento-visual', `bento-visual--${visualFor(index)}`]}
-              aria-hidden="true"
-            >
-              {visualFor(index) === 'tree' && (
-                <>
-                  <span class="node node--root" />
-                  <span class="node node--a" />
-                  <span class="node node--b" />
-                  <span class="node node--c" />
-                  <span class="link link--a" />
-                  <span class="link link--b" />
-                  <span class="link link--c" />
-                </>
-              )}
-              {visualFor(index) === 'gauge' && (
-                <>
-                  <span class="gauge-arc" />
-                  <span class="gauge-needle" />
-                  <span class="gauge-hub" />
-                </>
-              )}
-              {visualFor(index) === 'bars' && (
-                <>
-                  <span style="--h:42%" />
-                  <span style="--h:68%" />
-                  <span style="--h:54%" />
-                  <span style="--h:86%" />
-                  <span style="--h:62%" />
-                  <span style="--h:94%" />
-                </>
-              )}
-              {visualFor(index) === 'focus' && (
-                <>
-                  <span class="chip" />
-                  <span class="chip" />
-                  <span class="chip" />
-                  <span class="ring" />
-                </>
-              )}
-              {visualFor(index) === 'tokens' && (
-                <>
-                  <span style="--i:0" />
-                  <span style="--i:1" />
-                  <span style="--i:2" />
-                  <span style="--i:3" />
-                </>
-              )}
-              {visualFor(index) === 'layers' && (
-                <>
-                  <span style="--i:0" />
-                  <span style="--i:1" />
-                  <span style="--i:2" />
-                </>
-              )}
-            </div>
-            <h3>{item.title}</h3>
-            <p>{item.body}</p>
-            <div class="problem-detail">
-              <p class="problem-label">{content.problems.signalsLabel}</p>
-              <ul class="problem-signals">
-                {item.signals.map((signal) => (
-                  <li>{signal}</li>
-                ))}
-              </ul>
-              <p class="problem-outcome">
-                <strong>{content.problems.outcomeLabel}:</strong> {item.outcome}
-              </p>
-            </div>
-          </article>
-        ))
-      }
-    </div>
-  </div>
+            {visualFor(index) === 'tree' && (
+              <>
+                <span class="node node--root" />
+                <span class="node node--a" />
+                <span class="node node--b" />
+                <span class="node node--c" />
+                <span class="link link--a" />
+                <span class="link link--b" />
+                <span class="link link--c" />
+              </>
+            )}
+            {visualFor(index) === 'gauge' && (
+              <>
+                <span class="gauge-arc" />
+                <span class="gauge-needle" />
+                <span class="gauge-hub" />
+              </>
+            )}
+            {visualFor(index) === 'bars' && (
+              <>
+                <span style="--h:42%" />
+                <span style="--h:68%" />
+                <span style="--h:54%" />
+                <span style="--h:86%" />
+                <span style="--h:62%" />
+                <span style="--h:94%" />
+              </>
+            )}
+            {visualFor(index) === 'focus' && (
+              <>
+                <span class="chip" />
+                <span class="chip" />
+                <span class="chip" />
+                <span class="ring" />
+              </>
+            )}
+            {visualFor(index) === 'tokens' && (
+              <>
+                <span style="--i:0" />
+                <span style="--i:1" />
+                <span style="--i:2" />
+                <span style="--i:3" />
+              </>
+            )}
+            {visualFor(index) === 'layers' && (
+              <>
+                <span style="--i:0" />
+                <span style="--i:1" />
+                <span style="--i:2" />
+              </>
+            )}
+          </div>
+          <h3>{item.title}</h3>
+          <p>{item.body}</p>
+          <div class="problem-detail">
+            <p class="problem-label">{content.problems.signalsLabel}</p>
+            <ul class="problem-signals">
+              {item.signals.map((signal) => (
+                <li>{signal}</li>
+              ))}
+            </ul>
+            <p class="problem-outcome">
+              <strong>{content.problems.outcomeLabel}:</strong> {item.outcome}
+            </p>
+          </div>
+        </article>
+      ))
+    }
+  </Carousel>
 </section>
 
 <section

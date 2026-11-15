@@ -942,24 +942,12 @@
   scale: -1 1;
 }
 
-/* Bento grid with animated mini visuals */
-.bento-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(1.25rem, 3vw, 2.25rem);
-}
-
+/* Problem cards with animated mini visuals (slides of a carousel) */
 .bento-card {
   display: flex;
   flex-direction: column;
   overflow: hidden;
   overflow: clip;
-}
-
-.bento-card:nth-child(1),
-.bento-card:nth-child(4),
-.bento-card:nth-child(6) {
-  grid-column: span 2;
 }
 
 .bento-visual {
@@ -2522,15 +2510,8 @@ textarea.f-input {
   .conversion-grid--three,
   .conversion-grid--two,
   .articles-grid,
-  .expertise-grid,
-  .bento-grid {
+  .expertise-grid {
     grid-template-columns: 1fr;
-  }
-
-  .bento-card:nth-child(1),
-  .bento-card:nth-child(4),
-  .bento-card:nth-child(6) {
-    grid-column: auto;
   }
 
   .conversion-card--compact {
@@ -2658,13 +2639,6 @@ textarea.f-input {
 .problem-signals {
   display: grid;
   gap: 0.5rem;
-}
-
-.bento-card:nth-child(1) .problem-signals,
-.bento-card:nth-child(4) .problem-signals,
-.bento-card:nth-child(6) .problem-signals {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
-  column-gap: 1.5rem;
 }
 
 .problem-signals li {

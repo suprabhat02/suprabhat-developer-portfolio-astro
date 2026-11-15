@@ -62,6 +62,11 @@
   scrollbar-width: none;
 }
 
+/* A focusable track (slides without links): keep the ring inside the clip. */
+.cx-track:focus-visible {
+  outline-offset: -3px;
+}
+
 .cx-track::-webkit-scrollbar {
   display: none;
 }
@@ -70,6 +75,21 @@
   flex: 0 0 var(--cx-slide);
   min-width: 0;
   scroll-snap-align: start;
+}
+
+/* `desktop="grid"`: every slide fits, so the row becomes a plain grid and
+   stops being a scroll container (nothing to clip, nothing to focus). */
+@media (min-width: 1041px) {
+  .cx--grid .cx-track {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+
+  .cx--grid .cx-controls {
+    display: none;
+  }
 }
 
 /* ── Heading and controls ───────────────────────────────────────────── */

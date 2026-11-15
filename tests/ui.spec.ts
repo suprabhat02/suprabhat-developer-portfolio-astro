@@ -1405,11 +1405,24 @@ test('contact form project selects share one aligned row', async ({
   }
 });
 
-/** Homepage sections that show their cards in a carousel. */
+/** From this width a `desktop="grid"` carousel shows every slide at once. */
+const CAROUSEL_GRID_FROM = 1041;
+
+/**
+ * Homepage sections that show their cards in a carousel. `grid` sections
+ * turn into a plain grid on wide screens (see the grid test below).
+ */
 const carouselSections = [
-  { id: 'work', minimumSlides: 2 },
-  { id: 'engagements', minimumSlides: 4 },
+  { id: 'work', minimumSlides: 2, grid: false },
+  { id: 'problems', minimumSlides: 6, grid: true },
+  { id: 'engagements', minimumSlides: 4, grid: false },
 ] as const;
+
+/** Sections whose carousel scrolls sideways at this viewport width. */
+const scrollingCarousels = (width: number) =>
+  carouselSections.filter(
+    (section) => !section.grid || width < CAROUSEL_GRID_FROM,
+  );
 
 test('carousels keep every card reachable and never widen the page', async ({
   page,
@@ -1419,7 +1432,7 @@ test('carousels keep every card reachable and never widen the page', async ({
     for (const width of [360, 768, 1280]) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(`${prefix}/`);
-      for (const { id, minimumSlides } of carouselSections) {
+      for (const { id, minimumSlides } of scrollingCarousels(width)) {
         const carousel = page.locator(`#${id} [data-carousel]`);
         const track = carousel.locator('[data-carousel-track]');
         const label = `#${id} on ${prefix || '/en'} at ${width}px`;
@@ -1500,7 +1513,7 @@ test('carousels show their controls before the cards', async ({ page }) => {
     for (const width of [360, 768, 1040, 1041, 1280, 1920]) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(`${prefix}/`);
-      for (const { id } of carouselSections) {
+      for (const { id } of scrollingCarousels(width)) {
         const label = `#${id} on ${prefix || '/en'} at ${width}px`;
         const carousel = page.locator(`#${id} [data-carousel]`);
         await scrollToVisible(carousel.locator('.cx-controls'));
@@ -1548,6 +1561,81 @@ test('carousels show their controls before the cards', async ({ page }) => {
         await expect(carousel.locator('.cx-count'), label).toBeVisible();
       }
     }
+  }
+});
+
+test('problem cards become a grid without controls on wide screens', async ({
+  browser,
+}) => {
+  // With and without script: the grid and the missing controls are CSS only.
+  for (const javaScriptEnabled of [true, false]) {
+    const context = await browser.newContext({ javaScriptEnabled });
+    const page = await context.newPage();
+    for (const prefix of ['', '/ar']) {
+      for (const width of [CAROUSEL_GRID_FROM, 1280, 1920]) {
+        const label = `${prefix || '/en'} at ${width}px, script ${String(javaScriptEnabled)}`;
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(`${prefix}/`);
+        const carousel = page.locator('#problems [data-carousel]');
+        const track = carousel.locator('[data-carousel-track]');
+        await scrollToVisible(track);
+        await expect(carousel.locator('.cx-controls'), label).toBeHidden();
+        // Nothing scrolls here, so the script drops the track's tab stop.
+        if (javaScriptEnabled) {
+          await expect(track, label).not.toHaveAttribute('tabindex');
+        }
+        const layout = await track.evaluate((scroller) => {
+          const cards = Array.from(scroller.children, (card) =>
+            card.getBoundingClientRect(),
+          );
+          return {
+            overflowX: getComputedStyle(scroller).overflowX,
+            hidden: scroller.scrollWidth - scroller.clientWidth,
+            columns: new Set(cards.map((card) => Math.round(card.left))).size,
+            rows: new Set(cards.map((card) => Math.round(card.top))).size,
+            outside: cards.filter(
+              (card) => card.left < 0 || card.right > window.innerWidth,
+            ).length,
+            pageOverflow:
+              document.documentElement.scrollWidth >
+              document.documentElement.clientWidth,
+          };
+        });
+        expect(layout, label).toEqual({
+          overflowX: 'visible',
+          hidden: 0,
+          columns: 3,
+          rows: 2,
+          outside: 0,
+          pageOverflow: false,
+        });
+      }
+    }
+    await context.close();
+  }
+});
+
+test('problem cards can be scrolled from the keyboard on small screens', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const prefix of ['', '/ar']) {
+    await page.goto(`${prefix}/`);
+    const track = page.locator('#problems [data-carousel-track]');
+    await scrollToVisible(track);
+    await expect(page.locator('#problems [data-carousel]')).toHaveAttribute(
+      'data-ready',
+      '',
+    );
+    // The cards hold no links, so the track itself is the tab stop.
+    await expect(track, prefix).toHaveAttribute('tabindex', '0');
+    await track.focus();
+    await page.keyboard.press(prefix === '/ar' ? 'ArrowLeft' : 'ArrowRight');
+    await expect
+      .poll(() => track.evaluate((node) => Math.abs(node.scrollLeft)), {
+        message: prefix,
+      })
+      .toBeGreaterThan(0);
   }
 });
 
