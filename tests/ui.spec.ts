@@ -1564,7 +1564,7 @@ test('carousels show their controls before the cards', async ({ page }) => {
   }
 });
 
-test('problem cards become a grid without controls on wide screens', async ({
+test('problem cards become a bento without controls on wide screens', async ({
   browser,
 }) => {
   // With and without script: the grid and the missing controls are CSS only.
@@ -1593,6 +1593,33 @@ test('problem cards become a grid without controls on wide screens', async ({
             hidden: scroller.scrollWidth - scroller.clientWidth,
             columns: new Set(cards.map((card) => Math.round(card.left))).size,
             rows: new Set(cards.map((card) => Math.round(card.top))).size,
+            // Two wide cards beside a tall one, then mirrored: the tall cards
+            // are the narrow ones and each spans two rows.
+            tall: cards.filter((card, _index, all) => {
+              const narrowest = Math.min(...all.map((each) => each.width));
+              const shortest = Math.min(...all.map((each) => each.height));
+              return (
+                card.width < narrowest * 1.2 && card.height > shortest * 1.6
+              );
+            }).length,
+            overlapping: cards.filter((card, index) =>
+              cards.some(
+                (other, otherIndex) =>
+                  otherIndex > index &&
+                  card.left < other.right - 1 &&
+                  other.left < card.right - 1 &&
+                  card.top < other.bottom - 1 &&
+                  other.top < card.bottom - 1,
+              ),
+            ).length,
+            // The tiles close into one rectangle: only the gaps are empty.
+            filled:
+              cards.reduce((sum, card) => sum + card.width * card.height, 0) /
+                ((Math.max(...cards.map((card) => card.right)) -
+                  Math.min(...cards.map((card) => card.left))) *
+                  (Math.max(...cards.map((card) => card.bottom)) -
+                    Math.min(...cards.map((card) => card.top)))) >
+              0.9,
             outside: cards.filter(
               (card) => card.left < 0 || card.right > window.innerWidth,
             ).length,
@@ -1605,7 +1632,10 @@ test('problem cards become a grid without controls on wide screens', async ({
           overflowX: 'visible',
           hidden: 0,
           columns: 3,
-          rows: 2,
+          rows: 4,
+          tall: 2,
+          overlapping: 0,
+          filled: true,
           outside: 0,
           pageOverflow: false,
         });

@@ -50,6 +50,21 @@ const problemVisuals: NonEmpty<ProblemVisual> = [
 ];
 const visualFor = (index: number): ProblemVisual =>
   cycle(problemVisuals, index);
+/**
+ * Shape of each problem card in the desktop bento, by position. A `wide` card
+ * sets its pitch beside its evidence; a `tall` card stacks them and is as high
+ * as two wide ones. Placement lives in `homepage.css` (`.problem-bento`).
+ */
+type ProblemShape = 'wide' | 'tall';
+const problemShapes: NonEmpty<ProblemShape> = [
+  'wide',
+  'tall',
+  'wide',
+  'tall',
+  'wide',
+  'wide',
+];
+const shapeFor = (index: number): ProblemShape => cycle(problemShapes, index);
 /** Icons follow item order, which is identical in every locale. */
 const approachIcons: NonEmpty<IconName> = ['search', 'layers', 'badge-check'];
 const pad = (value: number) => String(value).padStart(2, '0');
@@ -147,7 +162,7 @@ const pad = (value: number) => String(value).padStart(2, '0');
     id="problems-track"
     desktop="grid"
     focusable
-    trackClass="fx-reveal"
+    trackClass="fx-reveal problem-bento"
     label={content.problems.eyebrow}
     count={content.problems.items.length}
     {locale}
@@ -167,67 +182,71 @@ const pad = (value: number) => String(value).padStart(2, '0');
             'conversion-card',
             'conversion-card--compact',
             'bento-card',
-            `bento-card--${visualFor(index)}`,
+            `bento-card--${shapeFor(index)}`,
             'fx-glow',
             'fx-card-gradient',
           ]}
           data-glow
         >
           <div
-            class:list={['bento-visual', `bento-visual--${visualFor(index)}`]}
+            class:list={['bento-stage', `bento-stage--${visualFor(index)}`]}
             aria-hidden="true"
           >
-            {visualFor(index) === 'tree' && (
-              <>
-                <span class="node node--root" />
-                <span class="node node--a" />
-                <span class="node node--b" />
-                <span class="node node--c" />
-                <span class="link link--a" />
-                <span class="link link--b" />
-                <span class="link link--c" />
-              </>
-            )}
-            {visualFor(index) === 'gauge' && (
-              <>
-                <span class="gauge-arc" />
-                <span class="gauge-needle" />
-                <span class="gauge-hub" />
-              </>
-            )}
-            {visualFor(index) === 'bars' && (
-              <>
-                <span style="--h:42%" />
-                <span style="--h:68%" />
-                <span style="--h:54%" />
-                <span style="--h:86%" />
-                <span style="--h:62%" />
-                <span style="--h:94%" />
-              </>
-            )}
-            {visualFor(index) === 'focus' && (
-              <>
-                <span class="chip" />
-                <span class="chip" />
-                <span class="chip" />
-                <span class="ring" />
-              </>
-            )}
-            {visualFor(index) === 'tokens' && (
-              <>
-                <span style="--i:0" />
-                <span style="--i:1" />
-                <span style="--i:2" />
-                <span style="--i:3" />
-              </>
-            )}
-            {visualFor(index) === 'layers' && (
-              <>
-                <span style="--i:0" />
-                <span style="--i:1" />
-                <span style="--i:2" />
-              </>
-            )}
+            <div
+              class:list={['bento-visual', `bento-visual--${visualFor(index)}`]}
+            >
+              {visualFor(index) === 'tree' && (
+                <>
+                  <span class="node node--root" />
+                  <span class="node node--a" />
+                  <span class="node node--b" />
+                  <span class="node node--c" />
+                  <span class="link link--a" />
+                  <span class="link link--b" />
+                  <span class="link link--c" />
+                </>
+              )}
+              {visualFor(index) === 'gauge' && (
+                <>
+                  <span class="gauge-arc" />
+                  <span class="gauge-needle" />
+                  <span class="gauge-hub" />
+                </>
+              )}
+              {visualFor(index) === 'bars' && (
+                <>
+                  <span style="--h:42%" />
+                  <span style="--h:68%" />
+                  <span style="--h:54%" />
+                  <span style="--h:86%" />
+                  <span style="--h:62%" />
+                  <span style="--h:94%" />
+                </>
+              )}
+              {visualFor(index) === 'focus' && (
+                <>
+                  <span class="chip" />
+                  <span class="chip" />
+                  <span class="chip" />
+                  <span class="ring" />
+                </>
+              )}
+              {visualFor(index) === 'tokens' && (
+                <>
+                  <span style="--i:0" />
+                  <span style="--i:1" />
+                  <span style="--i:2" />
+                  <span style="--i:3" />
+                </>
+              )}
+              {visualFor(index) === 'layers' && (
+                <>
+                  <span style="--i:0" />
+                  <span style="--i:1" />
+                  <span style="--i:2" />
+                </>
+              )}
+            </div>
           </div>
           <h3>{item.title}</h3>
           <p>{item.body}</p>

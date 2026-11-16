@@ -950,15 +950,119 @@
   overflow: clip;
 }
 
-.bento-visual {
-  position: relative;
-  height: 6.5rem;
+/* The stage frames the art and may grow with its card; the art inside keeps
+   its drawn size and stays centred, so no visual depends on the card's shape. */
+.bento-stage {
+  display: grid;
+  place-items: center;
+  min-height: 6.5rem;
   margin-block-end: 1.25rem;
   overflow: hidden;
   overflow: clip;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-control);
-  background: color-mix(in oklch, var(--bg) 55%, transparent);
+  background:
+    radial-gradient(
+        circle,
+        color-mix(in oklch, var(--text) 13%, transparent) 1px,
+        transparent 1.5px
+      )
+      50% 50% / 16px 16px,
+    color-mix(in oklch, var(--bg) 55%, transparent);
+}
+
+/* Between these widths a one-column stage is narrower than the three focus
+   chips, so they are drawn smaller instead of being cut off. */
+@media (min-width: 1041px) and (max-width: 1279px) {
+  .bento-card--tall .bento-visual--focus {
+    scale: 0.82;
+  }
+}
+
+/* Bars stand on the stage floor however tall the stage is. */
+.bento-stage--bars {
+  align-items: end;
+}
+
+.bento-visual {
+  position: relative;
+  width: 100%;
+  height: 6.5rem;
+}
+
+/* Desktop bento: two wide cards stacked beside one tall card, then mirrored.
+   A wide card is about half as high as a tall one, so the rows close without
+   empty space; whatever is left over goes to the stages. Below this width the
+   cards are slides of the carousel and keep the stacked layout.
+
+     a a b
+     c c b
+     d e e
+     d f f                                                                  */
+@media (min-width: 1041px) {
+  .problem-bento {
+    grid-template-areas:
+      'a a b'
+      'c c b'
+      'd e e'
+      'd f f';
+  }
+
+  .problem-bento > :nth-child(1) {
+    grid-area: a;
+  }
+
+  .problem-bento > :nth-child(2) {
+    grid-area: b;
+  }
+
+  .problem-bento > :nth-child(3) {
+    grid-area: c;
+  }
+
+  .problem-bento > :nth-child(4) {
+    grid-area: d;
+  }
+
+  .problem-bento > :nth-child(5) {
+    grid-area: e;
+  }
+
+  .problem-bento > :nth-child(6) {
+    grid-area: f;
+  }
+
+  .bento-card--tall .bento-stage {
+    flex: 1 0 8.5rem;
+  }
+
+  /* The gauge has room in a tall stage, so it is drawn a little larger. */
+  .bento-card--tall .bento-visual--gauge {
+    scale: 1.25;
+  }
+
+  /* Wide: the pitch (art, title, summary) beside the evidence. */
+  .bento-card--wide {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: minmax(6.5rem, 1fr) auto auto;
+    column-gap: clamp(1.5rem, 2.6vw, 2.5rem);
+  }
+
+  .bento-card--wide > :is(.bento-stage, h3, p) {
+    grid-column: 1;
+  }
+
+  .bento-card--wide > .problem-detail {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    align-content: start;
+    margin-block-start: 0;
+    padding-block-start: 0;
+    padding-inline-start: clamp(1.5rem, 2.6vw, 2.5rem);
+    border-block-start: 0;
+    border-inline-start: 1px dashed var(--border-strong);
+  }
 }
 
 .bento-visual span {
