@@ -1,7 +1,6 @@
 ---
 import { getProfile } from '../data/profile';
-import { getSkillLogos, getToolGroups } from '../data/tools';
-import { getSkills } from '../data/skills';
+import { getStack } from '../data/stack';
 import { getCaseStudies } from '../data/caseStudies';
 import { getWork } from '../data/work';
 import {
@@ -24,6 +23,7 @@ import TextReveal from './fx/TextReveal.astro';
 import ExperienceTimeline from './ExperienceTimeline.astro';
 import Icon, { type IconName } from './fx/Icon.astro';
 import LiveScene from './fx/LiveScene.astro';
+import Carousel from './Carousel.astro';
 import SceneDefs from './fx/SceneDefs.astro';
 import Globe from './fx/Globe.astro';
 import type { SceneName } from './fx/scenes';
@@ -41,7 +41,7 @@ import '../styles/homepage.css';
 const { locale = 'en' } = Astro.props as { locale?: Locale };
 const profile = getProfile(locale);
 const conversion = getHomepageConversionContent(locale);
-const toolGroups = getToolGroups();
+const stack = getStack(locale);
 const work = getWork(locale);
 const caseStudies = getCaseStudies(locale);
 const featuredCaseStudy =
@@ -94,7 +94,6 @@ const marqueeKeywords = [
   'Astro',
 ] as const;
 
-const skillColumns = getSkills(locale).skillGroups;
 const recruiterHighlights = [
   {
     label: t(locale, 'home.recruiterRoleLabel'),
@@ -701,60 +700,78 @@ const contactIndex = featured.length > 0 ? '14' : '13';
     </div>
   </section>
 
-  <!-- ── SKILLS (Card hover effect) ───────────────────────── -->
+  <!-- ── STACK (skills and tools as one bento) ─────────────── -->
+  <!-- Driven by stack.ts: names from skills.ts, logos from tools.ts -->
   <section
     id="skills"
     class="section section-alt cv-auto"
     aria-labelledby="skills-title"
   >
     <Backdrop pattern="dots" />
-    <div class="wrap">
+    <Carousel
+      id="tools"
+      desktop="grid"
+      focusable
+      trackClass="fx-reveal stack-bento"
+      label={t(locale, 'home.stackAria')}
+      count={stack.length}
+      {locale}
+    >
       <SectionHeader
+        slot="header"
         index="09"
         eyebrow={t(locale, 'page.skills.eyebrow')}
-        title={t(locale, 'page.skills.eyebrow')}
+        title={t(locale, 'home.toolsHeading')}
         titleId="skills-title"
         lead={t(locale, 'home.skillsLead')}
       />
-      <div class="skills-table fx-reveal">
-        <div class="skills-row fx-hover-group" data-hover-group>
-          <span class="fx-hover-pill" aria-hidden="true"></span>
-          {
-            skillColumns.map((column) => (
-              <div class="skill-col" data-skill-group={column.id}>
-                <h3>{column.heading}</h3>
-                <ul class="skill-ul">
-                  {column.items.map((item) => {
-                    const logos = getSkillLogos(item);
-                    return (
-                      <li>
-                        <span class="skill-logos" aria-hidden="true">
-                          {logos.length > 0 ? (
-                            logos.map((logo) => (
-                              <img
-                                src={logo.src}
-                                alt=""
-                                width="22"
-                                height="22"
-                                loading="lazy"
-                                decoding="async"
-                                class:list={{ 'tm-invert': logo.invert }}
-                              />
-                            ))
-                          ) : (
-                            <Icon name="layers" size={18} />
-                          )}
-                        </span>
-                        <span>{item}</span>
-                      </li>
-                    );
-                  })}
-                </ul>
+      {
+        stack.map((group) => (
+          <article
+            class:list={[
+              'stack-card',
+              `stack-card--${group.shape}`,
+              'fx-live',
+              'fx-glow',
+              'fx-card-gradient',
+            ]}
+            data-glow
+            data-stack-group={group.id}
+          >
+            <LiveScene scene={group.scene} />
+            <div class="stack-copy">
+              <div class="stack-text">
+                <h3>{group.title}</h3>
+                <p>{group.description}</p>
               </div>
-            ))
-          }
-        </div>
-      </div>
+              <ul class="stack-tech" role="list">
+                {group.items.map((item) => (
+                  <li class="stack-chip">
+                    {item.logos.length > 0 && (
+                      <span class="stack-logos" aria-hidden="true">
+                        {item.logos.map((logo) => (
+                          <img
+                            src={logo.src}
+                            alt=""
+                            width="18"
+                            height="18"
+                            loading="lazy"
+                            decoding="async"
+                            class:list={{ 'stack-invert': logo.invert }}
+                          />
+                        ))}
+                      </span>
+                    )}
+                    <span>{item.label}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </article>
+        ))
+      }
+    </Carousel>
+    <div class="wrap">
       <p class="section-cta">
         <a href="#contact" class="btn btn-outline">
           {t(locale, 'home.skillsCta')}
@@ -782,60 +799,6 @@ const contactIndex = featured.length > 0 ? '14' : '13';
     </div>
   </section>
 
-  <!-- ── TOOLS (Spotlight grid) ───────────────────────────── -->
-  <section
-    id="tools"
-    class="section section-alt cv-auto"
-    aria-labelledby="tools-title"
-  >
-    <Backdrop pattern="dots" />
-    <div class="wrap">
-      <SectionHeader
-        index="11"
-        eyebrow={t(locale, 'home.toolbox')}
-        title={t(locale, 'home.toolsHeading')}
-        titleId="tools-title"
-        lead={t(locale, 'home.stackLead')}
-      />
-    </div>
-
-    <div
-      class="tm-wrap tm-groups wrap"
-      aria-label={t(locale, 'home.stackAria')}
-    >
-      {
-        toolGroups.map((group) => (
-          <section class="tm-group" aria-labelledby={`tool-group-${group.id}`}>
-            <div class="tm-group-heading">
-              <h3 id={`tool-group-${group.id}`}>
-                {t(locale, `page.tools.group.${group.id}.title`)}
-              </h3>
-              <p>{t(locale, `page.tools.group.${group.id}.description`)}</p>
-            </div>
-            <ul class="tm-grid" role="list">
-              {group.tools.map((tool, index) => (
-                <li class="tm-item fx-reveal" style={`--tool-index: ${index}`}>
-                  <div class="tm-chip fx-glow" data-glow>
-                    <img
-                      src={tool.icon}
-                      alt=""
-                      width="36"
-                      height="36"
-                      loading="lazy"
-                      decoding="async"
-                      class:list={{ 'tm-invert': tool.invertOnDark }}
-                    />
-                    <span class="tm-name">{tool.name}</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))
-      }
-    </div>
-  </section>
-
   {
     featured.length > 0 && (
       <section
@@ -845,7 +808,7 @@ const contactIndex = featured.length > 0 ? '14' : '13';
       >
         <div class="wrap">
           <SectionHeader
-            index="12"
+            index="11"
             eyebrow={t(locale, 'home.recommendations')}
             title={t(locale, 'home.recommendations')}
             titleId="recs-title"

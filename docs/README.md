@@ -57,6 +57,7 @@ src/data/profile.ts          hero facts, about paragraphs, philosophy, contact
 src/data/skills.ts           the three skill groups
 src/data/experience.ts       employers, dates, locations, bullets
 src/data/tools.ts            the twelve tools
+src/data/stack.ts            homepage stack: skills + tools as one bento
 src/data/work.ts             internal-work summaries
 src/data/caseStudies.ts      localized case-study detail pages
 src/data/recommendations.ts  quotes and attribution

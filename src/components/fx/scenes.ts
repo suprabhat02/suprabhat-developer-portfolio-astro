@@ -58,6 +58,18 @@ export const sceneNames = [
   'canvas',
   /** Loose color swatches settle into a spaced, ruled grid. */
   'swatches',
+  /** Code typed in an editor compiles into a rendered component. */
+  'editor',
+  /** An action passes a schema gate, updates the store, reaches subscribers. */
+  'store',
+  /** One layout shown on a desktop frame and reflowed in a phone frame. */
+  'responsive',
+  /** An endpoint queries a database and rows return into a table. */
+  'query',
+  /** A selected, measured design element becomes a documented component. */
+  'handoff',
+  /** A pull request: the diff, checks passing, then merged. */
+  'review',
 ] as const;
 
 export type SceneName = (typeof sceneNames)[number];

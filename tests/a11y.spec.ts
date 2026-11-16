@@ -125,9 +125,7 @@ test('homepage renders correct structure and passes accessibility', async ({
     'Zustand',
   ]) {
     await expect(
-      page.locator('#tools .tm-grid > .tm-item .tm-chip', {
-        hasText: technology,
-      }),
+      page.locator('#skills .stack-chip', { hasText: technology }),
     ).toHaveCount(1);
   }
   expect(await page.locator('#skills img').count()).toBeGreaterThan(0);
@@ -168,13 +166,13 @@ test('homepage renders correct structure and passes accessibility', async ({
   ).toHaveCount(0);
   await expect(page.locator('a[href="/recommendations/"]')).toBeVisible();
   const technologyIconUrls = await page
-    .locator('#tools img')
+    .locator('#skills .stack-chip img')
     .evaluateAll((images) =>
       images.map((image) => (image as HTMLImageElement).src),
     );
-  await expect(page.locator('#tools .tm-item')).toHaveCount(28);
-  await expect(page.locator('#tools .tm-group')).toHaveCount(6);
-  await expect(page.locator('#tools .tm-track')).toHaveCount(0);
+  expect(new Set(technologyIconUrls).size).toBe(28);
+  await expect(page.locator('#skills .stack-chip')).toHaveCount(30);
+  await expect(page.locator('#skills .stack-card')).toHaveCount(6);
   for (const iconUrl of technologyIconUrls) {
     expect((await page.request.get(iconUrl)).status()).toBe(200);
   }
