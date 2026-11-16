@@ -7,7 +7,6 @@ import Backdrop from './fx/Backdrop.astro';
 import Carousel from './Carousel.astro';
 import Meteors from './fx/Meteors.astro';
 import SectionHeader from './fx/SectionHeader.astro';
-import Icon, { type IconName } from './fx/Icon.astro';
 import LiveScene from './fx/LiveScene.astro';
 import WorldMap from './fx/WorldMap.astro';
 import OpenSourceSpotlight from './OpenSourceSpotlight.astro';
@@ -65,8 +64,6 @@ const problemShapes: NonEmpty<ProblemShape> = [
   'wide',
 ];
 const shapeFor = (index: number): ProblemShape => cycle(problemShapes, index);
-/** Icons follow item order, which is identical in every locale. */
-const approachIcons: NonEmpty<IconName> = ['search', 'layers', 'badge-check'];
 const pad = (value: number) => String(value).padStart(2, '0');
 ---
 
@@ -337,26 +334,29 @@ const pad = (value: number) => String(value).padStart(2, '0');
       title={content.approach.title}
       titleId="approach-title"
     />
-    <ol class="conversion-grid conversion-grid--three conversion-steps">
-      {
-        content.approach.items.map((item, index) => (
-          <li
-            class="conversion-card conversion-card--compact step-card fx-live fx-glow fx-card-gradient fx-reveal"
-            data-glow
-          >
-            <span class="step-head">
-              <span class="step-num" aria-hidden="true">
-                0{index + 1}
-              </span>
-              <Icon name={cycle(approachIcons, index)} size={22} />
-            </span>
-            <LiveScene scene={item.visual} />
-            <h3>{item.title}</h3>
-            <p>{item.body}</p>
-          </li>
-        ))
-      }
-    </ol>
+    <div class="steps">
+      <div class="steps-rail" aria-hidden="true">
+        <span class="steps-rail-fill"></span>
+      </div>
+      <ol class="steps-list">
+        {
+          content.approach.items.map((item, index) => (
+            <li class="step">
+              <div class="step-main fx-live fx-reveal">
+                <div class="step-copy">
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </div>
+                <LiveScene scene={item.visual} />
+              </div>
+              <div class="step-marker" aria-hidden="true">
+                <span class="step-num">{pad(index + 1)}</span>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
   </div>
 </section>
 

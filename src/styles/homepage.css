@@ -1417,50 +1417,214 @@
   color: var(--accent-ink);
 }
 
-/* Approach steps with connecting beam */
-.conversion-steps {
+/* Approach: a timeline whose rail and step numbers sit on the trailing edge
+   (the right in English and Spanish, the left in Arabic). */
+.steps {
+  --steps-marker: 3.25rem;
   position: relative;
-  counter-reset: none;
 }
 
-.conversion-steps::before {
-  content: '';
+.steps-rail {
   position: absolute;
-  inset-block-start: 2.6rem;
-  inset-inline: 2.5rem;
-  height: 2px;
+  inset-block: 0.5rem;
+  inset-inline-end: calc(var(--steps-marker) / 2 - 1px);
+  width: 2px;
+  overflow: hidden;
+  overflow: clip;
+  border-radius: var(--radius-pill);
   background: linear-gradient(
-    90deg,
-    var(--accent),
-    var(--accent-2),
-    var(--accent)
+    to bottom,
+    transparent,
+    var(--border-strong) 4%,
+    var(--border-strong) 96%,
+    transparent
   );
-  opacity: 0.45;
 }
 
-.step-card {
-  position: relative;
+.steps-rail-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    to bottom,
+    var(--accent-2),
+    var(--accent) 55%,
+    color-mix(in oklch, var(--accent) 20%, transparent)
+  );
+  transform-origin: top;
+}
+
+.steps-list {
+  display: grid;
+  gap: clamp(2.75rem, 6vw, 4.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--steps-marker);
+  column-gap: clamp(1.25rem, 3vw, 2.5rem);
+  align-items: start;
+}
+
+.step-main {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: center;
+  min-width: 0;
+}
+
+.step-copy {
+  min-width: 0;
+}
+
+.step-copy h3 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+[dir='rtl'] .step-copy h3 {
+  letter-spacing: 0;
+}
+
+.step-copy p {
+  max-width: 46ch;
+  margin: 0;
+  color: var(--text-2);
+  font-size: clamp(1rem, 1.2vw, 1.0625rem);
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+/* The scene keeps the artwork's own proportions, so it grows with the column
+   instead of stopping at the card height used elsewhere. */
+.steps .lv-scene {
+  height: auto;
+  aspect-ratio: 320 / 144;
+  margin: 0;
+}
+
+.step-marker {
+  position: sticky;
+  top: 7.5rem;
+  display: grid;
+  place-items: center;
 }
 
 .step-num {
+  position: relative;
   display: grid;
   place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  margin-block-end: 1.1rem;
+  width: var(--steps-marker);
+  height: var(--steps-marker);
   border: 1px solid var(--accent-border);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--bg-card);
-  box-shadow:
-    0 0 0 6px var(--bg-2),
-    0 0 24px var(--accent-glow);
-  color: var(--accent-strong);
-  font-size: 0.85rem;
+  box-shadow: 0 0 0 6px var(--bg-2);
+  color: var(--accent-ink);
+  font-size: 0.9rem;
   font-weight: 800;
+  font-variant-numeric: tabular-nums;
 }
 
-[data-theme='light'] .step-num {
-  color: var(--accent-ink);
+/* The lit state, cross-faded with opacity so scrolling stays composited.
+   Lit by default: browsers without scroll timelines show every step reached. */
+.step-num::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border: 2px solid var(--accent);
+  border-radius: inherit;
+  box-shadow: 0 0 22px 2px var(--accent-glow);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    /* The viewport is inset to its centre line, so the rail's leading edge
+       and each number switch on where the reader is looking. */
+    .steps {
+      view-timeline: --steps block;
+      view-timeline-inset: 50%;
+    }
+
+    /* Longhands only: see the scroll-linked note in motion.css. */
+    .steps-rail-fill,
+    .step-num::after {
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+    }
+
+    .steps-rail-fill {
+      animation-name: steps-fill;
+      animation-timeline: --steps;
+      animation-range: cover 0% cover 100%;
+    }
+
+    /* Markers are sticky, so they follow their list item's timeline. */
+    .step {
+      view-timeline: --step block;
+      view-timeline-inset: 50%;
+    }
+
+    .step-num::after {
+      animation-name: steps-on;
+      animation-timeline: --step;
+      animation-range: cover 0% cover 4%;
+    }
+  }
+}
+
+@keyframes steps-fill {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes steps-on {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 860px) {
+  .steps {
+    --steps-marker: 2.5rem;
+  }
+
+  .step {
+    column-gap: 0.75rem;
+  }
+
+  .step-main {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+
+  .step-copy p {
+    max-width: 62ch;
+  }
+
+  /* The scene is decorative, so showing it first changes nothing for
+     assistive technology: the heading still comes first in the document. */
+  .steps .lv-scene {
+    order: -1;
+  }
+
+  .step-num {
+    font-size: 0.8rem;
+  }
 }
 
 /* Collaboration with meteors */
@@ -2622,20 +2786,6 @@ textarea.f-input {
     min-height: 0;
   }
 
-  .conversion-steps::before {
-    inset-block: 2.6rem;
-    inset-inline: auto;
-    inset-inline-start: calc(clamp(1.25rem, 3vw, 1.75rem) + 1.375rem - 1px);
-    width: 2px;
-    height: auto;
-    background: linear-gradient(
-      180deg,
-      var(--accent),
-      var(--accent-2),
-      var(--accent)
-    );
-  }
-
   .section-head--split {
     grid-template-columns: 1fr;
   }
@@ -2775,19 +2925,7 @@ textarea.f-input {
   color: var(--accent-ink);
 }
 
-/* Approach steps and collaboration cards with line icons */
-.step-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-block-end: 1.1rem;
-  color: var(--accent-ink);
-}
-
-.step-head .step-num {
-  margin: 0;
-}
-
+/* Collaboration cards with line icons */
 .collab-icon,
 .expertise-icon {
   display: grid;

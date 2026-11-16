@@ -528,6 +528,8 @@ test('living cards render decorative scenes with depth and stay static at rest',
   expect(await cards.count()).toBeGreaterThanOrEqual(17);
   const summary = await cards.evaluateAll((elements) =>
     elements.map((card) => ({
+      // Approach steps are open rows on a timeline, not framed cards.
+      framed: !card.classList.contains('step-main'),
       glow: card.hasAttribute('data-glow'),
       tilt: card.hasAttribute('data-tilt'),
       border: card.classList.contains('fx-card-gradient'),
@@ -538,11 +540,13 @@ test('living cards render decorative scenes with depth and stay static at rest',
         card.querySelector('.lv-scene')?.getAttribute('aria-hidden') ?? null,
     })),
   );
+  expect(summary.filter((card) => !card.framed)).toHaveLength(3);
   for (const card of summary) {
     expect(card).toEqual({
-      glow: true,
+      framed: card.framed,
+      glow: card.framed,
       tilt: false,
-      border: true,
+      border: card.framed,
       frameRadiusMatches: true,
       sceneHidden: 'true',
     });
@@ -1639,6 +1643,104 @@ test('problem cards become a bento without controls on wide screens', async ({
           outside: 0,
           pageOverflow: false,
         });
+      }
+    }
+    await context.close();
+  }
+});
+
+test('approach steps form a timeline with the rail on the trailing edge', async ({
+  browser,
+}) => {
+  // With and without script: the timeline is markup and CSS only.
+  for (const javaScriptEnabled of [true, false]) {
+    const context = await browser.newContext({ javaScriptEnabled });
+    const page = await context.newPage();
+    for (const prefix of ['', '/es', '/ar']) {
+      for (const width of [320, 390, 768, 861, 1280, 1920]) {
+        const label = `${prefix || '/en'} at ${width}px, script ${String(javaScriptEnabled)}`;
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(`${prefix}/`);
+        const steps = page.locator('#approach .step');
+        await expect(steps, label).toHaveCount(3);
+        await scrollToVisible(steps.first());
+        const layout = await page
+          .locator('#approach .steps')
+          .evaluate((root) => {
+            const rtl = getComputedStyle(root).direction === 'rtl';
+            const box = (element: Element | null) =>
+              element?.getBoundingClientRect() ?? new DOMRect();
+            const rail = box(root.querySelector('.steps-rail'));
+            const rows = Array.from(root.querySelectorAll('.step'), (step) => ({
+              main: box(step.querySelector('.step-main')),
+              copy: box(step.querySelector('.step-copy')),
+              scene: box(step.querySelector('.lv-scene')),
+              marker: box(step.querySelector('.step-num')),
+              heading: step.querySelector('h3')?.textContent?.trim() ?? '',
+              body: step.querySelector('p')?.textContent?.trim() ?? '',
+              number:
+                step.querySelector('.step-num')?.textContent?.trim() ?? '',
+            }));
+            return {
+              numbers: rows.map((row) => row.number),
+              // Trailing edge: right of the content in LTR, left of it in RTL.
+              trailing: rows.every((row) =>
+                rtl
+                  ? row.marker.right <= row.main.left
+                  : row.marker.left >= row.main.right,
+              ),
+              // The rail runs through the centre of every number.
+              centred: rows.every(
+                (row) =>
+                  Math.abs(
+                    rail.left +
+                      rail.width / 2 -
+                      (row.marker.left + row.marker.width / 2),
+                  ) <= 1,
+              ),
+              sideBySide: rows.every((row) =>
+                rtl
+                  ? row.scene.right <= row.copy.left
+                  : row.copy.right <= row.scene.left,
+              ),
+              sceneFirst: rows.every((row) => row.scene.bottom <= row.copy.top),
+              // The scene keeps the artwork's 320:144 proportions at any size.
+              proportional: rows.every(
+                (row) =>
+                  Math.abs(row.scene.width / row.scene.height - 320 / 144) <
+                  0.05,
+              ),
+              sceneWidth: Math.min(...rows.map((row) => row.scene.width)),
+              written: rows.every(
+                (row) => row.heading && row.body.length > 120,
+              ),
+              outside: rows.filter(
+                (row) =>
+                  Math.min(row.main.left, row.marker.left) < 0 ||
+                  Math.max(row.main.right, row.marker.right) >
+                    window.innerWidth,
+              ).length,
+              pageOverflow:
+                document.documentElement.scrollWidth >
+                document.documentElement.clientWidth,
+            };
+          });
+        const wide = width > 860;
+        expect(layout, label).toMatchObject({
+          numbers: ['01', '02', '03'],
+          trailing: true,
+          centred: true,
+          sideBySide: wide,
+          sceneFirst: !wide,
+          proportional: true,
+          written: true,
+          outside: 0,
+          pageOverflow: false,
+        });
+        // Larger than the 168px-high card scene the section used before.
+        if (width >= 1280) {
+          expect(layout.sceneWidth, label).toBeGreaterThan(440);
+        }
       }
     }
     await context.close();

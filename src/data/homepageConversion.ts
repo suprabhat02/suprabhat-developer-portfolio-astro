@@ -244,17 +244,17 @@ const content: Record<Locale, HomepageConversionContent> = {
         {
           title: 'Clarify the decision',
           visual: 'scan',
-          body: 'Start with users, constraints, failure states, and the business decision the interface supports.',
+          body: 'Before I write any code, I want to understand who uses the screen, what they are trying to decide, and what happens when something goes wrong. So I start with the users, the constraints, the failure states, and the business decision the interface supports. Changing direction here is far cheaper than changing it after the code is written.',
         },
         {
           title: 'Design the system',
           visual: 'stack',
-          body: 'Choose component, data, state, and rendering boundaries that fit the actual product.',
+          body: 'Next I decide where the boundaries go: which components exist, where data is fetched, who owns each piece of state, and what renders where. I choose them for the product in front of me, not for a pattern that worked somewhere else. The aim is a structure the next developer can read and change with confidence.',
         },
         {
           title: 'Verify the result',
           visual: 'verify',
-          body: 'Use type checks, tests, accessibility review, performance budgets, and documented handover.',
+          body: 'I do not call work finished because it looks right on my machine. Type checks, tests, an accessibility review, and performance budgets tell me whether it holds up for the people who use it. Then I write down what was built and why, so the handover is something your team can rely on.',
         },
       ],
     },
@@ -424,17 +424,17 @@ const content: Record<Locale, HomepageConversionContent> = {
         {
           title: 'Aclarar la decisión',
           visual: 'scan',
-          body: 'Comenzar por usuarios, restricciones, fallos y la decisión de negocio que apoya la interfaz.',
+          body: 'Antes de escribir código, quiero entender quién usa la pantalla, qué intenta decidir y qué ocurre cuando algo falla. Por eso empiezo por los usuarios, las restricciones, los estados de fallo y la decisión de negocio que apoya la interfaz. Cambiar de rumbo aquí cuesta mucho menos que hacerlo cuando el código ya está escrito.',
         },
         {
           title: 'Diseñar el sistema',
           visual: 'stack',
-          body: 'Elegir límites de componentes, datos, estado y renderizado adecuados al producto.',
+          body: 'Después decido dónde van los límites: qué componentes existen, dónde se obtienen los datos, quién es dueño de cada parte del estado y qué se renderiza en cada lugar. Los elijo para el producto que tengo delante, no para un patrón que funcionó en otro sitio. El objetivo es una estructura que la siguiente persona pueda leer y cambiar con confianza.',
         },
         {
           title: 'Verificar el resultado',
           visual: 'verify',
-          body: 'Usar tipos, pruebas, revisión de accesibilidad, presupuestos de rendimiento y entrega documentada.',
+          body: 'No doy un trabajo por terminado solo porque se ve bien en mi equipo. Los tipos, las pruebas, la revisión de accesibilidad y los presupuestos de rendimiento me dicen si resiste con las personas que lo usan. Después dejo por escrito qué se construyó y por qué, para que tu equipo pueda confiar en la entrega.',
         },
       ],
     },
@@ -600,17 +600,17 @@ const content: Record<Locale, HomepageConversionContent> = {
         {
           title: 'توضيح القرار',
           visual: 'scan',
-          body: 'البدء بالمستخدمين والقيود وحالات الفشل وقرار العمل الذي تدعمه الواجهة.',
+          body: 'قبل أن أكتب أي كود، أريد أن أفهم من يستخدم الشاشة، وما القرار الذي يحاول اتخاذه، وماذا يحدث عندما يقع خطأ. لذلك أبدأ بالمستخدمين والقيود وحالات الفشل وقرار العمل الذي تدعمه الواجهة. تغيير الاتجاه هنا أقل تكلفة بكثير من تغييره بعد كتابة الكود.',
         },
         {
           title: 'تصميم النظام',
           visual: 'stack',
-          body: 'اختيار حدود المكونات والبيانات والحالة والعرض المناسبة للمنتج.',
+          body: 'بعد ذلك أحدد أين تقع الحدود: ما المكونات الموجودة، ومن أين تُجلب البيانات، ومن يملك كل جزء من الحالة، وما الذي يُعرض في كل مكان. أختارها للمنتج الذي أمامي، لا لنمط نجح في مكان آخر. الهدف بنية يستطيع المطور التالي قراءتها وتعديلها بثقة.',
         },
         {
           title: 'التحقق من النتيجة',
           visual: 'verify',
-          body: 'استخدام الأنواع والاختبارات ومراجعة الإتاحة وميزانيات الأداء والتسليم الموثق.',
+          body: 'لا أعتبر العمل منتهيًا لمجرد أنه يبدو صحيحًا على جهازي. فحص الأنواع والاختبارات ومراجعة الإتاحة وميزانيات الأداء تخبرني هل يصمد أمام من يستخدمونه. ثم أوثّق ما تم بناؤه ولماذا، حتى يكون التسليم شيئًا يعتمد عليه فريقك.',
         },
       ],
     },
