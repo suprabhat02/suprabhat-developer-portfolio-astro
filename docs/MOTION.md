@@ -151,12 +151,30 @@ Scenes are drawn from a small paint vocabulary (`.t`, `.fa`, `.fb`, `.fok`,
 - Never tween `fill` on a lit element: a gradient cannot interpolate. Fade
   `opacity` instead, as `lv-paint` does.
 
+## Problems bento
+
+From 1041px the six problem cards form a bento (`.problem-bento` in
+`src/styles/homepage.css`): two wide cards stacked beside one tall card, then
+the same mirrored.
+
+- **Shapes come from position.** `problemShapes` in `HomepageConversion.astro`
+  marks each card `wide` or `tall`; the CSS places them by `:nth-child`. Every
+  locale publishes the same six problems in the same order.
+- **A wide card** is a two-column grid: art, title and summary on one side, the
+  signals and outcome on the other. **A tall card** stacks them.
+- **No empty space.** A wide card is about half as high as a tall one, so the
+  rows close on their own. What is left over goes to `.bento-stage`, the frame
+  around the art, which grows. The art inside (`.bento-visual`) keeps its drawn
+  size and stays centred, so no visual depends on the shape of its card.
+- **It is CSS only.** The DOM order is the reading order, nothing is measured
+  or moved by script, and below 1041px the same cards are carousel slides.
+
 ## Carousel
 
 `src/components/Carousel.astro` turns a long card grid into one horizontal row.
 The homepage uses it for the open-source work (`size="wide"`: one large card
 at a time), the problems (`desktop="grid"`: a row on phones and tablets, a
-three-column grid from 1041px) and the services (several cards in view).
+bento from 1041px, see below) and the services (several cards in view).
 
 - **Content is untouched.** Every slide is in the HTML and in the accessibility
   tree. Nothing is cloned, hidden or rendered late, so search engines and screen
