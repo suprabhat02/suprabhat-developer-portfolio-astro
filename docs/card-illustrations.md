@@ -73,10 +73,11 @@ These three marks use the existing dark-theme inversion treatment.
 
 `src/data/tools.ts` owns both the tool groups and the shared skill-logo lookup.
 `src/data/skills.ts` supplies the same skills to the homepage and Skills page.
-Both sections use six categories: languages/frameworks, state/data/validation,
+Both use six categories: languages/frameworks, state/data/validation,
 styling/UI systems, backend/databases, design/documentation, and delivery/workflow.
-Category groups form three columns and two rows on desktop, with fewer columns
-on smaller screens. Homepage groups reuse the localized Tools page headings. Names remain in
-server-rendered lists beside decorative, lazy-loaded icons. Native scroll
-reveals stagger the toolbox entries where supported; reduced-motion and
-unsupported browsers retain fully visible content without a carousel.
+On the homepage `src/data/stack.ts` joins the two into one section: a bento of
+six cards on desktop and a carousel on smaller screens, each card with a scene,
+the localized Tools page heading and description, and the group's technologies.
+The dedicated Skills and Tools pages keep three columns and two rows on desktop.
+Names remain in server-rendered lists beside decorative, lazy-loaded icons, and
+every card stays in the document with or without script.

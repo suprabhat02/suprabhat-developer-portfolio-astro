@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { axe, scrollToVisible } from './helpers';
 
-test('grouped skills and tools keep local logos and readable reduced-motion content in every locale', async ({
+test('the stack keeps local logos and readable reduced-motion content in every locale', async ({
   page,
 }) => {
   test.slow();
@@ -31,47 +31,42 @@ test('grouped skills and tools keep local logos and readable reduced-motion cont
         );
       }
       if (route === '/') {
-        await expect(page.locator('#tools .tm-group')).toHaveCount(6);
-        await expect(page.locator('#skills .skill-col')).toHaveCount(6);
-        await expect(page.locator('#tools .tm-item')).toHaveCount(28);
-        const names = await page.locator('#tools .tm-name').allTextContents();
-        expect(new Set(names).size).toBe(28);
-        for (const [name] of technologies) expect(names).toContain(name);
+        // Skills and tools are one section: six cards, every technology once.
+        await expect(page.locator('#tools')).toHaveCount(1);
+        await expect(page.locator('#skills #tools')).toHaveCount(1);
+        const cards = page.locator('#skills .stack-card');
+        await expect(cards).toHaveCount(6);
+        await expect(cards.locator('.lv-scene')).toHaveCount(6);
+        const labels = await page
+          .locator('#skills .stack-chip')
+          .allTextContents();
+        expect(labels).toHaveLength(30);
+        expect(new Set(labels.map((label) => label.trim())).size).toBe(30);
+        // All 28 tool logos stay in the page after the two sections merged.
+        const logos = await page
+          .locator('#skills .stack-chip img')
+          .evaluateAll((images) =>
+            images.map((image) => image.getAttribute('src') ?? ''),
+          );
+        expect(new Set(logos).size).toBe(28);
         for (const [group, members] of Object.entries({
-          languages: ['Astro', 'jQuery'],
-          data: ['Zod', 'Zustand', 'GraphQL'],
-          styling: ['CSS3', 'shadcn/ui', 'Material UI'],
-          backend: ['FastAPI', 'PostgreSQL', 'MongoDB'],
+          languages: ['Astro', 'jQuery', 'TypeScript'],
+          data: ['Zod', 'Zustand', 'GraphQL', 'Redux Toolkit + RTK Query'],
+          styling: ['CSS3', 'shadcn/ui', 'Material UI', 'Chakra UI'],
+          backend: ['FastAPI', 'PostgreSQL', 'MongoDB', 'REST APIs'],
           design: ['Figma', 'Storybook'],
           workflow: ['GitHub Actions', 'Azure', 'Git'],
         })) {
+          const card = page.locator(`[data-stack-group="${group}"]`);
+          await expect(card.locator('h3')).not.toBeEmpty();
+          await expect(card.locator('.stack-text p')).not.toBeEmpty();
           for (const member of members) {
-            await expect(
-              page.locator(`[data-skill-group="${group}"]`),
-            ).toContainText(member);
-            await expect(
-              page.locator(`[aria-labelledby="tool-group-${group}"] .tm-name`),
-            ).toContainText([member]);
+            await expect(card.locator('.stack-tech')).toContainText(member);
           }
         }
-        await page.locator('#tools').scrollIntoViewIfNeeded();
-        await page.emulateMedia({ reducedMotion: 'no-preference' });
-        const supportsTimeline = await page.evaluate(() =>
-          CSS.supports('animation-timeline', 'view()'),
-        );
-        await expect(page.locator('#tools .tm-item').first()).toHaveCSS(
-          'animation-name',
-          supportsTimeline ? 'fx-reveal' : 'none',
-        );
-        if (supportsTimeline) {
-          await expect(page.locator('#tools .tm-item').first()).toHaveCSS(
-            'animation-timeline',
-            'view()',
-          );
-        }
-        await page.emulateMedia({ reducedMotion: 'reduce' });
+        await page.locator('#skills').scrollIntoViewIfNeeded();
         expect(
-          await page.locator('#tools .tm-item').evaluateAll((items) =>
+          await cards.evaluateAll((items) =>
             items.every((item) => {
               const style = getComputedStyle(item);
               return style.animationName === 'none' && style.opacity === '1';
@@ -96,7 +91,9 @@ test('grouped skills and tools keep local logos and readable reduced-motion cont
         direction: getComputedStyle(element).direction,
         overflow: document.documentElement.scrollWidth > innerWidth,
         clipped: [
-          ...element.querySelectorAll('h3, .tm-name, .skill-ul li'),
+          ...element.querySelectorAll(
+            'h3, .tm-name, .skill-ul li, .stack-chip',
+          ),
         ].some((item) => item.scrollWidth > item.clientWidth + 1),
       }));
       expect(layout).toEqual({
@@ -104,10 +101,12 @@ test('grouped skills and tools keep local logos and readable reduced-motion cont
         overflow: false,
         clipped: false,
       });
-      if ((page.viewportSize()?.width ?? 0) > 1000) {
+      const viewportWidth = page.viewportSize()?.width ?? 0;
+      // The homepage bento needs the carousel's grid breakpoint.
+      if (viewportWidth > (route === '/' ? 1040 : 1000)) {
         const selectors =
           route === '/'
-            ? ['#skills .skill-col', '#tools .tm-group']
+            ? ['#skills .stack-card']
             : route === '/skills/'
               ? ['[data-skill-group]']
               : ['.tool-group'];
@@ -123,7 +122,9 @@ test('grouped skills and tools keep local logos and readable reduced-motion cont
               }
               return [...rows.values()];
             });
-          expect(rowSizes, `${prefix}${route} ${selector}`).toEqual([3, 3]);
+          expect(rowSizes, `${prefix}${route} ${selector}`).toEqual(
+            route === '/' ? [2, 2, 2] : [3, 3],
+          );
         }
       }
     }
@@ -1420,6 +1421,7 @@ const carouselSections = [
   { id: 'work', minimumSlides: 2, grid: false },
   { id: 'problems', minimumSlides: 6, grid: true },
   { id: 'engagements', minimumSlides: 4, grid: false },
+  { id: 'skills', minimumSlides: 6, grid: true },
 ] as const;
 
 /** Sections whose carousel scrolls sideways at this viewport width. */
@@ -1643,6 +1645,114 @@ test('problem cards become a bento without controls on wide screens', async ({
           outside: 0,
           pageOverflow: false,
         });
+      }
+    }
+    await context.close();
+  }
+});
+
+test('the stack becomes a 7+5, 5+7, 6+6 bento without controls on wide screens', async ({
+  browser,
+}) => {
+  // With and without script: the bento is CSS only.
+  for (const javaScriptEnabled of [true, false]) {
+    const context = await browser.newContext({ javaScriptEnabled });
+    const page = await context.newPage();
+    for (const prefix of ['', '/es', '/ar']) {
+      for (const width of [1041, 1280, 1920]) {
+        const label = `${prefix || '/en'} at ${width}px, script ${String(javaScriptEnabled)}`;
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(`${prefix}/`);
+        const track = page.locator('#skills [data-carousel-track]');
+        await scrollToVisible(track);
+        await expect(
+          page.locator('#skills .cx-controls'),
+          label,
+        ).not.toBeVisible();
+        const layout = await track.evaluate((element) => {
+          const rtl = getComputedStyle(element).direction === 'rtl';
+          const cards = Array.from(element.children, (card) => {
+            const box = card.getBoundingClientRect();
+            const scene =
+              card.querySelector('.lv-scene')?.getBoundingClientRect() ??
+              new DOMRect();
+            return {
+              group: card.getAttribute('data-stack-group'),
+              box,
+              // Where the card starts, measured from the leading edge.
+              start: rtl ? -box.right : box.left,
+              sceneWidth: scene.width,
+              sceneHeight: scene.height,
+              copyBelowScene:
+                (card.querySelector('.stack-copy')?.getBoundingClientRect()
+                  .top ?? 0) >= scene.bottom,
+            };
+          });
+          const rows = new Map<number, typeof cards>();
+          for (const card of cards) {
+            const top = Math.round(card.box.top);
+            rows.set(top, [...(rows.get(top) ?? []), card]);
+          }
+          const ordered = [...rows.entries()]
+            .sort(([first], [second]) => first - second)
+            .map(([, row]) => row.sort((a, b) => a.start - b.start));
+          const overlaps = cards.some((a, index) =>
+            cards
+              .slice(index + 1)
+              .some(
+                (b) =>
+                  a.box.left < b.box.right - 1 &&
+                  b.box.left < a.box.right - 1 &&
+                  a.box.top < b.box.bottom - 1 &&
+                  b.box.top < a.box.bottom - 1,
+              ),
+          );
+          return {
+            // Leading card first, so the same order holds in RTL.
+            rows: ordered.map((row) => row.map((card) => card.group)),
+            // Share of the row taken by its leading card.
+            shares: ordered.map((row) => {
+              const total = row.reduce((sum, card) => sum + card.box.width, 0);
+              return Math.round(((row[0]?.box.width ?? 0) / total) * 100);
+            }),
+            evenRows: ordered.every((row) =>
+              row.every(
+                (card) =>
+                  Math.abs(card.box.height - (row[0]?.box.height ?? 0)) <= 1,
+              ),
+            ),
+            overlaps,
+            sceneFirst: cards.every((card) => card.copyBelowScene),
+            // A scene never gets shorter than the artwork's own proportions.
+            scenesFit: cards.every(
+              (card) =>
+                card.sceneHeight >= (card.sceneWidth * 144) / 320 - 1 &&
+                card.sceneWidth > 300,
+            ),
+            scrolls: element.scrollWidth > element.clientWidth + 1,
+            pageOverflow:
+              document.documentElement.scrollWidth >
+              document.documentElement.clientWidth,
+          };
+        });
+        expect(layout, label).toMatchObject({
+          rows: [
+            ['languages', 'data'],
+            ['backend', 'styling'],
+            ['workflow', 'design'],
+          ],
+          evenRows: true,
+          overlaps: false,
+          sceneFirst: true,
+          scenesFit: true,
+          scrolls: false,
+          pageOverflow: false,
+        });
+        const [first, second, third] = layout.shares;
+        // 7 of 12, 5 of 12 and 6 of 12 columns, less the gap.
+        expect(first, label).toBeGreaterThan(55);
+        expect(second, label).toBeLessThan(45);
+        expect(third, label).toBe(50);
       }
     }
     await context.close();

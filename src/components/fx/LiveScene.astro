@@ -1499,5 +1499,689 @@ const ringAround = (x: number, y: number, w: number, h: number, r: number) => ({
         </>
       )
     }
+    {
+      scene === 'editor' && (
+        <>
+          <g class="lv-l" style="--d:.4">
+            <Raised
+              x={20}
+              y={6}
+              w={160}
+              h={104}
+              rx={R.frame}
+              tone="t"
+              lift={5}
+            />
+            <line class="ln" x1="20" y1="24" x2="180" y2="24" />
+            {[33, 44, 55].map((x) => (
+              <circle class="ftx lv-dim" cx={x} cy="15" r="2.6" />
+            ))}
+            <rect class="fas" x="72" y="10" width="46" height="10" rx="5" />
+            {[36, 50, 64, 78, 92].map((y) => (
+              <rect
+                class="ftx lv-faint"
+                x="30"
+                y={y - 2}
+                width="6"
+                height="4"
+                rx="2"
+              />
+            ))}
+          </g>
+          <g class="lv-l" style="--d:.9">
+            {(
+              [
+                ['sa', 48, 66, 36],
+                ['sb', 73, 116, 36],
+                ['sb lv-dim', 58, 78, 50],
+                ['sa', 85, 103, 50],
+                ['sb', 110, 142, 50],
+                ['sa', 58, 82, 64],
+                ['ok', 68, 98, 78],
+                ['sb lv-dim', 105, 146, 78],
+                ['sb', 48, 53, 92],
+              ] as const
+            ).map(([tone, x1, x2, y], i) => (
+              <line
+                class={`${tone} lv-bar k k-tick`}
+                style={`--bar:5;--i:${i}`}
+                x1={x1}
+                y1={y}
+                x2={x2}
+                y2={y}
+                pathLength="1"
+              />
+            ))}
+            <g transform="translate(162 94)">
+              <circle class="lv-okbg" r="9" />
+              <path
+                class="ok k k-tick"
+                style="--i:10"
+                d="M-4 0l3 3 6-6"
+                pathLength="1"
+              />
+            </g>
+          </g>
+          <g class="lv-l" style="--d:.6">
+            <path class="ln lv-dash" d="M184 58H204" />
+          </g>
+          <g class="lv-l" style="--d:1.1">
+            <path
+              class="sa lv-packet k k-packet"
+              style="--i:9"
+              d="M184 58H204"
+              pathLength="1"
+            />
+          </g>
+          <g class="lv-l" style="--d:1.4">
+            <Raised
+              x={208}
+              y={12}
+              w={92}
+              h={90}
+              rx={R.panel}
+              tone="t"
+              lift={5}
+            />
+            <rect
+              class="fas k k-rise"
+              style="--i:11"
+              x="216"
+              y="20"
+              width="76"
+              height="32"
+              rx={R.tile}
+            />
+            <rect
+              class="ftx lv-dim k k-rise"
+              style="--i:12"
+              x="216"
+              y="60"
+              width="52"
+              height="6"
+              rx="3"
+            />
+            <rect
+              class="ftx lv-faint k k-rise"
+              style="--i:13"
+              x="216"
+              y="71"
+              width="38"
+              height="5"
+              rx="2.5"
+            />
+            <rect
+              class="fa k k-rise"
+              style="--i:14"
+              x="216"
+              y="83"
+              width="40"
+              height="11"
+              rx="5.5"
+            />
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'store' && (
+        <>
+          <g class="lv-l" style="--d:.5">
+            <path class="ln lv-dash" d="M68 58H94" />
+            <path class="ln lv-dash" d="M126 58H148" />
+            {[22, 58, 94].map((y) => (
+              <path class="ln lv-dash" d={`M216 58C234 58 228 ${y} 246 ${y}`} />
+            ))}
+          </g>
+          <g class="lv-l" style="--d:.9">
+            <Raised
+              x={20}
+              y={44}
+              w={46}
+              h={28}
+              rx={R.tile}
+              tone="fas"
+              lip="var(--sc-a)"
+              class="k k-pop"
+            >
+              <rect class="ftx" x="29" y="55" width="28" height="6" rx="3" />
+            </Raised>
+            <g transform="translate(110 58)">
+              <path class="lv-base" d="M0-17L17 0 0 17-17 0Z" />
+              <path class="t" d="M0-17L17 0 0 17-17 0Z" />
+              <path
+                class="ok k k-tick"
+                style="--i:2"
+                d="M-5 0l3.5 3.5 7-7"
+                pathLength="1"
+              />
+            </g>
+            <Raised
+              x={150}
+              y={20}
+              w={64}
+              h={76}
+              rx={R.panel}
+              tone="t"
+              lift={5}
+            />
+            {[38, 58, 78].map((y) => (
+              <>
+                <rect
+                  class="fbs"
+                  x="158"
+                  y={y - 4}
+                  width="16"
+                  height="8"
+                  rx={R.chip}
+                />
+                <rect
+                  class="ftx lv-faint"
+                  x="180"
+                  y={y - 3}
+                  width="26"
+                  height="6"
+                  rx="3"
+                />
+              </>
+            ))}
+            <line
+              class="sa lv-bar k k-mark"
+              style="--bar:6;--i:4"
+              x1="183"
+              y1="58"
+              x2="203"
+              y2="58"
+              pathLength="1"
+            />
+          </g>
+          <g class="lv-l" style="--d:1.2">
+            <path
+              class="sa lv-packet k k-packet"
+              d="M68 58H94"
+              pathLength="1"
+            />
+            <path
+              class="sa lv-packet k k-packet"
+              style="--i:3"
+              d="M126 58H148"
+              pathLength="1"
+            />
+            {[22, 58, 94].map((y) => (
+              <path
+                class="sb lv-packet k k-packet"
+                style="--i:6"
+                d={`M216 58C234 58 228 ${y} 246 ${y}`}
+                pathLength="1"
+              />
+            ))}
+          </g>
+          <g class="lv-l" style="--d:1.5">
+            {[22, 58, 94].map((y, i) => (
+              <Raised
+                x={248}
+                y={y - 12}
+                w={52}
+                h={24}
+                rx={R.tile}
+                tone="t"
+                class="k k-pop"
+                style={`--i:${8 + i}`}
+              >
+                <circle class="fbs" cx="260" cy={y} r="4" />
+                <rect
+                  class="ftx lv-dim"
+                  x="269"
+                  y={y - 3}
+                  width="22"
+                  height="6"
+                  rx="3"
+                />
+              </Raised>
+            ))}
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'responsive' && (
+        <>
+          <g class="lv-l" style="--d:.5">
+            <Raised
+              x={16}
+              y={10}
+              w={178}
+              h={98}
+              rx={R.frame}
+              tone="t"
+              lift={5}
+            />
+            <line class="ln" x1="16" y1="26" x2="194" y2="26" />
+            {[28, 38, 48].map((x) => (
+              <circle class="ftx lv-dim" cx={x} cy="18" r="2.4" />
+            ))}
+            <rect
+              class="ftx lv-faint"
+              x="26"
+              y="34"
+              width="30"
+              height="64"
+              rx={R.tile}
+            />
+          </g>
+          <g class="lv-l" style="--d:.9">
+            {(
+              [
+                ['fas', 64, 34, 120, 28],
+                ['t', 64, 68, 36, 30],
+                ['fbs', 106, 68, 36, 30],
+                ['t', 148, 68, 36, 30],
+              ] as const
+            ).map(([tone, x, y, w, h], i) => (
+              <rect
+                class={`${tone} k k-paint`}
+                style={`--i:${i}`}
+                x={x}
+                y={y}
+                width={w}
+                height={h}
+                rx={R.tile}
+              />
+            ))}
+          </g>
+          <g class="lv-l" style="--d:1.1">
+            <path
+              class="sa k k-draw"
+              style="--i:2"
+              d="M202 59H232M208 53l-6 6 6 6M226 53l6 6-6 6"
+              pathLength="1"
+            />
+          </g>
+          <g class="lv-l" style="--d:1.4">
+            <Raised
+              x={240}
+              y={0}
+              w={62}
+              h={112}
+              rx={R.frame}
+              tone="t"
+              lift={5}
+            />
+            <rect
+              class="ftx lv-dim"
+              x="262"
+              y="5"
+              width="18"
+              height="4"
+              rx="2"
+            />
+            {(
+              [
+                ['fas', 15, 26],
+                ['t', 46, 17],
+                ['fbs', 68, 17],
+                ['t', 90, 17],
+              ] as const
+            ).map(([tone, y, h], i) => (
+              <rect
+                class={`${tone} k k-rise`}
+                style={`--i:${i + 4}`}
+                x="247"
+                y={y}
+                width="48"
+                height={h}
+                rx={R.tile}
+              />
+            ))}
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'query' && (
+        <>
+          <g class="lv-l" style="--d:.5">
+            <path class="ln lv-dash" d="M96 58H124" />
+            <path class="ln lv-dash" d="M196 58H220" />
+            <ellipse class="lv-shadow" cx="160" cy="106" rx="36" ry="4.5" />
+          </g>
+          <g class="lv-l" style="--d:.9">
+            <Raised x={18} y={42} w={76} h={32} rx={R.tile} tone="t">
+              <rect class="fa" x="26" y="52" width="22" height="12" rx="6" />
+              <rect
+                class="ftx lv-dim"
+                x="54"
+                y="55"
+                width="32"
+                height="6"
+                rx="3"
+              />
+            </Raised>
+          </g>
+          <g class="lv-l" style="--d:1.2">
+            {[76, 54, 32].map((y, i) => (
+              <>
+                <path class="lv-lip" d={`M128 ${y}v16a32 9 0 0 0 64 0v-16Z`} />
+                <ellipse class="lv-base" cx="160" cy={y} rx="32" ry="9" />
+                <ellipse
+                  class={i === 2 ? 'fas k k-paint' : 't'}
+                  style="--i:3"
+                  cx="160"
+                  cy={y}
+                  rx="32"
+                  ry="9"
+                />
+              </>
+            ))}
+          </g>
+          <g class="lv-l" style="--d:1.3">
+            <path
+              class="sa lv-packet k k-packet"
+              d="M96 58H124"
+              pathLength="1"
+            />
+            <path
+              class="sb lv-packet k k-packet"
+              style="--i:5"
+              d="M196 58H220"
+              pathLength="1"
+            />
+          </g>
+          <g class="lv-l" style="--d:1.5">
+            <Raised
+              x={222}
+              y={12}
+              w={80}
+              h={92}
+              rx={R.panel}
+              tone="t"
+              lift={5}
+            />
+            <rect
+              class="fbs"
+              x="230"
+              y="20"
+              width="64"
+              height="11"
+              rx={R.chip}
+            />
+            {[42, 57, 72].map((y, i) => (
+              <rect
+                class="ftx lv-dim k k-rise"
+                style={`--i:${7 + i}`}
+                x="230"
+                y={y}
+                width={[46, 58, 38][i]}
+                height="6"
+                rx="3"
+              />
+            ))}
+            <g transform="translate(286 90)">
+              <circle class="lv-okbg" r="8" />
+              <path
+                class="ok k k-tick"
+                style="--i:11"
+                d="M-3.5 0l2.5 2.5 5-5"
+                pathLength="1"
+              />
+            </g>
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'handoff' && (
+        <>
+          <g class="lv-l" style="--d:.5">
+            <Raised
+              x={16}
+              y={8}
+              w={132}
+              h={100}
+              rx={R.frame}
+              tone="t"
+              lift={5}
+            />
+            <rect
+              class="ftx lv-faint"
+              x="26"
+              y="17"
+              width="34"
+              height="5"
+              rx="2.5"
+            />
+            <rect
+              class="fas"
+              x="47"
+              y="42"
+              width="70"
+              height="26"
+              rx={R.tile}
+            />
+            <rect class="ftx" x="65" y="52" width="34" height="6" rx="3" />
+          </g>
+          <g class="lv-l" style="--d:1">
+            <path
+              class="sa lv-outline k k-draw"
+              d="M41 36H123V74H41Z"
+              pathLength="1"
+            />
+            {(
+              [
+                [41, 36],
+                [123, 36],
+                [123, 74],
+                [41, 74],
+              ] as const
+            ).map(([x, y]) => (
+              <rect
+                class="fa lv-pin k k-pop"
+                style="--i:2"
+                x={x - 3}
+                y={y - 3}
+                width="6"
+                height="6"
+                rx="1.5"
+              />
+            ))}
+            <path
+              class="sb k k-draw"
+              style="--i:3"
+              d="M41 90H123M41 85v10M123 85v10"
+              pathLength="1"
+            />
+          </g>
+          <g class="lv-l" style="--d:.6">
+            <path class="ln lv-dash" d="M152 58H172" />
+          </g>
+          <g class="lv-l" style="--d:1.2">
+            <path
+              class="sa lv-packet k k-packet"
+              style="--i:5"
+              d="M152 58H172"
+              pathLength="1"
+            />
+          </g>
+          <g class="lv-l" style="--d:1.4">
+            <Raised
+              x={176}
+              y={8}
+              w={128}
+              h={100}
+              rx={R.frame}
+              tone="t"
+              lift={5}
+            />
+            <line class="ln" x1="210" y1="8" x2="210" y2="108" />
+            {[22, 34, 46, 58].map((y, i) => (
+              <rect
+                class={i === 1 ? 'fa' : 'ftx lv-faint'}
+                x="184"
+                y={y}
+                width="18"
+                height="5"
+                rx="2.5"
+              />
+            ))}
+            <rect
+              class="fas k k-pop"
+              style="--i:7"
+              x="222"
+              y="18"
+              width="58"
+              height="22"
+              rx={R.tile}
+            />
+            <line class="ln" x1="218" y1="52" x2="296" y2="52" />
+            {[62, 76, 90].map((y, i) => (
+              <g class="k k-rise" style={`--i:${8 + i}`}>
+                <rect class="fbs" x="220" y={y} width="22" height="6" rx="3" />
+                <rect
+                  class="ftx lv-dim"
+                  x="250"
+                  y={y}
+                  width={[38, 26, 42][i]}
+                  height="6"
+                  rx="3"
+                />
+              </g>
+            ))}
+          </g>
+        </>
+      )
+    }
+    {
+      scene === 'review' && (
+        <>
+          <g class="lv-l" style="--d:.5">
+            <Raised
+              x={16}
+              y={6}
+              w={172}
+              h={104}
+              rx={R.frame}
+              tone="t"
+              lift={5}
+            />
+            <rect
+              class="ftx lv-dim"
+              x="28"
+              y="15"
+              width="68"
+              height="6"
+              rx="3"
+            />
+            <rect class="fas" x="136" y="12" width="42" height="12" rx="6" />
+            <line class="ln" x1="16" y1="30" x2="188" y2="30" />
+            {(
+              [
+                ['del', 42],
+                ['add', 56],
+                ['add', 70],
+                ['del', 84],
+                ['add', 98],
+              ] as const
+            ).map(([kind, y]) => (
+              <>
+                <rect
+                  class={kind === 'add' ? 'lv-okbg' : 'fas lv-faint'}
+                  x="24"
+                  y={y - 6}
+                  width="156"
+                  height="12"
+                  rx="3"
+                />
+                <path
+                  class={kind === 'add' ? 'ok' : 'sa'}
+                  d={kind === 'add' ? `M31 ${y}h6M34 ${y - 3}v6` : `M31 ${y}h6`}
+                />
+              </>
+            ))}
+          </g>
+          <g class="lv-l" style="--d:.9">
+            <line
+              class="sa lv-dim lv-bar"
+              style="--bar:5"
+              x1="46"
+              y1="42"
+              x2="128"
+              y2="42"
+            />
+            <line
+              class="sa lv-dim lv-bar"
+              style="--bar:5"
+              x1="46"
+              y1="84"
+              x2="104"
+              y2="84"
+            />
+            {(
+              [
+                [56, 150],
+                [70, 118],
+                [98, 138],
+              ] as const
+            ).map(([y, x2], i) => (
+              <line
+                class="ok lv-bar k k-tick"
+                style={`--bar:5;--i:${i}`}
+                x1="46"
+                y1={y}
+                x2={x2}
+                y2={y}
+                pathLength="1"
+              />
+            ))}
+          </g>
+          <g class="lv-l" style="--d:1.3">
+            {[20, 46, 72].map((y, i) => (
+              <>
+                <g transform={`translate(214 ${y})`}>
+                  <circle class="lv-base" r="10" />
+                  <circle class="t" r="10" />
+                  <path
+                    class="ok k k-tick"
+                    style={`--i:${4 + i * 2}`}
+                    d="M-4 0l3 3 6-6"
+                    pathLength="1"
+                  />
+                </g>
+                <rect
+                  class="ftx lv-dim"
+                  x="232"
+                  y={y - 3}
+                  width={[56, 42, 62][i]}
+                  height="6"
+                  rx="3"
+                />
+              </>
+            ))}
+          </g>
+          <g class="lv-l" style="--d:1.6">
+            <Raised
+              x={204}
+              y={90}
+              w={98}
+              h={20}
+              rx={10}
+              tone="fok"
+              lip="var(--sc-ok)"
+              class="k k-pop"
+              style="--i:10"
+            >
+              <path class="lv-ink" d="M213 100l3.5 3.5 7-7" />
+              <rect
+                class="lv-ink-fill"
+                x="232"
+                y="97"
+                width="56"
+                height="6"
+                rx="3"
+              />
+            </Raised>
+          </g>
+        </>
+      )
+    }
   </svg>
 </div>

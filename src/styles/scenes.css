@@ -455,6 +455,17 @@
   stroke-dasharray: 4 5;
 }
 
+/* Marks drawn on top of a solid, brightly lit face. */
+.lv-scene .lv-ink {
+  stroke: var(--bg);
+  stroke-width: 2;
+}
+
+.lv-scene .lv-ink-fill {
+  fill: var(--bg);
+  opacity: 0.75;
+}
+
 .lv-scene .lv-pin {
   stroke: var(--bg);
   stroke-width: 2;
@@ -702,6 +713,24 @@
 }
 .lv-scene--swatches {
   --lv-step: 110ms;
+}
+.lv-scene--editor {
+  --lv-step: 150ms;
+}
+.lv-scene--store {
+  --lv-step: 240ms;
+}
+.lv-scene--responsive {
+  --lv-step: 200ms;
+}
+.lv-scene--query {
+  --lv-step: 220ms;
+}
+.lv-scene--handoff {
+  --lv-step: 240ms;
+}
+.lv-scene--review {
+  --lv-step: 260ms;
 }
 
 /* ── Keyframes (0% is always the resting frame) ───────────────────── */

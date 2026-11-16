@@ -37,7 +37,7 @@ src/components/fx/
 | Card Spotlight / Glowing | `.fx-glow` + `data-glow` (pointer-lit hairline)           | Secondary cards, chips and links         |
 | Frame card               | `.fx-card-gradient` (fixed corners turn accent)           | Primary cards site-wide                  |
 | Parallax scene layers    | `.fx-live` + `.lv-l` layers with depth `--d`              | Living cards with pointer perspective    |
-| Card Hover Effect        | `.fx-hover-group` + `.fx-hover-pill` + `data-hover-group` | Engagements, skills table                |
+| Card Hover Effect        | `.fx-hover-group` + `.fx-hover-pill` + `data-hover-group` | Available; no section uses it at present |
 | Flip Words               | `FlipWords.astro`                                         | Hero                                     |
 | Infinite Moving Cards    | `.fx-marquee` + `.fx-marquee-track`                       | Keyword strip, recommendations           |
 | Bento Grid               | `.bento-card` with CSS mini-visuals                       | Problems section                         |
@@ -150,6 +150,31 @@ Scenes are drawn from a small paint vocabulary (`.t`, `.fa`, `.fb`, `.fok`,
   the way to the shade (green turns olive, orange turns purple).
 - Never tween `fill` on a lit element: a gradient cannot interpolate. Fade
   `opacity` instead, as `lv-paint` does.
+
+## Stack bento
+
+Skills and tools are one homepage section (`#skills`; the card list keeps the
+old `#tools` id so existing links still land there). `src/data/stack.ts`
+builds it: technology names from `skills.ts`, logos from `tools.ts`, headings
+and descriptions from `messages.ts`. The build fails if a group has no card or
+a logo in `tools.ts` would no longer be shown.
+
+- **A card** (`.stack-card`) is a `LiveScene`, the group's name and purpose,
+  then every technology as a chip with its local logo. The scene plays on
+  hover and focus, and with scrolling on touch screens, like every living card.
+- **Phones and tablets** show the six cards as a `Carousel`, the same
+  component as the problem cards.
+- **From 1041px** the carousel becomes a twelve-column bento, filled row by
+  row as 7 + 5, 5 + 7, 6 + 6. The shape of each card comes from `stack.ts`, in
+  card order, so the document order and the visual order stay the same.
+- **Row height.** A scene keeps the artwork's `320 / 144` proportions and takes
+  any spare height in its card, so two cards in a row line up without
+  stretching their text.
+- **Scenes.** `editor`, `store`, `responsive`, `query`, `handoff` and `review`
+  were drawn for these six groups and reuse the existing keyframes; each tells
+  what the group is for (code becoming an interface, an action reaching its
+  subscribers, one layout on two screens, a query returning rows, a design
+  becoming documentation, a pull request passing its checks).
 
 ## Problems bento
 
