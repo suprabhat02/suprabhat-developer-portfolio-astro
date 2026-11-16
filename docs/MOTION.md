@@ -159,22 +159,54 @@ builds it: technology names from `skills.ts`, logos from `tools.ts`, headings
 and descriptions from `messages.ts`. The build fails if a group has no card or
 a logo in `tools.ts` would no longer be shown.
 
-- **A card** (`.stack-card`) is a `LiveScene`, the group's name and purpose,
-  then every technology as a chip with its local logo. The scene plays on
-  hover and focus, and with scrolling on touch screens, like every living card.
+- **A card** (`.stack-card`) is a scene band, the group's name and purpose,
+  then every technology as a tile: its logo over its name. One technology per
+  tile; `skills.ts` never joins two names with "+".
+- **The technologies are the content.** The scene is a caption for them, so
+  the band has one modest height on every card (`clamp(11rem, 17vw, 13.75rem)`)
+  and the artwork keeps its drawn size instead of growing with wider cards.
+  On phones the band is exactly as tall as the artwork at full width.
+- **Logos** are 32px (28px on phones). A tile is a size container, and its
+  name is set at 15.5% of the tile's width (11.52px at most), which still fits
+  a ten-character word such as "JavaScript": names wrap between words only.
 - **Phones and tablets** show the six cards as a `Carousel`, the same
-  component as the problem cards.
+  component as the problem cards; tiles sit three to a row on most phones.
 - **From 1041px** the carousel becomes a twelve-column bento, filled row by
-  row as 7 + 5, 5 + 7, 6 + 6. The shape of each card comes from `stack.ts`, in
-  card order, so the document order and the visual order stay the same.
-- **Row height.** A scene keeps the artwork's `320 / 144` proportions and takes
-  any spare height in its card, so two cards in a row line up without
-  stretching their text.
-- **Scenes.** `editor`, `store`, `responsive`, `query`, `handoff` and `review`
-  were drawn for these six groups and reuse the existing keyframes; each tells
-  what the group is for (code becoming an interface, an action reaching its
-  subscribers, one layout on two screens, a query returning rows, a design
-  becoming documentation, a pull request passing its checks).
+  row as 5 + 7, 7 + 5, 6 + 6. The shape of each card comes from `stack.ts`, in
+  card order, so the document order and the visual order stay the same. The
+  order pairs a short list with a long one, so cards in a row end level.
+- **Scenes** are product-interface scenes; see "Product scenes" below.
+
+## Product scenes
+
+`editor`, `store`, `responsive`, `query`, `handoff` and `review` are drawn as
+small pieces of real software rather than as illustrations. They live in
+`src/components/fx/ProductScenes.astro` and are rendered by `LiveScene` like
+every other scene, so hover, focus, touch scrolling and reduced motion behave
+the same.
+
+- **Surfaces** are `Surface.astro`: a one-pixel hairline that stays one pixel
+  at any scale (`vector-effect: non-scaling-stroke`), a radius of 6 or less, a
+  lit top edge and an optional title-bar rule. No lips, no drop shadows.
+- **Text** is `Type.astro`, in the site's own monospace face, coloured token
+  by token (`kw`, `type`, `ok`, `dim`, `hi`, `on`). Only code, identifiers and
+  numbers appear, so no locale needs its own version, and scenes are
+  `aria-hidden`. Scenes are always laid out left to right, also in Arabic.
+- **Colour** is grey except for the one thing a scene is about, which takes
+  the accent or the success colour.
+- **One story per scene, in order.** The resting frame is the finished state;
+  hovering replays how it got there. The delays (`--i`) are set so cause comes
+  before effect, e.g. the store updates only after the action has passed its
+  schema, and subscribers flash only after the store has changed.
+- **Motion hooks** added for them: `k-reveal` and `k-caret` type a line one
+  character at a time with the caret riding its edge (`--reveal` is the
+  line's width in scene units), and `k-hop` sends a packet across a short
+  connector in about half a second. A hop ends past the path, because a dash
+  that only touches the end point would still paint its round cap as a dot.
+- **Adding one:** draw it at 320 × 144 scene units with `Surface` and `Type`,
+  register the name in `scenes.ts`, set its pace with `--lv-dur` and
+  `--lv-step` in `scenes.css`, then check it frame by frame by pausing its
+  animations at several times.
 
 ## Problems bento
 

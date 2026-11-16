@@ -125,14 +125,14 @@ test('homepage renders correct structure and passes accessibility', async ({
     'Zustand',
   ]) {
     await expect(
-      page.locator('#skills .stack-chip', { hasText: technology }),
+      page.locator('#skills .stack-tile', { hasText: technology }),
     ).toHaveCount(1);
   }
   expect(await page.locator('#skills img').count()).toBeGreaterThan(0);
   await expect(page.locator('#skills img:not([alt=""])')).toHaveCount(0);
   for (const skill of [
     'HTML5',
-    'CSS3 + Sass',
+    'Sass',
     'TanStack Query',
     'GraphQL',
     'Bootstrap 5',
@@ -166,12 +166,13 @@ test('homepage renders correct structure and passes accessibility', async ({
   ).toHaveCount(0);
   await expect(page.locator('a[href="/recommendations/"]')).toBeVisible();
   const technologyIconUrls = await page
-    .locator('#skills .stack-chip img')
+    .locator('#skills .stack-tile img')
     .evaluateAll((images) =>
       images.map((image) => (image as HTMLImageElement).src),
     );
-  expect(new Set(technologyIconUrls).size).toBe(28);
-  await expect(page.locator('#skills .stack-chip')).toHaveCount(30);
+  // The 28 tool logos plus JavaScript, Chakra UI and Headless UI.
+  expect(new Set(technologyIconUrls).size).toBe(31);
+  await expect(page.locator('#skills .stack-tile')).toHaveCount(36);
   await expect(page.locator('#skills .stack-card')).toHaveCount(6);
   for (const iconUrl of technologyIconUrls) {
     expect((await page.request.get(iconUrl)).status()).toBe(200);

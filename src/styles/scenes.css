@@ -138,6 +138,8 @@
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
+  /* Scenes read left to right in every locale: code is never mirrored. */
+  direction: ltr;
 }
 
 /* ── Paint vocabulary ─────────────────────────────────────────────── */
@@ -455,17 +457,6 @@
   stroke-dasharray: 4 5;
 }
 
-/* Marks drawn on top of a solid, brightly lit face. */
-.lv-scene .lv-ink {
-  stroke: var(--bg);
-  stroke-width: 2;
-}
-
-.lv-scene .lv-ink-fill {
-  fill: var(--bg);
-  opacity: 0.75;
-}
-
 .lv-scene .lv-pin {
   stroke: var(--bg);
   stroke-width: 2;
@@ -474,6 +465,183 @@
 /* Resting geometry for elements whose story starts "before" completion. */
 .lv-scene .k-shrink {
   transform: scaleX(0.55);
+}
+
+/* ── Product-interface paint (Surface.astro, Type.astro) ──────────── */
+/* Flat software surfaces: one-pixel hairlines that stay one pixel at any
+   scene size, small radii, no lips or shadows. Grey throughout; the accent
+   and the success colour are reserved for what the scene is about. */
+
+.lv-scene {
+  --ui-surface: color-mix(in oklab, var(--bg-card) 93%, var(--text));
+  --ui-well: color-mix(in oklab, var(--bg-card) 55%, var(--bg-deep));
+  --ui-line: color-mix(in oklch, var(--text) 17%, transparent);
+}
+
+.lv-scene .ui {
+  fill: var(--ui-surface);
+  stroke: var(--ui-line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.lv-scene .ui--well {
+  fill: var(--ui-well);
+}
+
+/* The lit top edge of a surface. */
+.lv-scene .ui-hi {
+  stroke: color-mix(in oklch, var(--text) 13%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.lv-scene .ui-ln {
+  stroke: var(--ui-line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.lv-scene .ui-ln--soft {
+  stroke: color-mix(in oklch, var(--text) 9%, transparent);
+}
+
+.lv-scene .ui-ln--menu {
+  stroke: var(--text-3);
+  stroke-width: 1.2;
+  vector-effect: none;
+}
+
+.lv-scene .ui-dot {
+  fill: color-mix(in oklch, var(--text) 24%, transparent);
+}
+
+.lv-scene .ui-m {
+  fill: color-mix(in oklch, var(--text) 9%, transparent);
+}
+
+.lv-scene .ui-m2 {
+  fill: color-mix(in oklch, var(--text) 18%, transparent);
+}
+
+.lv-scene .ui-a {
+  fill: var(--accent-fill);
+}
+
+.lv-scene .ui-as,
+.lv-scene .ui-avatar {
+  fill: color-mix(in oklch, var(--accent) 17%, transparent);
+}
+
+.lv-scene .ui-avatar {
+  stroke: var(--ui-surface);
+  stroke-width: 1.5;
+}
+
+.lv-scene .ui-ok {
+  fill: var(--success);
+}
+
+.lv-scene .ui-oks {
+  fill: color-mix(in oklch, var(--success) 16%, transparent);
+}
+
+/* A finished state: a soft success fill inside a success hairline. */
+.lv-scene .ui-merged {
+  fill: color-mix(in oklch, var(--success) 14%, transparent);
+  stroke: color-mix(in oklch, var(--success) 55%, transparent);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.lv-scene .ui-node {
+  fill: var(--ui-surface);
+}
+
+/* Diff bands: a removed line and an added one. */
+.lv-scene .ui-del {
+  fill: color-mix(in oklch, var(--accent) 10%, transparent);
+}
+
+.lv-scene .ui-add {
+  fill: color-mix(in oklch, var(--success) 11%, transparent);
+}
+
+.lv-scene .ui-strike {
+  stroke: color-mix(in oklch, var(--accent) 60%, transparent);
+  stroke-width: 0.8;
+}
+
+/* The active tab's underline, and thinner signal strokes. */
+.lv-scene .ui-active {
+  stroke: var(--sc-a);
+  stroke-width: 1.5;
+}
+
+.lv-scene .ui-s {
+  stroke-width: 1.5;
+}
+
+.lv-scene .ui-pk {
+  stroke-width: 3.2;
+}
+
+/* The picked item: an accent ring on a surface's own edge. */
+.lv-scene .ui-pick,
+.lv-scene .ui-select {
+  stroke: var(--sc-a);
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+}
+
+.lv-scene .ui-handle {
+  fill: var(--bg-card);
+  stroke: var(--sc-a);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Hides a line of code until it is "typed"; the editor's own colour. */
+.lv-scene .ui-cover {
+  fill: var(--ui-well);
+  transform: scaleX(0);
+}
+
+/* Text: the site's monospace face, left to right in every locale. */
+.lv-scene .ty {
+  font-family: inherit;
+  font-weight: 500;
+  letter-spacing: 0;
+  fill: var(--text-2);
+  stroke: none;
+}
+
+.lv-scene .ty--bold {
+  font-weight: 700;
+}
+
+.lv-scene .ty-hi {
+  fill: var(--text);
+}
+
+.lv-scene .ty-dim {
+  fill: var(--text-3);
+}
+
+.lv-scene .ty-kw {
+  fill: var(--accent-ink);
+}
+
+.lv-scene .ty-type {
+  fill: var(--text);
+}
+
+.lv-scene .ty-ok {
+  fill: var(--success);
+}
+
+.lv-scene .ty-on {
+  fill: var(--on-accent-fill);
 }
 
 /* ── Animation engine ─────────────────────────────────────────────── */
@@ -637,6 +805,22 @@
   --lv-anim: lv-wave-out;
   transform-origin: 0% 50%;
 }
+/* Typing: a cover shrinks off a line one character at a time, and the caret
+   rides its leading edge. Both use the same steps, so they stay in step. */
+.lv-scene .k-reveal {
+  --lv-anim: lv-reveal;
+  transform-origin: 100% 50%;
+  animation-timing-function: steps(25, end);
+}
+.lv-scene .k-caret {
+  --lv-anim: lv-caret;
+  animation-timing-function: steps(25, end);
+}
+/* A packet crossing a short connector quickly, at its moment in the story. */
+.lv-scene .k-hop {
+  --lv-anim: lv-hop;
+  animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+}
 
 /* Per-scene pacing: the step is the gap between beats of the story. */
 .lv-scene--pipeline {
@@ -715,21 +899,26 @@
   --lv-step: 110ms;
 }
 .lv-scene--editor {
-  --lv-step: 150ms;
+  --lv-dur: 5s;
+  --lv-step: 260ms;
 }
 .lv-scene--store {
-  --lv-step: 240ms;
-}
-.lv-scene--responsive {
-  --lv-step: 200ms;
-}
-.lv-scene--query {
+  --lv-dur: 4.6s;
   --lv-step: 220ms;
 }
+.lv-scene--responsive {
+  --lv-step: 240ms;
+}
+.lv-scene--query {
+  --lv-dur: 4.6s;
+  --lv-step: 240ms;
+}
 .lv-scene--handoff {
+  --lv-dur: 5s;
   --lv-step: 240ms;
 }
 .lv-scene--review {
+  --lv-dur: 4.6s;
   --lv-step: 260ms;
 }
 
@@ -1253,5 +1442,48 @@
 
   .lv-scene::after {
     display: none;
+  }
+}
+
+/* A cover that hides a line, then uncovers it left to right in steps. */
+@keyframes lv-reveal {
+  0%,
+  100% {
+    transform: scaleX(0);
+  }
+  2%,
+  8% {
+    transform: scaleX(1);
+  }
+  44% {
+    transform: scaleX(0);
+  }
+}
+
+/* Moves the caret back to the start of the line, then along it with the
+   typing. `--reveal` is the width of the line in scene units. */
+@keyframes lv-caret {
+  0%,
+  100% {
+    transform: none;
+  }
+  2%,
+  8% {
+    transform: translateX(calc(var(--reveal, 0) * -1px));
+  }
+  44% {
+    transform: none;
+  }
+}
+
+/* Ends a little past the path: a dash that only touches the end point would
+   still paint its round cap there as a dot. */
+@keyframes lv-hop {
+  0% {
+    stroke-dashoffset: 0.08;
+  }
+  12%,
+  100% {
+    stroke-dashoffset: -1.12;
   }
 }

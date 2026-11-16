@@ -66,10 +66,19 @@ license retained in `public/assets/techicons/LICENSE.devicon.txt`. The first
 three are optimized SVGs; Zustand is a 96px WebP generated from the upstream
 SVG to avoid shipping its 121 KB source at icon size.
 
-GitHub Actions also uses Devicon artwork. Astro, shadcn/ui and Zod use
-monochrome marks from [Simple Icons](https://github.com/simple-icons/simple-icons),
-with its license retained in `public/assets/techicons/LICENSE.simple-icons.txt`.
-These three marks use the existing dark-theme inversion treatment.
+GitHub Actions, JavaScript and Chakra UI also use Devicon artwork (the
+`-original` SVGs from Devicon 2.18.0, unmodified). Astro, shadcn/ui, Zod and
+Headless UI use monochrome marks from
+[Simple Icons](https://github.com/simple-icons/simple-icons) (Headless UI from
+16.38.0, CC0), with its license retained in
+`public/assets/techicons/LICENSE.simple-icons.txt`. These four marks use the
+existing dark-theme inversion treatment.
+
+JavaScript, Chakra UI and Headless UI are skills without a tool entry of their
+own, so their logos are listed as `skillOnlyLogos` in `src/data/tools.ts`: they
+appear beside the skill name on the homepage and the Skills page, never on the
+Tools page. RTK Query and the Context API reuse the Redux and React marks they
+belong to; REST APIs has no logo and shows the `layers` icon.
 
 `src/data/tools.ts` owns both the tool groups and the shared skill-logo lookup.
 `src/data/skills.ts` supplies the same skills to the homepage and Skills page.

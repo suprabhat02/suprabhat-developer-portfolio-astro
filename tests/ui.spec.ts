@@ -31,28 +31,35 @@ test('the stack keeps local logos and readable reduced-motion content in every l
         );
       }
       if (route === '/') {
-        // Skills and tools are one section: six cards, every technology once.
+        // Skills and tools are one section: six cards, every technology once,
+        // each on its own tile (never "A + B").
         await expect(page.locator('#tools')).toHaveCount(1);
         await expect(page.locator('#skills #tools')).toHaveCount(1);
         const cards = page.locator('#skills .stack-card');
         await expect(cards).toHaveCount(6);
         await expect(cards.locator('.lv-scene')).toHaveCount(6);
-        const labels = await page
-          .locator('#skills .stack-chip')
-          .allTextContents();
-        expect(labels).toHaveLength(30);
-        expect(new Set(labels.map((label) => label.trim())).size).toBe(30);
-        // All 28 tool logos stay in the page after the two sections merged.
+        const labels = (
+          await page.locator('#skills .stack-name').allTextContents()
+        ).map((label) => label.trim());
+        expect(labels).toHaveLength(36);
+        expect(new Set(labels).size).toBe(36);
+        expect(labels.filter((label) => label.includes(' + '))).toEqual([]);
+        // The 28 tool logos plus JavaScript, Chakra UI and Headless UI; only
+        // REST APIs has no logo of its own.
         const logos = await page
-          .locator('#skills .stack-chip img')
+          .locator('#skills .stack-tile img')
           .evaluateAll((images) =>
             images.map((image) => image.getAttribute('src') ?? ''),
           );
-        expect(new Set(logos).size).toBe(28);
+        expect(logos).toHaveLength(35);
+        expect(new Set(logos).size).toBe(31);
+        await expect(
+          page.locator('#skills .stack-tile:not(:has(img))'),
+        ).toHaveText(['REST APIs']);
         for (const [group, members] of Object.entries({
-          languages: ['Astro', 'jQuery', 'TypeScript'],
-          data: ['Zod', 'Zustand', 'GraphQL', 'Redux Toolkit + RTK Query'],
-          styling: ['CSS3', 'shadcn/ui', 'Material UI', 'Chakra UI'],
+          languages: ['React', 'Next.js', 'JavaScript', 'TypeScript', 'Astro'],
+          data: ['Redux Toolkit', 'RTK Query', 'React Hooks', 'Context API'],
+          styling: ['CSS3', 'Sass', 'Bootstrap 5', 'React Bootstrap'],
           backend: ['FastAPI', 'PostgreSQL', 'MongoDB', 'REST APIs'],
           design: ['Figma', 'Storybook'],
           workflow: ['GitHub Actions', 'Azure', 'Git'],
@@ -61,9 +68,27 @@ test('the stack keeps local logos and readable reduced-motion content in every l
           await expect(card.locator('h3')).not.toBeEmpty();
           await expect(card.locator('.stack-text p')).not.toBeEmpty();
           for (const member of members) {
-            await expect(card.locator('.stack-tech')).toContainText(member);
+            await expect(
+              card.locator('.stack-name', { hasText: member }).first(),
+            ).toBeAttached();
           }
         }
+        // A name may wrap between its words, never inside one.
+        expect(
+          await page.locator('#skills .stack-name').evaluateAll((names) =>
+            names
+              .filter((name) => {
+                const lines = Math.round(
+                  name.getBoundingClientRect().height /
+                    parseFloat(getComputedStyle(name).lineHeight),
+                );
+                return (
+                  lines > (name.textContent ?? '').trim().split(/\s+/).length
+                );
+              })
+              .map((name) => name.textContent),
+          ),
+        ).toEqual([]);
         await page.locator('#skills').scrollIntoViewIfNeeded();
         expect(
           await cards.evaluateAll((items) =>
@@ -92,7 +117,7 @@ test('the stack keeps local logos and readable reduced-motion content in every l
         overflow: document.documentElement.scrollWidth > innerWidth,
         clipped: [
           ...element.querySelectorAll(
-            'h3, .tm-name, .skill-ul li, .stack-chip',
+            'h3, .tm-name, .skill-ul li, .stack-name',
           ),
         ].some((item) => item.scrollWidth > item.clientWidth + 1),
       }));
@@ -1651,7 +1676,7 @@ test('problem cards become a bento without controls on wide screens', async ({
   }
 });
 
-test('the stack becomes a 7+5, 5+7, 6+6 bento without controls on wide screens', async ({
+test('the stack becomes a 5+7, 7+5, 6+6 bento without controls on wide screens', async ({
   browser,
 }) => {
   // With and without script: the bento is CSS only.
@@ -1676,13 +1701,21 @@ test('the stack becomes a 7+5, 5+7, 6+6 bento without controls on wide screens',
             const scene =
               card.querySelector('.lv-scene')?.getBoundingClientRect() ??
               new DOMRect();
+            const art =
+              card.querySelector('.lv-scene svg')?.getBoundingClientRect() ??
+              new DOMRect();
             return {
               group: card.getAttribute('data-stack-group'),
               box,
               // Where the card starts, measured from the leading edge.
               start: rtl ? -box.right : box.left,
-              sceneWidth: scene.width,
-              sceneHeight: scene.height,
+              band: scene.height,
+              // How large the 320 x 144 artwork is drawn.
+              scale: Math.min(art.width / 320, art.height / 144),
+              logos: Array.from(
+                card.querySelectorAll('.stack-tile img'),
+                (logo) => logo.getBoundingClientRect().width,
+              ),
               copyBelowScene:
                 (card.querySelector('.stack-copy')?.getBoundingClientRect()
                   .top ?? 0) >= scene.bottom,
@@ -1723,11 +1756,17 @@ test('the stack becomes a 7+5, 5+7, 6+6 bento without controls on wide screens',
             ),
             overlaps,
             sceneFirst: cards.every((card) => card.copyBelowScene),
-            // A scene never gets shorter than the artwork's own proportions.
-            scenesFit: cards.every(
+            // Every scene is drawn at one size, close to the size it was drawn
+            // at, so hairlines and code stay fine instead of growing with
+            // wider cards.
+            scenesEven: cards.every(
               (card) =>
-                card.sceneHeight >= (card.sceneWidth * 144) / 320 - 1 &&
-                card.sceneWidth > 300,
+                Math.abs(card.band - (cards[0]?.band ?? 0)) <= 1 &&
+                Math.abs(card.scale - (cards[0]?.scale ?? 0)) < 0.01,
+            ),
+            scale: cards[0]?.scale ?? 0,
+            logosLarge: cards.every((card) =>
+              card.logos.every((width) => width >= 32),
             ),
             scrolls: element.scrollWidth > element.clientWidth + 1,
             pageOverflow:
@@ -1738,20 +1777,23 @@ test('the stack becomes a 7+5, 5+7, 6+6 bento without controls on wide screens',
         expect(layout, label).toMatchObject({
           rows: [
             ['languages', 'data'],
-            ['backend', 'styling'],
+            ['styling', 'backend'],
             ['workflow', 'design'],
           ],
           evenRows: true,
           overlaps: false,
           sceneFirst: true,
-          scenesFit: true,
+          scenesEven: true,
+          logosLarge: true,
           scrolls: false,
           pageOverflow: false,
         });
+        expect(layout.scale, label).toBeGreaterThanOrEqual(0.9);
+        expect(layout.scale, label).toBeLessThanOrEqual(1.4);
         const [first, second, third] = layout.shares;
-        // 7 of 12, 5 of 12 and 6 of 12 columns, less the gap.
-        expect(first, label).toBeGreaterThan(55);
-        expect(second, label).toBeLessThan(45);
+        // 5 of 12, 7 of 12 and 6 of 12 columns, less the gap.
+        expect(first, label).toBeLessThan(45);
+        expect(second, label).toBeGreaterThan(55);
         expect(third, label).toBe(50);
       }
     }

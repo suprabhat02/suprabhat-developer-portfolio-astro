@@ -1,0 +1,872 @@
+---
+/**
+ * Product-interface scenes for `LiveScene`: small pieces of real software
+ * (an editor, a store, a query, a pull request) drawn flat, with hairline
+ * borders and readable code instead of placeholder bars.
+ *
+ * Rules these scenes follow:
+ * - Surfaces are `Surface`, text is `Type`. No lips, no drop shadows.
+ * - Everything is grey except the one thing the scene is about, which takes
+ *   the accent or the success colour.
+ * - One story per scene, told once: the resting frame is the finished state
+ *   and the animation replays how it got there.
+ * - Words are code, identifiers and numbers only, so no locale needs its own
+ *   version and nothing is read out (the scene is `aria-hidden`).
+ *
+ * Rendered inside the `<svg viewBox="0 -12 320 144">` of `LiveScene.astro`.
+ */
+import type { SceneName } from './scenes';
+import Surface from './Surface.astro';
+import Type, { type TypePart } from './Type.astro';
+
+interface Props {
+  scene: SceneName;
+}
+
+const { scene } = Astro.props;
+
+/** A line of code: its left edge and its coloured tokens. */
+interface CodeLine {
+  x: number;
+  y: number;
+  parts: readonly TypePart[];
+}
+
+const editorCode: readonly CodeLine[] = [
+  {
+    x: 32,
+    y: 32,
+    parts: [
+      ['kw', 'type '],
+      ['type', 'Props '],
+      ['dim', '= { '],
+      ['base', 'title'],
+      ['dim', ': '],
+      ['type', 'string'],
+      ['dim', ' }'],
+    ],
+  },
+  {
+    x: 32,
+    y: 58,
+    parts: [
+      ['kw', 'export function '],
+      ['hi', 'Card'],
+      ['dim', '('],
+      ['base', 'p'],
+      ['dim', ': '],
+      ['type', 'Props'],
+      ['dim', ') {'],
+    ],
+  },
+  {
+    x: 41.6,
+    y: 71,
+    parts: [
+      ['kw', 'return '],
+      ['ok', '<h3>'],
+      ['dim', '{'],
+      ['base', 'p.title'],
+      ['dim', '}'],
+      ['ok', '</h3>'],
+    ],
+  },
+  { x: 32, y: 84, parts: [['dim', '}']] },
+];
+
+const sqlCode: readonly CodeLine[] = [
+  {
+    x: 13,
+    y: 58,
+    parts: [
+      ['kw', 'SELECT '],
+      ['base', 'id, status, total'],
+    ],
+  },
+  {
+    x: 13,
+    y: 70,
+    parts: [
+      ['kw', 'FROM '],
+      ['type', 'orders'],
+    ],
+  },
+  {
+    x: 13,
+    y: 82,
+    parts: [
+      ['kw', 'WHERE '],
+      ['base', 'status '],
+      ['dim', '= '],
+      ['ok', "'paid'"],
+    ],
+  },
+  {
+    x: 13,
+    y: 94,
+    parts: [
+      ['kw', 'LIMIT '],
+      ['type', '3'],
+    ],
+  },
+];
+
+const orderRows = [
+  ['1042', '$120'],
+  ['1043', '$64'],
+  ['1047', '$210'],
+] as const;
+
+const storeRows = [
+  { key: 'items', was: '2', now: '3' },
+  { key: 'total', was: '$56', now: '$84' },
+] as const;
+
+const subscribers = ['<Cart />', '<Badge />', '<Total />'] as const;
+
+const propRows: readonly (readonly [string, readonly TypePart[]])[] = [
+  [
+    'variant',
+    [
+      ['ok', "'primary'"],
+      ['dim', ' | '],
+      ['ok', "'ghost'"],
+    ],
+  ],
+  [
+    'size',
+    [
+      ['ok', "'sm'"],
+      ['dim', ' | '],
+      ['ok', "'md'"],
+      ['dim', ' | '],
+      ['ok', "'lg'"],
+    ],
+  ],
+  ['disabled', [['type', 'boolean']]],
+];
+
+/** A diff line: removed, added or unchanged context. */
+const diffLines: readonly {
+  kind: 'del' | 'add' | 'ctx';
+  x: number;
+  parts: readonly TypePart[];
+}[] = [
+  { kind: 'del', x: 24, parts: [['dim', 'const rows = data.filter(fn)']] },
+  {
+    kind: 'add',
+    x: 24,
+    parts: [
+      ['kw', 'const '],
+      ['base', 'rows '],
+      ['dim', '= '],
+      ['hi', 'useMemo'],
+      ['dim', '(() =>'],
+    ],
+  },
+  {
+    kind: 'add',
+    x: 33,
+    parts: [
+      ['base', 'data.filter(fn)'],
+      ['dim', ', [data, fn])'],
+    ],
+  },
+  {
+    kind: 'ctx',
+    x: 24,
+    parts: [
+      ['kw', 'return '],
+      ['ok', '<Table '],
+      ['base', 'rows'],
+      ['dim', '={rows} '],
+      ['ok', '/>'],
+    ],
+  },
+];
+
+const checks = ['build', 'tests', 'a11y'] as const;
+---
+
+{
+  scene === 'editor' && (
+    <>
+      <g class="lv-l" style="--d:.4">
+        <Surface x={8} y={0} w={200} h={120} tone="well" chrome={16}>
+          {[18, 25, 32].map((cx) => (
+            <circle class="ui-dot" cx={cx} cy="8" r="2" />
+          ))}
+          <Type x={46} y={10.6} size={7} parts={[['hi', 'Card.tsx']]} />
+          <Type x={90} y={10.6} size={7} parts={[['dim', 'types.ts']]} />
+          <line class="ui-active" x1="44" y1="16" x2="80" y2="16" />
+          {[1, 2, 3, 4, 5].map((number, index) => (
+            <Type
+              x={24}
+              y={32 + index * 13}
+              size={7}
+              anchor="end"
+              parts={[['dim', String(number)]]}
+            />
+          ))}
+          <line class="ui-ln" x1="8" y1="104" x2="208" y2="104" />
+          <Type x={16} y={114.3} size={6.5} parts={[['dim', 'TypeScript']]} />
+          <Type
+            x={200}
+            y={114.3}
+            size={6.5}
+            anchor="end"
+            parts={[['ok', '0 errors']]}
+          />
+        </Surface>
+      </g>
+      <g class="lv-l" style="--d:.7">
+        {editorCode.map((line) => (
+          <Type x={line.x} y={line.y} size={8} parts={line.parts} />
+        ))}
+        {/* The return line is typed: a cover in the editor's own colour
+            uncovers it from left to right. */}
+        <rect
+          class="ui-cover k k-reveal"
+          x="41"
+          y="63"
+          width="121"
+          height="12"
+        />
+        <rect
+          class="ui-a k k-caret"
+          style="--reveal:121"
+          x="162.2"
+          y="64"
+          width="1.2"
+          height="9"
+        />
+        <path
+          class="ok ui-s k k-tick"
+          style="--i:9"
+          d="M160 111.6l2 2 4-4"
+          pathLength="1"
+        />
+      </g>
+      <g class="lv-l" style="--d:1">
+        <Surface x={220} y={12} w={92} h={96} chrome={14}>
+          <Type x={228} y={21.7} size={6.5} parts={[['dim', 'Preview']]} />
+          <circle class="ui-ok" cx="304" cy="19" r="1.8" />
+        </Surface>
+        <Type
+          class="k k-rise"
+          style="--i:7"
+          x={228}
+          y={46}
+          size={11}
+          bold
+          parts={[['hi', 'Revenue']]}
+        />
+        <rect class="ui-m2" x="228" y="56" width="76" height="4" rx="2" />
+        <rect class="ui-m" x="228" y="65" width="58" height="4" rx="2" />
+        <rect class="ui-m" x="228" y="74" width="68" height="4" rx="2" />
+        <rect class="ui-m" x="228" y="90" width="34" height="10" rx="3" />
+      </g>
+    </>
+  )
+}
+{
+  scene === 'store' && (
+    <>
+      <g class="lv-l" style="--d:.3">
+        <line class="ui-ln" x1="98" y1="60" x2="112" y2="60" />
+        <line class="ui-ln" x1="132" y1="60" x2="146" y2="60" />
+        {[28, 60, 92].map((y) => (
+          <path class="ui-ln" d={`M234 60C242 60 242 ${y} 250 ${y}`} />
+        ))}
+      </g>
+      <g class="lv-l" style="--d:.6">
+        <Surface x={6} y={34} w={92} h={52} chrome={14}>
+          <Type x={13} y={43.7} size={6.5} parts={[['dim', 'dispatch']]} />
+          <Type
+            x={13}
+            y={60}
+            size={7}
+            parts={[
+              ['base', 'type'],
+              ['dim', ': '],
+              ['ok', "'cart/add'"],
+            ]}
+          />
+          <Type
+            x={13}
+            y={73}
+            size={7}
+            parts={[
+              ['base', 'qty'],
+              ['dim', ': '],
+              ['type', '1'],
+            ]}
+          />
+        </Surface>
+        <circle class="ui" cx="122" cy="60" r="10" />
+        <path
+          class="ok ui-s k k-tick"
+          style="--i:3"
+          d="M117.5 60l3 3 5.5-5.5"
+          pathLength="1"
+        />
+        <Type
+          x={122}
+          y={81}
+          size={6}
+          anchor="middle"
+          parts={[['dim', 'schema']]}
+        />
+      </g>
+      <g class="lv-l" style="--d:.9">
+        <Surface x={146} y={12} w={88} h={96} chrome={14}>
+          <Type x={153} y={21.7} size={6.5} parts={[['dim', 'store']]} />
+        </Surface>
+        {storeRows.map((row, index) => (
+          <>
+            <rect
+              class="ui-as k k-lo"
+              style="--i:-4"
+              x="150"
+              y={33 + index * 22}
+              width="80"
+              height="18"
+              rx="3"
+            />
+            <Type x={156} y={44.7 + index * 22} parts={[['base', row.key]]} />
+            <Type
+              class="k k-hi"
+              style="--i:-4"
+              x={226}
+              y={44.7 + index * 22}
+              anchor="end"
+              parts={[['hi', row.now]]}
+            />
+            <Type
+              class="k k-lo"
+              style="--i:-4"
+              x={226}
+              y={44.7 + index * 22}
+              anchor="end"
+              parts={[['kw', row.was]]}
+            />
+          </>
+        ))}
+        <Type x={156} y={88.7} parts={[['base', 'status']]} />
+        <Type x={226} y={88.7} anchor="end" parts={[['ok', "'idle'"]]} />
+      </g>
+      <g class="lv-l" style="--d:.9">
+        <path
+          class="sa lv-packet ui-pk k k-hop"
+          d="M98 60H112"
+          pathLength="1"
+        />
+        <path
+          class="sa lv-packet ui-pk k k-hop"
+          style="--i:6"
+          d="M132 60H146"
+          pathLength="1"
+        />
+        {[28, 60, 92].map((y) => (
+          <path
+            class="sa lv-packet ui-pk k k-hop"
+            style="--i:9"
+            d={`M234 60C242 60 242 ${y} 250 ${y}`}
+            pathLength="1"
+          />
+        ))}
+      </g>
+      <g class="lv-l" style="--d:1.1">
+        {subscribers.map((name, index) => (
+          <Surface x={250} y={17 + index * 32} w={64} h={22} rx={5}>
+            <circle
+              class="ui-ok k k-beat"
+              style={`--i:${11 + index}`}
+              cx="258.5"
+              cy={28 + index * 32}
+              r="2.2"
+            />
+            <Type
+              x={265}
+              y={30.5 + index * 32}
+              size={7}
+              parts={[['base', name]]}
+            />
+          </Surface>
+        ))}
+      </g>
+    </>
+  )
+}
+{
+  scene === 'responsive' && (
+    <>
+      <g class="lv-l" style="--d:.4">
+        <Surface x={6} y={-2} w={210} h={106} chrome={14}>
+          {[15, 21.5, 28].map((cx) => (
+            <circle class="ui-dot" cx={cx} cy="5" r="1.8" />
+          ))}
+          <rect class="ui-m" x="68" y="1" width="86" height="8" rx="4" />
+          <Type
+            x={111}
+            y={7.1}
+            size={6}
+            anchor="middle"
+            parts={[['dim', 'suprabhat-dev.com']]}
+          />
+          <rect class="ui-a" x="16" y="18" width="6" height="6" rx="1.5" />
+          {[118, 138, 158].map((x) => (
+            <rect class="ui-m2" x={x} y="19.5" width="14" height="3" rx="1.5" />
+          ))}
+          <rect class="ui-m2" x="182" y="17" width="24" height="8" rx="4" />
+          <Type x={16} y={44} size={10} bold parts={[['hi', 'Components']]} />
+          <rect class="ui-m" x="16" y="50" width="96" height="3.5" rx="1.75" />
+        </Surface>
+        <path class="ui-ln" d="M6 113v6M216 113v6M6 116H94M128 116H216" />
+        <Type
+          x={111}
+          y={118.3}
+          size={6.5}
+          anchor="middle"
+          parts={[['dim', '1280']]}
+        />
+      </g>
+      <g class="lv-l" style="--d:.7">
+        {[16, 82, 148].map((x, index) => (
+          <Surface x={x} y={60} w={58} h={36} rx={4}>
+            <rect
+              class={index === 1 ? 'ui-a' : 'ui-m2'}
+              x={x + 6}
+              y="66"
+              width="10"
+              height="10"
+              rx="2.5"
+            />
+            <rect
+              class="ui-m2"
+              x={x + 6}
+              y="82"
+              width="36"
+              height="3"
+              rx="1.5"
+            />
+            <rect
+              class="ui-m"
+              x={x + 6}
+              y="88"
+              width="24"
+              height="3"
+              rx="1.5"
+            />
+          </Surface>
+        ))}
+        <rect
+          class="ui-pick k k-paint"
+          x="82"
+          y="60"
+          width="58"
+          height="36"
+          rx="4"
+        />
+      </g>
+      <g class="lv-l" style="--d:.9">
+        <path
+          class="sa ui-s k k-draw"
+          d="M223 52H243M239 48l4 4-4 4"
+          pathLength="1"
+        />
+      </g>
+      <g class="lv-l" style="--d:1.1">
+        <Surface x={250} y={-6} w={62} h={112} rx={9}>
+          <rect
+            class="ui-m2"
+            x="272"
+            y="-2.5"
+            width="18"
+            height="3.5"
+            rx="1.75"
+          />
+          <rect class="ui-a" x="257" y="6" width="5" height="5" rx="1.25" />
+          <path class="ui-ln ui-ln--menu" d="M298 7h7M298 10h7" />
+          <Type x={257} y={24} size={7} bold parts={[['hi', 'Components']]} />
+        </Surface>
+        {[30, 54, 78].map((y, index) => (
+          <Surface
+            class="k k-rise"
+            style={`--i:${index * 2 + 2}`}
+            x={257}
+            y={y}
+            w={48}
+            h={20}
+            rx={3.5}
+          >
+            <rect
+              class={index === 1 ? 'ui-a' : 'ui-m2'}
+              x="262"
+              y={y + 6}
+              width="8"
+              height="8"
+              rx="2"
+            />
+            <rect
+              class="ui-m2"
+              x="275"
+              y={y + 6}
+              width="24"
+              height="3"
+              rx="1.5"
+            />
+            <rect
+              class="ui-m"
+              x="275"
+              y={y + 11.5}
+              width="15"
+              height="3"
+              rx="1.5"
+            />
+          </Surface>
+        ))}
+        <rect
+          class="ui-pick k k-paint"
+          style="--i:4"
+          x="257"
+          y="54"
+          width="48"
+          height="20"
+          rx="3.5"
+        />
+        <path class="ui-ln" d="M250 113v6M312 113v6M250 116H269M293 116H312" />
+        <Type
+          x={281}
+          y={118.3}
+          size={6.5}
+          anchor="middle"
+          parts={[['dim', '390']]}
+        />
+      </g>
+    </>
+  )
+}
+{
+  scene === 'query' && (
+    <>
+      <g class="lv-l" style="--d:.3">
+        <line class="ui-ln" x1="152" y1="62" x2="166" y2="62" />
+      </g>
+      <g class="lv-l" style="--d:.6">
+        <Surface x={6} y={0} w={146} h={22}>
+          <rect class="ui-as" x="12" y="5" width="24" height="12" rx="3" />
+          <Type
+            x={24}
+            y={13.3}
+            size={6.5}
+            anchor="middle"
+            bold
+            parts={[['kw', 'GET']]}
+          />
+          <Type
+            x={42}
+            y={13.5}
+            size={7}
+            parts={[
+              ['hi', '/api/orders'],
+              ['dim', '?status='],
+              ['ok', 'paid'],
+            ]}
+          />
+        </Surface>
+        <Surface x={6} y={30} w={146} h={78} tone="well" chrome={14}>
+          <Type x={13} y={39.7} size={6.5} parts={[['dim', 'orders.sql']]} />
+          {sqlCode.map((line) => (
+            <Type x={line.x} y={line.y} parts={line.parts} />
+          ))}
+        </Surface>
+      </g>
+      <g class="lv-l" style="--d:.9">
+        <path
+          class="sa lv-packet ui-pk k k-hop"
+          d="M152 62H166"
+          pathLength="1"
+        />
+      </g>
+      <g class="lv-l" style="--d:1">
+        <Surface x={166} y={0} w={148} h={108} chrome={18}>
+          <Type x={176} y={11.5} size={6.5} parts={[['dim', 'id']]} />
+          <Type x={212} y={11.5} size={6.5} parts={[['dim', 'status']]} />
+          <Type
+            x={304}
+            y={11.5}
+            size={6.5}
+            anchor="end"
+            parts={[['dim', 'total']]}
+          />
+          <line class="ui-ln" x1="166" y1="84" x2="314" y2="84" />
+          <Type
+            x={304}
+            y={98.3}
+            size={6.5}
+            anchor="end"
+            parts={[['dim', '3 rows']]}
+          />
+        </Surface>
+        {orderRows.map(([id, total], index) => (
+          <g class="k k-rise" style={`--i:${3 + index}`}>
+            <Type x={176} y={33 + index * 21} parts={[['hi', id]]} />
+            <rect
+              class="ui-oks"
+              x="210"
+              y={24.5 + index * 21}
+              width="30"
+              height="11.5"
+              rx="5.75"
+            />
+            <Type
+              x={225}
+              y={32.6 + index * 21}
+              size={6.5}
+              anchor="middle"
+              parts={[['ok', 'paid']]}
+            />
+            <Type
+              x={304}
+              y={33 + index * 21}
+              anchor="end"
+              parts={[['base', total]]}
+            />
+          </g>
+        ))}
+        <circle
+          class="ui-ok k k-beat"
+          style="--i:8"
+          cx="178.5"
+          cy="96"
+          r="2.2"
+        />
+        <Type x={185} y={98.4} size={7} bold parts={[['ok', '200 OK']]} />
+      </g>
+    </>
+  )
+}
+{
+  scene === 'handoff' && (
+    <>
+      <g class="lv-l" style="--d:.3">
+        <line class="ui-ln" x1="148" y1="56" x2="164" y2="56" />
+      </g>
+      <g class="lv-l" style="--d:.5">
+        <Surface x={6} y={2} w={142} h={108} tone="well">
+          <Type
+            x={13}
+            y={13.5}
+            size={6.5}
+            parts={[['dim', 'Button / Primary']]}
+          />
+        </Surface>
+        <rect class="ui-a" x="37" y="43" width="80" height="26" rx="6" />
+        <Type
+          x={77}
+          y={58.7}
+          anchor="middle"
+          bold
+          parts={[['on', 'Save changes']]}
+        />
+      </g>
+      <g class="lv-l" style="--d:.8">
+        <path class="ui-select" d="M33 39H121V73H33Z" />
+        {(
+          [
+            [33, 39],
+            [121, 39],
+            [121, 73],
+            [33, 73],
+          ] as const
+        ).map(([x, y]) => (
+          <rect
+            class="ui-handle k k-pop"
+            x={x - 2}
+            y={y - 2}
+            width="4"
+            height="4"
+          />
+        ))}
+        <g class="k k-pop" style="--i:2">
+          <rect class="ui-a" x="59" y="79" width="36" height="11" rx="5.5" />
+          <Type
+            x={77}
+            y={86.8}
+            size={6}
+            anchor="middle"
+            bold
+            parts={[['on', '80 × 26']]}
+          />
+        </g>
+        <path
+          class="sa lv-packet ui-pk k k-hop"
+          style="--i:4"
+          d="M148 56H164"
+          pathLength="1"
+        />
+      </g>
+      <g class="lv-l" style="--d:1">
+        <Surface x={164} y={2} w={150} h={108} chrome={22}>
+          <Type x={173} y={16.2} size={9} bold parts={[['hi', 'Button']]} />
+          <rect
+            class="ui-oks"
+            x="276"
+            y="7.5"
+            width="30"
+            height="11"
+            rx="5.5"
+          />
+          <Type
+            x={291}
+            y={15.2}
+            size={6}
+            anchor="middle"
+            parts={[['ok', 'stable']]}
+          />
+          <Type x={173} y={33.5} size={6.5} parts={[['dim', 'prop']]} />
+          <Type x={214} y={33.5} size={6.5} parts={[['dim', 'type']]} />
+          <line class="ui-ln ui-ln--soft" x1="164" y1="39" x2="314" y2="39" />
+          <line class="ui-ln" x1="164" y1="86" x2="314" y2="86" />
+          <Type x={184} y={100.3} size={6.5} parts={[['dim', 'keyboard']]} />
+          <Type x={244} y={100.3} size={6.5} parts={[['dim', 'contrast']]} />
+        </Surface>
+        {propRows.map(([name, type], index) => (
+          <g class="k k-rise" style={`--i:${7 + index}`}>
+            <Type x={173} y={52 + index * 13} size={7} parts={[['hi', name]]} />
+            <Type x={214} y={52 + index * 13} size={7} parts={type} />
+          </g>
+        ))}
+        {[173, 233].map((x, index) => (
+          <path
+            class="ok ui-s k k-tick"
+            style={`--i:${11 + index}`}
+            d={`M${x} 98l2 2 4-4`}
+            pathLength="1"
+          />
+        ))}
+      </g>
+    </>
+  )
+}
+{
+  scene === 'review' && (
+    <>
+      <g class="lv-l" style="--d:.4">
+        <Surface x={6} y={0} w={200} h={120} chrome={20}>
+          <rect class="ui-m" x="13" y="4.5" width="58" height="11" rx="5.5" />
+          <Type
+            x={42}
+            y={12.3}
+            size={6.5}
+            anchor="middle"
+            parts={[['hi', 'feat/filters']]}
+          />
+          <path class="ui-ln ui-ln--menu" d="M76 10h9M82 7l3 3-3 3" />
+          <rect class="ui-m" x="90" y="4.5" width="28" height="11" rx="5.5" />
+          <Type
+            x={104}
+            y={12.3}
+            size={6.5}
+            anchor="middle"
+            parts={[['hi', 'main']]}
+          />
+          <Type
+            x={198}
+            y={12.3}
+            size={6.5}
+            anchor="end"
+            parts={[
+              ['ok', '+2 '],
+              ['kw', '−1'],
+            ]}
+          />
+          <Type x={13} y={30.5} size={6.5} parts={[['dim', 'FilterBar.tsx']]} />
+          <line class="ui-ln" x1="6" y1="98" x2="206" y2="98" />
+          <circle class="ui-m2" cx="17" cy="109" r="4.5" />
+          <circle class="ui-avatar" cx="25" cy="109" r="4.5" />
+          <Type x={35} y={111.4} size={7} parts={[['ok', 'Approved']]} />
+        </Surface>
+      </g>
+      <g class="lv-l" style="--d:.7">
+        {diffLines.map((line, index) => (
+          <>
+            {line.kind !== 'ctx' && (
+              <rect
+                class={line.kind === 'add' ? 'ui-add' : 'ui-del'}
+                x="6.5"
+                y={36.5 + index * 14}
+                width="199"
+                height="14"
+              />
+            )}
+            {line.kind !== 'ctx' && (
+              <Type
+                x={14}
+                y={46.2 + index * 14}
+                parts={[line.kind === 'add' ? ['ok', '+'] : ['kw', '−']]}
+              />
+            )}
+            <Type
+              class={line.kind === 'add' ? 'k k-rise' : undefined}
+              style={line.kind === 'add' ? `--i:${index - 1}` : undefined}
+              x={line.x}
+              y={46.2 + index * 14}
+              parts={line.parts}
+            />
+          </>
+        ))}
+        <line class="ui-strike" x1="23" y1="43.6" x2="151" y2="43.6" />
+      </g>
+      <g class="lv-l" style="--d:1">
+        <Surface x={216} y={0} w={98} h={84} chrome={14}>
+          <Type x={223} y={9.7} size={6.5} parts={[['dim', 'checks']]} />
+        </Surface>
+        {checks.map((name, index) => (
+          <>
+            <circle class="ui-oks" cx="229" cy={30 + index * 19} r="5.5" />
+            <path
+              class="ok ui-s k k-tick"
+              style={`--i:${3 + index * 2}`}
+              d={`M226.3 ${30 + index * 19}l1.9 1.9 3.6-3.6`}
+              pathLength="1"
+            />
+            <Type x={241} y={32.7 + index * 19} parts={[['hi', name]]} />
+            <Type
+              x={306}
+              y={32.5 + index * 19}
+              size={6.5}
+              anchor="end"
+              parts={[['dim', 'pass']]}
+            />
+          </>
+        ))}
+        <g class="k k-pop" style="--i:10">
+          <rect
+            class="ui-merged"
+            x="216"
+            y="94"
+            width="98"
+            height="26"
+            rx="6"
+          />
+          <path
+            class="ok ui-s"
+            d="M240 104.9v4.6M240 105c0 2.4 2.6 2.2 5.6 2.2"
+          />
+          {(
+            [
+              [240, 103.2],
+              [240, 111.2],
+              [247.3, 107.2],
+            ] as const
+          ).map(([cx, cy]) => (
+            <circle class="ok ui-s ui-node" cx={cx} cy={cy} r="1.7" />
+          ))}
+          <Type x={255} y={109.9} size={8} bold parts={[['ok', 'Merged']]} />
+        </g>
+      </g>
+    </>
+  )
+}

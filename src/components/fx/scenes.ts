@@ -58,17 +58,17 @@ export const sceneNames = [
   'canvas',
   /** Loose color swatches settle into a spaced, ruled grid. */
   'swatches',
-  /** Code typed in an editor compiles into a rendered component. */
+  /** A line typed in an editor; the preview updates and the file has no errors. */
   'editor',
-  /** An action passes a schema gate, updates the store, reaches subscribers. */
+  /** A dispatched action passes its schema, updates the store, notifies subscribers. */
   'store',
-  /** One layout shown on a desktop frame and reflowed in a phone frame. */
+  /** One page at 1280px and reflowed at 390px, the same card picked in both. */
   'responsive',
-  /** An endpoint queries a database and rows return into a table. */
+  /** A GET request runs its SQL; three rows return with 200 OK. */
   'query',
-  /** A selected, measured design element becomes a documented component. */
+  /** A selected, measured button becomes a documented, checked component. */
   'handoff',
-  /** A pull request: the diff, checks passing, then merged. */
+  /** A pull request: its diff, three passing checks, approved and merged. */
   'review',
 ] as const;
 

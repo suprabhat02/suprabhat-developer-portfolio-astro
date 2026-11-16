@@ -14,22 +14,24 @@ interface StackCard {
 
 /**
  * One card per technology group. Key order is card order, and the shapes
- * fill a six-column grid row by row: wide + narrow, narrow + wide, half + half.
- * Typing it as a record makes a new group fail the build until it has a card.
+ * fill the grid row by row: narrow + wide, wide + narrow, half + half. A wide
+ * card holds a longer list, so both cards in a row need the same number of
+ * logo rows and end level. Typing it as a record makes a new group fail the
+ * build until it has a card.
  */
 const cards: Record<ToolGroupId, StackCard> = {
-  languages: { shape: 'wide', scene: 'editor' },
-  data: { shape: 'narrow', scene: 'store' },
-  backend: { shape: 'narrow', scene: 'query' },
+  languages: { shape: 'narrow', scene: 'editor' },
+  data: { shape: 'wide', scene: 'store' },
   styling: { shape: 'wide', scene: 'responsive' },
+  backend: { shape: 'narrow', scene: 'query' },
   workflow: { shape: 'half', scene: 'review' },
   design: { shape: 'half', scene: 'handoff' },
 };
 
 export interface StackItem {
   label: string;
-  /** Up to two local logos; empty when the technology has none. */
-  logos: readonly { src: string; invert: boolean }[];
+  /** The technology's local logo, or `null` when it has none. */
+  logo: { src: string; invert: boolean } | null;
 }
 
 export interface StackGroup extends StackCard {
@@ -59,13 +61,16 @@ export const getStack = (locale: Locale): readonly StackGroup[] => {
       ...cards[id],
       title: t(locale, `page.tools.group.${id}.title`),
       description: t(locale, `page.tools.group.${id}.description`),
-      items: items.map((label) => ({ label, logos: getSkillLogos(label) })),
+      items: items.map((label) => ({
+        label,
+        logo: getSkillLogos(label)[0] ?? null,
+      })),
     };
   });
 
   const shown = new Set(
     groups.flatMap((group) =>
-      group.items.flatMap((item) => item.logos.map((logo) => logo.src)),
+      group.items.flatMap((item) => (item.logo ? [item.logo.src] : [])),
     ),
   );
   const missing = tools.filter((tool) => !shown.has(tool.icon));
