@@ -15,8 +15,10 @@ const sharedGroups: readonly { id: ToolGroupId; items: readonly string[] }[] = [
   {
     id: 'languages',
     items: [
-      'React + Next.js',
-      'JavaScript + TypeScript',
+      'React',
+      'Next.js',
+      'JavaScript',
+      'TypeScript',
       'HTML5',
       'Astro',
       'jQuery',
@@ -25,9 +27,11 @@ const sharedGroups: readonly { id: ToolGroupId; items: readonly string[] }[] = [
   {
     id: 'data',
     items: [
-      'Redux Toolkit + RTK Query',
+      'Redux Toolkit',
+      'RTK Query',
       'Zustand',
-      'React Hooks + Context API',
+      'React Hooks',
+      'Context API',
       'TanStack Query',
       'GraphQL',
       'Zod',
@@ -36,12 +40,14 @@ const sharedGroups: readonly { id: ToolGroupId; items: readonly string[] }[] = [
   {
     id: 'styling',
     items: [
-      'CSS3 + Sass',
+      'CSS3',
+      'Sass',
       'Tailwind CSS',
       'shadcn/ui',
       'Chakra UI',
       'Headless UI',
-      'Bootstrap 5 + React Bootstrap',
+      'Bootstrap 5',
+      'React Bootstrap',
       'Ant Design',
       'Material UI',
     ],

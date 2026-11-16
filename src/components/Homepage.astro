@@ -746,23 +746,23 @@ const contactIndex = featured.length > 0 ? '14' : '13';
               </div>
               <ul class="stack-tech" role="list">
                 {group.items.map((item) => (
-                  <li class="stack-chip">
-                    {item.logos.length > 0 && (
-                      <span class="stack-logos" aria-hidden="true">
-                        {item.logos.map((logo) => (
-                          <img
-                            src={logo.src}
-                            alt=""
-                            width="18"
-                            height="18"
-                            loading="lazy"
-                            decoding="async"
-                            class:list={{ 'stack-invert': logo.invert }}
-                          />
-                        ))}
-                      </span>
-                    )}
-                    <span>{item.label}</span>
+                  <li class="stack-tile">
+                    <span class="stack-logo" aria-hidden="true">
+                      {item.logo ? (
+                        <img
+                          src={item.logo.src}
+                          alt=""
+                          width="32"
+                          height="32"
+                          loading="lazy"
+                          decoding="async"
+                          class:list={{ 'stack-invert': item.logo.invert }}
+                        />
+                      ) : (
+                        <Icon name="layers" size={26} />
+                      )}
+                    </span>
+                    <span class="stack-name">{item.label}</span>
                   </li>
                 ))}
               </ul>

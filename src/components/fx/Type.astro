@@ -1,0 +1,64 @@
+---
+/**
+ * A line of text inside a `LiveScene` SVG, set in the site's own monospace
+ * face. Scenes are decorative (`aria-hidden`), so the words are code,
+ * identifiers and numbers that read the same in every locale; nothing here is
+ * translated copy.
+ *
+ * `parts` colours a line token by token, e.g. a keyword, then a name. The
+ * tokens are emitted with no whitespace between them, so spacing is exactly
+ * what the strings contain.
+ */
+export type TypeTone =
+  /** Default: secondary text. */
+  | 'base'
+  /** Primary text: names and headings. */
+  | 'hi'
+  /** Punctuation, labels and line numbers. */
+  | 'dim'
+  /** Keywords: the accent. */
+  | 'kw'
+  /** Types and numbers. */
+  | 'type'
+  /** Strings, tags and passing states. */
+  | 'ok'
+  /** Text on a solid accent or success fill. */
+  | 'on';
+
+export type TypePart = readonly [tone: TypeTone, text: string];
+
+interface Props {
+  x: number;
+  y: number;
+  parts: readonly TypePart[];
+  /** Font size in scene units. */
+  size?: number;
+  anchor?: 'start' | 'middle' | 'end';
+  bold?: boolean;
+  class?: string | undefined;
+  style?: string | undefined;
+}
+
+const {
+  x,
+  y,
+  parts,
+  size = 7.5,
+  anchor = 'start',
+  bold = false,
+  class: className,
+  style,
+} = Astro.props;
+---
+
+<text
+  class:list={['ty', { 'ty--bold': bold }, className]}
+  x={x}
+  y={y}
+  font-size={size}
+  text-anchor={anchor}
+  style={style}
+  >{
+    parts.map(([tone, text]) => <tspan class={`ty-${tone}`}>{text}</tspan>)
+  }</text
+>

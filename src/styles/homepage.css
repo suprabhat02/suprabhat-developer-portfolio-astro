@@ -2115,35 +2115,52 @@
    STACK — skills and tools as one bento (slides of a carousel)
 ══════════════════════════════════════════════════════════════════════ */
 
-/* A card is its scene, then the group's name and purpose, then every
-   technology in the group. On phones and tablets the cards are carousel
-   slides; from 1041px they form a bento (see the media query below). */
+/* A card is a scene band, then the group's name and purpose, then every
+   technology as a logo tile. The technologies are the content; the scene is
+   a caption for them, so it stays one modest size on every card. On phones
+   and tablets the cards are carousel slides; from 1041px they form a bento
+   (see the media query below). */
 .stack-card {
+  --stack-pad: clamp(1.1rem, 2.2vw, 1.5rem);
   display: flex;
   flex-direction: column;
-  gap: clamp(1rem, 2vw, 1.35rem);
   min-width: 0;
-  padding: clamp(1rem, 2.2vw, 1.35rem);
 }
 
-/* The scene keeps the artwork's proportions and takes any spare height, so
-   cards in one row line up without stretching their text. */
+/* The scene is a full-width band at the top of its card, with no frame of
+   its own. The artwork keeps its drawn size instead of growing with the
+   card, so hairlines stay fine and code stays code-sized. */
 .stack-card .lv-scene {
-  flex: 1 0 auto;
-  height: auto;
-  aspect-ratio: 320 / 144;
+  flex: none;
+  height: clamp(11rem, 17vw, 13.75rem);
   margin: 0;
+  padding: 0.9rem;
+  border: 0;
+  border-block-end: 1px solid var(--border-strong);
+  border-radius: 0;
+  box-shadow: none;
+  background:
+    radial-gradient(90% 120% at 50% 0%, transparent 40%, var(--bg-card) 100%),
+    radial-gradient(var(--fx-grid-dot) 1px, transparent 1.4px) 50% 0 / 14px 14px,
+    color-mix(in oklch, var(--bg) 45%, transparent);
+}
+
+.stack-card:is(:hover, :focus-within, [data-active]) .lv-scene {
+  border-color: var(--border-strong);
+  border-block-end-color: var(--accent-border);
+  box-shadow: none;
 }
 
 .stack-copy {
   display: grid;
-  gap: 1rem;
-  padding-inline: 0.25rem;
-  padding-block-end: 0.25rem;
+  flex: 1;
+  align-content: start;
+  gap: 1.1rem;
+  padding: var(--stack-pad);
 }
 
 .stack-text h3 {
-  margin: 0 0 0.45rem;
+  margin: 0 0 0.4rem;
   color: var(--text);
   font-size: clamp(1.05rem, 1.5vw, 1.2rem);
   line-height: 1.3;
@@ -2152,54 +2169,114 @@
 .stack-text p {
   margin: 0;
   color: var(--text-2);
-  font-size: 0.92rem;
-  line-height: 1.65;
+  font-size: 0.9rem;
+  line-height: 1.6;
   text-wrap: pretty;
 }
 
 .stack-tech {
-  display: flex;
-  flex-wrap: wrap;
-  align-content: start;
-  gap: 0.45rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(5.25rem, 1fr));
+  gap: 0.5rem;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.stack-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  min-height: 2rem;
-  padding: 0.3rem 0.7rem;
+/* A technology: its logo, large enough to recognise, over its name. The tile
+   is a size container, so the name can scale with it (see .stack-name). */
+.stack-tile {
+  container-type: inline-size;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 0.55rem;
+  min-width: 0;
+  padding: 0.85rem 0.35rem 0.7rem;
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius-pill);
-  background: color-mix(in oklch, var(--bg) 55%, transparent);
-  color: var(--text);
-  font-size: 0.8rem;
-  font-weight: 600;
-  line-height: 1.25;
+  border-radius: var(--radius-control);
+  background: color-mix(in oklch, var(--bg) 45%, transparent);
+  text-align: center;
+  transition:
+    border-color 200ms ease,
+    background-color 200ms ease;
 }
 
-.stack-logos {
-  display: inline-flex;
-  flex: none;
-  gap: 0.25rem;
+.stack-logo {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  color: var(--text-3);
 }
 
-.stack-logos img {
-  width: 18px;
-  height: 18px;
+.stack-logo img {
+  width: 32px;
+  height: 32px;
   object-fit: contain;
+  transition: transform 320ms var(--fx-ease-out);
+}
+
+/* The longest single word is ten characters ("JavaScript", "PostgreSQL").
+   At 15.5% of the tile's width a monospace word that long still fits, so a
+   name only ever wraps between words, never inside one. */
+.stack-name {
+  max-width: 100%;
+  color: var(--text);
+  font-size: clamp(0.6rem, 15.5cqi, 0.72rem);
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
 }
 
 [data-theme='dark'] .stack-invert {
   filter: invert(1);
 }
 
+@media (hover: hover) {
+  .stack-tile:hover {
+    border-color: var(--accent-border);
+    background: var(--accent-subtle);
+  }
+}
+
+/* The logo lifts only for readers who have not asked for reduced motion. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .stack-tile:hover img {
+    transform: translateY(-2px) scale(1.08);
+  }
+}
+
+/* Phones: the band is exactly as tall as the artwork at full width, and the
+   technologies sit three to a row with slightly smaller logos and names, so a
+   card stays short enough to read without much scrolling. */
+@media (max-width: 640px) {
+  .stack-card .lv-scene {
+    box-sizing: content-box;
+    height: auto;
+    aspect-ratio: 320 / 144;
+    padding: 0.75rem 0.5rem;
+  }
+
+  .stack-tech {
+    grid-template-columns: repeat(auto-fill, minmax(4.4rem, 1fr));
+    gap: 0.4rem;
+  }
+
+  .stack-tile {
+    gap: 0.45rem;
+    padding: 0.7rem 0.2rem 0.6rem;
+  }
+
+  .stack-logo,
+  .stack-logo img {
+    width: 28px;
+    height: 28px;
+  }
+}
+
 @media (min-width: 1041px) {
-  /* Twelve columns, filled row by row as 7 + 5, 5 + 7, 6 + 6. The shapes
+  /* Twelve columns, filled row by row as 5 + 7, 7 + 5, 6 + 6. The shapes
      follow the card order in stack.ts, so the document order is unchanged. */
   .cx--grid .stack-bento {
     grid-template-columns: repeat(12, minmax(0, 1fr));

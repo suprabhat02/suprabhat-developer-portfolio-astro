@@ -99,11 +99,30 @@ export const toolGroups: readonly ToolGroup[] = [
   { id: 'workflow', tools: ['Git', 'GitHub Actions', 'Azure', 'Claude AI'] },
 ];
 
+/**
+ * Logos for skills that are not listed as tools of their own: they appear
+ * beside a skill name, never on the Tools page.
+ */
+const skillOnlyLogos: readonly Tool[] = [
+  { name: 'JavaScript', icon: '/assets/techicons/javascript.svg', alt: '' },
+  { name: 'Chakra UI', icon: '/assets/techicons/chakraui.svg', alt: '' },
+  {
+    name: 'Headless UI',
+    icon: '/assets/techicons/headlessui.svg',
+    alt: '',
+    invertOnDark: true,
+  },
+];
+
 const toolsByName = new Map(tools.map((tool) => [tool.name, tool]));
+const logosByName = new Map(
+  [...tools, ...skillOnlyLogos].map((tool) => [tool.name, tool]),
+);
 
 const skillLogos: readonly [RegExp, string][] = [
   [/\bReact\b(?! Bootstrap)/, 'React'],
   [/Next\.js/, 'Next.js'],
+  [/JavaScript/, 'JavaScript'],
   [/TypeScript/, 'TypeScript'],
   [/HTML5/, 'HTML5'],
   [/CSS3/, 'CSS3'],
@@ -115,6 +134,10 @@ const skillLogos: readonly [RegExp, string][] = [
   [/Zustand/, 'Zustand'],
   [/\bGit\b/, 'Git'],
   [/Redux/, 'Redux'],
+  [/RTK Query/, 'Redux'],
+  [/Context API/, 'React'],
+  [/Chakra UI/, 'Chakra UI'],
+  [/Headless UI/, 'Headless UI'],
   [/TanStack/, 'TanStack Query'],
   [/GraphQL/, 'GraphQL'],
   [/MongoDB/, 'MongoDB'],
@@ -136,7 +159,7 @@ export const getSkillLogos = (item: string) =>
   skillLogos
     .map(([pattern, name]) => ({
       index: item.search(pattern),
-      tool: toolsByName.get(name),
+      tool: logosByName.get(name),
     }))
     .filter(
       (match): match is { index: number; tool: Tool } =>
