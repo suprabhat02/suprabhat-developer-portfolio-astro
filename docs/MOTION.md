@@ -169,6 +169,29 @@ the same mirrored.
 - **It is CSS only.** The DOM order is the reading order, nothing is measured
   or moved by script, and below 1041px the same cards are carousel slides.
 
+## Approach timeline
+
+The engineering approach is a vertical timeline (`.steps` in
+`src/styles/homepage.css`), built like the experience timeline but with its
+rail on the trailing edge.
+
+- **Each step** is a list item with two parts: `.step-main` (heading, text and
+  a `LiveScene`) and `.step-marker` (the step number). The rail and the numbers
+  are `aria-hidden`; the `<ol>` already gives the order to assistive technology.
+- **Trailing edge** means the right in English and Spanish and the left in
+  Arabic. Everything is placed with logical properties, so there is no RTL
+  override.
+- **Scene size.** Inside `.steps` a scene drops its fixed height and keeps the
+  artwork's `320 / 144` proportions, so it grows with its column. From 861px
+  the text and the scene sit side by side; below that the scene is shown first
+  with `order`, while the heading stays first in the document.
+- **Scroll progress.** `.steps-rail-fill` and the ring on each number
+  (`.step-num::after`) follow view timelines with `transform` and `opacity`
+  only. Numbers are lit by default, so browsers without scroll timelines and
+  readers who prefer reduced motion see every step reached.
+- **Copy** lives in `approach.items` in `src/data/homepageConversion.ts`, one
+  entry per locale. Adding a step there adds a row; nothing else changes.
+
 ## Carousel
 
 `src/components/Carousel.astro` turns a long card grid into one horizontal row.
