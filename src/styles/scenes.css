@@ -353,11 +353,6 @@
   fill: color-mix(in oklab, var(--shadow-ink) 55%, transparent);
 }
 
-/* Small status light. */
-.lv-scene .lv-led {
-  fill: var(--sc-ok);
-}
-
 /* ── Scene-specific statics ───────────────────────────────────────── */
 
 .lv-scene .lv-head {
@@ -427,11 +422,6 @@
    thickness. */
 .lv-scene .lv-bar {
   stroke-width: var(--bar, 8);
-}
-
-/* Blueprint outline traced around a tile before it is painted. */
-.lv-scene .lv-outline {
-  stroke-width: 1.5;
 }
 
 /* A ring drawn on the control's own edge, for tightly packed controls. */
@@ -526,6 +516,26 @@
 
 .lv-scene .ui-a {
   fill: var(--accent-fill);
+}
+
+.lv-scene .ui-on {
+  fill: var(--on-accent-fill);
+}
+
+/* A round-capped bar or arc (a meter, a gauge). Its colour comes from `.sa`,
+   `.ok` or `.ui-track`; `--bar` is its thickness. */
+.lv-scene .ui-bar {
+  stroke-width: var(--bar, 6);
+}
+
+.lv-scene .ui-track {
+  stroke: color-mix(in oklch, var(--text) 11%, transparent);
+}
+
+.lv-scene .k-gauge {
+  stroke-dasharray: 100 120;
+  stroke-dashoffset: 0;
+  --lv-anim: lv-gauge;
 }
 
 .lv-scene .ui-as,
@@ -869,9 +879,6 @@
 .lv-scene--components {
   --lv-step: 200ms;
 }
-.lv-scene--server {
-  --lv-step: 260ms;
-}
 .lv-scene--race {
   --lv-step: 70ms;
 }
@@ -891,12 +898,6 @@
 .lv-scene--bridge {
   --lv-dur: 2.4s;
   --lv-step: 500ms;
-}
-.lv-scene--canvas {
-  --lv-step: 180ms;
-}
-.lv-scene--swatches {
-  --lv-step: 110ms;
 }
 .lv-scene--editor {
   --lv-dur: 5s;
@@ -920,6 +921,18 @@
 .lv-scene--review {
   --lv-dur: 4.6s;
   --lv-step: 260ms;
+}
+.lv-scene--layout {
+  --lv-dur: 4.4s;
+  --lv-step: 180ms;
+}
+.lv-scene--flow {
+  --lv-dur: 4.8s;
+  --lv-step: 220ms;
+}
+.lv-scene--system {
+  --lv-dur: 4.6s;
+  --lv-step: 220ms;
 }
 
 /* ── Keyframes (0% is always the resting frame) ───────────────────── */
@@ -1485,5 +1498,19 @@
   12%,
   100% {
     stroke-dashoffset: -1.12;
+  }
+}
+
+@keyframes lv-gauge {
+  0%,
+  62%,
+  100% {
+    stroke-dashoffset: 0;
+    stroke: var(--sc-ok);
+  }
+  6%,
+  50% {
+    stroke-dashoffset: 58;
+    stroke: var(--warning);
   }
 }

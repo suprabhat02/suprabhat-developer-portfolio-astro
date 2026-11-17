@@ -40,8 +40,6 @@ export const sceneNames = [
   'zones',
   /** Loose component chips wiring themselves into a page frame. */
   'components',
-  /** Request/response packets travelling from a server rack to endpoints. */
-  'server',
   /** A marker sprints down a track trailing speed streaks to a finish line. */
   'race',
   /** A speaker's sound waves highlight each caption line as it is read. */
@@ -54,10 +52,12 @@ export const sceneNames = [
   'branch',
   /** A pulse travels the connector between a UI layer and a data layer. */
   'bridge',
-  /** Outlines draw in a canvas, then fill solid one by one. */
-  'canvas',
-  /** Loose color swatches settle into a spaced, ruled grid. */
-  'swatches',
+  /** App window whose sidebar, top bar, tiles and table assemble into a tidy layout. */
+  'layout',
+  /** Browser, server and database: a locked request leaves, verified rows return. */
+  'flow',
+  /** Palette and spacing scale feed three matching controls; a speed gauge hits green. */
+  'system',
   /** A line typed in an editor; the preview updates and the file has no errors. */
   'editor',
   /** A dispatched action passes its schema, updates the store, notifies subscribers. */
