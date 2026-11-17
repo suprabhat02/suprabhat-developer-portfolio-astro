@@ -338,11 +338,6 @@
   fill: color-mix(in oklab, var(--bg) 94%, var(--text));
 }
 
-/* The far side of an isometric slab catches less light. */
-.lv-scene .lv-lip--far {
-  fill: color-mix(in oklab, var(--bg) 74%, var(--paint-lip, var(--text)));
-}
-
 /* Specular glint on a sphere or glossy face. */
 .lv-scene .lv-spec {
   fill: rgb(var(--highlight) / 0.55);
@@ -410,11 +405,6 @@
   fill: var(--text);
   stroke: var(--bg);
   stroke-width: 1.2;
-}
-
-.lv-scene .lv-plane {
-  stroke: color-mix(in oklch, var(--text) 30%, transparent);
-  stroke-width: 1;
 }
 
 /* A bar drawn as a round-capped stroke, so its ends stay round while it
@@ -496,6 +486,18 @@
   stroke: color-mix(in oklch, var(--text) 9%, transparent);
 }
 
+/* A boundary drawn around a group, not a surface of its own. */
+.lv-scene .ui-ln--dash {
+  stroke-dasharray: 4 3;
+}
+
+/* A connector that draws itself in (`k-draw`). It scales with the scene: a
+   non-scaling stroke would measure its `pathLength` dash in screen pixels. */
+.lv-scene .ui-wire {
+  stroke: var(--ui-line);
+  stroke-width: 1;
+}
+
 .lv-scene .ui-ln--menu {
   stroke: var(--text-3);
   stroke-width: 1.2;
@@ -536,6 +538,9 @@
   stroke-dasharray: 100 120;
   stroke-dashoffset: 0;
   --lv-anim: lv-gauge;
+}
+.lv-scene .k-gather {
+  --lv-anim: lv-gather;
 }
 
 .lv-scene .ui-as,
@@ -774,17 +779,8 @@
 .lv-scene .k-cursor {
   --lv-anim: lv-cursor;
 }
-.lv-scene .k-lens {
-  --lv-anim: lv-lens;
-}
 .lv-scene .k-mark {
   --lv-anim: lv-mark;
-}
-.lv-scene .k-layer {
-  --lv-anim: lv-layer;
-}
-.lv-scene .k-fill {
-  --lv-anim: lv-fill;
 }
 .lv-scene .k-type {
   --lv-anim: lv-type;
@@ -832,6 +828,70 @@
   animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
 }
 
+/* Visual stories start together; delayed elements wait in their start state.
+   Resting and reduced-motion styles still show the complete result. */
+.ui-story .k-rise {
+  --lv-anim: ui-arrive;
+}
+.ui-story :is(.k-draw, .k-tick, .k-progress) {
+  --lv-anim: ui-trace;
+}
+.ui-story .k-gather {
+  --lv-anim: ui-gather;
+}
+.ui-story .k-hop {
+  --lv-anim: ui-transfer;
+  stroke-dashoffset: -1.12;
+}
+.ui-story .k-pop {
+  --lv-anim: ui-arrive;
+}
+@keyframes ui-arrive {
+  0%,
+  4% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  20%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ui-trace {
+  0%,
+  4% {
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 1.12;
+  }
+  24%,
+  100% {
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes ui-gather {
+  0%,
+  4% {
+    transform: translate(var(--gx), var(--gy));
+    opacity: 0.4;
+  }
+  24%,
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes ui-transfer {
+  0% {
+    stroke-dashoffset: 0.12;
+  }
+  16%,
+  100% {
+    stroke-dashoffset: -1.12;
+  }
+}
+
 /* Per-scene pacing: the step is the gap between beats of the story. */
 .lv-scene--pipeline {
   --lv-step: 1000ms;
@@ -850,15 +910,6 @@
 }
 .lv-scene--browser {
   --lv-step: 220ms;
-}
-.lv-scene--scan {
-  --lv-step: 650ms;
-}
-.lv-scene--stack {
-  --lv-step: 260ms;
-}
-.lv-scene--verify {
-  --lv-step: 420ms;
 }
 .lv-scene--chat {
   --lv-step: 400ms;
@@ -933,6 +984,18 @@
 .lv-scene--system {
   --lv-dur: 4.6s;
   --lv-step: 220ms;
+}
+.lv-scene--clarify {
+  --lv-dur: 4.8s;
+  --lv-step: 240ms;
+}
+.lv-scene--blueprint {
+  --lv-dur: 4.8s;
+  --lv-step: 220ms;
+}
+.lv-scene--quality {
+  --lv-dur: 4.8s;
+  --lv-step: 240ms;
 }
 
 /* ── Keyframes (0% is always the resting frame) ───────────────────── */
@@ -1273,23 +1336,6 @@
   }
 }
 
-@keyframes lv-lens {
-  0%,
-  100% {
-    transform: none;
-  }
-  22% {
-    transform: translate(58px, 4px);
-  }
-  42% {
-    transform: translate(6px, 18px);
-  }
-  62%,
-  84% {
-    transform: translate(52px, 22px);
-  }
-}
-
 @keyframes lv-mark {
   0%,
   100% {
@@ -1304,39 +1350,6 @@
   76% {
     stroke-dasharray: 1 2;
     stroke-dashoffset: 0;
-  }
-}
-
-@keyframes lv-layer {
-  0%,
-  100% {
-    transform: none;
-  }
-  12%,
-  30% {
-    transform: translateY(var(--ty, 0px));
-  }
-  58% {
-    transform: none;
-  }
-}
-
-@keyframes lv-fill {
-  0%,
-  100% {
-    stroke-dasharray: 1 2;
-    stroke-dashoffset: 0;
-    stroke: var(--sc-ok);
-  }
-  5% {
-    stroke-dasharray: 1 2;
-    stroke-dashoffset: 0.96;
-    stroke: var(--warning);
-  }
-  70% {
-    stroke-dasharray: 1 2;
-    stroke-dashoffset: 0;
-    stroke: var(--sc-ok);
   }
 }
 
@@ -1512,5 +1525,17 @@
   50% {
     stroke-dashoffset: 58;
     stroke: var(--warning);
+  }
+}
+
+@keyframes lv-gather {
+  0%,
+  54%,
+  100% {
+    transform: none;
+  }
+  8%,
+  26% {
+    transform: translate(var(--gx, 0px), var(--gy, 0px));
   }
 }

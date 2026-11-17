@@ -22,12 +22,12 @@ export const sceneNames = [
   'a11y',
   /** Browser window whose sections build in, with a clicking cursor. */
   'browser',
-  /** Magnifier scanning a brief and surfacing the key decision. */
-  'scan',
-  /** Isometric UI, state and data layers separating into a system. */
-  'stack',
-  /** Checklist ticking through to a passing quality gate. */
-  'verify',
+  /** Scattered question cards converge into one clear goal card with a check. */
+  'clarify',
+  /** Three-tier architecture block diagram whose connectors draw in order. */
+  'blueprint',
+  /** Four quality checks tick green one by one, ending in a verified shield. */
+  'quality',
   /** Async conversation with a typing indicator. */
   'chat',
   /** Delivery track reaching each milestone, flag at the finish. */
