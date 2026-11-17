@@ -47,6 +47,7 @@ src/components/fx/
 | Focus Cards              | `.fx-focus-group` + `.fx-focus-item`                      | Featured articles                        |
 | Lamp                     | `.fx-lamp` + `.fx-lamp-line`                              | Homepage CTA band                        |
 | Meteors                  | `Meteors.astro`                                           | CTA band, collaboration, 404             |
+| Dotted Glow Background   | `DotGlow.astro` (`.fx-dot-glow`)                          | Inner-page CTA only                      |
 | Floating Navbar          | `.site-header[data-scrolled]`, `.nav-pill`                | Global header                            |
 
 ## Rules that keep Lighthouse and axe at 100
@@ -54,8 +55,9 @@ src/components/fx/
 1. **Content never depends on JavaScript.** Every effect is decorative and
    layered on server-rendered HTML. `motion.ts` only adds pointer polish and
    state attributes.
-2. **Continuous animations only use `transform`.** They run on the compositor,
-   cost no main-thread time, and cannot cause layout shift.
+2. **Continuous animations only use `transform` or decorative `opacity`.**
+   Keep their painted geometry static and pause them off screen. Never animate
+   text opacity.
 3. **Reveal effects never animate `opacity` on text.** Scroll reveals use
    `transform` and `filter`, so axe never samples half-transparent text in a
    color-contrast check. Hidden Flip Words slots are clipped, not faded.
@@ -379,6 +381,29 @@ hidden on frame cards. Framed cards have layered shadows at rest; a fine
 pointer adds up to four degrees of perspective and a 6px lift. Living scene
 layers also move independently. Motion resets on leave, scroll, resize or
 window blur and is disabled for reduced motion and coarse pointers.
+
+## Inner-page signal field
+
+`DotGlow.astro` is the owner-approved Dotted Glow Background port for the
+`PageOutro` CTA only, not the homepage CTA. It adds no script or dependency.
+Its 18 deterministic dots use a single radial-gradient core and halo; only
+decorative opacity twinkles, over 4-9 seconds with negative delays. No filters,
+shadows or blend modes are involved. CTA link hover on a hover-capable pointer
+and keyboard focus brighten the field, never the text.
+
+- Keep the field in its own grid column at inline-end, never underneath copy
+  or buttons. At 760px and below it occupies a reserved bottom row and shows
+  nine dots. Between 761px and 1040px its column narrows and its fade increases.
+- The 14px grid begins at inline-start (right in Arabic). CSS `round()` snaps
+  dot centers to its 7px-offset nodes as the field resizes. Logical dot
+  positions and mirrored physical mask gradients preserve RTL alignment.
+- Keep `aria-hidden` and `data-motion-scope`. The existing observer pauses
+  offscreen animations; never put the field inside `content-visibility: auto`.
+- Reduced motion removes animations and transitions, leaving a fixed subset
+  lit. Forced colors hides the field while retaining its reserved space.
+- Related links use the existing `fx-card-gradient` frame and pointer tilt,
+  without redundant `fx-glow` markup. Icon fills cross-fade through opacity;
+  arrow motion mirrors in RTL. Reduced motion leaves the cards still.
 
 ## Collaboration map
 

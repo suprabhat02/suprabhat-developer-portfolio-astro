@@ -16,6 +16,83 @@ FCP. Until a dedicated performance change makes every run score 100, the gate
 can fail on `main` itself, and no change to the built site is merged under the
 strict requirement while it fails.
 
+## Page outro refresh (2026-11-17 UTC)
+
+**Status: BLOCKED for merge. Main passed 2/54 strict audits; the feature
+passed 33/54.** The remaining 21 feature runs failed Performance. Accessibility,
+Best Practices and SEO scored 100 in all 108 baseline and feature runs.
+This is not an exception to the strict gate.
+
+Baseline: `cf0338e00a9741123653456ae1a955fa06fa760e`.
+Branch: `feat/page-outro-refresh`. Both builds used Node 22.23.4 and the same
+machine, preview port 4323, nine paths, three runs, mobile and desktop.
+Audits ran sequentially without concurrent tests, builds or screenshot browsers.
+Machine-wide idleness cannot be guaranteed in a shared environment.
+No failed Lighthouse run was repeated or discarded; no averages were used.
+
+Performance scores, in run order:
+
+| Path            | Profile | Main runs 1/2/3 | Feature runs 1/2/3 |
+| --------------- | ------- | --------------- | ------------------ |
+| `/`             | Mobile  | 84/99/99        | 99/96/96           |
+| `/`             | Desktop | 96/96/95        | 94/94/94           |
+| `/es/`          | Mobile  | 99/99/100       | 97/100/100         |
+| `/es/`          | Desktop | 98/98/99        | 100/100/100        |
+| `/ar/`          | Mobile  | 99/96/96        | 99/98/99           |
+| `/ar/`          | Desktop | 98/96/97        | 100/100/99         |
+| `/about/`       | Mobile  | 99/96/98        | 100/99/99          |
+| `/about/`       | Desktop | 99/97/97        | 100/100/100        |
+| `/es/about/`    | Mobile  | 98/98/98        | 99/99/99           |
+| `/es/about/`    | Desktop | 99/99/99        | 100/100/100        |
+| `/ar/about/`    | Mobile  | 98/99/98        | 100/99/99          |
+| `/ar/about/`    | Desktop | 99/97/99        | 100/100/100        |
+| `/services/`    | Mobile  | 99/98/100       | 100/100/100        |
+| `/services/`    | Desktop | 99/99/98        | 100/100/100        |
+| `/ar/services/` | Mobile  | 98/97/98        | 99/99/99           |
+| `/ar/services/` | Desktop | 98/99/99        | 100/100/100        |
+| `/blog/`        | Mobile  | 98/99/97        | 100/100/100        |
+| `/blog/`        | Desktop | 99/97/98        | 100/100/100        |
+
+All changed-path Performance scores were at least their corresponding baseline
+scores, but that does **not** establish zero metric regression. Pairing by path,
+profile and run number shows 10 FCP increases (largest +65.72 ms), 13 LCP
+increases (largest +120.97 ms), and nine TBT increases (largest +95.81 ms).
+No changed-path CLS or Speed Index increased. Measurement variability prevents
+assigning these differences to the outro; it does not justify declaring the
+no-regression requirement met. The three homepage HTML hashes are identical
+to baseline; their pre-existing performance issues were not changed here.
+
+Raw reports and the full 108-row FCP/LCP/TBT/CLS/Speed Index comparison are
+retained in the session workspace:
+`lighthouse-baseline/2026-11-17T17-11-35-380Z/`,
+`lighthouse-branch/2026-11-17T18-21-05-151Z/`,
+`lighthouse-all-runs.csv`, and `lighthouse-metric-deltas.json`.
+
+Build (123 pages, zero diagnostics), lint and formatting passed. All 88 new
+outro test executions passed. The final full suite reported 236 passed,
+three skipped and one timeout in the unchanged homepage approach timeline
+test. That test passed alone in 23.6 seconds, but the full-suite gate is not
+green. Its timeout and unrelated homepage code were not modified.
+
+Screenshot review covered all six requested widths, English/Arabic and both
+themes, plus reduced motion, focused cards, focused CTA links and enlarged
+grid-node crops: 44 images under `screenshots/` in the session workspace.
+The reduced-motion checks also caught and fixed inherited 0.01 ms color
+transitions inside the new cards; focus is checked immediately, without waiting
+for those transitions to finish.
+
+HTML gzip bytes (Node's default gzip level, identical settings before/after):
+
+| Page         | Before |  After | Growth |
+| ------------ | -----: | -----: | -----: |
+| `/about/`    | 10,627 | 10,936 |   +309 |
+| `/es/about/` | 10,948 | 11,251 |   +303 |
+| `/ar/about/` |  9,147 |  9,467 |   +320 |
+
+Homepage gzip sizes remain unchanged: en 49,913 B, es 49,350 B, ar 47,196 B.
+The existing installed dependencies were retained rather than reinstalled with
+`npm ci`; the task-local pinned Node installation did not change system Node.
+
 ## Visual scene redesign (2026-11-17 UTC)
 
 **Status (superseded by the gate policy above): passed the owner's then-revised
