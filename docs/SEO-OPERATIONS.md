@@ -31,7 +31,7 @@ npm run audit:lighthouse -- --paths /services/,/tools/,/work/performance-moderni
 
 Homepage measurements do not certify every route. The generated-page SEO tests separately inventory the entire build and check indexed-page metadata, canonical/sitemap consistency, reciprocal language links, internal destinations and fragments, image alternatives, parseable structured data, and internal incoming links. Intentional `noindex,follow` pages, including tag archives and duplicate skills content, are not indexing failures.
 
-A local all-100 result is a release gate, not a promise of identical scores on every device or hosting environment. After an authorized deployment, repeat against the production origin and use Search Console field data when available. Do not merge or deploy under the strict requirement while the local gate is failing. No deployment workflow or branch protection is changed by this local command.
+A local all-100 result is a release gate, not a promise of identical scores on every device or hosting environment. After an authorized deployment, repeat against the production origin and use Search Console field data when available. Do not merge or deploy under the strict requirement while the local gate is failing. Changes that leave the built site unchanged, such as documentation or tests, are not blocked by a failure that already exists on `main`. No deployment workflow or branch protection is changed by this local command.
 
 ## Search-intent priorities
 

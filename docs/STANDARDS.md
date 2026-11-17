@@ -156,14 +156,16 @@ Details and measured pitfalls:
 - Report homepage HTML size (gzip) for `/`, `/es/`, `/ar/` before and after any
   change to shared markup. Growth above 8 KB gzip per page needs a written reason;
   prefer deleting dead code to offset it.
-- **Lighthouse gate:** `npm run audit:lighthouse` against `npm run preview` on an
-  idle machine, mobile and desktop, all three homepages, plus any changed template
-  route. Target: 100 in Performance, Accessibility, Best Practices and SEO in every
-  run. Accessibility, Best Practices and SEO below 100 always fail. A single
-  Performance 99 is acceptable only when the same audit of the unchanged `main`
-  baseline, run the same way on the same machine, reproduces it; record both runs
-  in [docs/LIGHTHOUSE-EVIDENCE.md](LIGHTHOUSE-EVIDENCE.md). Never average runs,
-  pick the best run, or disable motion for audits.
+- **Lighthouse gate:** the strict pre-release gate in
+  [docs/SEO-OPERATIONS.md](SEO-OPERATIONS.md#strict-pre-release-gate):
+  `npm run audit:lighthouse` against `npm run preview` on an idle machine, mobile
+  and desktop, three runs per profile, on all three homepages plus every changed
+  template route. Performance, Accessibility, Best Practices and SEO must each
+  score 100 in every run. There is no exception for a 99 in any category. Never
+  average runs, pick the best run, rerun until a pass appears, or disable motion
+  for audits. If the unchanged `main` baseline already fails a path, report the
+  failing metric with its numbers: it is fixed in its own task, and no change to
+  the built site is merged while the gate fails.
 
 ## 5. Accessibility
 

@@ -1,8 +1,25 @@
 # Lighthouse evidence
 
+## Gate policy (2026-11-17 UTC)
+
+The owner restored the strict requirement: Performance, Accessibility, Best
+Practices and SEO score 100 in every run, with no exception for a 99. The
+99–100 acceptance recorded for the visual scene redesign below applied to that
+change only and no longer applies. Its measurements stay as recorded.
+
+Open issue: the strict gate is not yet reliably green on the unchanged
+homepages. On 2026-11-17, two Arabic mobile runs of the build now on `main`
+scored 100 and 99 Performance; the miss came from Total Blocking Time (49 ms
+in the passing run, 101 ms in the failing one), with FCP, LCP, Speed Index and
+CLS all scoring 1.00. Earlier misses in this file came from Speed Index and
+FCP. Until a dedicated performance change makes every run score 100, the gate
+can fail on `main` itself, and no change to the built site is merged under the
+strict requirement while it fails.
+
 ## Visual scene redesign (2026-11-17 UTC)
 
-**Status: passes the owner's revised 99–100 requirement for this redesign.**
+**Status (superseded by the gate policy above): passed the owner's then-revised
+99–100 requirement for this redesign.**
 All eight final audits scored at least 99 Performance and 100 in the other
 three categories. The original, stricter all-100 gate still passes only
 6 of 8 runs; the two 99s below have not been hidden or relabeled as 100.
