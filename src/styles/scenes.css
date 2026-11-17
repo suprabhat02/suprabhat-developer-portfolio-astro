@@ -209,15 +209,6 @@
   stroke-dasharray: 4 6;
 }
 
-.lv-scene .lv-dim {
-  --lv-o: 0.45;
-  opacity: 0.45;
-}
-
-.lv-scene .lv-faint {
-  opacity: 0.22;
-}
-
 .lv-scene .tx {
   fill: var(--text);
   font-family: inherit;
@@ -375,9 +366,6 @@
 /* A bar drawn as a round-capped stroke, so its ends stay round while it
    fills (scaling a rounded rectangle would flatten them). `--bar` is its
    thickness. */
-.lv-scene .lv-bar {
-  stroke-width: var(--bar, 8);
-}
 
 /* A ring drawn on the control's own edge, for tightly packed controls. */
 .lv-scene .lv-focus--tight {
@@ -646,11 +634,6 @@
     0 10px 30px -18px var(--accent-glow);
 }
 
-.lv-scene .k-travel {
-  --lv-anim: lv-travel;
-  animation-timing-function: linear;
-}
-
 .lv-scene .k-tick {
   --lv-anim: lv-tick;
 }
@@ -692,10 +675,6 @@
   --lv-anim: lv-rise;
 }
 
-.lv-scene .k-mark {
-  --lv-anim: lv-mark;
-}
-
 .lv-scene .k-progress {
   --lv-anim: lv-progress;
 }
@@ -708,10 +687,7 @@
   --lv-anim: lv-sweep;
   animation-timing-function: ease-in-out;
 }
-.lv-scene .k-wave-out {
-  --lv-anim: lv-wave-out;
-  transform-origin: 0% 50%;
-}
+
 /* Typing: a cover shrinks off a line one character at a time, and the caret
    rides its leading edge. Both use the same steps, so they stay in step. */
 .lv-scene .k-reveal {
@@ -786,6 +762,19 @@
 }
 .ui-story .k-progress {
   --lv-anim: ui-progress;
+}
+.ui-story .k-speak {
+  --lv-anim: ui-speak;
+}
+@keyframes ui-speak {
+  0% {
+    opacity: 0;
+    transform: translateX(-3px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
 }
 .ui-story :is(.k-before, .k-after, .k-contrast, .k-focus-tour, .k-progress) {
   animation-timing-function: linear;
@@ -935,7 +924,7 @@
   --lv-dur: 3.2s;
   --lv-step: 140ms;
 }
-.lv-scene--components {
+.lv-scene--article {
   --lv-step: 200ms;
 }
 .lv-scene--race {
@@ -1007,28 +996,6 @@
 }
 
 /* ── Keyframes (0% is always the resting frame) ───────────────────── */
-
-@keyframes lv-travel {
-  0% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  75% {
-    transform: translateX(228px);
-    opacity: 1;
-  }
-  84% {
-    transform: translateX(228px);
-    opacity: 0;
-  }
-  85% {
-    transform: translateX(0);
-    opacity: 0;
-  }
-  97% {
-    opacity: 1;
-  }
-}
 
 @keyframes lv-tick {
   0% {
@@ -1202,23 +1169,6 @@
   }
 }
 
-@keyframes lv-mark {
-  0%,
-  100% {
-    stroke-dasharray: 1 2;
-    stroke-dashoffset: 0;
-  }
-  4%,
-  60% {
-    stroke-dasharray: 1 2;
-    stroke-dashoffset: 1;
-  }
-  76% {
-    stroke-dasharray: 1 2;
-    stroke-dashoffset: 0;
-  }
-}
-
 @keyframes lv-progress {
   0%,
   100% {
@@ -1236,21 +1186,6 @@
 }
 
 /* Sound waves leave the speaker one after another and fade as they go. */
-@keyframes lv-wave-out {
-  0%,
-  100% {
-    transform: none;
-    opacity: 0;
-  }
-  5% {
-    transform: none;
-    opacity: 0.9;
-  }
-  36% {
-    transform: translateX(10px) scale(1.25);
-    opacity: 0;
-  }
-}
 
 @keyframes lv-orbit {
   to {

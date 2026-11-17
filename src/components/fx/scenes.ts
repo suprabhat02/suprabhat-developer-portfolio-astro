@@ -38,11 +38,11 @@ export const sceneNames = [
   'orbit',
   /** Americas, Europe and India pins with the shared overlap window. */
   'zones',
-  /** Loose component chips wiring themselves into a page frame. */
-  'components',
-  /** A marker sprints down a track trailing speed streaks to a finish line. */
+  /** Neutral article layout: headline, text and illustration assemble. */
+  'article',
+  /** Relative response bars: a long blocked task versus responsive chunks. */
   'race',
-  /** A speaker's sound waves highlight each caption line as it is read. */
+  /** An icon-only button gains a label, then a speech bubble reads it aloud. */
   'voice',
   /** Three vitals rings fill to green one after another. */
   'vitals',
@@ -73,3 +73,11 @@ export const sceneNames = [
 ] as const;
 
 export type SceneName = (typeof sceneNames)[number];
+
+const articleScenes = new Map<string, SceneName>([
+  ['react-inp-benchmark', 'race'],
+  ['accessibility-in-react-what-developers-skip', 'voice'],
+]);
+
+export const getArticleScene = (slug: string): SceneName =>
+  articleScenes.get(slug) ?? 'article';
