@@ -5,48 +5,49 @@ files. They render the same animated `LiveScene` SVG engine used everywhere
 else on the homepage (services, engagements, approach, collaboration — see
 `docs/MOTION.md`).
 
-Each scene is a hand-authored SVG defined in `src/components/fx/LiveScene.astro`
+Each scene is a hand-authored SVG mounted by `src/components/fx/LiveScene.astro`
 and registered by name in `src/components/fx/scenes.ts`. Colors come only
 from design tokens (`src/styles/tokens.css` via the `--sc-*` vars in
 `src/styles/scenes.css`), so a scene automatically follows light/dark theme
 and any palette change — nothing is a baked-in color or a downloaded asset.
 
-| Section           | Card                           | Scene        |
-| ----------------- | ------------------------------ | ------------ |
-| Featured articles | Performance article            | `perf`       |
-| Featured articles | Accessibility article          | `a11y`       |
-| Featured articles | UI engineering article         | `components` |
-| About me          | Performance-first              | `perf`       |
-| About me          | Accessibility by default       | `a11y`       |
-| About me          | Scalable architecture          | `stack`      |
-| About me          | Full-stack capable             | `orbit`      |
-| Core expertise    | Front-end engineering          | `components` |
-| Core expertise    | Back-end and API integration   | `server`     |
-| Core expertise    | Design systems and performance | `tokens`     |
+| Section           | Card                                          | Scene     |
+| ----------------- | --------------------------------------------- | --------- |
+| Featured articles | `react-inp-benchmark`                         | `race`    |
+| Featured articles | `accessibility-in-react-what-developers-skip` | `voice`   |
+| Featured articles | Every other post slug                         | `article` |
+| About me          | Performance-first                             | `vitals`  |
+| About me          | Accessibility by default                      | `keys`    |
+| About me          | Scalable architecture                         | `branch`  |
+| About me          | Full-stack capable                            | `bridge`  |
+| Core expertise    | Front-end engineering                         | `layout`  |
+| Core expertise    | Back-end and API integration                  | `flow`    |
+| Core expertise    | Design systems and performance                | `system`  |
 
-Reusing a scene across two topically-related cards (e.g. `perf` for both the
-performance article and the "Performance-first" trait) is intentional —
-same icon language for the same concept, zero extra weight, nothing to keep
-in sync between a Figma file and the code.
+The five redesigned sections live in `src/components/fx/scenes/`. Their
+visual-only stories use no code and almost no words. See
+[Motion: visual stories](MOTION.md#visual-stories-outside-the-stack) for the
+complete scene inventory and animation rules. The `perf` loading filmstrip
+is also used by the small hero work-proof card. Writing uses
+`getArticleScene(post.id)`, never the post's position in the featured list.
 
 ## Adding a new scene
 
 1. Add the name to `sceneNames` in `src/components/fx/scenes.ts` with a
    one-line JSDoc description of the story it tells.
-2. Add a `scene === 'your-name' && (...)` block to `LiveScene.astro`. Reuse
-   the existing paint classes (`.ln`, `.t`, `.fa`/`.fb`/`.fok`/`.ftx`,
-   `.sa`/`.sb`/`.ok`) and animation triggers (`k k-draw`, `k k-rise`,
-   `k k-pop`, `k k-packet`, `k k-tick`, etc. — see `scenes.css`) before
-   inventing a new keyframe.
-3. If the story needs a new keyframe, add it under "Animation engine" in
-   `scenes.css`, with its `0%` frame matching the element's resting state
-   (scenes must look complete and static until engaged).
+2. Add a `scene === 'your-name' && (...)` block to the relevant scene
+   component. Reuse `Surface`, `ui-*` paint and existing motion primitives
+   before introducing a keyframe.
+3. Keep the unanimated CSS in the finished state. A `.ui-story` starts its
+   ordered replay only on engagement and resets all beats together. Check
+   start, intermediate and end frames, plus the reduced-motion result.
 4. Reference the scene from content with `<LiveScene scene="your-name" />`
    inside a card carrying the `fx-live fx-card-gradient` classes (plus
    `fx-glow`/`data-glow`). Wrap layers in `<g class="lv-l" style="--d:…">`
    to give them parallax depth.
 
-The collaboration bento combines the `chat`, `milestones` and `merge` scenes
+The collaboration bento combines the `chat`, `milestones` and `merge`
+(package handover, not a version-control merge) scenes
 with `WorldMap.astro`: a build-time dotted map, the existing portrait and
 verified international team connections. The grid uses unequal column spans
 on desktop, two columns on tablets and a single column on phones. All three

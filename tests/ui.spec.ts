@@ -1,5 +1,184 @@
 import { expect, test } from '@playwright/test';
 import { axe, scrollToVisible } from './helpers';
+import { getArticleScene } from '../src/components/fx/scenes';
+
+test('article artwork follows its slug even when posts are reordered or unknown', async ({
+  page,
+}) => {
+  const slugs = [
+    'future-article',
+    'accessibility-in-react-what-developers-skip',
+    'react-inp-benchmark',
+  ];
+  expect(slugs.map(getArticleScene)).toEqual(['article', 'voice', 'race']);
+  expect(slugs.toReversed().map(getArticleScene)).toEqual([
+    'race',
+    'voice',
+    'article',
+  ]);
+  for (const prefix of ['', '/es', '/ar']) {
+    await page.goto(`${prefix}/`);
+    const cards = page.locator('#blog .article-card');
+    await expect(cards).toHaveCount(3);
+    for (const card of await cards.all()) {
+      const href = await card.locator('.read-link').getAttribute('href');
+      const slug = href?.split('/').filter(Boolean).at(-1);
+      expect(slug).toBeTruthy();
+      const expected =
+        slug === 'react-inp-benchmark'
+          ? 'race'
+          : slug === 'accessibility-in-react-what-developers-skip'
+            ? 'voice'
+            : 'article';
+      await expect(card.locator('.lv-scene')).toHaveClass(
+        new RegExp(`\\blv-scene--${expected}\\b`),
+      );
+    }
+  }
+});
+
+test('visual stories stay word-light and show complete reduced-motion results in every locale', async ({
+  page,
+}) => {
+  test.slow();
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const sections = '#expertise, #approach, #engagements, #collaboration, #blog';
+  for (const prefix of ['', '/es', '/ar']) {
+    await page.goto(`${prefix}/`);
+    const scenes = page.locator(sections).locator('.lv-scene');
+    await expect(scenes).toHaveCount(prefix ? 16 : 20);
+    await expect(scenes.locator('.ty-kw, .ty-type')).toHaveCount(0);
+    const results = await scenes.evaluateAll((elements) =>
+      elements.map((scene) => ({
+        hidden: scene.getAttribute('aria-hidden'),
+        words: Array.from(scene.querySelectorAll('text')).map(
+          (text) => text.textContent?.trim() ?? '',
+        ),
+        animations: scene.getAnimations({ subtree: true }).length,
+        missingPaint: Array.from(
+          scene.querySelectorAll(
+            '.ok, .ui-warning, .ui-danger, .ui-warn-stroke',
+          ),
+        ).filter((node) => getComputedStyle(node).stroke === 'none').length,
+        incomplete: Array.from(
+          scene.querySelectorAll(
+            '.ui-story .k-rise, .ui-story .k-after, .ui-story .k-tick, .ui-story .k-progress',
+          ),
+        ).filter(
+          (node) =>
+            getComputedStyle(node).opacity !== '1' ||
+            parseFloat(getComputedStyle(node).strokeDashoffset) !== 0,
+        ).length,
+        packets: Array.from(scene.querySelectorAll('.k-hop')).map((node) =>
+          parseFloat(getComputedStyle(node).strokeDashoffset),
+        ),
+      })),
+    );
+    for (const scene of results) {
+      expect(scene.hidden).toBe('true');
+      expect(scene.words.length).toBeLessThanOrEqual(3);
+      expect(scene.words.join('')).toMatch(/^[0-9?Aa]*$/);
+      expect(scene.animations).toBe(0);
+      expect(scene.missingPaint).toBe(0);
+      expect(scene.incomplete).toBe(0);
+      for (const offset of scene.packets) expect(offset).toBeLessThan(-1);
+    }
+    for (const scene of ['clarify', 'blueprint', 'quality']) {
+      await expect(page.locator(`#approach .lv-scene--${scene}`)).toHaveCount(
+        1,
+      );
+    }
+    await expect(
+      page.locator('.hero-proof-card--work .lv-scene--perf'),
+    ).toHaveCount(1);
+    expect(await page.locator('html').getAttribute('dir')).toBe(
+      prefix === '/ar' ? 'rtl' : 'ltr',
+    );
+  }
+});
+
+test('visual story replays share a clock and animate only transforms, opacity and dashes', async ({
+  page,
+  isMobile,
+}) => {
+  test.slow();
+  await page.goto('/');
+  const cards = page.locator(
+    '#expertise .fx-live, #approach .fx-live, #engagements .fx-live, #collaboration .fx-live, #blog .fx-live',
+  );
+  for (const card of await cards.all()) {
+    await page.mouse.move(-10, -10);
+    await scrollToVisible(card);
+    const scene = card.locator('.lv-scene');
+    const synchronized = await scene.locator('.ui-story').count();
+    if (isMobile) await card.locator('h3').tap();
+    else await card.hover();
+    await expect
+      .poll(() =>
+        scene.evaluate(
+          (el) =>
+            el
+              .getAnimations({ subtree: true })
+              .filter(
+                (a) =>
+                  a.effect instanceof KeyframeEffect &&
+                  a.effect.target instanceof Element &&
+                  a.effect.target.classList.contains('k'),
+              ).length,
+        ),
+      )
+      .toBeGreaterThan(0);
+    const tracks = await scene.evaluate((el) =>
+      el
+        .getAnimations({ subtree: true })
+        .filter(
+          (a) =>
+            a.effect instanceof KeyframeEffect &&
+            a.effect.target instanceof Element &&
+            a.effect.target.classList.contains('k'),
+        )
+        .map((a) => {
+          const effect = a.effect as KeyframeEffect;
+          const timing = effect.getTiming();
+          return {
+            delay: timing.delay,
+            duration: timing.duration,
+            keys: effect.getKeyframes().flatMap((frame) => Object.keys(frame)),
+          };
+        }),
+    );
+    expect(new Set(tracks.map((track) => track.duration)).size).toBe(1);
+    for (const track of tracks) {
+      if (synchronized) expect(track.delay).toBe(0);
+      expect(
+        track.keys.filter(
+          (key) =>
+            ![
+              'offset',
+              'computedOffset',
+              'easing',
+              'composite',
+              'opacity',
+              'transform',
+              'strokeDashoffset',
+              'strokeDasharray',
+            ].includes(key),
+        ),
+      ).toEqual([]);
+    }
+    if (isMobile) await card.locator('h3').tap();
+  }
+  // Keyboard activation follows the same gate without adding decorative tab stops.
+  await page.locator('#blog .read-link').first().focus();
+  await expect
+    .poll(() =>
+      page
+        .locator('#blog .lv-scene')
+        .first()
+        .evaluate((el) => el.getAnimations({ subtree: true }).length),
+    )
+    .toBeGreaterThan(0);
+});
 
 test('the stack keeps local logos and readable reduced-motion content in every locale', async ({
   page,
@@ -577,8 +756,7 @@ test('living cards render decorative scenes with depth and stay static at rest',
       sceneHidden: 'true',
     });
   }
-  // Nothing animates on a clock until a card is engaged (touch screens tie
-  // the scenes to scrolling instead, which is not time-based).
+  // Nothing animates until a card is hovered, focused or tapped.
   const running = await page.evaluate(
     () =>
       document

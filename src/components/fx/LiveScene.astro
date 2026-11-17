@@ -3,11 +3,10 @@
  * Animated SVG mini-scene for "living" cards (see `.fx-live` in
  * src/styles/scenes.css).
  *
- * - Purely decorative: hidden from assistive technology, no text content
- *   beyond universal figures (a score, "AA").
+ * - Purely decorative and hidden from assistive technology.
  * - At rest every scene shows its finished state. Hovering or focusing the
- *   card plays the scene's story on a loop; on touch screens the story is
- *   tied to scrolling instead. Nothing animates while idle, and everything
+ *   card plays the scene's story on a loop; touch screens use tap-to-toggle,
+ *   never scrolling. Nothing animates while idle, and everything
  *   is static under `prefers-reduced-motion: reduce`.
  * - Layers marked `.lv-l` drift with the pointer (`--px/--py`, written by
  *   the parallax handler in motion.ts) at their own depth `--d`.

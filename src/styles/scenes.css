@@ -13,10 +13,10 @@
  *      their own depth `--d`, with fine-pointer card perspective and lift.
  *
  * Choreography rules:
- *   - Keyframe 0% matches the resting styles, so scenes look complete at
- *     rest and nothing animates until a card is engaged.
- *   - Sequences stagger with `--i * --lv-step`; every element in a scene
- *     shares one period, so phase offsets stay in sync on every loop.
+ *   - Resting styles show the finished scene; no animation attaches until
+ *     engagement. Visual stories then replay from their start state.
+ *   - Legacy scenes stagger with `--i * --lv-step`. Visual stories use
+ *     `--i` inside a linear easing function, resetting all beats together.
  *   - Colors come only from theme tokens, so scenes follow light/dark and
  *     any palette change in tokens.css.
  */
@@ -138,7 +138,7 @@
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
-  /* Scenes read left to right in every locale: code is never mirrored. */
+  /* Decorative diagrams keep their internal direction in every locale. */
   direction: ltr;
 }
 
@@ -330,8 +330,6 @@
   fill: rgb(var(--highlight) / 0.55);
 }
 
-/* Contact shadow on the floor under a floating object. */
-
 /* ── Scene-specific statics ───────────────────────────────────────── */
 
 .lv-scene .lv-ring {
@@ -363,10 +361,6 @@
   filter: drop-shadow(0 0 5px var(--sc-b-soft));
 }
 
-/* A bar drawn as a round-capped stroke, so its ends stay round while it
-   fills (scaling a rounded rectangle would flatten them). `--bar` is its
-   thickness. */
-
 /* A ring drawn on the control's own edge, for tightly packed controls. */
 .lv-scene .lv-focus--tight {
   stroke-width: 2;
@@ -388,8 +382,6 @@
   stroke: var(--bg);
   stroke-width: 2;
 }
-
-/* Resting geometry for elements whose story starts "before" completion. */
 
 /* ── Product-interface paint (Surface.astro, Type.astro) ──────────── */
 /* Flat software surfaces: one-pixel hairlines that stay one pixel at any
@@ -482,6 +474,9 @@
   stroke-dasharray: 100 120;
   stroke-dashoffset: 0;
   --lv-anim: lv-gauge;
+}
+:is(.lv-scene--flow, .lv-scene--system) .k-hop {
+  stroke-dashoffset: -1.12;
 }
 
 .lv-scene .ui-as,
@@ -995,7 +990,7 @@
   --lv-step: 240ms;
 }
 
-/* ── Keyframes (0% is always the resting frame) ───────────────────── */
+/* ── Legacy keyframes (0% matches the resting frame) ──────────────── */
 
 @keyframes lv-tick {
   0% {
@@ -1285,11 +1280,9 @@
   62%,
   100% {
     stroke-dashoffset: 0;
-    stroke: var(--sc-ok);
   }
   6%,
   50% {
     stroke-dashoffset: 58;
-    stroke: var(--warning);
   }
 }

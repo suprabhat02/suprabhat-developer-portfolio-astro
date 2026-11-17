@@ -24,6 +24,7 @@ src/components/fx/
   LiveScene.astro            animated SVG mini-scenes for living cards
   SceneDefs.astro            shared lit gradients for every scene on a page
   Raised.astro               a scene object with a lit top face and a shaded lip
+  scenes/                    visual-only expertise, approach, service, collaboration and writing scenes
 ```
 
 ## Aceternity mapping
@@ -131,19 +132,19 @@ Scenes are drawn from a small paint vocabulary (`.t`, `.fa`, `.fb`, `.fok`,
   stylesheet against the stylesheet, not the page.
 - `Raised.astro` gives an object thickness: a shaded lip, an opaque backing and
   the lit face, in one group so it animates as a single body.
-- Corner radii come from one scale in `LiveScene.astro` (`R.frame` 12,
-  `R.panel` 10, `R.tile` 6, `R.chip` 4); pills use half their height. An
-  outline traced around a tile uses `roundedRectPath` with the tile's radius,
-  and a focus ring uses `ringAround`, so it follows the control's corners.
+- Legacy corner radii come from one scale in `LiveScene.astro` (`R.frame`
+  12, `R.panel` 10, `R.tile` 6, `R.chip` 4); pills use half their height.
+  Flat product scenes use `Surface.astro` with small radii. Draw outlines
+  and focus rings to follow the control's own geometry.
 - An outline, ring or connector sits in the same `.lv-l` layer as the shape it
   belongs to; in different layers the two drift apart under parallax.
 - A translucent node that a line passes behind needs a `.lv-base` circle under
   it, or the line shows through.
-- A bar that fills is a round-capped `<line class="lv-bar">` animated with
-  `stroke-dashoffset` (`k-mark`, `k-fill`, `k-progress`). Scaling a rounded
+- A bar that fills is a round-capped `<line class="ui-bar">` animated with
+  `stroke-dashoffset` (`k-progress`). Scaling a rounded
   rectangle flattens its ends.
-- `.lv-glow-a|b|ok` pools light behind a focal object, `.lv-spec` is a glint on
-  a sphere, `.lv-shadow` is a contact shadow. All are static shapes.
+- `.lv-glow-a|b` pools light behind a focal object and `.lv-spec` is a glint
+  on a sphere. These legacy materials remain static.
 - No SVG `filter` is used for depth. Gradients are painted once; a filter would
   be re-rasterised on every animated frame.
 - Stop colours are tokens mixed in `oklab`. Mixing in `oklch` swings the hue on
@@ -182,13 +183,13 @@ a logo in `tools.ts` would no longer be shown.
 `editor`, `store`, `responsive`, `query`, `handoff` and `review` are drawn as
 small pieces of real software rather than as illustrations. They live in
 `src/components/fx/ProductScenes.astro` and are rendered by `LiveScene` like
-every other scene, so hover, focus, touch scrolling and reduced motion behave
+every other scene, so hover, focus, touch tapping and reduced motion behave
 the same.
 
 - **Surfaces** are `Surface.astro`: a one-pixel hairline that stays one pixel
   at any scale (`vector-effect: non-scaling-stroke`), a radius of 6 or less, a
   lit top edge and an optional title-bar rule. No lips, no drop shadows.
-- **Text** is `Type.astro`, in the site's own monospace face, coloured token
+- **Stack text** is `Type.astro`, in the site's own monospace face, coloured token
   by token (`kw`, `type`, `ok`, `dim`, `hi`, `on`). Only code, identifiers and
   numbers appear, so no locale needs its own version, and scenes are
   `aria-hidden`. Scenes are always laid out left to right, also in Arabic.
@@ -207,6 +208,72 @@ the same.
   register the name in `scenes.ts`, set its pace with `--lv-dur` and
   `--lv-step` in `scenes.css`, then check it frame by frame by pausing its
   animations at several times.
+
+### Visual stories outside the stack
+
+Core expertise, Engineering approach, Services, Remote collaboration and
+Writing use diagrams or simplified product UI, not code. Their components
+are in `src/components/fx/scenes/` and are mounted by `LiveScene`. They reuse
+the flat `Surface` and `ui-*` paint vocabulary; no runtime or dependency is
+added. The existing card dimensions and layouts stay unchanged.
+
+- No keywords, code syntax, filenames, URLs, terminal output or `kw`/`type`
+  token tones. These scenes use icons, shapes and universal symbols instead
+  of untranslated prose, with at most three short labels.
+- Neutral token greys, small radii and hairlines; accent highlights the
+  story. Green, amber and red mean success, risk and failure respectively.
+- Resting CSS is the complete, meaningful result. Hover, focus within a
+  card, or touch tapping replays the story. Touch scrolling never starts it;
+  links retain their normal behavior. Reduced motion disables animation and
+  parallax without hiding the result.
+- `.ui-story` sequences synchronize every beat on one looping timeline.
+  `--i` selects the start inside a `linear()` easing function rather than
+  delaying separate loops, so every replay resets together. `ui-arrive`,
+  `ui-trace` and `ui-gather` move from the start state to the result, then
+  hold. Expertise retains its approved choreography.
+- New animations change only transforms, opacity or stroke dashes. SVG dash
+  drawing is not claimed to be compositor-only; colors and geometry are
+  static. Semantic color changes cross-fade pre-painted shapes.
+- Animated connectors use `ui-wire`, not the non-scaling `ui-ln`: normalized
+  `pathLength` dashes must scale with their paths. Packets rest beyond the
+  path to avoid round-cap dots in idle and reduced-motion frames.
+
+| Section       | Scene        | Form and story                                                                  |
+| ------------- | ------------ | ------------------------------------------------------------------------------- |
+| Expertise     | `layout`     | UI: header, sidebar, tiles and rows assemble                                    |
+| Expertise     | `flow`       | Diagram: locked browser request, server, database, returning rows               |
+| Expertise     | `system`     | Diagram: palette and spacing become matching controls and a green gauge         |
+| Approach      | `clarify`    | Diagram: question cards converge on a checked goal                              |
+| Approach      | `blueprint`  | Diagram: connectors build a layered system                                      |
+| Approach      | `quality`    | UI: four checks complete before a shield                                        |
+| Services      | `pipeline`   | Diagram: plan, build and launch milestones                                      |
+| Services      | `perf`       | UI: loading filmstrip from slow to fast; also used in the small hero proof card |
+| Services      | `graph`      | Diagram: tangled connections settle into layers                                 |
+| Services      | `advisory`   | Diagram: out-of-order replies; stale ones fade, newest reaches the screen       |
+| Services      | `chart`      | UI: applied filter, KPI tiles and line chart                                    |
+| Services      | `tokens`     | UI: consistent button sizes and states                                          |
+| Services      | `a11y`       | UI: readable contrast, traveling focus and accessibility approval               |
+| Services      | `browser`    | UI: a page assembles top to bottom                                              |
+| Collaboration | `chat`       | Diagram: two time zones, offline messaging and a pinned decision                |
+| Collaboration | `milestones` | Diagram: roadmap flags fill and an amber risk resolves                          |
+| Collaboration | `merge`      | Diagram: documents and a key pass from a person to a team                       |
+| Writing       | `race`       | Diagram: relative response bars compare a blocked task with responsive chunks   |
+| Writing       | `voice`      | UI: a button gains a label and is read aloud                                    |
+| Writing       | `article`    | UI: a neutral article layout draws in                                           |
+
+`getArticleScene(post.id)` in `src/components/fx/scenes.ts` binds
+`react-inp-benchmark` to `race` and
+`accessibility-in-react-what-developers-skip` to `voice`. Every other slug
+gets `article`, regardless of publication date or list position. The same
+mapping applies in English, Spanish and Arabic.
+
+Service content is unchanged: Spanish and Arabic currently have four cards,
+not the English eight. Architecture review, design system engineering,
+accessibility audit and website design/development lack distinct localized
+cards. Their existing dashboard/audit/advisory copy describes fractional
+product engineering, a general technical audit and scheduled advisory,
+respectively, rather than the narrower English services. These content
+gaps require confirmed translations, not invented replacements.
 
 ## Problems bento
 
