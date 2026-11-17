@@ -28,11 +28,11 @@ export const sceneNames = [
   'blueprint',
   /** Four quality checks tick green one by one, ending in a verified shield. */
   'quality',
-  /** Async conversation with a typing indicator. */
+  /** Two people in different time zones exchange messages and pin a decision. */
   'chat',
-  /** Delivery track reaching each milestone, flag at the finish. */
+  /** Roadmap flags fill in and an amber risk resolves. */
   'milestones',
-  /** Feature branch committing and merging back into main. */
+  /** Documents and a key pass from one person to a team with item checks. */
   'merge',
   /** Orbits around a core: the React + TypeScript stack. */
   'orbit',

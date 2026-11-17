@@ -1,0 +1,156 @@
+---
+import type { SceneName } from '../scenes';
+import Surface from '../Surface.astro';
+interface Props {
+  scene: SceneName;
+}
+const { scene } = Astro.props;
+---
+
+{
+  scene === 'chat' && (
+    <g class="ui-story lv-l" style="--d:.7">
+      {[38, 282].map((x, i) => (
+        <g>
+          <circle class="ui" cx={x} cy="54" r="22" />
+          <circle class="ui-m2" cx={x} cy="49" r="6" />
+          <path class="sb ui-s" d={`M${x - 11} 65v-2a11 8 0 0 1 22 0v2`} />
+          <circle class="ui" cx={x} cy="14" r="10" />
+          <path class="sb ui-s" d={`M${x} 7v7l${i ? '-5 3' : '5 0'}`} />
+          {i === 0 ? (
+            <circle class="ui-ok" cx={x + 17} cy="70" r="3" />
+          ) : (
+            <path class="sb ui-s" d="M296 66a6 6 0 1 0 7 7 5 5 0 0 1-7-7z" />
+          )}
+        </g>
+      ))}
+      <path class="ui-wire" d="M66 44H252m-5-4 5 4-5 4M252 64H66m5-4-5 4 5 4" />
+      <path
+        class="sa lv-packet ui-pk k k-hop"
+        style="--i:1"
+        d="M66 44H252"
+        pathLength="1"
+      />
+      <path
+        class="sa lv-packet ui-pk k k-hop"
+        style="--i:4"
+        d="M252 64H66"
+        pathLength="1"
+      />
+      <g class="k k-rise" style="--i:7">
+        <Surface x={110} y={82} w={100} h={34} rx={4}>
+          <path class="sa ui-s" d="M123 89h10l-2 7 3 3h-12l3-3z m5 10v7" />
+          <path class="ui-ln" d="M143 94h54m-54 9h36" />
+          <path
+            class="ok ui-s k k-tick"
+            style="--i:9"
+            d="M187 106l3 3 6-6"
+            pathLength="1"
+          />
+        </Surface>
+      </g>
+    </g>
+  )
+}
+
+{
+  scene === 'milestones' && (
+    <g class="ui-story lv-l" style="--d:.7">
+      <path
+        class="ui-track ui-bar"
+        style="--bar:3"
+        d="M40 90H120V70H208V90H280"
+      />
+      <path
+        class="sa ui-bar k k-progress"
+        style="--bar:3"
+        d="M40 90H120V70H208V90H280"
+        pathLength="1"
+      />
+      {(
+        [
+          [48, 90],
+          [160, 70],
+          [272, 90],
+        ] as const
+      ).map(([x, y], i) => (
+        <g>
+          <circle class="ui" cx={x} cy={y} r="7" />
+          <path class="ui-wire" d={`M${x} ${y - 7}v-44`} />
+          <path class="ui" d={`M${x} ${y - 51}h30l-7 11 7 11h-30z`} />
+          {i === 1 && (
+            <g class="k k-before">
+              <path
+                class="ui-warning"
+                d={`M${x} ${y - 51}h30l-7 11 7 11h-30z`}
+              />
+              <path
+                class="ui-warn-stroke ui-s"
+                d={`M${x + 12} ${y - 47}v8m0 4v1`}
+              />
+            </g>
+          )}
+          <g class="k k-rise" style={`--i:${i * 3 + 2}`}>
+            <path class="ui-merged" d={`M${x} ${y - 51}h30l-7 11 7 11h-30z`} />
+            <path class="ok ui-s" d={`M${x + 6} ${y - 40}l4 4 8-8`} />
+            <circle class="ui-ok" cx={x} cy={y} r="3" />
+          </g>
+        </g>
+      ))}
+    </g>
+  )
+}
+
+{
+  scene === 'merge' && (
+    <g class="ui-story lv-l" style="--d:.7">
+      <circle class="ui" cx="34" cy="58" r="21" />
+      <circle class="ui-m2" cx="34" cy="51" r="6" />
+      <path class="sb ui-s" d="M23 70v-4a11 8 0 0 1 22 0v4" />
+      <path class="ui-wire" d="M62 65H244m-6-5 6 5-6 5" />
+      <g class="k k-gather" style="--gx:-40px;--gy:0px">
+        <Surface x={112} y={59} w={94} h={48} rx={4}>
+          <path class="ui-ln" d="M112 72h94m-47 0v35" />
+          <path class="ui-ln" d="M112 59l15-12h64l15 12" />
+        </Surface>
+        {[126, 151].map((x, i) => (
+          <g class="k k-rise" style={`--i:${i + 1}`}>
+            <Surface x={x} y={19 + i * 7} w={20} h={30} rx={2}>
+              <path
+                class="ui-ln"
+                d={`M${x + 4} ${28 + i * 7}h12m-12 6h12m-12 6h8`}
+              />
+            </Surface>
+          </g>
+        ))}
+        <g class="k k-rise" style="--i:3">
+          <circle class="sa ui-s" cx="191" cy="28" r="6" />
+          <path class="sa ui-s" d="M191 34v16m0-4h5m-5-5h5" />
+        </g>
+        {[127, 159, 191].map((x, i) => (
+          <path
+            class="ok ui-s k k-tick"
+            style={`--i:${i + 5}`}
+            d={`M${x - 4} 87l3 3 6-6`}
+            pathLength="1"
+          />
+        ))}
+      </g>
+      {[254, 284].map((x) => (
+        <g>
+          <circle class="ui-m2" cx={x} cy="46" r="6" />
+          <path class="sb ui-s" d={`M${x - 10} 65v-5a10 7 0 0 1 20 0v5`} />
+        </g>
+      ))}
+      <circle class="ui" cx="269" cy="71" r="19" />
+      <circle class="ui-m2" cx="269" cy="65" r="6" />
+      <path class="sb ui-s" d="M259 82v-5a10 7 0 0 1 20 0v5" />
+      <path
+        class="ok ui-s k k-tick"
+        style="--i:9"
+        d="M262 105l4 4 8-8"
+        pathLength="1"
+      />
+    </g>
+  )
+}
