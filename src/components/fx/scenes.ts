@@ -6,21 +6,21 @@
  * showing a visual that contradicts its copy.
  */
 export const sceneNames = [
-  /** Scope → build → test → ship pipeline filling up. */
+  /** Three-stage plan, build and launch timeline completing. */
   'pipeline',
-  /** Waterfall bars shrinking while a score ring climbs to 100. */
+  /** Loading filmstrip: an incomplete slow page becomes complete and fast. */
   'perf',
-  /** Architecture graph: edges redraw while a scanner flags a risky node. */
+  /** Tangled connections settle into a clean layered graph. */
   'graph',
-  /** Two time zones exchanging review packets along an arc. */
+  /** Out-of-order responses: stale arrivals fade, only the newest fills the screen. */
   'advisory',
-  /** Dashboard line chart drawing over growing bars. */
+  /** Dashboard filter applies, KPI tiles appear and a line chart draws. */
   'chart',
-  /** Design tokens flowing into a themed component. */
+  /** One button repeated consistently in a grid of sizes and states. */
   'tokens',
-  /** Keyboard focus hopping across controls, each passing its check. */
+  /** Contrast improves, focus traverses controls and an accessibility badge passes. */
   'a11y',
-  /** Browser window whose sections build in, with a clicking cursor. */
+  /** Browser page assembled from navigation through hero to content cards. */
   'browser',
   /** Scattered question cards converge into one clear goal card with a check. */
   'clarify',

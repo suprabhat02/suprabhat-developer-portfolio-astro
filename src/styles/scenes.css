@@ -218,10 +218,6 @@
   opacity: 0.22;
 }
 
-.lv-scene .lv-faint-stroke {
-  opacity: 0.4;
-}
-
 .lv-scene .tx {
   fill: var(--text);
   font-family: inherit;
@@ -344,15 +340,8 @@
 }
 
 /* Contact shadow on the floor under a floating object. */
-.lv-scene .lv-shadow {
-  fill: color-mix(in oklab, var(--shadow-ink) 55%, transparent);
-}
 
 /* ── Scene-specific statics ───────────────────────────────────────── */
-
-.lv-scene .lv-head {
-  filter: drop-shadow(0 0 6px var(--sc-b));
-}
 
 .lv-scene .lv-ring {
   stroke: var(--sc-ok);
@@ -369,28 +358,10 @@
   opacity: 0;
 }
 
-.lv-scene .lv-risk {
-  fill: color-mix(in oklch, var(--success) 18%, transparent);
-  stroke: var(--sc-ok);
-  stroke-width: 2;
-}
-
-.lv-scene .lv-beam {
-  fill: color-mix(in oklch, var(--sc-b) 14%, transparent);
-}
-
-.lv-scene .k-scan {
-  opacity: 0;
-}
-
 .lv-scene .lv-packet {
   stroke-width: 5;
   stroke-dasharray: 0.08 1.2;
   stroke-dashoffset: 0.08;
-}
-
-.lv-scene .lv-area {
-  fill: color-mix(in oklch, var(--accent) 16%, transparent);
 }
 
 .lv-scene .lv-focus {
@@ -399,12 +370,6 @@
   stroke-width: 2.5;
   opacity: 0;
   filter: drop-shadow(0 0 5px var(--sc-b-soft));
-}
-
-.lv-scene .lv-cursor {
-  fill: var(--text);
-  stroke: var(--bg);
-  stroke-width: 1.2;
 }
 
 /* A bar drawn as a round-capped stroke, so its ends stay round while it
@@ -443,9 +408,6 @@
 }
 
 /* Resting geometry for elements whose story starts "before" completion. */
-.lv-scene .k-shrink {
-  transform: scaleX(0.55);
-}
 
 /* ── Product-interface paint (Surface.astro, Type.astro) ──────────── */
 /* Flat software surfaces: one-pixel hairlines that stay one pixel at any
@@ -538,9 +500,6 @@
   stroke-dasharray: 100 120;
   stroke-dashoffset: 0;
   --lv-anim: lv-gauge;
-}
-.lv-scene .k-gather {
-  --lv-anim: lv-gather;
 }
 
 .lv-scene .ui-as,
@@ -693,18 +652,6 @@
     0 10px 30px -18px var(--accent-glow);
 }
 
-.lv-scene .k-shrink {
-  transform-origin: 0% 50%;
-}
-
-.lv-scene .k-grow {
-  transform-origin: 50% 100%;
-}
-
-.lv-scene .k-spin {
-  transform-origin: 50% 100%;
-}
-
 .lv-scene .k-wave {
   transform-origin: 0% 50%;
 }
@@ -713,18 +660,11 @@
   --lv-anim: lv-travel;
   animation-timing-function: linear;
 }
-.lv-scene .k-stage {
-  --lv-anim: lv-pulse;
-}
+
 .lv-scene .k-tick {
   --lv-anim: lv-tick;
 }
-.lv-scene .k-drop {
-  --lv-anim: lv-drop;
-}
-.lv-scene .k-shrink {
-  --lv-anim: lv-shrink;
-}
+
 .lv-scene .k-score {
   --lv-anim: lv-score;
 }
@@ -737,27 +677,12 @@
 .lv-scene .k-draw {
   --lv-anim: lv-draw;
 }
-.lv-scene .k-fix {
-  --lv-anim: lv-fix;
-}
-.lv-scene .k-scan {
-  --lv-anim: lv-scan;
-  animation-timing-function: linear;
-}
+
 .lv-scene .k-packet {
   --lv-anim: lv-packet;
   animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
 }
-.lv-scene .k-spin {
-  --lv-anim: lv-spin;
-  animation-timing-function: linear;
-}
-.lv-scene .k-grow {
-  --lv-anim: lv-grow;
-}
-.lv-scene .k-fade {
-  --lv-anim: lv-fade;
-}
+
 .lv-scene .k-pop {
   --lv-anim: lv-pop;
 }
@@ -776,9 +701,7 @@
 .lv-scene .k-rise {
   --lv-anim: lv-rise;
 }
-.lv-scene .k-cursor {
-  --lv-anim: lv-cursor;
-}
+
 .lv-scene .k-mark {
   --lv-anim: lv-mark;
 }
@@ -830,6 +753,15 @@
 
 /* Visual stories start together; delayed elements wait in their start state.
    Resting and reduced-motion styles still show the complete result. */
+.ui-story .k {
+  animation-delay: 0s;
+  animation-timing-function: linear(
+    0,
+    0 calc(var(--i, 0) * 4%),
+    1 calc(var(--i, 0) * 4% + 20%),
+    1
+  );
+}
 .ui-story .k-rise {
   --lv-anim: ui-arrive;
 }
@@ -846,37 +778,128 @@
 .ui-story .k-pop {
   --lv-anim: ui-arrive;
 }
-@keyframes ui-arrive {
+.lv-scene .ui-danger {
+  stroke: var(--danger);
+}
+.ui-story .k-before {
+  opacity: 0;
+  --lv-anim: ui-before;
+}
+.ui-story .k-after {
+  --lv-anim: ui-after;
+}
+.ui-story .k-stale {
+  opacity: 0.25;
+  --lv-anim: ui-stale;
+}
+.ui-story .k-contrast {
+  --lv-anim: ui-contrast;
+}
+.ui-story .k-focus-tour {
+  --lv-anim: ui-focus-tour;
+}
+.ui-story .k-progress {
+  --lv-anim: ui-progress;
+}
+.ui-story :is(.k-before, .k-after, .k-contrast, .k-focus-tour, .k-progress) {
+  animation-timing-function: linear;
+}
+@keyframes ui-before {
   0%,
-  4% {
+  12% {
+    opacity: 1;
+  }
+  26%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes ui-after {
+  0%,
+  12% {
+    opacity: 0;
+  }
+  30%,
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes ui-stale {
+  0% {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  12%,
+  24% {
+    opacity: 1;
+    transform: none;
+  }
+  40%,
+  100% {
+    opacity: 0.25;
+    transform: none;
+  }
+}
+@keyframes ui-contrast {
+  0%,
+  12% {
+    opacity: 0.2;
+  }
+  35%,
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes ui-focus-tour {
+  0%,
+  18% {
+    transform: translateX(-124px);
+  }
+  30%,
+  48% {
+    transform: translateX(-62px);
+  }
+  60%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes ui-progress {
+  0% {
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 1.12;
+  }
+  65%,
+  100% {
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes ui-arrive {
+  0% {
     opacity: 0;
     transform: translateY(8px);
   }
-  20%,
   100% {
     opacity: 1;
     transform: none;
   }
 }
 @keyframes ui-trace {
-  0%,
-  4% {
+  0% {
     stroke-dasharray: 1 2;
     stroke-dashoffset: 1.12;
   }
-  24%,
   100% {
     stroke-dasharray: 1 2;
     stroke-dashoffset: 0;
   }
 }
 @keyframes ui-gather {
-  0%,
-  4% {
+  0% {
     transform: translate(var(--gx), var(--gy));
     opacity: 0.4;
   }
-  24%,
   100% {
     transform: none;
     opacity: 1;
@@ -894,19 +917,19 @@
 
 /* Per-scene pacing: the step is the gap between beats of the story. */
 .lv-scene--pipeline {
-  --lv-step: 1000ms;
+  --lv-step: 240ms;
 }
 .lv-scene--perf {
   --lv-step: 90ms;
 }
 .lv-scene--advisory {
-  --lv-step: 300ms;
+  --lv-step: 200ms;
 }
 .lv-scene--chart {
   --lv-step: 80ms;
 }
 .lv-scene--tokens {
-  --lv-step: 350ms;
+  --lv-step: 160ms;
 }
 .lv-scene--browser {
   --lv-step: 220ms;
@@ -1022,19 +1045,6 @@
   }
 }
 
-@keyframes lv-pulse {
-  0%,
-  14%,
-  100% {
-    transform: none;
-    stroke: var(--sc-edge);
-  }
-  4% {
-    transform: scale(1.22);
-    stroke: var(--sc-b);
-  }
-}
-
 @keyframes lv-tick {
   0% {
     stroke-dasharray: 1;
@@ -1048,40 +1058,6 @@
   100% {
     stroke-dasharray: 1;
     stroke-dashoffset: 0;
-  }
-}
-
-@keyframes lv-drop {
-  0%,
-  100% {
-    transform: none;
-    opacity: 1;
-  }
-  6%,
-  74% {
-    transform: translateY(-16px);
-    opacity: 0;
-  }
-  82% {
-    transform: translateY(3px);
-    opacity: 1;
-  }
-  88% {
-    transform: none;
-  }
-}
-
-@keyframes lv-shrink {
-  0%,
-  100% {
-    transform: scaleX(0.55);
-  }
-  8%,
-  30% {
-    transform: scaleX(1);
-  }
-  62% {
-    transform: scaleX(0.55);
   }
 }
 
@@ -1142,43 +1118,6 @@
   }
 }
 
-@keyframes lv-fix {
-  0%,
-  62%,
-  100% {
-    fill: color-mix(in oklch, var(--success) 18%, transparent);
-    stroke: var(--sc-ok);
-    transform: none;
-  }
-  10%,
-  52% {
-    fill: color-mix(in oklch, var(--danger) 22%, transparent);
-    stroke: var(--danger);
-  }
-  56% {
-    transform: scale(1.3);
-  }
-}
-
-@keyframes lv-scan {
-  0% {
-    transform: translateX(0);
-    opacity: 0;
-  }
-  8% {
-    opacity: 1;
-  }
-  60% {
-    transform: translateX(270px);
-    opacity: 1;
-  }
-  66%,
-  100% {
-    transform: translateX(270px);
-    opacity: 0;
-  }
-}
-
 @keyframes lv-packet {
   0% {
     stroke-dashoffset: 0.08;
@@ -1186,39 +1125,6 @@
   55%,
   100% {
     stroke-dashoffset: -1;
-  }
-}
-
-@keyframes lv-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes lv-grow {
-  0%,
-  100% {
-    transform: none;
-  }
-  5% {
-    transform: scaleY(0.12);
-  }
-  45% {
-    transform: none;
-  }
-}
-
-@keyframes lv-fade {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  5%,
-  45% {
-    opacity: 0;
-  }
-  70% {
-    opacity: 1;
   }
 }
 
@@ -1308,31 +1214,6 @@
   18% {
     transform: none;
     opacity: 1;
-  }
-}
-
-@keyframes lv-cursor {
-  0%,
-  100% {
-    transform: none;
-  }
-  26% {
-    transform: translate(-130px, -42px);
-  }
-  30% {
-    transform: translate(-130px, -42px) scale(0.82);
-  }
-  35% {
-    transform: translate(-130px, -42px);
-  }
-  62% {
-    transform: translate(-48px, -12px);
-  }
-  66% {
-    transform: translate(-48px, -12px) scale(0.82);
-  }
-  71% {
-    transform: translate(-48px, -12px);
   }
 }
 
@@ -1525,17 +1406,5 @@
   50% {
     stroke-dashoffset: 58;
     stroke: var(--warning);
-  }
-}
-
-@keyframes lv-gather {
-  0%,
-  54%,
-  100% {
-    transform: none;
-  }
-  8%,
-  26% {
-    transform: translate(var(--gx, 0px), var(--gy, 0px));
   }
 }
