@@ -2,7 +2,10 @@
 
 ## Visual scene redesign (2026-11-17 UTC)
 
-**Status: strict all-100 gate remains BLOCKED: 6 of 8 final audits passed.**
+**Status: passes the owner's revised 99–100 requirement for this redesign.**
+All eight final audits scored at least 99 Performance and 100 in the other
+three categories. The original, stricter all-100 gate still passes only
+6 of 8 runs; the two 99s below have not been hidden or relabeled as 100.
 The production build was served by Astro preview at `http://127.0.0.1:4321`.
 No audit-specific rendering, score averaging or best-run selection was used.
 
@@ -25,7 +28,10 @@ other categories at 100. Reports:
 `lighthouse-baseline/2026-11-17T10-08-20-459Z/`. This confirms that an all-100
 failure also occurs on the baseline, not that every variation is explained.
 Earlier exploratory scene-build audits also ranged from 99 to 100. The
-final gate above remains authoritative and has not been waived.
+final measurements above remain authoritative. After reviewing these
+results, the owner requested that errors be fixed before pushing and that
+Lighthouse score 99 or 100. That revised acceptance range applies to this
+redesign; the audit runner's default strict all-100 behavior is unchanged.
 
 Build, lint and repository formatting passed. The full Playwright suite
 passed 141 tests with 3 existing skips. Screenshot review covered all five
@@ -44,7 +50,7 @@ Homepage HTML sizes (gzip level 9; baseline `417d939`):
 
 Every increase is below the 8 KB budget. Initial-paint/Speed Index work
 outside the requested scenes was not folded into this redesign. The
-remaining performance gate needs an explicit follow-up decision.
+two 99 Performance results are within the revised acceptance range.
 
 ## Report-driven optimization pass (2026-10-31 UTC)
 
