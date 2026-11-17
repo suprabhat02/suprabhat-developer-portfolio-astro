@@ -106,6 +106,12 @@ Set the existing Web3Forms access key as a hosting secret or environment variabl
 PUBLIC_WEB3FORMS_KEY
 ```
 
+## Documentation
+
+- [Engineering standards](STANDARDS.md): read before every task; workflow,
+  design, scenes, performance, accessibility, SEO, localization and definition
+  of done.
+
 ## Open TODOs
 
 See `docs/TODO.md`. Nothing in it has been filled in with invented content.

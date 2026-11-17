@@ -43,6 +43,14 @@ wins** — say so instead of guessing.
 8. **If you're not sure where something lives, search first, then say what
    you found — don't describe code from memory.** Use the file map in §2.
 
+## Standards (read before every task)
+
+`docs/STANDARDS.md` defines the quality bar for every change: workflow, visual
+design, SVG scenes, performance and Lighthouse, accessibility, SEO, and content
+in all three languages, plus the definition of done. Read it before starting any
+task and follow it. If a task cannot meet a rule there, stop and say which rule
+and why.
+
 ## 1. What this project actually is
 
 - Astro 7, static output (`output: 'static'`), TypeScript strict.
@@ -109,6 +117,7 @@ src/scripts/carousel.ts            carousel buttons/counter, lazy-loaded by
                                     motion.ts (see docs/MOTION.md "Carousel")
 
 docs/README.md                     setup/build/translation/deploy overview
+docs/STANDARDS.md                  engineering quality bar and definition of done
 docs/THEMING.md                    how the token system works
 docs/MOTION.md                     how the motion layer works
 docs/DEPLOYMENT.md                 release workflow, dashboards
