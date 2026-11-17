@@ -1,0 +1,407 @@
+---
+/**
+ * Engineering approach scenes (`#approach`), one per step of the timeline.
+ * Visual only: no code, no prose, readable in two seconds at timeline size.
+ *
+ * - `clarify` (diagram): three scattered question cards converge into one
+ *   clear goal card with a target mark and a passing check.
+ * - `blueprint` (diagram): a tidy three-tier architecture diagram whose
+ *   connectors draw in top-to-bottom order.
+ * - `quality` (UI): four quality rows tick green one by one while a progress
+ *   bar completes and a shield badge lights up.
+ */
+import type { SceneName } from '../scenes';
+import Surface from '../Surface.astro';
+import Type from '../Type.astro';
+
+interface Props {
+  scene: SceneName;
+}
+
+const { scene } = Astro.props;
+
+/** Scattered question cards: resting position and drift offset on replay. */
+const questions = [
+  { x: 14, y: 12, w: 78, b1: 38, b2: 24, dx: -8, dy: -6 },
+  { x: 24, y: 49, w: 78, b1: 44, b2: 30, dx: -10, dy: 0 },
+  { x: 14, y: 86, w: 78, b1: 34, b2: 28, dx: -8, dy: 6 },
+] as const;
+
+const questionWires = [
+  'M92 23C132 23 134 52 174 52',
+  'M102 60H174',
+  'M92 97C132 97 134 68 174 68',
+] as const;
+
+const middleNodes = [42, 128, 214] as const;
+const bottomNodes = [85, 171] as const;
+
+const topToMid = [
+  ['M160 28C160 39 74 39 74 50', false],
+  ['M160 28V50', true],
+  ['M160 28C160 39 246 39 246 50', false],
+] as const;
+
+const midToBot = [
+  ['M74 72C74 82 117 82 117 92', false],
+  ['M160 72C160 82 117 82 117 92', true],
+  ['M160 72C160 82 203 82 203 92', false],
+  ['M246 72C246 82 203 82 203 92', false],
+] as const;
+
+const checkWidths = [
+  [68, 36],
+  [54, 44],
+  [76, 30],
+  [60, 40],
+] as const;
+---
+
+{
+  scene === 'clarify' && (
+    <g class="ui-story">
+      <g class="lv-l" style="--d:.3">
+        {questionWires.map((d, index) => (
+          <path
+            class={`${index === 1 ? 'sa ui-s' : 'ui-wire'} k k-draw`}
+            style={`--i:${2 + index}`}
+            d={d}
+            pathLength="1"
+          />
+        ))}
+        <path
+          class="sa lv-packet ui-pk k k-hop"
+          style="--i:5"
+          d="M102 60H174"
+          pathLength="1"
+        />
+      </g>
+      <g class="lv-l" style="--d:.6">
+        {questions.map((card, index) => (
+          <g
+            class="k k-gather"
+            style={`--i:${index};--gx:${card.dx}px;--gy:${card.dy}px`}
+          >
+            <Surface x={card.x} y={card.y} w={card.w} h={22} rx={5}>
+              <circle class="ui-as" cx={card.x + 11} cy={card.y + 11} r="5.5" />
+              <Type
+                x={card.x + 11}
+                y={card.y + 13.4}
+                size={7}
+                anchor="middle"
+                bold
+                parts={[['hi', '?']]}
+              />
+              <rect
+                class="ui-m2"
+                x={card.x + 22}
+                y={card.y + 7}
+                width={card.b1}
+                height="3.2"
+                rx="1.6"
+              />
+              <rect
+                class="ui-m"
+                x={card.x + 22}
+                y={card.y + 12.5}
+                width={card.b2}
+                height="2.8"
+                rx="1.4"
+              />
+            </Surface>
+          </g>
+        ))}
+      </g>
+      <g class="lv-l" style="--d:1">
+        <g class="k k-rise" style="--i:5">
+          <Surface x={174} y={20} w={132} h={80} chrome={16}>
+            <circle class="ui-as" cx="186" cy="28" r="4" />
+            <circle class="ui-a" cx="186" cy="28" r="1.8" />
+            <rect
+              class="ui-m2"
+              x="195"
+              y="26.5"
+              width="42"
+              height="3"
+              rx="1.5"
+            />
+            <g class="k k-pop" style="--i:7">
+              <circle class="ui-oks" cx="294" cy="28" r="5" />
+              <path
+                class="ok ui-s k k-tick"
+                style="--i:8"
+                d="M291.5 28l1.8 1.8 3.3-3.3"
+                pathLength="1"
+              />
+            </g>
+          </Surface>
+          <g class="k k-rise" style="--i:5">
+            <circle class="ui-ln" cx="240" cy="63" r="20" />
+            <circle class="ui-ln" cx="240" cy="63" r="12" />
+            <circle class="ui-a" cx="240" cy="63" r="4" />
+            <path
+              class="sa ui-s k k-draw"
+              style="--i:6"
+              d="M240 63l19-19m-6 0h6v6"
+              pathLength="1"
+            />
+          </g>
+          <rect
+            class="ui-pick k k-paint"
+            style="--i:7"
+            x="174"
+            y="20"
+            width="132"
+            height="80"
+            rx="6"
+          />
+        </g>
+      </g>
+    </g>
+  )
+}
+{
+  scene === 'blueprint' && (
+    <g class="ui-story">
+      <g class="lv-l" style="--d:.3">
+        <rect
+          class="ui-ln ui-ln--dash"
+          x="28"
+          y="42"
+          width="264"
+          height="38"
+          rx="6"
+        />
+        {topToMid.map(([d, accent], index) => (
+          <path
+            class={`${accent ? 'sa ui-s' : 'ui-wire'} k k-draw`}
+            style={`--i:${1 + index}`}
+            d={d}
+            pathLength="1"
+          />
+        ))}
+        {midToBot.map(([d, accent], index) => (
+          <path
+            class={`${accent ? 'sa ui-s' : 'ui-wire'} k k-draw`}
+            style={`--i:${5 + index}`}
+            d={d}
+            pathLength="1"
+          />
+        ))}
+      </g>
+      <g class="lv-l" style="--d:.6">
+        <Surface x={108} y={4} w={104} h={24} rx={5}>
+          <rect class="ui-a" x="116" y="11" width="10" height="10" rx="2.5" />
+          <rect
+            class="ui-m2"
+            x="132"
+            y="12.5"
+            width="46"
+            height="3.5"
+            rx="1.75"
+          />
+          <rect class="ui-m" x="132" y="18" width="30" height="2.8" rx="1.4" />
+          <circle class="ui-ok" cx="202" cy="16" r="2.2" />
+        </Surface>
+      </g>
+      <g class="lv-l" style="--d:.8">
+        {middleNodes.map((x, index) => (
+          <Surface
+            class="k k-rise"
+            style={`--i:${2 + index}`}
+            x={x}
+            y={50}
+            w={64}
+            h={22}
+            rx={4}
+          >
+            <rect
+              class={index === 1 ? 'ui-as' : 'ui-m'}
+              x={x + 6}
+              y="56"
+              width="10"
+              height="10"
+              rx="2.5"
+            />
+            {index === 1 && (
+              <rect
+                class="ui-a"
+                x={x + 8.5}
+                y="58.5"
+                width="5"
+                height="5"
+                rx="1.2"
+              />
+            )}
+            <rect
+              class="ui-m2"
+              x={x + 21}
+              y="57.5"
+              width="34"
+              height="3.2"
+              rx="1.6"
+            />
+            <rect
+              class="ui-m"
+              x={x + 21}
+              y="63"
+              width="22"
+              height="2.6"
+              rx="1.3"
+            />
+          </Surface>
+        ))}
+        <rect
+          class="ui-pick k k-paint"
+          style="--i:4"
+          x="128"
+          y="50"
+          width="64"
+          height="22"
+          rx="4"
+        />
+      </g>
+      <g class="lv-l" style="--d:1">
+        {bottomNodes.map((x, index) => (
+          <Surface
+            class="k k-rise"
+            style={`--i:${7 + index}`}
+            x={x}
+            y={92}
+            w={64}
+            h={22}
+            rx={4}
+          >
+            <circle
+              class="ui-ok k k-beat"
+              style={`--i:${9 + index}`}
+              cx={x + 11}
+              cy="103"
+              r="2.4"
+            />
+            <rect
+              class="ui-m2"
+              x={x + 19}
+              y="99.5"
+              width="34"
+              height="3.2"
+              rx="1.6"
+            />
+            <rect
+              class="ui-m"
+              x={x + 19}
+              y="105"
+              width="24"
+              height="2.6"
+              rx="1.3"
+            />
+          </Surface>
+        ))}
+      </g>
+    </g>
+  )
+}
+{
+  scene === 'quality' && (
+    <g class="ui-story">
+      <g class="lv-l" style="--d:.4">
+        <Surface x={10} y={2} w={194} h={116} chrome={18}>
+          <rect class="ui-m2" x="20" y="9" width="44" height="3.5" rx="1.75" />
+          <line
+            class="ui-track ui-bar"
+            style="--bar:4"
+            x1="126"
+            y1="11"
+            x2="192"
+            y2="11"
+          />
+          <line
+            class="ok ui-bar k k-progress"
+            style="--bar:4;--i:1"
+            x1="126"
+            y1="11"
+            x2="192"
+            y2="11"
+            pathLength="1"
+          />
+          {[44, 67, 90].map((y) => (
+            <line class="ui-ln ui-ln--soft" x1="10" y1={y} x2="204" y2={y} />
+          ))}
+        </Surface>
+      </g>
+      <g class="lv-l" style="--d:.7">
+        {checkWidths.map(([w1, w2], index) => {
+          const cy = 32 + index * 23;
+          return (
+            <>
+              <circle class="ui-oks" cx="26" cy={cy} r="6" />
+              <path
+                class="ok ui-s k k-tick"
+                style={`--i:${index * 2}`}
+                d={`M23 ${cy}l2.1 2.1 4-4`}
+                pathLength="1"
+              />
+              <rect
+                class="ui-m2"
+                x="40"
+                y={cy - 4}
+                width={w1}
+                height="3.5"
+                rx="1.75"
+              />
+              <rect
+                class="ui-m"
+                x="40"
+                y={cy + 2}
+                width={w2}
+                height="2.8"
+                rx="1.4"
+              />
+              <rect
+                class="ui-oks k k-rise"
+                style={`--i:${1 + index * 2}`}
+                x="166"
+                y={cy - 5}
+                width="28"
+                height="10"
+                rx="5"
+              />
+              <circle
+                class="ui-ok k k-beat"
+                style={`--i:${2 + index * 2}`}
+                cx="180"
+                cy={cy}
+                r="2"
+              />
+            </>
+          );
+        })}
+      </g>
+      <g class="lv-l" style="--d:1">
+        <Surface x={216} y={14} w={94} h={92} rx={6}>
+          <g class="k k-pop" style="--i:8">
+            <path
+              class="ui-merged"
+              d="M263 28l22 7v16c0 14-9.5 23.5-22 28-12.5-4.5-22-14-22-28V35z"
+            />
+            <path
+              class="ok ui-s k k-tick"
+              style="--i:9"
+              d="M255.5 53l5 5 10-10"
+              pathLength="1"
+            />
+          </g>
+          <rect
+            class="ui-m2"
+            x="239"
+            y="88"
+            width="48"
+            height="3.5"
+            rx="1.75"
+          />
+          <rect class="ui-m" x="247" y="95" width="32" height="2.8" rx="1.4" />
+        </Surface>
+      </g>
+    </g>
+  )
+}

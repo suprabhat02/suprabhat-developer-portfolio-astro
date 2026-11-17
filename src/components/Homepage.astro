@@ -26,7 +26,7 @@ import LiveScene from './fx/LiveScene.astro';
 import Carousel from './Carousel.astro';
 import SceneDefs from './fx/SceneDefs.astro';
 import Globe from './fx/Globe.astro';
-import type { SceneName } from './fx/scenes';
+import { getArticleScene, type SceneName } from './fx/scenes';
 import { getHomepageConversionContent } from '../data/homepageConversion';
 import { getCareerStats } from '../data/careerStats';
 import {
@@ -160,11 +160,6 @@ const heroProofClass: Record<HeroProofCard['variant'], string> = {
 const stats = getCareerStats(locale);
 
 const posts = await getBlogPosts(locale);
-const articleScenes = [
-  'race',
-  'voice',
-  'components',
-] as const satisfies readonly SceneName[];
 const featured = recommendations.filter((r) =>
   featuredRecommendationIds.includes(
     r.id as (typeof featuredRecommendationIds)[number],
@@ -206,7 +201,7 @@ const traits = [
 
 const expertiseCards = [
   {
-    visual: 'canvas' as SceneName,
+    visual: 'layout' as SceneName,
     icon: 'frontend',
     title: t(locale, 'expertise.frontend.title'),
     body: t(locale, 'expertise.frontend.body'),
@@ -224,7 +219,7 @@ const expertiseCards = [
     ],
   },
   {
-    visual: 'server' as SceneName,
+    visual: 'flow' as SceneName,
     icon: 'backend',
     title: t(locale, 'expertise.backend.title'),
     body: t(locale, 'expertise.backend.body'),
@@ -239,7 +234,7 @@ const expertiseCards = [
     ],
   },
   {
-    visual: 'swatches' as SceneName,
+    visual: 'system' as SceneName,
     icon: 'design',
     title: t(locale, 'expertise.design.title'),
     body: t(locale, 'expertise.design.body'),
@@ -535,12 +530,12 @@ const contactIndex = featured.length > 0 ? '14' : '13';
 
       <div class="articles-grid fx-focus-group">
         {
-          posts.slice(0, 3).map((post, i) => (
+          posts.slice(0, 3).map((post) => (
             <article
               class="article-card fx-live fx-focus-item fx-glow fx-card-gradient fx-reveal"
               data-glow
             >
-              <LiveScene scene={articleScenes[i] ?? 'race'} />
+              <LiveScene scene={getArticleScene(post.id)} />
               {post.data.tags[0] && (
                 <a
                   class="article-kicker"

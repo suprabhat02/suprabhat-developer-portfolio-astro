@@ -6,45 +6,43 @@
  * showing a visual that contradicts its copy.
  */
 export const sceneNames = [
-  /** Scope → build → test → ship pipeline filling up. */
+  /** Three-stage plan, build and launch timeline completing. */
   'pipeline',
-  /** Waterfall bars shrinking while a score ring climbs to 100. */
+  /** Loading filmstrip: an incomplete slow page becomes complete and fast. */
   'perf',
-  /** Architecture graph: edges redraw while a scanner flags a risky node. */
+  /** Tangled connections settle into a clean layered graph. */
   'graph',
-  /** Two time zones exchanging review packets along an arc. */
+  /** Out-of-order responses: stale arrivals fade, only the newest fills the screen. */
   'advisory',
-  /** Dashboard line chart drawing over growing bars. */
+  /** Dashboard filter applies, KPI tiles appear and a line chart draws. */
   'chart',
-  /** Design tokens flowing into a themed component. */
+  /** One button repeated consistently in a grid of sizes and states. */
   'tokens',
-  /** Keyboard focus hopping across controls, each passing its check. */
+  /** Contrast improves, focus traverses controls and an accessibility badge passes. */
   'a11y',
-  /** Browser window whose sections build in, with a clicking cursor. */
+  /** Browser page assembled from navigation through hero to content cards. */
   'browser',
-  /** Magnifier scanning a brief and surfacing the key decision. */
-  'scan',
-  /** Isometric UI, state and data layers separating into a system. */
-  'stack',
-  /** Checklist ticking through to a passing quality gate. */
-  'verify',
-  /** Async conversation with a typing indicator. */
+  /** Scattered question cards converge into one clear goal card with a check. */
+  'clarify',
+  /** Three-tier architecture block diagram whose connectors draw in order. */
+  'blueprint',
+  /** Four quality checks tick green one by one, ending in a verified shield. */
+  'quality',
+  /** Two people in different time zones exchange messages and pin a decision. */
   'chat',
-  /** Delivery track reaching each milestone, flag at the finish. */
+  /** Roadmap flags fill in and an amber risk resolves. */
   'milestones',
-  /** Feature branch committing and merging back into main. */
+  /** Documents and a key pass from one person to a team with item checks. */
   'merge',
   /** Orbits around a core: the React + TypeScript stack. */
   'orbit',
   /** Americas, Europe and India pins with the shared overlap window. */
   'zones',
-  /** Loose component chips wiring themselves into a page frame. */
-  'components',
-  /** Request/response packets travelling from a server rack to endpoints. */
-  'server',
-  /** A marker sprints down a track trailing speed streaks to a finish line. */
+  /** Neutral article layout: headline, text and illustration assemble. */
+  'article',
+  /** Relative response bars: a long blocked task versus responsive chunks. */
   'race',
-  /** A speaker's sound waves highlight each caption line as it is read. */
+  /** An icon-only button gains a label, then a speech bubble reads it aloud. */
   'voice',
   /** Three vitals rings fill to green one after another. */
   'vitals',
@@ -54,10 +52,12 @@ export const sceneNames = [
   'branch',
   /** A pulse travels the connector between a UI layer and a data layer. */
   'bridge',
-  /** Outlines draw in a canvas, then fill solid one by one. */
-  'canvas',
-  /** Loose color swatches settle into a spaced, ruled grid. */
-  'swatches',
+  /** App window whose sidebar, top bar, tiles and table assemble into a tidy layout. */
+  'layout',
+  /** Browser, server and database: a locked request leaves, verified rows return. */
+  'flow',
+  /** Palette and spacing scale feed three matching controls; a speed gauge hits green. */
+  'system',
   /** A line typed in an editor; the preview updates and the file has no errors. */
   'editor',
   /** A dispatched action passes its schema, updates the store, notifies subscribers. */
@@ -73,3 +73,11 @@ export const sceneNames = [
 ] as const;
 
 export type SceneName = (typeof sceneNames)[number];
+
+const articleScenes = new Map<string, SceneName>([
+  ['react-inp-benchmark', 'race'],
+  ['accessibility-in-react-what-developers-skip', 'voice'],
+]);
+
+export const getArticleScene = (slug: string): SceneName =>
+  articleScenes.get(slug) ?? 'article';

@@ -1,0 +1,497 @@
+---
+/**
+ * Core expertise scenes (`#expertise`). Visual only: no code, no untranslated
+ * prose, readable in a glance from shapes, motion and icons.
+ *
+ * - `layout` (UI): an app window whose top bar, sidebar, metric tiles and
+ *   table rows assemble in order into a tidy workspace.
+ * - `flow` (diagram): browser → server → database; a locked sign-in packet
+ *   travels out, verified data pulses back, and the browser fills with rows.
+ * - `system` (diagram): a palette and spacing scale flow into three matching
+ *   controls while a speed gauge settles in the green.
+ */
+import type { SceneName } from '../scenes';
+import Surface from '../Surface.astro';
+import Type from '../Type.astro';
+
+interface Props {
+  scene: SceneName;
+}
+
+const { scene } = Astro.props;
+
+const navRows = [30, 44, 58, 72] as const;
+
+const tileBars = [
+  [84, 34, 24],
+  [158, 30, 28],
+  [232, 38, 22],
+] as const;
+
+const tableRows = [
+  [80, 34, true],
+  [92, 42, true],
+  [104, 28, false],
+] as const;
+
+const screenRows = [53, 67, 81] as const;
+
+const scaleTicks = [14, 22, 34, 50, 72, 100] as const;
+---
+
+{
+  scene === 'layout' && (
+    <>
+      <g class="lv-l" style="--d:.4">
+        <Surface x={20} y={-2} w={280} h={122} tone="well" chrome={14}>
+          {[30, 37, 44].map((cx) => (
+            <circle class="ui-dot" cx={cx} cy="5" r="2" />
+          ))}
+          <rect class="ui-m" x="114" y="1" width="92" height="8" rx="4" />
+        </Surface>
+      </g>
+      <g class="lv-l" style="--d:.7">
+        <g class="k k-rise" style="--i:0">
+          <Surface x={26} y={18} w={44} h={96} rx={4}>
+            <rect class="ui-a" x="33" y="25" width="8" height="8" rx="2" />
+            <rect
+              class="ui-m2"
+              x="45"
+              y="27.5"
+              width="18"
+              height="3"
+              rx="1.5"
+            />
+            <rect class="ui-as" x="30" y="40" width="36" height="10" rx="3" />
+            {navRows.map((y, index) => (
+              <rect
+                class={index === 0 ? 'ui-a' : 'ui-m2'}
+                x="34"
+                y={y + 13.5}
+                width={index === 0 ? 24 : 20 + (index % 2) * 6}
+                height="3"
+                rx="1.5"
+              />
+            ))}
+          </Surface>
+        </g>
+        <g class="k k-rise" style="--i:2">
+          <Surface x={76} y={18} w={218} h={16} rx={4}>
+            <rect
+              class="ui-m2"
+              x="84"
+              y="24.5"
+              width="44"
+              height="3.5"
+              rx="1.75"
+            />
+            <rect
+              class="ui-m"
+              x="230"
+              y="22.5"
+              width="32"
+              height="7"
+              rx="3.5"
+            />
+            <rect
+              class="ui-a"
+              x="266"
+              y="22.5"
+              width="20"
+              height="7"
+              rx="3.5"
+            />
+          </Surface>
+        </g>
+      </g>
+      <g class="lv-l" style="--d:1">
+        {tileBars.map(([x, w1, w2], index) => (
+          <Surface
+            class="k k-rise"
+            style={`--i:${4 + index}`}
+            x={x - 8}
+            y={40}
+            w={70}
+            h={26}
+            rx={4}
+          >
+            <rect
+              class={index === 0 ? 'ui-a' : 'ui-m2'}
+              x={x}
+              y="46"
+              width="10"
+              height="3"
+              rx="1.5"
+            />
+            <rect class="ui-m2" x={x} y="53" width={w1} height="4.5" rx="2" />
+            <rect
+              class={index === 0 ? 'ui-oks' : 'ui-m'}
+              x={x + 40}
+              y="52.5"
+              width={w2 - 10}
+              height="6"
+              rx="3"
+            />
+          </Surface>
+        ))}
+        <g class="k k-rise" style="--i:7">
+          <Surface x={76} y={72} w={218} h={42} rx={4}>
+            {[84, 96].map((y) => (
+              <line class="ui-ln ui-ln--soft" x1="76" y1={y} x2="294" y2={y} />
+            ))}
+            {tableRows.map(([y, w, ok], rowIndex) => (
+              <>
+                <circle
+                  class={rowIndex === 0 ? 'ui-a' : 'ui-m2'}
+                  cx="86"
+                  cy={y - 2}
+                  r="2.5"
+                />
+                <rect
+                  class="ui-m2"
+                  x="95"
+                  y={y - 3.5}
+                  width={w}
+                  height="3"
+                  rx="1.5"
+                />
+                <rect
+                  class="ui-m"
+                  x="156"
+                  y={y - 3.5}
+                  width="54"
+                  height="3"
+                  rx="1.5"
+                />
+                <rect
+                  class={ok ? 'ui-oks' : 'ui-m'}
+                  x="262"
+                  y={y - 5.5}
+                  width="24"
+                  height="7"
+                  rx="3.5"
+                />
+                {ok && <circle class="ui-ok" cx="268" cy={y - 2} r="1.5" />}
+              </>
+            ))}
+          </Surface>
+        </g>
+      </g>
+    </>
+  )
+}
+{
+  scene === 'flow' && (
+    <>
+      <g class="lv-l" style="--d:.3">
+        <line class="ui-ln" x1="112" y1="48" x2="144" y2="48" />
+        <line class="ui-ln" x1="144" y1="72" x2="112" y2="72" />
+        <line class="ui-ln" x1="216" y1="48" x2="244" y2="48" />
+        <line class="ui-ln" x1="244" y1="72" x2="216" y2="72" />
+        <path
+          class="ui-ln ui-ln--menu"
+          d="M140 45.5l3.5 2.5-3.5 2.5M116 69.5l-3.5 2.5 3.5 2.5M240 45.5l3.5 2.5-3.5 2.5M220 69.5l-3.5 2.5 3.5 2.5"
+        />
+      </g>
+      <g class="lv-l" style="--d:.6">
+        <Surface x={8} y={14} w={104} h={92} chrome={14}>
+          {[16, 22, 28].map((cx) => (
+            <circle class="ui-dot" cx={cx} cy="21" r="1.8" />
+          ))}
+          <rect class="ui-m" x="38" y="17.5" width="66" height="7" rx="3.5" />
+          <rect class="ui-m2" x="16" y="36" width="42" height="4" rx="2" />
+          <circle
+            class="ui-ok k k-beat"
+            style="--i:10"
+            cx="101"
+            cy="38"
+            r="2.5"
+          />
+        </Surface>
+        {screenRows.map((y, index) => (
+          <g class="k k-rise" style={`--i:${8 + index}`}>
+            <rect
+              class="ui ui--well"
+              x="16"
+              y={y - 5}
+              width="88"
+              height="10"
+              rx="2.5"
+            />
+            <circle class="ui-ok" cx="23" cy={y} r="1.8" />
+            <rect
+              class="ui-m2"
+              x="30"
+              y={y - 1.5}
+              width={32 + (index % 2) * 12}
+              height="3"
+              rx="1.5"
+            />
+            <rect
+              class="ui-m"
+              x="82"
+              y={y - 1.5}
+              width="16"
+              height="3"
+              rx="1.5"
+            />
+          </g>
+        ))}
+      </g>
+      <g class="lv-l" style="--d:.8">
+        <Surface x={144} y={20} w={72} h={80} chrome={14}>
+          <circle class="ui-dot" cx="153" cy="27" r="1.8" />
+          <rect class="ui-m2" x="160" y="25.5" width="28" height="3" rx="1.5" />
+          {[44, 62].map((y) => (
+            <>
+              <rect
+                class="ui ui--well"
+                x="152"
+                y={y}
+                width="56"
+                height="12"
+                rx="2.5"
+              />
+              <rect
+                class="ui-m2"
+                x="157"
+                y={y + 4.5}
+                width="24"
+                height="3"
+                rx="1.5"
+              />
+              <circle class="ui-ok" cx="201" cy={y + 6} r="1.8" />
+            </>
+          ))}
+        </Surface>
+        <g class="k k-pop" style="--i:2">
+          <circle class="ui-as" cx="128" cy="34" r="9" />
+          <path class="sa ui-s" d="M125.5 34v-2a2.5 2.5 0 0 1 5 0v2" />
+          <rect
+            class="ui-a"
+            x="124.2"
+            y="33.5"
+            width="7.6"
+            height="5.5"
+            rx="1.4"
+          />
+        </g>
+        <circle class="ui-oks" cx="180" cy="87" r="6" />
+        <path
+          class="ok ui-s k k-tick"
+          style="--i:3"
+          d="M177.2 87l2 2 3.8-3.8"
+          pathLength="1"
+        />
+      </g>
+      <g class="lv-l" style="--d:.9">
+        <path
+          class="sa lv-packet ui-pk k k-hop"
+          style="--i:0"
+          d="M112 48H144"
+          pathLength="1"
+        />
+        <path
+          class="sa lv-packet ui-pk k k-hop"
+          style="--i:4"
+          d="M216 48H244"
+          pathLength="1"
+        />
+        <path
+          class="ok lv-packet ui-pk k k-hop"
+          style="--i:6"
+          d="M244 72H216"
+          pathLength="1"
+        />
+        <path
+          class="ok lv-packet ui-pk k k-hop"
+          style="--i:7"
+          d="M144 72H112"
+          pathLength="1"
+        />
+      </g>
+      <g class="lv-l" style="--d:1">
+        <Surface x={244} y={20} w={68} h={80} rx={8}>
+          <ellipse class="ui ui--well" cx="278" cy="34" rx="22" ry="6" />
+          <path class="ui-ln" d="M256 34v44c0 3.3 9.8 6 22 6s22-2.7 22-6V34" />
+          <path
+            class="ui-ln ui-ln--soft"
+            d="M256 50c0 3.3 9.8 6 22 6s22-2.7 22-6M256 65c0 3.3 9.8 6 22 6s22-2.7 22-6"
+          />
+          <circle
+            class="ui-ok k k-beat"
+            style="--i:5"
+            cx="278"
+            cy="90"
+            r="2.4"
+          />
+        </Surface>
+      </g>
+    </>
+  )
+}
+{
+  scene === 'system' && (
+    <>
+      <g class="lv-l" style="--d:.3">
+        {[34, 60, 86].map((y) => (
+          <path class="ui-ln" d={`M96 60C106 60 106 ${y} 116 ${y}`} />
+        ))}
+        <path
+          class="sa lv-packet ui-pk k k-hop"
+          style="--i:2"
+          d="M96 60H116"
+          pathLength="1"
+        />
+      </g>
+      <g class="lv-l" style="--d:.5">
+        <Surface x={6} y={10} w={90} h={100} rx={6}>
+          <rect
+            class="ui-a k k-beat"
+            style="--i:0"
+            x="14"
+            y="18"
+            width="16"
+            height="16"
+            rx="4"
+          />
+          <rect class="ui-m2" x="34" y="18" width="16" height="16" rx="4" />
+          <rect class="ui-m" x="54" y="18" width="16" height="16" rx="4" />
+          <rect class="ui-oks" x="74" y="18" width="14" height="16" rx="4" />
+          <line class="ui-ln ui-ln--soft" x1="14" y1="44" x2="88" y2="44" />
+          {scaleTicks.map((tick) => (
+            <line
+              class="ui-ln"
+              x1={8 + tick * 0.78}
+              y1="52"
+              x2={8 + tick * 0.78}
+              y2="59"
+            />
+          ))}
+          <line class="ui-ln" x1="18.9" y1="59" x2="86" y2="59" />
+          {[
+            [14, 70, 20],
+            [14, 80, 36],
+            [14, 90, 56],
+          ].map(([x, y, w], index) => (
+            <rect
+              class={index === 2 ? 'ui-as' : 'ui-m2'}
+              x={x}
+              y={y}
+              width={w}
+              height="5"
+              rx="2.5"
+            />
+          ))}
+        </Surface>
+      </g>
+      <g class="lv-l" style="--d:.8">
+        <Surface
+          class="k k-rise"
+          style="--i:3"
+          x={116}
+          y={18}
+          w={104}
+          h={28}
+          rx={5}
+        >
+          <rect class="ui-a" x="124" y="25" width="44" height="14" rx="4" />
+          <rect class="ui-on" x="133" y="30.5" width="26" height="3" rx="1.5" />
+          <rect class="ui-m" x="174" y="25" width="38" height="14" rx="4" />
+        </Surface>
+        <Surface
+          class="k k-rise"
+          style="--i:4"
+          x={116}
+          y={50}
+          w={104}
+          h={24}
+          rx={5}
+        >
+          <rect
+            class="ui ui--well"
+            x="124"
+            y="56"
+            width="64"
+            height="12"
+            rx="3"
+          />
+          <rect class="ui-a" x="128" y="59" width="1.2" height="6" />
+          <rect class="ui-m2" x="132" y="60.5" width="30" height="3" rx="1.5" />
+          <rect
+            class="ui-oks"
+            x="194"
+            y="57.5"
+            width="18"
+            height="9"
+            rx="4.5"
+          />
+          <circle class="ui-ok" cx="207" cy="62" r="3" />
+        </Surface>
+        <Surface
+          class="k k-rise"
+          style="--i:5"
+          x={116}
+          y={78}
+          w={104}
+          h={32}
+          rx={5}
+        >
+          <rect class="ui-as" x="124" y="85" width="12" height="12" rx="3" />
+          <rect class="ui-a" x="127" y="88" width="6" height="6" rx="1.5" />
+          <rect
+            class="ui-m2"
+            x="142"
+            y="86.5"
+            width="48"
+            height="3.5"
+            rx="1.75"
+          />
+          <rect class="ui-m" x="142" y="93" width="32" height="3" rx="1.5" />
+        </Surface>
+      </g>
+      <g class="lv-l" style="--d:1">
+        <Surface x={230} y={10} w={84} h={100} rx={6}>
+          <path
+            class="ui-track ui-bar"
+            style="--bar:5"
+            d="M246 74A26 26 0 1 1 298 74"
+          />
+          <path
+            class="ok ui-bar k k-gauge"
+            style="--bar:5;--i:6"
+            d="M246 74A26 26 0 1 1 298 74"
+            pathLength="100"
+          />
+          <Type
+            class="k k-hi"
+            style="--i:6"
+            x={272}
+            y={66}
+            size={12}
+            anchor="middle"
+            bold
+            parts={[['ok', '100']]}
+          />
+          <Type
+            class="k k-lo"
+            style="--i:6"
+            x={272}
+            y={66}
+            size={12}
+            anchor="middle"
+            bold
+            parts={[['dim', '58']]}
+          />
+          <circle class="ui-oks" cx="272" cy="92" r="7" />
+          <path
+            class="ok ui-s k k-tick"
+            style="--i:8"
+            d="M269 92l2.1 2.1 4-4"
+            pathLength="1"
+          />
+        </Surface>
+      </g>
+    </>
+  )
+}

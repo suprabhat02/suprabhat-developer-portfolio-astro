@@ -1,5 +1,57 @@
 # Lighthouse evidence
 
+## Visual scene redesign (2026-11-17 UTC)
+
+**Status: passes the owner's revised 99–100 requirement for this redesign.**
+All eight final audits scored at least 99 Performance and 100 in the other
+three categories. The original, stricter all-100 gate still passes only
+6 of 8 runs; the two 99s below have not been hidden or relabeled as 100.
+The production build was served by Astro preview at `http://127.0.0.1:4321`.
+No audit-specific rendering, score averaging or best-run selection was used.
+
+| Homepage | Profile | Performance Run 1 | Run 2 |
+| -------- | ------- | ----------------- | ----- |
+| English  | Mobile  | 100               | 100   |
+| English  | Desktop | 100               | 99    |
+| Arabic   | Mobile  | 99                | 100   |
+| Arabic   | Desktop | 100               | 100   |
+
+Accessibility, Best Practices and SEO scored 100 throughout; CLS was zero.
+The English desktop miss had Speed Index 1.261 s, LCP 0.505 s and TBT 0 ms.
+The Arabic mobile miss had FCP/LCP 1.635 s, Speed Index 1.877 s and TBT 50 ms.
+Final reports are retained in the session workspace under
+`lighthouse-final/2026-11-17T10-29-20-333Z/`.
+
+An isolated production build of the unchanged `417d939` baseline was also
+measured with the same runner: Arabic mobile scored 100 then 99, with the
+other categories at 100. Reports:
+`lighthouse-baseline/2026-11-17T10-08-20-459Z/`. This confirms that an all-100
+failure also occurs on the baseline, not that every variation is explained.
+Earlier exploratory scene-build audits also ranged from 99 to 100. The
+final measurements above remain authoritative. After reviewing these
+results, the owner requested that errors be fixed before pushing and that
+Lighthouse score 99 or 100. That revised acceptance range applies to this
+redesign; the audit runner's default strict all-100 behavior is unchanged.
+
+Build, lint and repository formatting passed. The full Playwright suite
+passed 141 tests with 3 existing skips. Screenshot review covered all five
+sections at 390, 768, 1280 and 1440 px in English/Arabic, light theme, motion
+frames, Spanish and reduced motion. A direct baseline comparison confirmed
+unchanged scene-band dimensions and no clipped artwork at all four widths
+in all three locales, including the small hero performance-scene reuse.
+
+Homepage HTML sizes (gzip level 9; baseline `417d939`):
+
+| Locale | Baseline raw | Final raw | Baseline gzip | Final gzip | Gzip growth |
+| ------ | -----------: | --------: | ------------: | ---------: | ----------: |
+| en     |    239,734 B | 254,711 B |      46,859 B |   49,525 B |    +2,666 B |
+| es     |    232,407 B | 247,180 B |      46,332 B |   48,974 B |    +2,642 B |
+| ar     |    234,206 B | 248,979 B |      43,947 B |   46,811 B |    +2,864 B |
+
+Every increase is below the 8 KB budget. Initial-paint/Speed Index work
+outside the requested scenes was not folded into this redesign. The
+two 99 Performance results are within the revised acceptance range.
+
 ## Report-driven optimization pass (2026-10-31 UTC)
 
 **Status: still BLOCKED. Final strict gate: 9 of 18 runs scored 100 in all
