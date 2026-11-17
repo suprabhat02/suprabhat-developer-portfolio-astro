@@ -1,0 +1,134 @@
+---
+interface Props {
+  count?: number | undefined;
+  class?: string | undefined;
+}
+
+const { count = 18, class: className } = Astro.props;
+const dots = Array.from({ length: Math.max(0, count) }, (_, index) => ({
+  x: (12 + ((index * 37) % 77)) / 100,
+  y: (12 + ((index * 29) % 77)) / 100,
+  duration: 4 + ((index * 7) % 11) / 2,
+  delay: -((index * 1.73) % 9),
+}));
+---
+
+<div
+  class:list={['fx-dot-glow', className]}
+  aria-hidden="true"
+  data-motion-scope
+>
+  {
+    dots.map((dot) => (
+      <span
+        style={`--x:${dot.x};--y:${dot.y};--duration:${dot.duration}s;--delay:${dot.delay.toFixed(2)}s`}
+      />
+    ))
+  }
+</div>
+
+<style>
+  .fx-dot-glow {
+    position: relative;
+    overflow: hidden;
+    overflow: clip;
+    pointer-events: none;
+    background: radial-gradient(var(--fx-grid-dot) 1px, transparent 1.4px) left
+      top / 14px 14px;
+    mask-image:
+      linear-gradient(
+        to right,
+        transparent,
+        var(--text) var(--dot-fade-start, 32%),
+        var(--text) 78%,
+        transparent
+      ),
+      linear-gradient(
+        to bottom,
+        transparent,
+        var(--text) 18%,
+        var(--text) 82%,
+        transparent
+      );
+    mask-composite: intersect;
+    opacity: var(--dot-glow-opacity, 0.55);
+    transition: opacity 240ms ease-in-out;
+  }
+
+  :global([dir='rtl']) .fx-dot-glow {
+    background-position: right top;
+    mask-image:
+      linear-gradient(
+        to left,
+        transparent,
+        var(--text) var(--dot-fade-start, 32%),
+        var(--text) 78%,
+        transparent
+      ),
+      linear-gradient(
+        to bottom,
+        transparent,
+        var(--text) 18%,
+        var(--text) 82%,
+        transparent
+      );
+  }
+
+  .fx-dot-glow > span {
+    position: absolute;
+    /* Grid centers are 7px from the logical origin; halos have a 10px radius. */
+    inset-inline-start: calc(round(down, (100% - 14px) * var(--x), 14px) - 3px);
+    inset-block-start: calc(round(down, (100% - 14px) * var(--y), 14px) - 3px);
+    inline-size: 20px;
+    block-size: 20px;
+    background: radial-gradient(
+      circle,
+      var(--accent-fill) 1px,
+      color-mix(in oklch, var(--accent-fill) 35%, transparent) 3px,
+      transparent 10px
+    );
+    opacity: 0.06;
+    animation: dot-glow-twinkle var(--duration) ease-in-out var(--delay)
+      infinite;
+  }
+
+  @keyframes dot-glow-twinkle {
+    0%,
+    58%,
+    92%,
+    100% {
+      opacity: 0.06;
+    }
+    68%,
+    78% {
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .fx-dot-glow > span:nth-child(n + 10) {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fx-dot-glow {
+      transition: none;
+    }
+
+    .fx-dot-glow > span {
+      animation: none;
+      opacity: 0;
+    }
+
+    .fx-dot-glow > span:nth-child(5n + 2) {
+      opacity: 0.85;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .fx-dot-glow {
+      visibility: hidden;
+    }
+  }
+</style>
