@@ -12,6 +12,7 @@ server-rendered.
 ```
 src/styles/motion.css        effect primitives (fx-*), keyframes, reduced-motion fallbacks
 src/scripts/motion.ts        pointer and scroll enhancements, loaded once by BaseLayout
+src/scripts/dotGlow.ts       lazy canvas renderer for the inner-page CTA field
 src/components/Carousel.astro  horizontal scroll-snap carousel (see "Carousel")
 src/styles/carousel.css      carousel track, controls and progress rail
 src/scripts/carousel.ts      carousel buttons and counter, loaded on demand
@@ -47,7 +48,7 @@ src/components/fx/
 | Focus Cards              | `.fx-focus-group` + `.fx-focus-item`                      | Featured articles                        |
 | Lamp                     | `.fx-lamp` + `.fx-lamp-line`                              | Homepage CTA band                        |
 | Meteors                  | `Meteors.astro`                                           | CTA band, collaboration, 404             |
-| Dotted Glow Background   | `DotGlow.astro` (`.fx-dot-glow`)                          | Inner-page CTA only                      |
+| Dotted Glow Background   | `DotGlow.astro` + `dotGlow.ts` (lazy canvas)              | Inner-page CTA only                      |
 | Floating Navbar          | `.site-header[data-scrolled]`, `.nav-pill`                | Global header                            |
 
 ## Rules that keep Lighthouse and axe at 100
@@ -57,7 +58,8 @@ src/components/fx/
    state attributes.
 2. **Continuous animations only use `transform` or decorative `opacity`.**
    Keep their painted geometry static and pause them off screen. Never animate
-   text opacity.
+   text opacity. Canvas renderers (the globe and dotted glow) draw only while
+   visible.
 3. **Reveal effects never animate `opacity` on text.** Scroll reveals use
    `transform` and `filter`, so axe never samples half-transparent text in a
    color-contrast check. Hidden Flip Words slots are clipped, not faded.
@@ -384,26 +386,95 @@ window blur and is disabled for reduced motion and coarse pointers.
 
 ## Inner-page signal field
 
-`DotGlow.astro` is the owner-approved Dotted Glow Background port for the
-`PageOutro` CTA only, not the homepage CTA. It adds no script or dependency.
-Its 18 deterministic dots use a single radial-gradient core and halo; only
-decorative opacity twinkles, over 4-9 seconds with negative delays. No filters,
-shadows or blend modes are involved. CTA link hover on a hover-capable pointer
-and keyboard focus brighten the field, never the text.
+`DotGlow.astro` and `src/scripts/dotGlow.ts` port Aceternity's
+[Dotted Glow Background](https://ui.aceternity.com/registry/dotted-glow-background.json)
+for the `PageOutro` CTA only; the
+[official demo 2](https://ui.aceternity.com/registry/dotted-glow-background-demo-2.json)
+provides its usage values. The React component is not redistributed. The site
+adds no dependency or client framework.
 
-- Keep the field in its own grid column at inline-end, never underneath copy
-  or buttons. At 760px and below it occupies a reserved bottom row and shows
-  nine dots. Between 761px and 1040px its column narrows and its fade increases.
-- The 14px grid begins at inline-start (right in Arabic). CSS `round()` snaps
-  dot centers to its 7px-offset nodes as the field resizes. Logical dot
-  positions and mirrored physical mask gradients preserve RTL alignment.
-- Keep `aria-hidden` and `data-motion-scope`. The existing observer pauses
-  offscreen animations; never put the field inside `content-visibility: auto`.
-- Reduced motion removes animations and transitions, leaving a fixed subset
-  lit. Forced colors hides the field while retaining its reserved space.
-- Related links use the existing `fx-card-gradient` frame and pointer tilt,
-  without redundant `fx-glow` markup. Icon fills cross-fade through opacity;
-  arrow motion mirrors in RTL. Reduced motion leaves the cards still.
+The port keeps the original staggered grid (including its two-dot overscan),
+per-dot random phase and speed, resize regeneration, DPR cap of 2, triangle
+wave, alpha range 0.25–0.8, glow threshold and blur formula, and one circle
+path/fill per dot. The CTA uses gap 10, radius 1.6, opacity 1, speed range
+0.3–1.6 and speed scale 1. Component defaults remain gap 12, radius 2,
+opacity 0.6, speed range 0.4–1.3 and speed scale 1.
+
+Adaptations and reasons:
+
+- Two typed token names (`--text-3` and `--accent-fill`) replace literal,
+  light/dark color props. A hidden probe resolves `light-dark()` and
+  `color-mix()` tokens to canvas-readable colors, and a `data-theme` observer
+  refreshes them.
+- `ResizeObserver.contentRect` supplies dimensions; there are no per-frame
+  layout reads or window-resize listener. Dot coordinates, phases and speeds
+  use typed arrays to reduce allocations, and shadow state changes only when
+  needed.
+- The renderer is dynamically imported at a 200px intersection margin. Its
+  animation loop cancels offscreen and while the document is hidden, then
+  resumes when visible. A 30fps cap reduces mobile work. The initial frame
+  paints as soon as the size is known.
+- Reduced motion renders a static time-zero frame and listens for preference
+  changes; forced colors clears the canvas and hides the field. The canvas
+  fades in over 400ms, except under reduced motion.
+- Non-finite numeric attributes fall back to defaults; finite values clamp to
+  gap 4–64, radius 0.5–8, opacity 0–1 and speeds 0–10. Token names must start
+  with `--`. Background fading and hover/focus brightening are omitted because
+  this use needs neither.
+- The dots use `Float32Array` storage, but preserve independent randomized
+  phase and speed and the source's per-dot drawing. Batching or glow sprites
+  are not used: prior measurements on this CTA made them slower or no faster.
+
+The field stays in the CTA's inline-end grid column at widths above 760px,
+bleeds to the card's block edges and inline-end edge, and uses a mirrored
+radial mask to fade before the copy. At 760px and below it moves below the
+buttons, spans the card's inner width and touches its bottom edge. It never
+overlaps the eyebrow, heading, lead or actions. Its host is `aria-hidden` and
+`pointer-events: none`; it has no `data-motion-scope` because its renderer owns
+visibility pausing. Light theme uses layer opacity 0.45; dark uses 1.
+
+Measured Chromium main-thread `TaskDuration` delta over five seconds at 4× CPU
+throttling (lower is better; main is the unchanged CSS field, branch is the
+canvas field):
+
+| State                             | Main (ms / 5s) | Branch (ms / 5s) |
+| --------------------------------- | -------------: | ---------------: |
+| `/about/` at top, field offscreen |            122 |               96 |
+| CTA on screen, 1280×900 DPR 1     |             24 |            3,705 |
+| CTA on screen, 1280×900 DPR 2     |             21 |            4,344 |
+| CTA on screen, 390×844 DPR 3      |             21 |            1,341 |
+| CTA on screen, reduced motion     |              2 |                4 |
+
+Both builds were served from production previews on Node 22.23.4 and measured
+with the same Chromium script, 4× CPU throttling, and a five-second window.
+The branch uses an exact 30 fps cap. Animation pauses offscreen and while the
+document is hidden; reduced motion draws a static frame. The branch's offscreen
+measurement was 26 ms lower than main, and reduced motion was 3 ms higher.
+
+The long-task observer recorded no tasks for main. On the branch it recorded
+one 55 ms task at DPR 1 and nine tasks (499 ms total, 63 ms longest) at DPR 2;
+it recorded none offscreen, on mobile, or with reduced motion. These are
+throttled lab measurements, not field performance.
+
+HTML sizes (`gzip -9`) for the CTA pages:
+
+| Page         | Main raw | Branch raw | Main gzip | Branch gzip | Gzip change |
+| ------------ | -------: | ---------: | --------: | ----------: | ----------: |
+| `/about/`    |   39,103 |     37,647 |    10,929 |      10,746 |        -183 |
+| `/es/about/` |   39,831 |     38,375 |    11,245 |      11,070 |        -175 |
+| `/ar/about/` |   34,292 |     32,836 |     9,454 |       9,262 |        -192 |
+
+Homepage HTML raw sizes were unchanged. Gzip grew by 1 byte for `/`, 2 bytes
+for `/es/`, and 1 byte for `/ar/`; those documents reference the updated
+hashed global script bundle.
+
+Validation on Node 22.23.4: `npm run build`, `npm run lint`, and
+`npm run format:check` passed. The focused outro suite passed all 104 tests;
+the full Playwright suite passed 253 tests with 3 skips.
+
+Related links keep the existing `fx-card-gradient` frame and pointer tilt,
+without redundant `fx-glow` markup. Icon fills cross-fade through opacity;
+arrow motion mirrors in RTL. Reduced motion leaves the cards still.
 
 ## Collaboration map
 

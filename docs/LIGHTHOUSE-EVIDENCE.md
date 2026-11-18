@@ -16,6 +16,30 @@ FCP. Until a dedicated performance change makes every run score 100, the gate
 can fail on `main` itself, and no change to the built site is merged under the
 strict requirement while it fails.
 
+## Dotted glow baseline gate (2026-11-18 UTC)
+
+**Status: blocked before the branch audit.** On unchanged `main` (`465b50b`),
+the first mobile homepage sample produced two 99 Performance scores. As the
+strict policy requires, no Lighthouse runs were made against the feature
+branch.
+
+The command was `npm run audit:lighthouse -- --paths / --profiles mobile
+--runs 3`, using Lighthouse 13.6.0. The audit process ran on Node 24.13.1
+instead of the pinned Node 22.23.4, and the shared machine's idle state could
+not be guaranteed. Treat these as failed exploratory baseline runs, not a
+qualified release gate or evidence about the branch.
+
+| Run | Performance | Accessibility | Best Practices | SEO |   FCP |   LCP |   TBT | CLS | Speed Index |
+| --: | ----------: | ------------: | -------------: | --: | ----: | ----: | ----: | --: | ----------: |
+|   1 |          99 |           100 |            100 | 100 | 1.6 s | 1.6 s | 40 ms |   0 |       2.5 s |
+|   2 |         100 |           100 |            100 | 100 | 1.4 s | 1.4 s |  0 ms |   0 |       1.7 s |
+|   3 |          99 |           100 |            100 | 100 | 1.6 s | 1.6 s | 50 ms |   0 |       2.3 s |
+
+Reports are retained outside the repository in the session workspace under
+`files/outro-baseline/lighthouse-reports/2026-11-18T06-26-42-312Z/`. Rerun
+the complete baseline gate with the pinned runtime on an idle machine before
+auditing the branch.
+
 ## Page outro refresh (2026-11-18 UTC)
 
 **Status: passes the strict gate.** Baseline `main` (`cf0338e`) and the
