@@ -122,6 +122,16 @@ first: `--z-float` (back to top), `--z-header`, `--z-menu` (mobile menu),
 Small values from -2 to 2 that only order layers inside one component stay
 local.
 
+## Page-scoped CSS
+
+Keep site-wide rules and design tokens in `src/styles/global.css` and
+`src/styles/tokens.css`. Put rules used only by one component in a stylesheet
+that component imports; `Carousel.astro` with `carousel.css` and
+`PageContent.astro` with `pages.css` are existing examples. Keep a component's
+responsive, theme, RTL, focus, hover, open-state and reduced-motion variants
+with its base rules. This keeps styles out of routes that do not render their
+component and makes stylesheet ownership and cascade order explicit.
+
 ## Effects that follow the tokens
 
 Everything decorative reads the same roles, so a seed change re-themes it
