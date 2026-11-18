@@ -14,6 +14,8 @@
  * controls (which made the rail flicker in Safari).
  */
 
+import type { MotionPreference } from './motionPreference';
+
 type Cleanup = () => void;
 
 interface Metrics {
@@ -27,8 +29,6 @@ interface Metrics {
   max: number;
   count: number;
 }
-
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
 const hasScrollTimeline =
   CSS.supports('animation-timeline', 'scroll()') &&
@@ -45,7 +45,10 @@ const pad = (value: number): string => String(value).padStart(2, '0');
 const clamp = (value: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, value));
 
-function mountCarousel(root: HTMLElement): Cleanup {
+function mountCarousel(
+  root: HTMLElement,
+  motionPreference: MotionPreference,
+): Cleanup {
   const track = root.querySelector<HTMLElement>('[data-carousel-track]');
   if (!track) return () => undefined;
 
@@ -177,7 +180,7 @@ function mountCarousel(root: HTMLElement): Cleanup {
     const inline = getComputedStyle(track).direction === 'rtl' ? -1 : 1;
     track.scrollTo({
       left: destination * inline,
-      behavior: reducedMotion.matches ? 'auto' : 'smooth',
+      behavior: motionPreference.isPaused ? 'auto' : 'smooth',
     });
   };
 
@@ -215,7 +218,12 @@ function mountCarousel(root: HTMLElement): Cleanup {
   };
 }
 
-export function mountCarousels(roots: Iterable<HTMLElement>): Cleanup {
-  const cleanups = Array.from(roots, mountCarousel);
+export function mountCarousels(
+  roots: Iterable<HTMLElement>,
+  motionPreference: MotionPreference,
+): Cleanup {
+  const cleanups = Array.from(roots, (root) =>
+    mountCarousel(root, motionPreference),
+  );
   return () => cleanups.forEach((cleanup) => cleanup());
 }

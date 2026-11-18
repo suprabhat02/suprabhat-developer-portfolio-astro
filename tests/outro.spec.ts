@@ -2,6 +2,12 @@ import { expect, test, type Page } from '@playwright/test';
 import { t, type MessageKey } from '../src/i18n/messages';
 import { axe, scrollToVisible } from './helpers';
 
+declare global {
+  interface Window {
+    __motionTestRafCount: number;
+  }
+}
+
 const related = {
   about: ['experience', 'work', 'blog'],
   skills: ['tools', 'work', 'experience'],
@@ -48,6 +54,35 @@ const paintedPixels = (page: Page) =>
       if ((pixels[index] ?? 0) > 0) opaque++;
     }
     return opaque;
+  });
+
+const sampledCanvas = (page: Page) =>
+  page.locator('.po-field canvas').evaluate((element) => {
+    if (!(element instanceof HTMLCanvasElement))
+      throw new Error('Expected the outro canvas.');
+    const context = element.getContext('2d');
+    if (!context) throw new Error('Expected a 2D canvas context.');
+    const pixels = context.getImageData(
+      0,
+      0,
+      element.width,
+      element.height,
+    ).data;
+    const samples: number[] = [];
+    for (let row = 0; row < 48; row++) {
+      const y = Math.min(
+        element.height - 1,
+        Math.floor(((row + 0.5) * element.height) / 48),
+      );
+      for (let column = 0; column < 128; column++) {
+        const x = Math.min(
+          element.width - 1,
+          Math.floor(((column + 0.5) * element.width) / 128),
+        );
+        samples.push(pixels[(y * element.width + x) * 4 + 3] ?? 0);
+      }
+    }
+    return samples;
   });
 
 for (const locale of ['en', 'es', 'ar'] as const) {
@@ -162,7 +197,7 @@ for (const locale of ['en', 'ar'] as const) {
       await page.goto(path);
       const field = page.locator('.po-field');
       await expect(field).toHaveAttribute('aria-hidden', 'true');
-      await expect(field).not.toHaveAttribute('data-motion-scope');
+      await expect(field).toHaveAttribute('data-motion-scope');
       const geometry = await field.evaluate((element) => {
         const rect = element.getBoundingClientRect();
         const card = element.parentElement!;
@@ -353,6 +388,60 @@ for (const locale of ['en', 'ar'] as const) {
     ).toBe(0);
   });
 }
+
+test('motion toggle freezes canvas frames and resumes without a time jump', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    window.__motionTestRafCount = 0;
+    const requestFrame = window.requestAnimationFrame.bind(window);
+    window.requestAnimationFrame = (callback) => {
+      window.__motionTestRafCount++;
+      return requestFrame(callback);
+    };
+  });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/about/');
+  const field = page.locator('.po-field');
+  await scrollToVisible(field);
+  await expect(field).toHaveAttribute('data-ready', '');
+  const toggle = page.getByRole('button', {
+    name: t('en', 'motion.toggle'),
+  });
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+
+  const readRafCount = () => page.evaluate(() => window.__motionTestRafCount);
+  const pausedCanvas = await canvasSnapshot(page);
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  await expect.poll(readRafCount).toBeGreaterThan(0);
+  await page.waitForTimeout(250);
+
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+  await page.waitForTimeout(100);
+  const pausedFrames = await readRafCount();
+  const pausedFrame = await canvasSnapshot(page);
+  const pausedPixels = await sampledCanvas(page);
+  await page.waitForTimeout(400);
+  expect(await readRafCount()).toBe(pausedFrames);
+  expect(await canvasSnapshot(page)).toBe(pausedFrame);
+
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => requestAnimationFrame(() => resolve())),
+  );
+  const resumedPixels = await sampledCanvas(page);
+  const changedRatio =
+    resumedPixels.filter(
+      (pixel, index) => Math.abs(pixel - (pausedPixels[index] ?? pixel)) > 24,
+    ).length / resumedPixels.length;
+  expect(changedRatio).toBeGreaterThan(0);
+  expect(changedRatio).toBeLessThan(0.5);
+  expect(pausedCanvas).not.toBe(await canvasSnapshot(page));
+});
 
 for (const [locale, path] of [
   ['en', '/about/'],

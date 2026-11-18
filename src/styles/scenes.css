@@ -1213,21 +1213,21 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lv-scene .k {
+  :root:not([data-motion='playing']) .lv-scene .k {
     animation: none !important;
   }
 
-  .fx-live .lv-l {
+  :root:not([data-motion='playing']) .fx-live .lv-l {
     translate: none;
     transition: none;
   }
 
-  .lv-scene svg {
+  :root:not([data-motion='playing']) .lv-scene svg {
     scale: none !important;
     transition: none;
   }
 
-  .lv-scene::after {
+  :root:not([data-motion='playing']) .lv-scene::after {
     display: none;
   }
 }

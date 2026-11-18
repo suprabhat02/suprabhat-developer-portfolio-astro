@@ -150,6 +150,9 @@ Details and measured pitfalls:
   the production-only analytics beacon already in `BaseLayout.astro`.
 - Every rule and pitfall in [docs/MOTION.md](MOTION.md) is binding. Do not
   reintroduce a listed pitfall.
+- Every automatically repeating CSS or canvas effect belongs to a
+  `[data-motion-scope]` and honors the site-wide motion preference; pausing must
+  not leave content hidden or strand it in a partial entrance state.
 - Images: built through the existing pipeline with explicit `width` and `height`;
   below-the-fold images lazy-load; the LCP element is never hidden, faded or
   delayed.

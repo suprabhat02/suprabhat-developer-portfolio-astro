@@ -558,8 +558,10 @@ const label = (key: MessageKey) => t(locale, key);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .case-study-toc a,
-    .case-study-toc a[aria-current='location'] {
+    :global(:root:not([data-motion='playing'])) .case-study-toc a,
+    :global(:root:not([data-motion='playing']))
+      .case-study-toc
+      a[aria-current='location'] {
       transition: none;
       transform: none;
     }

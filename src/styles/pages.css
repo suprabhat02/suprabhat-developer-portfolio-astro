@@ -922,17 +922,19 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .po-link.fx-card-gradient,
-  .po-link *,
-  .po-link::before,
-  .po-link::after,
-  .po-link *::before,
-  .po-link *::after {
+  :root:not([data-motion='playing']) .po-link.fx-card-gradient,
+  :root:not([data-motion='playing']) .po-link *,
+  :root:not([data-motion='playing']) .po-link::before,
+  :root:not([data-motion='playing']) .po-link::after,
+  :root:not([data-motion='playing']) .po-link *::before,
+  :root:not([data-motion='playing']) .po-link *::after {
     transition: none;
   }
 
-  .po-link.fx-card-gradient,
-  .po-link:is(:hover, :focus-visible) .po-arrow {
+  :root:not([data-motion='playing']) .po-link.fx-card-gradient,
+  :root:not([data-motion='playing'])
+    .po-link:is(:hover, :focus-visible)
+    .po-arrow {
     transform: none;
   }
 }

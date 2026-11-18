@@ -53,6 +53,8 @@ const HUBS: readonly GeoPoint[] = [
   { lat: -33.87, lng: 151.21 }, // Sydney
 ];
 
+import type { MotionPreference } from './motionPreference';
+
 const DEG = Math.PI / 180;
 const ARC_SAMPLES = 56;
 const ARC_PERIOD_MS = 4200;
@@ -150,13 +152,16 @@ const readPalette = (element: HTMLElement): Palette => {
   return palette;
 };
 
-export function mountGlobe(host: HTMLElement): () => void {
+export function mountGlobe(
+  host: HTMLElement,
+  motionPreference: MotionPreference,
+): () => void {
   const canvas = host.querySelector('canvas');
   const context = canvas?.getContext('2d');
   if (!canvas || !context) return () => undefined;
   const ctx = context;
 
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const clock = motionPreference.createClock();
   const homeLabel = host.dataset.homeLabel ?? 'India';
   const rtl = document.documentElement.dir === 'rtl';
   const { points, india } = buildDots();
@@ -173,7 +178,6 @@ export function mountGlobe(host: HTMLElement): () => void {
   let dpr = 1;
   let frame = 0;
   let visible = false;
-  let start = performance.now();
   let dragYaw = 0;
   let dragPitch = 0;
   let velocity = 0;
@@ -214,7 +218,9 @@ export function mountGlobe(host: HTMLElement): () => void {
 
   const draw = (now: number) => {
     if (!width) return;
-    const elapsed = reducedMotion.matches ? 0 : now - start;
+    const elapsed = motionPreference.isSystemReducedMotion
+      ? 0
+      : clock.elapsedAt(now);
     // Sway between Europe and East Asia so India stays in view, plus drag.
     const yaw =
       (HOME.lng - 18 + 46 * Math.sin((elapsed / 38000) * Math.PI * 2)) * DEG +
@@ -317,8 +323,12 @@ export function mountGlobe(host: HTMLElement): () => void {
         ((elapsed + arcIndex * (ARC_PERIOD_MS / routes.length) * 1.7) %
           (ARC_PERIOD_MS * 1.4)) /
         ARC_PERIOD_MS;
-      const head = reducedMotion.matches ? 1 : Math.min(1, phase);
-      const tail = reducedMotion.matches ? 0 : Math.max(0, phase - 0.42);
+      const head = motionPreference.isSystemReducedMotion
+        ? 1
+        : Math.min(1, phase);
+      const tail = motionPreference.isSystemReducedMotion
+        ? 0
+        : Math.max(0, phase - 0.42);
       let previous: [number, number, boolean] | null = null;
 
       for (let s = 0; s <= ARC_SAMPLES; s++) {
@@ -372,7 +382,11 @@ export function mountGlobe(host: HTMLElement): () => void {
         ctx.arc(px, py, dot * 1.3, 0, Math.PI * 2);
         ctx.fill();
         const landed = phase - 1;
-        if (!reducedMotion.matches && landed > 0 && landed < 0.35) {
+        if (
+          !motionPreference.isSystemReducedMotion &&
+          landed > 0 &&
+          landed < 0.35
+        ) {
           const progress = landed / 0.35;
           ctx.globalAlpha = 1 - progress;
           ctx.strokeStyle = palette.hub;
@@ -397,7 +411,9 @@ export function mountGlobe(host: HTMLElement): () => void {
     if (z > 0) {
       const px = cx + x * radius;
       const py = cy - y * radius;
-      const pulse = reducedMotion.matches ? 0.4 : (elapsed % 1800) / 1800;
+      const pulse = motionPreference.isSystemReducedMotion
+        ? 0.4
+        : (elapsed % 1800) / 1800;
       ctx.globalAlpha = 0.9 * (1 - pulse);
       ctx.strokeStyle = palette.home;
       ctx.lineWidth = 1.5;
@@ -448,13 +464,18 @@ export function mountGlobe(host: HTMLElement): () => void {
       velocity *= 0.94;
     }
     draw(now);
-    if (visible && !reducedMotion.matches && !document.hidden) {
+    if (visible && !motionPreference.isPaused && !document.hidden) {
       frame = requestAnimationFrame(loop);
     }
   };
 
   const schedule = () => {
-    if (!frame) frame = requestAnimationFrame(loop);
+    if (frame) return;
+    if (motionPreference.isPaused) {
+      draw(performance.now());
+      return;
+    }
+    frame = requestAnimationFrame(loop);
   };
 
   const resize = new ResizeObserver(([entry]) => {
@@ -477,7 +498,12 @@ export function mountGlobe(host: HTMLElement): () => void {
   io.observe(host);
 
   const onVisibility = () => {
-    if (!document.hidden) schedule();
+    if (document.hidden) {
+      cancelAnimationFrame(frame);
+      frame = 0;
+    } else {
+      schedule();
+    }
   };
   document.addEventListener('visibilitychange', onVisibility);
 
@@ -489,6 +515,16 @@ export function mountGlobe(host: HTMLElement): () => void {
     attributes: true,
     attributeFilter: ['data-theme'],
   });
+
+  const onMotionChange = (paused: boolean) => {
+    if (paused) {
+      cancelAnimationFrame(frame);
+      frame = 0;
+    } else {
+      schedule();
+    }
+  };
+  const unsubscribeMotion = motionPreference.subscribe(onMotionChange);
 
   const onDown = (event: PointerEvent) => {
     pointer = { id: event.pointerId, x: event.clientX, y: event.clientY };
@@ -520,7 +556,6 @@ export function mountGlobe(host: HTMLElement): () => void {
   canvas.addEventListener('pointercancel', onUp);
 
   host.setAttribute('data-ready', '');
-  start = performance.now();
 
   return () => {
     cancelAnimationFrame(frame);
@@ -528,6 +563,8 @@ export function mountGlobe(host: HTMLElement): () => void {
     io.disconnect();
     theme.disconnect();
     document.removeEventListener('visibilitychange', onVisibility);
+    unsubscribeMotion();
+    clock.dispose();
     canvas.removeEventListener('pointerdown', onDown);
     canvas.removeEventListener('pointermove', onMove);
     canvas.removeEventListener('pointerup', onUp);

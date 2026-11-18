@@ -253,6 +253,22 @@ const combinedSchema = {
       } catch {
         document.documentElement.dataset.theme = 'dark';
       }
+      let motionChoice = null;
+      try {
+        const savedMotion = localStorage.getItem('sk-motion');
+        if (savedMotion === 'paused' || savedMotion === 'playing')
+          motionChoice = savedMotion;
+      } catch {
+        // Reduced-motion preference still applies when storage is unavailable.
+      }
+      const motionPaused =
+        motionChoice === 'paused' ||
+        (motionChoice === null &&
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+      if (motionPaused) document.documentElement.dataset.motion = 'paused';
+      else if (motionChoice === 'playing')
+        document.documentElement.dataset.motion = 'playing';
+      else delete document.documentElement.dataset.motion;
       {
         const themeColor = document.querySelector('meta[name="theme-color"]');
         const themeColorValue =

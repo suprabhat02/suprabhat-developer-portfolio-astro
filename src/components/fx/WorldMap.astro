@@ -283,8 +283,17 @@ const packetStyles = curves.map(({ start, control, end }, index) => {
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .world-map-packet {
+    :global(:root:not([data-motion='playing'])) .world-map-packet {
       display: none;
+    }
+
+    :global(:root[data-motion='playing']) .world-map-packet {
+      animation: world-map-travel 7s linear infinite;
+      animation-delay: var(--route-delay);
+    }
+
+    :global(:root[data-motion='playing']) .world-map-halo {
+      animation: world-map-pulse 4s ease-out infinite;
     }
   }
 
