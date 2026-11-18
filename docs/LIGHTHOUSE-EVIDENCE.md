@@ -16,6 +16,44 @@ FCP. Until a dedicated performance change makes every run score 100, the gate
 can fail on `main` itself, and no change to the built site is merged under the
 strict requirement while it fails.
 
+## Page outro refresh (2026-11-18 UTC)
+
+**Status: passes the strict gate.** Baseline `main` (`cf0338e`) and the
+`feat/page-outro-refresh` build each scored 100 / 100 / 100 / 100 in all 54
+runs: nine paths (`/`, `/es/`, `/ar/`, `/about/`, `/es/about/`, `/ar/about/`,
+`/services/`, `/ar/services/`, `/blog/`), mobile and desktop, three runs each,
+run sequentially on one idle machine against `npm run preview` with
+`npm run audit:lighthouse`. No run was repeated, discarded or averaged.
+
+An earlier attempt on a different, busy machine scored only 2 of 54 baseline
+runs at 100 on unchanged `main`. That result measured the machine, not the code,
+and it is not used as evidence. Run the gate on an idle machine.
+
+Worst single run per profile across all nine paths (milliseconds, CLS unitless):
+
+| Profile | Build  | FCP   | LCP   | TBT | CLS | Speed Index |
+| ------- | ------ | ----- | ----- | --- | --- | ----------- |
+| Mobile  | main   | 1,218 | 1,860 | 30  | 0   | 1,218       |
+| Mobile  | branch | 1,260 | 1,860 | 37  | 0   | 1,260       |
+| Desktop | main   | 380   | 540   | 0   | 0   | 461         |
+| Desktop | branch | 341   | 501   | 0   | 0   | 429         |
+
+The mobile differences are within run-to-run noise: FCP and Speed Index move by
+42 ms and TBT by 7 ms, with LCP and CLS unchanged, and every category still
+rounds to 100. The Arabic mobile homepage did not drop below 100 in this run,
+but the variance recorded in the gate policy above is not fixed; keep watching it.
+
+HTML gzip bytes (`gzip -9`, same settings before and after):
+
+| Page         | Before |  After | Growth |
+| ------------ | -----: | -----: | -----: |
+| `/about/`    | 10,469 | 10,780 |   +311 |
+| `/es/about/` | 10,787 | 11,095 |   +308 |
+| `/ar/about/` |  9,025 |  9,343 |   +318 |
+
+Build, lint and format passed. The full end-to-end suite passed (237 passed,
+3 skipped), including the new `tests/outro.spec.ts`.
+
 ## Visual scene redesign (2026-11-17 UTC)
 
 **Status (superseded by the gate policy above): passed the owner's then-revised

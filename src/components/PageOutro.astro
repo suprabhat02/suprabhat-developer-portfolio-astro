@@ -4,6 +4,7 @@
  * links with descriptive text) and a contact call to action.
  */
 import Icon, { type IconName } from './fx/Icon.astro';
+import DotGlow from './fx/DotGlow.astro';
 import { localePrefix, type Locale } from '../i18n/config';
 import { t, type MessageKey } from '../i18n/messages';
 
@@ -43,8 +44,7 @@ const pages: Record<
         related.map((id) => (
           <li>
             <a
-              class="po-link fx-glow"
-              data-glow
+              class="po-link fx-card-gradient"
               href={`${prefix}/${id === 'skills' ? 'services' : id}/`}
             >
               <span class="po-icon">
@@ -65,22 +65,25 @@ const pages: Record<
   </nav>
 
   <section class="po-cta" aria-labelledby="po-cta-title">
-    <p class="eyebrow">{t(locale, 'home.ctaTag')}</p>
-    <h2 id="po-cta-title" class="po-cta-title">
-      {t(locale, 'home.ctaTitle')}
-    </h2>
-    <p class="po-cta-lead">{t(locale, 'home.ctaLead')}</p>
-    <div class="po-actions">
-      <a class="button primary" href={`${prefix}/contact/`}>
-        {t(locale, 'action.start')}
-      </a>
-      <a
-        class="button"
-        href="/assets/suprabhat-kumar-senior-frontend-engineer-resume.pdf"
-        download
-      >
-        {t(locale, 'action.resume')}
-      </a>
+    <div class="po-cta-copy">
+      <p class="eyebrow">{t(locale, 'home.ctaTag')}</p>
+      <h2 id="po-cta-title" class="po-cta-title">
+        {t(locale, 'home.ctaTitle')}
+      </h2>
+      <p class="po-cta-lead">{t(locale, 'home.ctaLead')}</p>
+      <div class="po-actions">
+        <a class="button primary" href={`${prefix}/contact/`}>
+          {t(locale, 'action.start')}
+        </a>
+        <a
+          class="button"
+          href="/assets/suprabhat-kumar-senior-frontend-engineer-resume.pdf"
+          download
+        >
+          {t(locale, 'action.resume')}
+        </a>
+      </div>
     </div>
+    <DotGlow class="po-field" />
   </section>
 </div>
