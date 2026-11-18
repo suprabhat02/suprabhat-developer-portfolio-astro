@@ -16,6 +16,215 @@ FCP. Until a dedicated performance change makes every run score 100, the gate
 can fail on `main` itself, and no change to the built site is merged under the
 strict requirement while it fails.
 
+## Homepage mobile TBT investigation (2026-11-18 UTC)
+
+**Status: cause found, no safe code change beats the noise.** The strict gate
+misses that recur are on the Arabic pages, on mobile (Performance 99 from TBT
+of 50 to 130 ms), and the Arabic homepage is the one that shows up on unchanged
+`main` too. This section records what was
+measured so the work is not repeated.
+
+Method: Chromium with a 412 px mobile viewport, 4x CPU throttling, tracing and
+`Performance.getMetrics`; each figure is the median of 7 loads of the built
+site (`npm run preview`, Node 22.23.4). Run-to-run spread is about 15 ms.
+
+What the long task is. On every page the one task over 50 ms is the first
+rendering update: style recalculation, one `Layout` and a paint in a single
+task (152 to 215 ms at 4x on `/ar/`). JavaScript is not the cost: the boot
+script has about 7 ms of self time, and the `BaseLayout` script that Lighthouse
+names owns only the surrounding task.
+
+| Page (mobile, 4x) | Layout (ms) | TBT (ms) |
+| ----------------- | ----------: | -------: |
+| `/ar/`            |         122 |      105 |
+| `/es/`            |          46 |       55 |
+| `/`               |          51 |       53 |
+| `/ar/about/`      |          96 |       62 |
+| `/about/`         |          32 |       28 |
+| `/services/`      |          31 |       11 |
+| `/faq/`           |          23 |       10 |
+
+Arabic pages spend two to three times the layout time of the same page in
+Latin script. The first `Layout` covers about 270 objects and is dominated by
+text shaping (about 90 shaping calls), so complex-script shaping in the first
+viewport is the floor. Pages with less first-viewport text (`/services/`,
+`/faq/`) cost far less, and every run of them on `main` scored 100.
+
+Candidates tried and rejected. None moved layout or TBT by more than the
+run-to-run spread, so none was shipped:
+
+- `text-wrap: balance` and `pretty` off, `backdrop-filter` off, `mask-image` and
+  `filter` off, all animations and transitions off.
+- A system monospace font instead of Geist Mono, and an explicit Arabic-capable
+  family list for `[dir='rtl']`.
+- Hiding or `content-visibility: auto` on the hero proof cards (the homepage
+  already skips the sections below the hero this way).
+- `build.inlineStylesheets: 'always'`: FCP improved by 10 to 40 ms, but every
+  page grew by 19 to 29 KB gzip (the homepage HTML goes from 46 to 75 KB), and
+  `/ar/` mobile TBT rose from 22 to 56 ms with one run at 99. Not worth it.
+
+Open, larger items (not started, no score depends on them): Lighthouse
+estimates 12 to 23 KiB of unused CSS and about 180 ms of render-blocking
+savings on mobile, because `global.css` carries rules for components absent
+from a given page; splitting it by page is a refactor that touches RTL and
+theme rules. The homepage portrait AVIF at the 560 px step is 68 KB for a
+287 px slot (13 KiB estimated saving).
+
+## Page-scoped CSS investigation (2026-11-18 UTC)
+
+No CSS was moved. The measured `main` baseline was
+`e7969480755397eb66e99d28c3861fa0774fce67`, built with Node 22.23.4 and the
+existing `node_modules`. Playwright CSS coverage was collected at 390 × 844
+with reduced motion for 16 route types in each of `en`, `es` and `ar` (48
+pages). Each page was scrolled to its end; native disclosures, the mobile menu
+and language menu were opened, the theme was toggled, and available form and
+copy controls were exercised. These coverage bytes are a hint for investigation,
+not proof that an unobserved pseudo-class or media variant can be removed.
+
+| Route type      | BaseLayout CSS reported unused, across locales (raw bytes) |
+| --------------- | ---------------------------------------------------------: |
+| Home            |                                              39,293–44,894 |
+| About           |                                              51,495–51,731 |
+| Services        |                                              49,968–50,204 |
+| FAQ             |                                              51,027–51,263 |
+| Contact         |                                              52,440–52,727 |
+| Blog index      |                                              49,658–49,894 |
+| Blog article    |                                              45,460–45,703 |
+| Work index      |                                              44,698–45,041 |
+| Case study      |                                              50,849–51,048 |
+| Experience      |                                              46,502–46,796 |
+| Skills          |                                              50,268–50,504 |
+| Tools           |                                              49,653–49,940 |
+| Recommendations |                                              50,554–50,790 |
+| Accessibility   |                                              53,953–54,152 |
+| Privacy         |                                              54,396–54,519 |
+| 404             |                                              48,999–49,198 |
+
+These are raw, route-level Chromium coverage figures after the stated
+interactions, not Lighthouse's `unused-css-rules` estimates. The following
+component-owned blocks were checked against markup and scripts. Locale variants
+have the same component placement; the code search found no script that adds
+these classes outside those components.
+
+| Rule block                               |                        `global.css` lines | Routes that render it (`en`, `es`, `ar`)                                              |
+| ---------------------------------------- | ----------------------------------------: | ------------------------------------------------------------------------------------- |
+| 404 page                                 | 841–1026, 1845–1848, 1886–1900, 1915–1942 | 404 page only                                                                         |
+| Topic-cloud base                         |                                 1029–1043 | Blog index, tag pages and `/blog/` content in `PageContent`                           |
+| Tool-group layout                        |                                 1067–1107 | `/tools/`                                                                             |
+| Accessibility note                       |                                 1109–1112 | `/accessibility/`                                                                     |
+| Metadata and bullets                     |                                 1113–1129 | Blog pages, case studies and relevant `PageContent` sections; shared across templates |
+| Article page, list, prose and scorecard  |                                 1453–1728 | Blog index, tag pages and blog articles                                               |
+| FAQ disclosure effects                   |                                 2149–2185 | Home and `/faq/`                                                                      |
+| Contact form focus effects               |                                 2187–2212 | Home and `/contact/`                                                                  |
+| Article link and inline-code effects     |                                 2214–2244 | Blog articles                                                                         |
+| Philosophy callout                       |                                 2325–2347 | No matching markup or script found                                                    |
+| Work index tile                          |                                 2348–2358 | `/work/`                                                                              |
+| Experience timeline and promotion ladder |                                 2359–2799 | Home and `/experience/`                                                               |
+| Copy button                              |                                 2804–2877 | Home, `/work/`, blog articles and case studies                                        |
+| Open-source spotlight and terminal       |                                 2973–3239 | Home and `/work/`                                                                     |
+| Frame-card treatment                     |                                 2879–2971 | Shared by multiple card components; not exclusive                                     |
+| Reduced-motion card/copy/spotlight rules |                                 3240–3265 | Mixed selectors; keep with their shared rules                                         |
+
+The existing BaseLayout stylesheet measured 73,720 raw bytes and 15,700 gzip
+bytes on `main`. Removing every block in the table above that is exclusive to
+one or two routes (404, tools, article, work tile, experience, spotlight and
+terminal) with a CSS parser, and rebuilding, gives 53,721 raw and 11,918 gzip
+bytes: 3,782 gzip bytes (24 %) less on pages that use none of those blocks
+(`/about/`, `/services/`, `/faq/`, `/contact/`, `/skills/`). A narrower upper
+bound that kept the mixed groups measured 2,010 gzip bytes. The homepage uses
+the experience, spotlight, FAQ and contact blocks, so it saves far less.
+
+Decision: not shipped. 3.8 KB gzip is about 20 ms of transfer at Lighthouse's
+mobile bandwidth (1.6 Mbps), every score is already 100, and the move touches
+cascade order, theme, RTL and state variants across 48 pages. Revisit only
+with a pixel-for-pixel comparison harness in place. Strict Lighthouse numbers
+from a shared, busy laptop were discarded: with identical CSS they varied from
+57 to 29 passing runs out of 72, which shows that machine cannot serve as a gate.
+
+## Hero portrait quality sweep (2026-11-18 UTC)
+
+**Decision: keep `heroPortraitQuality` at 62.** The source is
+`portrait-1100.webp` (1100 × 1467, 305,780 bytes). Sharp 0.35.5 generated
+AVIF and WebP at qualities 62, 58, 54 and 50 for widths 288, 360, 450, 560,
+720 and 880. The quality-62 outputs matched all 12 responsive variants from
+the pinned-Node Astro build byte for byte.
+
+The Q62 column is the current per-file size. Other columns show the candidate
+size and its byte reduction versus Q62 at the same width and format.
+
+| Format | Width | Q62 bytes | Q58 bytes (saved) | Q54 bytes (saved) | Q50 bytes (saved) |
+| ------ | ----: | --------: | ----------------: | ----------------: | ----------------: |
+| AVIF   |   288 |    19,777 |    16,995 (2,782) |    14,291 (5,486) |    12,708 (7,069) |
+| AVIF   |   360 |    29,783 |    25,945 (3,838) |    21,486 (8,297) |   18,731 (11,052) |
+| AVIF   |   450 |    46,145 |    39,336 (6,809) |   32,573 (13,572) |   28,702 (17,443) |
+| AVIF   |   560 |    69,096 |    59,137 (9,959) |   48,960 (20,136) |   42,457 (26,639) |
+| AVIF   |   720 |   109,534 |   93,164 (16,370) |   77,167 (32,367) |   67,294 (42,240) |
+| AVIF   |   880 |   157,330 |  134,866 (22,464) |  111,830 (45,500) |   98,150 (59,180) |
+| WebP   |   288 |    17,790 |      17,178 (612) |    16,058 (1,732) |    15,228 (2,562) |
+| WebP   |   360 |    26,966 |    25,810 (1,156) |    24,222 (2,744) |    22,978 (3,988) |
+| WebP   |   450 |    41,142 |    39,424 (1,718) |    36,830 (4,312) |    35,158 (5,984) |
+| WebP   |   560 |    62,030 |    58,702 (3,328) |    54,944 (7,086) |    52,262 (9,768) |
+| WebP   |   720 |    99,098 |    93,956 (5,142) |   87,792 (11,306) |   83,422 (15,676) |
+| WebP   |   880 |   139,778 |   135,400 (4,378) |  125,824 (13,954) |  120,044 (19,734) |
+
+PSNR and mean absolute difference (MAD) compare each lower-quality encode to
+Q62 at the same width and format. Each cell is `PSNR dB / MAD` on decoded
+sRGB RGB channel values (0–255).
+
+| Format | Width | Q58 PSNR / MAD | Q54 PSNR / MAD | Q50 PSNR / MAD |
+| ------ | ----: | -------------: | -------------: | -------------: |
+| AVIF   |   288 |  33.07 / 3.941 |  32.00 / 4.469 |  31.54 / 4.691 |
+| AVIF   |   360 |  33.18 / 3.869 |  32.11 / 4.382 |  31.60 / 4.610 |
+| AVIF   |   450 |  33.28 / 3.814 |  32.17 / 4.334 |  31.68 / 4.564 |
+| AVIF   |   560 |  33.40 / 3.758 |  32.29 / 4.283 |  31.77 / 4.511 |
+| AVIF   |   720 |  33.51 / 3.715 |  32.39 / 4.237 |  31.89 / 4.455 |
+| AVIF   |   880 |  33.93 / 3.519 |  32.74 / 4.046 |  32.22 / 4.271 |
+| WebP   |   288 |  34.52 / 3.245 |  33.15 / 3.888 |  32.46 / 4.237 |
+| WebP   |   360 |  34.74 / 3.167 |  33.08 / 3.891 |  32.42 / 4.238 |
+| WebP   |   450 |  34.78 / 3.131 |  33.36 / 3.754 |  32.68 / 4.079 |
+| WebP   |   560 |  34.61 / 3.193 |  33.37 / 3.709 |  32.59 / 4.085 |
+| WebP   |   720 |  34.68 / 3.119 |  33.36 / 3.701 |  32.59 / 4.082 |
+| WebP   |   880 |  35.13 / 2.911 |  33.90 / 3.426 |  33.05 / 3.825 |
+
+The required PSNR threshold is above 40 dB; none of the candidates reaches it.
+At 450 and 560 px, AVIF Q54 saves 13,572 and 20,136 bytes respectively, but
+WebP Q54 saves only 4,312 and 7,086 bytes. Q58 saves less than 10,000 bytes at
+both widths in both formats. On the 2× face, hair-edge and jacket-texture
+crops at 450 and 560 px, Q58 already loses some fine detail; Q54 and Q50 are
+visibly softer, with the hair/tree edges and jacket texture becoming less
+distinct. The crops are not visually indistinguishable at 2×, so none of the
+lower qualities meets the combined size, visual and PSNR criteria.
+
+Playwright `currentSrc` probes on the homepage confirmed these AVIF selections
+(DPR 1 / 2 / 3); the WebP files in the preceding table are the format fallback:
+
+| Viewport width | DPR 1 | DPR 2 | DPR 3 |
+| -------------: | ----: | ----: | ----: |
+|            320 |   288 |   450 |   720 |
+|            390 |   288 |   560 |   880 |
+|            768 |   450 |   880 |   880 |
+|           1040 |   450 |   880 |   880 |
+|           1041 |   450 |   880 |   880 |
+|           1280 |   450 |   880 |   880 |
+|           1440 |   450 |   880 |   880 |
+
+| Width | AVIF file                             | WebP fallback file                   |
+| ----: | ------------------------------------- | ------------------------------------ |
+|   288 | `portrait-1100.Do0cluMw_A1tSL.avif`   | `portrait-1100.Do0cluMw_1TptuF.webp` |
+|   360 | `portrait-1100.Do0cluMw_Z1cmxFU.avif` | `portrait-1100.Do0cluMw_71qTY.webp`  |
+|   450 | `portrait-1100.Do0cluMw_Z11yWAr.avif` | `portrait-1100.Do0cluMw_hO20s.webp`  |
+|   560 | `portrait-1100.Do0cluMw_Z1dink6.avif` | `portrait-1100.Do0cluMw_65BgN.webp`  |
+|   720 | `portrait-1100.Do0cluMw_Zm6Fkl.avif`  | `portrait-1100.Do0cluMw_Whjgy.webp`  |
+|   880 | `portrait-1100.Do0cluMw_NhxHd.avif`   | `portrait-1100.Do0cluMw_XSbTG.webp`  |
+
+Across the tested wide viewports (1041 and 1280 px, DPR 1–3), the media-gated
+image preload's `imagesrcset` and `imagesizes` matched the AVIF `<source>` and
+`<img sizes>`; the browser selected a candidate present in the preload set and
+requested it once. At smaller viewports the preload media condition does not
+match, and the selected lazy image was requested once.
+
+No source or quality setting was changed, so no performance run was needed.
+
 ## Dotted glow canvas (2026-11-18 UTC)
 
 **Status: the pages that carry the field score 100 in every run.** Node 22.23.4
