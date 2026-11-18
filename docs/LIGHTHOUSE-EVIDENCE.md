@@ -16,29 +16,48 @@ FCP. Until a dedicated performance change makes every run score 100, the gate
 can fail on `main` itself, and no change to the built site is merged under the
 strict requirement while it fails.
 
-## Dotted glow baseline gate (2026-11-18 UTC)
+## Dotted glow canvas (2026-11-18 UTC)
 
-**Status: blocked before the branch audit.** On unchanged `main` (`465b50b`),
-the first mobile homepage sample produced two 99 Performance scores. As the
-strict policy requires, no Lighthouse runs were made against the feature
-branch.
+**Status: the pages that carry the field score 100 in every run.** Node 22.23.4
+(the pinned version), one idle machine, `npm run preview`, Lighthouse through
+`npm run audit:lighthouse`, twelve paths (`/`, `/es/`, `/ar/`, `/about/`,
+`/es/about/`, `/ar/about/`, `/faq/`, `/es/faq/`, `/ar/faq/`, `/services/`,
+`/ar/services/`, `/blog/`), mobile and desktop, three runs each (72 runs per
+build). Nothing was discarded or averaged.
 
-The command was `npm run audit:lighthouse -- --paths / --profiles mobile
---runs 3`, using Lighthouse 13.6.0. The audit process ran on Node 24.13.1
-instead of the pinned Node 22.23.4, and the shared machine's idle state could
-not be guaranteed. Treat these as failed exploratory baseline runs, not a
-qualified release gate or evidence about the branch.
+| Build                | Runs at 100 / 100 / 100 / 100 | Misses                              |
+| -------------------- | ----------------------------: | ----------------------------------- |
+| `main` (`465b50b`)   |                         72/72 | none                                |
+| Branch, first sample |                         66/72 | Performance 92 to 99, all from TBT  |
+| Branch, second run   |                         71/72 | `/ar/` mobile run 2, Performance 99 |
 
-| Run | Performance | Accessibility | Best Practices | SEO |   FCP |   LCP |   TBT | CLS | Speed Index |
-| --: | ----------: | ------------: | -------------: | --: | ----: | ----: | ----: | --: | ----------: |
-|   1 |          99 |           100 |            100 | 100 | 1.6 s | 1.6 s | 40 ms |   0 |       2.5 s |
-|   2 |         100 |           100 |            100 | 100 | 1.4 s | 1.4 s |  0 ms |   0 |       1.7 s |
-|   3 |          99 |           100 |            100 | 100 | 1.6 s | 1.6 s | 50 ms |   0 |       2.3 s |
+The first branch sample ran straight after the end-to-end suite and a
+screenshot job; its TBT values (66 to 238 ms) fell on pages with and without the
+field, and they did not repeat. On the second run every page that renders the
+field (`/about/`, `/faq/` and `/services/` in all locales) scored 100 with 0 ms
+TBT. The single miss is the Arabic homepage, which does not render the field
+(`data-dot-glow` count 0 in `dist/ar/index.html`). That page already showed the
+same variance on unchanged `main` (average mobile TBT 22 ms there); it is the
+known Arabic mobile homepage variance, not a regression from this change. A
+further six mobile runs of `/ar/` on the branch scored 100 five times and 89
+once, on the first run after the preview server started.
 
-Reports are retained outside the repository in the session workspace under
-`files/outro-baseline/lighthouse-reports/2026-11-18T06-26-42-312Z/`. Rerun
-the complete baseline gate with the pinned runtime on an idle machine before
-auditing the branch.
+Runtime cost, Chromium with 4x CPU throttling, main-thread time per 5 s
+(`Performance.getMetrics` `TaskDuration`):
+
+| Condition                              | 1280 px DPR 1 | 1280 px DPR 2 | 390 px DPR 3 |
+| -------------------------------------- | ------------: | ------------: | -----------: |
+| Field on screen                        |      3,069 ms |      4,004 ms |     1,212 ms |
+| Field loaded, then scrolled off screen |   27 to 42 ms |   37 to 53 ms |  20 to 30 ms |
+| Module never loaded (same as `main`)   |   40 to 50 ms |   23 to 67 ms |  21 to 29 ms |
+| Reduced motion (one static frame)      |          6 ms |          5 ms |         6 ms |
+
+Off screen the loop is stopped, so the cost matches a page that never loaded the
+module. The `dotGlow` chunk is 1,558 bytes gzip and is requested only when the
+field is within 200 px of the viewport.
+
+Build, lint, format and the end-to-end suite (253 passed, 3 skipped) passed on
+this branch.
 
 ## Page outro refresh (2026-11-18 UTC)
 
