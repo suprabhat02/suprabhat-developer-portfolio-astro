@@ -1,128 +1,70 @@
 ---
 interface Props {
-  count?: number | undefined;
   class?: string | undefined;
+  gap?: number | undefined;
+  radius?: number | undefined;
+  opacity?: number | undefined;
+  speedMin?: number | undefined;
+  speedMax?: number | undefined;
+  speedScale?: number | undefined;
+  colorVar?: `--${string}` | undefined;
+  glowColorVar?: `--${string}` | undefined;
 }
 
-const { count = 18, class: className } = Astro.props;
-const dots = Array.from({ length: Math.max(0, count) }, (_, index) => ({
-  x: (12 + ((index * 37) % 77)) / 100,
-  y: (12 + ((index * 29) % 77)) / 100,
-  duration: 4 + ((index * 7) % 11) / 2,
-  delay: -((index * 1.73) % 9),
-}));
+const {
+  class: className,
+  gap = 12,
+  radius = 2,
+  opacity = 0.6,
+  speedMin = 0.4,
+  speedMax = 1.3,
+  speedScale = 1,
+  colorVar = '--text-3',
+  glowColorVar = '--accent-fill',
+} = Astro.props;
 ---
 
 <div
   class:list={['fx-dot-glow', className]}
+  data-dot-glow
+  data-gap={gap}
+  data-radius={radius}
+  data-opacity={opacity}
+  data-speed-min={speedMin}
+  data-speed-max={speedMax}
+  data-speed-scale={speedScale}
+  data-color-var={colorVar}
+  data-glow-color-var={glowColorVar}
   aria-hidden="true"
-  data-motion-scope
 >
-  {
-    dots.map((dot) => (
-      <span
-        style={`--x:${dot.x};--y:${dot.y};--duration:${dot.duration}s;--delay:${dot.delay.toFixed(2)}s`}
-      />
-    ))
-  }
+  <canvas></canvas>
 </div>
 
 <style>
   .fx-dot-glow {
     position: relative;
-    overflow: hidden;
-    overflow: clip;
+    min-inline-size: 0;
+    min-block-size: 0;
     pointer-events: none;
-    background: radial-gradient(var(--fx-grid-dot) 1px, transparent 1.4px) left
-      top / 14px 14px;
-    mask-image:
-      linear-gradient(
-        to right,
-        transparent,
-        var(--text) var(--dot-fade-start, 32%),
-        var(--text) 78%,
-        transparent
-      ),
-      linear-gradient(
-        to bottom,
-        transparent,
-        var(--text) 18%,
-        var(--text) 82%,
-        transparent
-      );
-    mask-composite: intersect;
-    opacity: var(--dot-glow-opacity, 0.55);
-    transition: opacity 240ms ease-in-out;
   }
 
-  :global([dir='rtl']) .fx-dot-glow {
-    background-position: right top;
-    mask-image:
-      linear-gradient(
-        to left,
-        transparent,
-        var(--text) var(--dot-fade-start, 32%),
-        var(--text) 78%,
-        transparent
-      ),
-      linear-gradient(
-        to bottom,
-        transparent,
-        var(--text) 18%,
-        var(--text) 82%,
-        transparent
-      );
-  }
-
-  .fx-dot-glow > span {
+  .fx-dot-glow canvas {
     position: absolute;
-    /* Grid centers are 7px from the logical origin; halos have a 10px radius. */
-    inset-inline-start: calc(round(down, (100% - 14px) * var(--x), 14px) - 3px);
-    inset-block-start: calc(round(down, (100% - 14px) * var(--y), 14px) - 3px);
-    inline-size: 20px;
-    block-size: 20px;
-    background: radial-gradient(
-      circle,
-      var(--accent-fill) 1px,
-      color-mix(in oklch, var(--accent-fill) 35%, transparent) 3px,
-      transparent 10px
-    );
-    opacity: 0.06;
-    animation: dot-glow-twinkle var(--duration) ease-in-out var(--delay)
-      infinite;
+    inset: 0;
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    opacity: 0;
+    transition: opacity 400ms ease;
   }
 
-  @keyframes dot-glow-twinkle {
-    0%,
-    58%,
-    92%,
-    100% {
-      opacity: 0.06;
-    }
-    68%,
-    78% {
-      opacity: 1;
-    }
-  }
-
-  @media (max-width: 760px) {
-    .fx-dot-glow > span:nth-child(n + 10) {
-      display: none;
-    }
+  .fx-dot-glow[data-ready] canvas {
+    opacity: 1;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .fx-dot-glow {
+    .fx-dot-glow canvas {
       transition: none;
-    }
-
-    .fx-dot-glow > span {
-      animation: none;
-      opacity: 0;
-    }
-
-    .fx-dot-glow > span:nth-child(5n + 2) {
-      opacity: 0.85;
     }
   }
 

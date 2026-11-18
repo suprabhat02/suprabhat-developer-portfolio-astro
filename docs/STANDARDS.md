@@ -66,6 +66,7 @@ Always:
 Never introduce:
 
 - Decorative gradients, glows, blobs, glassmorphism stacks or new drop shadows.
+- The inner-page CTA dotted glow is an owner-approved exception to the no-glows rule.
 - Emoji as icons, clip art, stock 3D illustration, sparkles or confetti.
 - Identical cards that differ only by text when the content has real structure.
 - Fake data that reads as a claim about the owner: metrics, client names, logos,

@@ -485,6 +485,34 @@ function initLazyGlobes(): Cleanup {
   };
 }
 
+/* ── Dotted CTA field: load the canvas renderer only when it approaches ─ */
+
+function initLazyDotGlows(): Cleanup {
+  const hosts = document.querySelectorAll<HTMLElement>('[data-dot-glow]');
+  if (!hosts.length || !('IntersectionObserver' in window)) {
+    return () => undefined;
+  }
+  const unmounts: Cleanup[] = [];
+  const observer = new IntersectionObserver(
+    (entries) =>
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        observer.unobserve(entry.target);
+        import('./dotGlow')
+          .then(({ mountDotGlow }) =>
+            unmounts.push(mountDotGlow(entry.target as HTMLElement)),
+          )
+          .catch((error: unknown) => console.error(error));
+      }),
+    { rootMargin: '200px 0px' },
+  );
+  hosts.forEach((host) => observer.observe(host));
+  return () => {
+    observer.disconnect();
+    unmounts.forEach((unmount) => unmount());
+  };
+}
+
 /* ── Carousels: fetch the controls only when one approaches the viewport ─ */
 /*
  * A carousel scrolls natively without this (see scripts/carousel.ts), so the
@@ -545,6 +573,7 @@ const initializers: ReadonlyArray<() => Cleanup> = [
   initLiveScenes,
   initHeroEngagement,
   initLazyGlobes,
+  initLazyDotGlows,
   initLazyCarousels,
   initToasts,
 ];
