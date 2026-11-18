@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { t, type MessageKey } from '../src/i18n/messages';
 import { axe, scrollToVisible } from './helpers';
 
@@ -23,6 +23,32 @@ const labels: Record<Destination, readonly [MessageKey, MessageKey]> = {
   services: ['nav.services', 'page.services.title'],
   tools: ['nav.tools', 'page.tools.title'],
 };
+
+const canvasSnapshot = (page: Page) =>
+  page.locator('.po-field canvas').evaluate((element) => {
+    if (!(element instanceof HTMLCanvasElement))
+      throw new Error('Expected the outro canvas.');
+    return element.toDataURL();
+  });
+
+const paintedPixels = (page: Page) =>
+  page.locator('.po-field canvas').evaluate((element) => {
+    if (!(element instanceof HTMLCanvasElement))
+      throw new Error('Expected the outro canvas.');
+    const context = element.getContext('2d');
+    if (!context) throw new Error('Expected a 2D canvas context.');
+    const pixels = context.getImageData(
+      0,
+      0,
+      element.width,
+      element.height,
+    ).data;
+    let opaque = 0;
+    for (let index = 3; index < pixels.length; index += 4) {
+      if ((pixels[index] ?? 0) > 0) opaque++;
+    }
+    return opaque;
+  });
 
 for (const locale of ['en', 'es', 'ar'] as const) {
   const prefix = locale === 'en' ? '' : `/${locale}`;
@@ -72,6 +98,10 @@ for (const locale of ['en', 'es', 'ar'] as const) {
       await page.evaluate((value) => {
         document.documentElement.dataset.theme = value;
       }, theme);
+      await expect(page.locator('.po-field')).toHaveCSS(
+        'opacity',
+        theme === 'light' ? '0.45' : '1',
+      );
       const results = await axe(page).analyze();
       expect(results.violations, theme).toEqual([]);
       expect(
@@ -124,23 +154,29 @@ for (const locale of ['en', 'ar'] as const) {
       .toBe('1');
   });
 
-  for (const width of [390, 768, 1280, 1440]) {
-    test(`signal field avoids copy and aligns to grid: ${locale} ${width}`, async ({
+  for (const width of [390, 760, 768, 1280, 1440]) {
+    test(`signal field clears copy and meets card edges: ${locale} ${width}`, async ({
       page,
     }) => {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(path);
       const field = page.locator('.po-field');
       await expect(field).toHaveAttribute('aria-hidden', 'true');
-      await expect(field).toHaveAttribute('data-motion-scope', '');
-      await scrollToVisible(field);
-      await expect(field).not.toHaveAttribute('data-offscreen');
+      await expect(field).not.toHaveAttribute('data-motion-scope');
       const geometry = await field.evaluate((element) => {
         const rect = element.getBoundingClientRect();
-        const copy = element.parentElement!.querySelector('.po-cta-copy')!;
+        const card = element.parentElement!;
+        const cardRect = card.getBoundingClientRect();
+        const cardStyle = getComputedStyle(card);
+        const copy = card.querySelector('.po-cta-copy')!;
+        const actionBottom = Math.max(
+          ...Array.from(copy.querySelectorAll('a')).map(
+            (link) => link.getBoundingClientRect().bottom,
+          ),
+        );
         const ancestors: string[] = [];
         for (
-          let ancestor = element.parentElement;
+          let ancestor: Element | null = element.parentElement;
           ancestor;
           ancestor = ancestor.parentElement
         ) {
@@ -149,7 +185,15 @@ for (const locale of ['en', 'ar'] as const) {
         }
         return {
           field: rect.toJSON(),
+          card: cardRect.toJSON(),
+          borders: {
+            top: Number.parseFloat(cardStyle.borderTopWidth),
+            right: Number.parseFloat(cardStyle.borderRightWidth),
+            bottom: Number.parseFloat(cardStyle.borderBottomWidth),
+            left: Number.parseFloat(cardStyle.borderLeftWidth),
+          },
           copy: copy.getBoundingClientRect().toJSON(),
+          actionBottom,
           ancestors,
           overlaps: Array.from(
             copy.querySelectorAll('.eyebrow, h2, .po-cta-lead, a'),
@@ -164,112 +208,133 @@ for (const locale of ['en', 'ar'] as const) {
               );
             })
             .map((node) => node.className),
-          dots: Array.from(element.children)
-            .filter((node) => getComputedStyle(node).display !== 'none')
-            .map((node) => {
-              const dot = node.getBoundingClientRect();
-              return {
-                inline:
-                  getComputedStyle(element).direction === 'rtl'
-                    ? rect.right - dot.left - dot.width / 2
-                    : dot.left + dot.width / 2 - rect.left,
-                block: dot.top + dot.height / 2 - rect.top,
-              };
-            }),
+          direction: getComputedStyle(element).direction,
+          pointerEvents: getComputedStyle(element).pointerEvents,
+          scrollWidth: document.documentElement.scrollWidth,
+          clientWidth: document.documentElement.clientWidth,
         };
       });
       expect(geometry.ancestors).toEqual([]);
       expect(geometry.overlaps).toEqual([]);
       expect(geometry.field.width).toBeGreaterThan(0);
       expect(geometry.field.height).toBeGreaterThan(0);
+      expect(geometry.pointerEvents).toBe('none');
       if (width <= 760) {
-        expect(geometry.field.top).toBeGreaterThan(geometry.copy.bottom);
-        expect(geometry.dots.length).toBe(9);
+        expect(geometry.field.top).toBeGreaterThanOrEqual(
+          geometry.actionBottom,
+        );
+        expect(
+          Math.abs(
+            geometry.field.bottom -
+              (geometry.card.bottom - geometry.borders.bottom),
+          ),
+        ).toBeLessThanOrEqual(1);
+        expect(
+          Math.abs(
+            geometry.field.left - (geometry.card.left + geometry.borders.left),
+          ),
+        ).toBeLessThanOrEqual(1);
+        expect(
+          Math.abs(
+            geometry.field.right -
+              (geometry.card.right - geometry.borders.right),
+          ),
+        ).toBeLessThanOrEqual(1);
       } else {
-        if (locale === 'ar')
-          expect(geometry.field.right).toBeLessThan(geometry.copy.left);
-        else expect(geometry.field.left).toBeGreaterThan(geometry.copy.right);
-        expect(geometry.dots.length).toBeGreaterThanOrEqual(16);
-        expect(geometry.dots.length).toBeLessThanOrEqual(20);
-      }
-      for (const dot of geometry.dots) {
-        for (const position of [dot.inline, dot.block]) {
-          const node = Math.round((position - 7) / 14) * 14 + 7;
-          expect(Math.abs(position - node)).toBeLessThanOrEqual(0.5);
+        expect(
+          Math.abs(
+            geometry.field.top - (geometry.card.top + geometry.borders.top),
+          ),
+        ).toBeLessThanOrEqual(1);
+        expect(
+          Math.abs(
+            geometry.field.bottom -
+              (geometry.card.bottom - geometry.borders.bottom),
+          ),
+        ).toBeLessThanOrEqual(1);
+        if (geometry.direction === 'rtl') {
+          expect(
+            Math.abs(
+              geometry.field.left -
+                (geometry.card.left + geometry.borders.left),
+            ),
+          ).toBeLessThanOrEqual(1);
+        } else {
+          expect(
+            Math.abs(
+              geometry.field.right -
+                (geometry.card.right - geometry.borders.right),
+            ),
+          ).toBeLessThanOrEqual(1);
         }
       }
-      expect(
-        await page.evaluate(
-          () =>
-            document.documentElement.scrollWidth >
-            document.documentElement.clientWidth,
-        ),
-      ).toBe(false);
+      expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.clientWidth);
     });
   }
 
-  test(`signals pause offscreen and respond to CTA intent: ${locale}`, async ({
+  test(`canvas appears on demand and paints: ${locale}`, async ({ page }) => {
+    const requests: string[] = [];
+    page.on('request', (request) => {
+      if (/\/dotGlow\.[\w-]+\.js$/.test(new URL(request.url()).pathname)) {
+        requests.push(request.url());
+      }
+    });
+    await page.goto(path);
+    await page.waitForLoadState('load');
+    expect(requests).toHaveLength(0);
+    const field = page.locator('.po-field');
+    await scrollToVisible(field);
+    await expect(field).toHaveAttribute('data-ready', '', { timeout: 15_000 });
+    await expect.poll(() => paintedPixels(page)).toBeGreaterThan(0);
+    expect(requests).toHaveLength(1);
+  });
+
+  test(`canvas animates while visible and pauses offscreen: ${locale}`, async ({
     page,
   }) => {
     await page.goto(path);
     const field = page.locator('.po-field');
-    await expect(field).toHaveAttribute('data-offscreen', '');
-    expect(
-      await field.evaluate((element) =>
-        element
-          .getAnimations({ subtree: true })
-          .every((animation) => animation.playState === 'paused'),
-      ),
-    ).toBe(true);
     await scrollToVisible(field);
-    await expect(field).not.toHaveAttribute('data-offscreen');
-    expect(
-      await field.evaluate((element) =>
-        element
-          .getAnimations({ subtree: true })
-          .some((animation) => animation.playState === 'running'),
-      ),
-    ).toBe(true);
-    await expect(field).toHaveCSS('opacity', '0.55');
-    for (const link of await page.locator('.po-actions a').all()) {
-      await link.focus();
-      await expect(link).toBeFocused();
-      await expect(field).toHaveCSS('opacity', '1');
-    }
-    await page.locator('.po-link').first().focus();
-    await expect(field).toHaveCSS('opacity', '0.55');
-    if (await page.evaluate(() => matchMedia('(hover: hover)').matches)) {
-      for (const link of await page.locator('.po-actions a').all()) {
-        await link.hover();
-        await expect(field).toHaveCSS('opacity', '1');
-        await page.mouse.move(0, 0);
-        await expect(field).toHaveCSS('opacity', '0.55');
-      }
-    }
+    await expect(field).toHaveAttribute('data-ready', '');
+    const first = await canvasSnapshot(page);
+    await page.waitForTimeout(400);
+    expect(await canvasSnapshot(page)).not.toBe(first);
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+    await expect
+      .poll(
+        async () => {
+          const before = await canvasSnapshot(page);
+          await page.waitForTimeout(500);
+          return (await canvasSnapshot(page)) === before;
+        },
+        { timeout: 3_000 },
+      )
+      .toBe(true);
   });
 
-  test(`reduced motion keeps static signals and still cards: ${locale}`, async ({
+  test(`reduced motion draws a theme-aware static canvas: ${locale}`, async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(path);
-    await scrollToVisible(page.locator('.po-cta'));
     const field = page.locator('.po-field');
-    await page.locator('.po-actions a').first().focus();
-    expect(
-      await field.evaluate(
-        (element) => element.getAnimations({ subtree: true }).length,
-      ),
-    ).toBe(0);
-    const dots = await field
-      .locator('span')
-      .evaluateAll((elements) =>
-        elements
-          .filter((element) => getComputedStyle(element).display !== 'none')
-          .map((element) => Number(getComputedStyle(element).opacity)),
-      );
-    expect(dots.filter((opacity) => opacity > 0).length).toBeGreaterThan(0);
-    expect(dots.filter((opacity) => opacity === 0).length).toBeGreaterThan(0);
+    await scrollToVisible(field);
+    await expect(field).toHaveAttribute('data-ready', '');
+    await expect.poll(() => paintedPixels(page)).toBeGreaterThan(0);
+    const dark = await canvasSnapshot(page);
+    await page.waitForTimeout(500);
+    expect(await canvasSnapshot(page)).toBe(dark);
+
+    await page.evaluate(() => {
+      document.documentElement.dataset.theme = 'light';
+    });
+    await expect.poll(() => canvasSnapshot(page)).not.toBe(dark);
+    const light = await canvasSnapshot(page);
+    await page.evaluate(() => {
+      document.documentElement.dataset.theme = 'dark';
+    });
+    await expect.poll(() => canvasSnapshot(page)).not.toBe(light);
+
     const card = page.locator('.po-link').first();
     expect(
       await card.evaluate((element) => {
@@ -286,7 +351,68 @@ for (const locale of ['en', 'ar'] as const) {
         (element) => element.getAnimations({ subtree: true }).length,
       ),
     ).toBe(0);
-    await page.emulateMedia({ forcedColors: 'active' });
-    await expect(field).toHaveCSS('visibility', 'hidden');
   });
 }
+
+for (const [locale, path] of [
+  ['en', '/about/'],
+  ['ar', '/ar/about/'],
+] as const) {
+  test(`canvas backing store respects DPR cap: ${locale}`, async ({
+    browser,
+  }) => {
+    for (const dpr of [1, 3]) {
+      const context = await browser.newContext({
+        viewport: { width: 1280, height: 900 },
+        deviceScaleFactor: dpr,
+      });
+      try {
+        const page = await context.newPage();
+        await page.goto(path);
+        const field = page.locator('.po-field');
+        await scrollToVisible(field);
+        await expect(field).toHaveAttribute('data-ready', '');
+        const size = await field.locator('canvas').evaluate((element) => {
+          const canvas = element as HTMLCanvasElement;
+          const rect = canvas.getBoundingClientRect();
+          return {
+            width: canvas.width,
+            height: canvas.height,
+            cssWidth: rect.width,
+            cssHeight: rect.height,
+            dpr: window.devicePixelRatio,
+          };
+        });
+        const scale = Math.min(2, size.dpr);
+        expect(
+          Math.abs(size.width - size.cssWidth * scale),
+        ).toBeLessThanOrEqual(1);
+        expect(
+          Math.abs(size.height - size.cssHeight * scale),
+        ).toBeLessThanOrEqual(1);
+      } finally {
+        await context.close();
+      }
+    }
+  });
+}
+
+test('canvas is not loaded near the top of the FAQ page', async ({ page }) => {
+  await page.setViewportSize({ width: 1350, height: 940 });
+  const requests: string[] = [];
+  page.on('request', (request) => {
+    if (/\/dotGlow\.[\w-]+\.js$/.test(new URL(request.url()).pathname)) {
+      requests.push(request.url());
+    }
+  });
+  await page.goto('/faq/');
+  await page.waitForLoadState('load');
+  await page.waitForTimeout(500);
+  expect(requests).toHaveLength(0);
+});
+
+test('forced colors hides the decorative field', async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active' });
+  await page.goto('/about/');
+  await expect(page.locator('.po-field')).toHaveCSS('visibility', 'hidden');
+});
