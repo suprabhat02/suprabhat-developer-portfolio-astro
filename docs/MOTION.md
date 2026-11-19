@@ -32,11 +32,12 @@ src/components/fx/
 
 ## Site-wide motion preference
 
-The header toggle is a pressed-state button available in every locale. With no
-saved choice, motion follows `prefers-reduced-motion`: it plays by default and
-starts paused when the system requests reduced motion. A visitor choice
-(`paused` or `playing`) in local storage key `sk-motion` overrides that
-default. The existing inline bootstrap applies the choice before first paint;
+The control lives in the header's display settings panel (see "Display
+settings" below) as the **Animations** radio group: System, On, Off. With
+"System" (no saved choice), motion follows `prefers-reduced-motion`: it plays
+by default and is paused when the system requests reduced motion. "On" and
+"Off" store `playing` or `paused` in local storage key `sk-motion` and
+override that default; choosing "System" again removes the key. The existing inline bootstrap applies the choice before first paint;
 storage failures fall back to the system preference without disabling the
 control for the current page. No preference data is sent anywhere.
 
@@ -51,16 +52,49 @@ product scenes remain idle until hover, focus, or tap.
 
 | Source                                                                                                                 | Repeats automatically?                                          | Scope             | Reduced-motion / pause behavior                                                                                                               |
 | ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| Homepage hero orbit, Flip Words, moving borders and availability ping (`Homepage.astro`; `homepage.css`, `motion.css`) | Yes                                                             | Hero section      | System reduction keeps them static; the site toggle pauses the scope in place.                                                                |
+| Homepage hero orbit, Flip Words, moving borders and availability ping (`Homepage.astro`; `homepage.css`, `motion.css`) | Yes                                                             | Hero section      | System reduction keeps them static; the site setting pauses the scope in place.                                                               |
 | Backdrop aurora blobs (`Backdrop.astro`; `motion.css`)                                                                 | Yes                                                             | Backdrop          | Static under system reduction; scope pause retains the current frame. The wide hero aurora flow starts only after engagement.                 |
 | Keyword and recommendation marquees (`Homepage.astro`; `motion.css`)                                                   | Yes                                                             | Each marquee      | System reduction wraps originals and hides clones; pause freezes the current position.                                                        |
 | Meteor fields (`Meteors.astro`; `motion.css`)                                                                          | Yes                                                             | Meteor field      | Hidden under system reduction; scope pause freezes the field.                                                                                 |
 | Homepage globe (`Globe.astro`; `globe.ts`) and inner-page dotted CTA (`DotGlow.astro`; `dotGlow.ts`)                   | Yes                                                             | Canvas host       | Draw only while visible and motion is allowed. Reduced motion paints one static frame; pause cancels the loop and resume continues its clock. |
 | World map packets and halo (`WorldMap.astro`)                                                                          | Yes                                                             | Figure            | Packets are hidden under system reduction; pause freezes both animations.                                                                     |
 | 404 status orb (`PageContent.astro`; `global.css`)                                                                     | Yes                                                             | Orb               | Static under system reduction; scope pause retains its frame.                                                                                 |
-| Product scenes (`LiveScene.astro`; `scenes.css`)                                                                       | No; play only on hover, focus or tap                            | No per-card scope | Reduced motion shows the resting state. The site toggle freezes an already active scene; it never starts one.                                 |
+| Product scenes (`LiveScene.astro`; `scenes.css`)                                                                       | No; play only on hover, focus or tap                            | No per-card scope | Reduced motion shows the resting state. The site setting freezes an already active scene; it never starts one.                                |
 | Bento focus ring, developer palette orbit and terminal cursor (`homepage.css`, `PalettePicker.astro`, `global.css`)    | No; require hover or focus                                      | No scope          | They are interaction-triggered, not idle loops; reduced motion disables them, and the pause state freezes them if active.                     |
 | Carousels and finite timers (`carousel.ts`, `motion.ts`, `toast.ts`, `ContactForm.astro`)                              | No autoplay; timers follow user actions or dismiss transient UI | No scope          | Carousel steps use instant scrolling while paused. Nav settling, toast dismissal and form-success timing are not animation loops.             |
+
+## Display settings
+
+The header holds two popovers, each a native `popover` panel opened by a
+`<button popovertarget>`; the browser supplies `aria-expanded`, Escape, light
+dismiss, focus return and opening another closes the first. Neither uses
+`role="menu"`: menus are for application actions and promise arrow-key
+behaviour a list of links or settings does not have.
+
+- **Language** (`#lang-menu`): a labelled `<nav>` of plain links whose text is
+  the language's own name, each with its `lang`. It stays its own control, not
+  part of display settings: someone who cannot read the current page can still
+  find their language by name, and changing it is navigation (another URL),
+  not a preference. It opens without scripts.
+- **Display settings** (`#prefs-panel`): two `<fieldset>` radio groups, Theme
+  (System, Light, Dark) and Animations (System, On, Off). Native radios give
+  arrow-key movement in both directions, constant labels and correct state
+  announcements; the radio itself stays in place under the label styling. A
+  choice applies at once and never closes the panel. The trigger is hidden
+  until the inline bootstrap sets `data-js` on the root, because without
+  scripts a choice could not apply; there is never a dead control.
+
+Both panels hang from their trigger with CSS anchor positioning
+(`position-area: block-end span-inline-start`, which mirrors on RTL pages by
+itself); browsers without it place them at the header's inline end, and
+browsers without popovers keep them closed (the mobile menu still lists every
+language). In forced colours the chosen option is filled with `Highlight` so
+the focus outline stays visible on top of it.
+
+`src/scripts/themePreference.ts` and `motionPreference.ts` own the state;
+`initPreferences` in `motion.ts` wires the radio groups to them. Both modules
+ride in the layout script that already loads on every page, so the panel adds
+no request.
 
 ## Aceternity mapping
 

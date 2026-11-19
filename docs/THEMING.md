@@ -5,6 +5,16 @@ use role tokens such as `--bg`, `--text`, or `--accent`; no stylesheet contains
 a brand color literal. Change the seeds, and the whole site follows: page
 grounds, text, buttons, glows, gradients, borders, focus rings, and both themes.
 
+## Theme choice
+
+The site is dark by default. Visitors choose System, Light or Dark in the
+header's display settings (`docs/MOTION.md`, "Display settings"). The choice is
+stored only in this browser (`localStorage` key `sk-theme`); "System" follows
+`prefers-color-scheme`, live. The inline bootstrap in `BaseLayout.astro`
+applies the stored choice before first paint and `src/scripts/themePreference.ts`
+takes over once scripts run; both resolve to `data-theme="light"` or `"dark"`
+on `<html>`, which is all the token layer reads.
+
 ## Seeds
 
 | Seed                    | Default  | Controls                                         |
@@ -146,5 +156,5 @@ with no extra work:
 - **Collaboration globe** (`src/scripts/globe.ts`): reads `--accent`,
   `--accent-2`, `--accent-strong`, `--text`, `--text-2` and `--bg-2` from
   the page when it mounts, and again whenever `data-theme` changes. Edits
-  made live in DevTools apply on the next theme toggle.
+  made live in DevTools apply on the next theme change.
 - **Toasts** (`.toast`, global.css): `--success` and `--danger` set the tone.
