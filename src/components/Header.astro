@@ -38,10 +38,19 @@ const currentLanguageAria = `${languageCode}: ${formatLabel(
   t(locale, 'language.current'),
   { language: localeMeta[locale].label },
 )}`;
-const languageSwitchAria = (next: Locale) =>
-  t(locale, `language.switch.${next}`);
-const switchToLightTheme = t(locale, 'theme.switchLight');
-const switchToDarkTheme = t(locale, 'theme.switchDark');
+const prefsOpenLabel = t(locale, 'prefs.open');
+// The inline bootstrap and the preference modules default to these values;
+// the server renders the same state so nothing moves when scripts run.
+const themeOptions = [
+  { value: 'system', label: t(locale, 'prefs.theme.system') },
+  { value: 'light', label: t(locale, 'prefs.theme.light') },
+  { value: 'dark', label: t(locale, 'prefs.theme.dark'), checked: true },
+] as const;
+const motionOptions = [
+  { value: 'system', label: t(locale, 'prefs.motion.system'), checked: true },
+  { value: 'on', label: t(locale, 'prefs.motion.on') },
+  { value: 'off', label: t(locale, 'prefs.motion.off') },
+] as const;
 type HeaderNavItem = NavDestination & {
   key: string;
   pageKey?: string;
@@ -160,8 +169,7 @@ const isActive = (item: (typeof headerNav)[number]) =>
           type="button"
           class="hdr-dropdown-btn"
           id="lang-dd-btn"
-          aria-haspopup="true"
-          aria-expanded="false"
+          popovertarget="lang-menu"
           aria-label={currentLanguageAria}
           title={currentLanguageAria}
         >
@@ -198,91 +206,108 @@ const isActive = (item: (typeof headerNav)[number]) =>
             <path d="M6 9l6 6 6-6"></path>
           </svg>
         </button>
-        <div
+        <nav
           class="hdr-menu"
-          role="menu"
+          id="lang-menu"
+          popover
           aria-label={t(locale, 'language.options')}
         >
-          {
-            locales.map((item) => (
-              <a
-                class:list={['hdr-menu-item', { selected: item === locale }]}
-                href={localeHref(item)}
-                lang={localeMeta[item].htmlLang}
-                role="menuitem"
-                aria-current={item === locale ? 'page' : undefined}
-                aria-label={languageSwitchAria(item)}
-              >
-                <span class="dot" aria-hidden="true" />
-                {localeMeta[item].label}
-              </a>
-            ))
-          }
-        </div>
+          <ul role="list">
+            {
+              locales.map((item) => (
+                <li>
+                  <a
+                    class:list={[
+                      'hdr-menu-item',
+                      { selected: item === locale },
+                    ]}
+                    href={localeHref(item)}
+                    lang={localeMeta[item].htmlLang}
+                    aria-current={item === locale ? 'page' : undefined}
+                  >
+                    <span class="dot" aria-hidden="true" />
+                    {localeMeta[item].label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
       </div>
 
-      <button
-        class="hdr-dropdown-btn theme-toggle"
-        type="button"
-        aria-pressed="false"
-        aria-label={t(locale, 'theme')}
-        title={t(locale, 'theme')}
-        data-label-light={switchToLightTheme}
-        data-label-dark={switchToDarkTheme}
-      >
-        <svg
-          class="theme-toggle-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
+      <div class="hdr-prefs" id="prefs-dd">
+        <button
+          type="button"
+          class="hdr-dropdown-btn prefs-btn"
+          id="prefs-btn"
+          popovertarget="prefs-panel"
+          aria-label={prefsOpenLabel}
+          title={prefsOpenLabel}
         >
-          <g class="theme-icon-sun">
-            <circle cx="12" cy="12" r="4"></circle>
-            <path d="M12 2v2"></path>
-            <path d="M12 20v2"></path>
-            <path d="m4.93 4.93 1.41 1.41"></path>
-            <path d="m17.66 17.66 1.41 1.41"></path>
-            <path d="M2 12h2"></path>
-            <path d="M20 12h2"></path>
-            <path d="m6.34 17.66-1.41 1.41"></path>
-            <path d="m19.07 4.93-1.41 1.41"></path>
-          </g>
-          <path
-            class="theme-icon-moon"
-            d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5 7 7 0 1 0 20.5 14.5Z"></path>
-        </svg>
-      </button>
-
-      <button
-        class="hdr-dropdown-btn motion-toggle"
-        type="button"
-        aria-pressed="false"
-        aria-label={t(locale, 'motion.toggle')}
-        title={t(locale, 'motion.toggle')}
-        data-motion-toggle
-      >
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M4 7h9"></path>
+            <path d="M17 7h3"></path>
+            <circle cx="15" cy="7" r="2"></circle>
+            <path d="M4 17h3"></path>
+            <path d="M11 17h9"></path>
+            <circle cx="9" cy="17" r="2"></circle>
+          </svg>
+        </button>
+        <div
+          class="hdr-menu prefs-panel"
+          id="prefs-panel"
+          popover
+          role="group"
+          aria-label={t(locale, 'prefs.label')}
         >
-          <g class="motion-icon-pause">
-            <path d="M8 5v14"></path>
-            <path d="M16 5v14"></path>
-          </g>
-          <path class="motion-icon-play" d="m8 5 12 7-12 7z"></path>
-        </svg>
-      </button>
+          <fieldset class="prefs-group">
+            <legend>{t(locale, 'prefs.theme')}</legend>
+            <div class="prefs-options">
+              {
+                themeOptions.map((option) => (
+                  <label class="prefs-option">
+                    <input
+                      type="radio"
+                      name="pref-theme"
+                      value={option.value}
+                      checked={'checked' in option}
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+          <fieldset class="prefs-group">
+            <legend>{t(locale, 'prefs.motion')}</legend>
+            <div class="prefs-options">
+              {
+                motionOptions.map((option) => (
+                  <label class="prefs-option">
+                    <input
+                      type="radio"
+                      name="pref-motion"
+                      value={option.value}
+                      checked={'checked' in option}
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+        </div>
+      </div>
 
       <button
         type="button"
@@ -359,9 +384,8 @@ const isActive = (item: (typeof headerNav)[number]) =>
           href={localeHref(item)}
           lang={localeMeta[item].htmlLang}
           aria-current={item === locale ? 'true' : undefined}
-          aria-label={languageSwitchAria(item)}
         >
-          {item.toUpperCase()}
+          {localeMeta[item].label}
         </a>
       ))
     }
@@ -370,75 +394,17 @@ const isActive = (item: (typeof headerNav)[number]) =>
 
 <script>
   (() => {
-    const closeAllDropdowns = () => {
-      document.querySelectorAll('.hdr-dropdown').forEach((dropdown) => {
-        dropdown.classList.remove('open');
-        dropdown
-          .querySelector('.hdr-dropdown-btn')
-          ?.setAttribute('aria-expanded', 'false');
-      });
-    };
-
+    // Mirror the language list's open state on its trigger for the chevron.
+    const languageButton = document.getElementById('lang-dd-btn');
     document
-      .querySelectorAll('.hdr-dropdown .hdr-dropdown-btn')
-      .forEach((button) => {
-        button.addEventListener('click', (event) => {
-          event.stopPropagation();
-          const dropdown = button.closest('.hdr-dropdown');
-          if (!dropdown) return;
-          const shouldOpen = !dropdown.classList.contains('open');
-          closeAllDropdowns();
-          if (shouldOpen) {
-            dropdown.classList.add('open');
-            button.setAttribute('aria-expanded', 'true');
-          }
-        });
+      .getElementById('lang-menu')
+      ?.addEventListener('toggle', (event) => {
+        if (event instanceof ToggleEvent)
+          languageButton?.toggleAttribute(
+            'data-open',
+            event.newState === 'open',
+          );
       });
-
-    document.addEventListener('click', (event) => {
-      if (!(event.target instanceof Element)) return;
-      if (!event.target.closest('.hdr-dropdown')) closeAllDropdowns();
-    });
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') closeAllDropdowns();
-    });
-
-    const syncThemeButtons = () => {
-      const isLight = document.documentElement.dataset.theme === 'light';
-      document.querySelectorAll('.theme-toggle').forEach((button) => {
-        button.setAttribute('aria-pressed', String(isLight));
-        if (button instanceof HTMLElement) {
-          const nextLabel = isLight
-            ? button.dataset.labelDark
-            : button.dataset.labelLight;
-          if (nextLabel) {
-            button.setAttribute('aria-label', nextLabel);
-            button.setAttribute('title', nextLabel);
-          }
-        }
-      });
-    };
-
-    syncThemeButtons();
-
-    document.querySelectorAll('.theme-toggle').forEach((button) => {
-      button.addEventListener('click', () => {
-        const root = document.documentElement;
-        const next = root.dataset.theme === 'light' ? 'dark' : 'light';
-        root.dataset.theme = next;
-        const themeColor = document.querySelector<HTMLMetaElement>(
-          'meta[name="theme-color"]',
-        );
-        const themeColorValue = themeColor?.dataset[next];
-        if (themeColor && themeColorValue) themeColor.content = themeColorValue;
-        syncThemeButtons();
-        try {
-          localStorage.setItem('sk-theme', next);
-        } catch {
-          // Storage access is optional.
-        }
-      });
-    });
 
     const mobileButton = document.getElementById('mob-btn');
     const mobileMenu = document.getElementById('mob-menu');

@@ -313,18 +313,6 @@ textarea {
   margin-inline-start: auto;
   z-index: 2;
 }
-.theme-toggle {
-  min-width: 34px;
-  min-height: 34px;
-  display: grid;
-  place-items: center;
-  border: 1px solid color-mix(in oklch, var(--text) 14%, transparent);
-  border-radius: var(--radius-control);
-  background: transparent;
-  color: var(--text);
-  cursor: pointer;
-  list-style: none;
-}
 .hdr-dropdown {
   position: relative;
 }
@@ -359,71 +347,36 @@ textarea {
 .hdr-dropdown-btn svg {
   flex-shrink: 0;
 }
-.hdr-dropdown-btn .chevron,
-.theme-toggle-icon :is(.theme-icon-sun, .theme-icon-moon) {
+.hdr-dropdown-btn .chevron {
   transition: transform 180ms ease;
 }
-.hdr-dropdown.open .hdr-dropdown-btn .chevron {
+#lang-dd-btn[data-open] .chevron {
   transform: rotate(180deg);
 }
-.theme-toggle {
-  width: 34px;
-  padding: 0;
+/* Header popovers (language list, display settings). They render in the
+   top layer: undo the UA centring, then hang below their trigger and align
+   with its inline end, so they mirror on RTL pages with no extra rules. */
+#lang-dd-btn {
+  anchor-name: --lang-dd;
 }
-.motion-toggle {
-  width: 34px;
-  min-width: 34px;
-  min-height: 34px;
-  padding: 0;
-  color: var(--text);
+#prefs-btn {
+  anchor-name: --prefs-dd;
 }
-.motion-toggle svg {
-  width: 18px;
-  height: 18px;
+#lang-menu {
+  position-anchor: --lang-dd;
 }
-.motion-icon-play {
-  display: none;
-}
-:root[data-motion='paused'] .motion-icon-pause {
-  display: none;
-}
-:root[data-motion='paused'] .motion-icon-play {
-  display: block;
-}
-.theme-toggle-icon {
-  width: 18px;
-  height: 18px;
-}
-.theme-icon-sun,
-.theme-icon-moon {
-  transform-origin: center;
-  transition:
-    opacity 160ms ease,
-    transform 160ms ease;
-}
-.theme-icon-sun {
-  opacity: 0;
-  transform: scale(0.7) rotate(-30deg);
-}
-.theme-icon-moon {
-  opacity: 1;
-  transform: scale(1) rotate(0deg);
-}
-[data-theme='light'] .theme-icon-sun {
-  opacity: 1;
-  transform: scale(1) rotate(0deg);
-}
-[data-theme='light'] .theme-icon-moon {
-  opacity: 0;
-  transform: scale(0.7) rotate(30deg);
+#prefs-panel {
+  position-anchor: --prefs-dd;
 }
 .hdr-menu {
-  position: absolute;
-  inset-block-start: calc(100% + 8px);
-  inset-inline-end: 0;
+  position: fixed;
+  inset: auto;
+  inset-block-start: 84px;
+  inset-inline-end: 20px;
+  margin: 0;
   min-width: 148px;
-  display: none;
   padding: 6px;
+  color: var(--text);
   background: color-mix(in oklch, var(--bg-card) 95%, transparent);
   border: 1px solid color-mix(in oklch, var(--text) 12%, transparent);
   border-radius: var(--radius-card);
@@ -432,8 +385,25 @@ textarea {
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
 }
-.hdr-dropdown.open .hdr-menu {
-  display: block;
+@supports (position-area: block-end) {
+  .hdr-menu {
+    inset: auto;
+    position-area: block-end span-inline-start;
+    position-try-fallbacks: flip-inline;
+    margin-block-start: 8px;
+  }
+}
+/* Browsers without popovers keep the panels closed; the mobile menu still
+   lists every language as plain links. */
+@supports not selector(:popover-open) {
+  .hdr-menu {
+    display: none;
+  }
+}
+.hdr-menu ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 .hdr-menu-item {
   display: flex;
@@ -467,6 +437,105 @@ textarea {
 }
 .hdr-menu-item.selected .dot {
   opacity: 1;
+}
+/* Display settings: needs scripts to apply a choice, so it stays hidden
+   until the inline bootstrap marks scripts as running. */
+:root:not([data-js]) .hdr-prefs {
+  display: none;
+}
+.prefs-btn {
+  width: 34px;
+  padding: 0;
+}
+.prefs-panel {
+  width: max-content;
+  min-width: 232px;
+  padding: 12px;
+}
+.prefs-panel:popover-open {
+  display: grid;
+  gap: 14px;
+}
+.prefs-group {
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.prefs-group legend {
+  margin-block-end: 6px;
+  padding: 0;
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 600;
+}
+.prefs-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid color-mix(in oklch, var(--text) 12%, transparent);
+  border-radius: var(--radius-control);
+  background: color-mix(in oklch, var(--bg-3) 60%, transparent);
+}
+.prefs-option {
+  position: relative;
+  display: grid;
+  cursor: pointer;
+}
+/* The pill is the span after the radio, so its states use sibling
+   selectors: no :has() invalidation while the page is still parsing. */
+.prefs-option span {
+  display: grid;
+  place-items: center;
+  min-block-size: 32px;
+  padding-inline: 10px;
+  border-radius: calc(var(--radius-control) - 2px);
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition:
+    background 120ms ease,
+    color 120ms ease;
+}
+/* The native radio stays in place (focusable, clickable, announced); only
+   its default drawing is hidden behind the label styling. */
+.prefs-option input {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.prefs-option:hover span {
+  color: var(--text);
+}
+.prefs-option input:checked + span {
+  background: var(--accent-subtle);
+  color: var(--accent);
+  font-weight: 600;
+}
+.prefs-option input:focus-visible + span {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+@media (forced-colors: active) {
+  .hdr-menu {
+    border: 1px solid CanvasText;
+  }
+  /* Fill the chosen option with system colours so the focus outline above
+     stays free to show keyboard focus on top of it. */
+  .prefs-option input:checked + span {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+  .prefs-option input:focus-visible + span {
+    outline-color: CanvasText;
+  }
 }
 .mob-btn {
   display: none;
@@ -551,7 +620,6 @@ textarea {
   color: var(--text-2);
   font-size: 13px !important;
   font-weight: 700;
-  letter-spacing: 0.06em;
   text-align: center;
 }
 .mob-lang-btn.is-active {
@@ -1894,10 +1962,6 @@ main {
   }
   .hdr-dropdown {
     display: none;
-  }
-  .hdr-dropdown.theme-toggle,
-  .theme-toggle {
-    display: inline-flex;
   }
   .grid.two,
   .grid.three {

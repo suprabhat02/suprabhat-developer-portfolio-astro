@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { axe, scrollToVisible } from './helpers';
+import { axe, scrollToVisible, setPreference } from './helpers';
 import { getArticleScene } from '../src/components/fx/scenes';
 
 test('article artwork follows its slug even when posts are reordered or unknown', async ({
@@ -437,9 +437,9 @@ test('major-device journeys preserve navigation, themes, content and form valida
       await page.keyboard.press('Escape');
       await expect(menu).toHaveAttribute('aria-expanded', 'false');
     }
-    for (const theme of ['light', 'dark']) {
+    for (const theme of ['light', 'dark'] as const) {
       if ((await page.locator('html').getAttribute('data-theme')) !== theme) {
-        await page.locator('.theme-toggle').click();
+        await setPreference(page, 'theme', theme);
       }
       await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
       await expect

@@ -7,11 +7,12 @@ export interface MotionClock {
 }
 
 export interface MotionPreference {
+  /** The visitor's saved choice, or `null` to follow the system setting. */
+  readonly choice: MotionChoice;
   readonly isPaused: boolean;
   readonly isSystemReducedMotion: boolean;
   subscribe(listener: MotionListener): () => void;
-  setPaused(paused: boolean): void;
-  toggle(): void;
+  setChoice(choice: MotionChoice): void;
   createClock(): MotionClock;
 }
 
@@ -43,6 +44,9 @@ const update = (next: boolean) => {
 };
 
 export const motionPreference: MotionPreference = {
+  get choice() {
+    return choice;
+  },
   get isPaused() {
     return paused;
   },
@@ -54,17 +58,15 @@ export const motionPreference: MotionPreference = {
     listener(paused);
     return () => listeners.delete(listener);
   },
-  setPaused(next) {
-    choice = next ? 'paused' : 'playing';
+  setChoice(next) {
+    choice = next;
     try {
-      window.localStorage.setItem(STORAGE_KEY, choice);
+      if (next === null) window.localStorage.removeItem(STORAGE_KEY);
+      else window.localStorage.setItem(STORAGE_KEY, next);
     } catch {
       // Motion still changes for this page when storage is unavailable.
     }
-    update(next);
-  },
-  toggle() {
-    this.setPaused(!paused);
+    update(next === null ? reducedMotion.matches : next === 'paused');
   },
   createClock() {
     const startedAt = performance.now();

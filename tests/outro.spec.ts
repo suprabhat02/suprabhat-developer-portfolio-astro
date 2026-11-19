@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { t, type MessageKey } from '../src/i18n/messages';
-import { axe, scrollToVisible } from './helpers';
+import { axe, scrollToVisible, setPreference } from './helpers';
 
 declare global {
   interface Window {
@@ -389,7 +389,7 @@ for (const locale of ['en', 'ar'] as const) {
   });
 }
 
-test('motion toggle freezes canvas frames and resumes without a time jump', async ({
+test('the motion setting freezes canvas frames and resumes without a time jump', async ({
   page,
 }) => {
   await page.addInitScript(() => {
@@ -405,20 +405,17 @@ test('motion toggle freezes canvas frames and resumes without a time jump', asyn
   const field = page.locator('.po-field');
   await scrollToVisible(field);
   await expect(field).toHaveAttribute('data-ready', '');
-  const toggle = page.getByRole('button', {
-    name: t('en', 'motion.toggle'),
-  });
-  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'paused');
 
   const readRafCount = () => page.evaluate(() => window.__motionTestRafCount);
   const pausedCanvas = await canvasSnapshot(page);
-  await toggle.click();
-  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  await setPreference(page, 'motion', 'on');
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'playing');
   await expect.poll(readRafCount).toBeGreaterThan(0);
   await page.waitForTimeout(250);
 
-  await toggle.click();
-  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+  await setPreference(page, 'motion', 'off');
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'paused');
   await page.waitForTimeout(100);
   const pausedFrames = await readRafCount();
   const pausedFrame = await canvasSnapshot(page);
@@ -427,8 +424,8 @@ test('motion toggle freezes canvas frames and resumes without a time jump', asyn
   expect(await readRafCount()).toBe(pausedFrames);
   expect(await canvasSnapshot(page)).toBe(pausedFrame);
 
-  await toggle.click();
-  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  await setPreference(page, 'motion', 'on');
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'playing');
   await page.evaluate(
     () =>
       new Promise<void>((resolve) => requestAnimationFrame(() => resolve())),

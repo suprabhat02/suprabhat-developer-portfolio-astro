@@ -29,3 +29,25 @@ export const scrollToVisible = async (target: Locator) => {
     })
     .toBe(true);
 };
+
+interface PreferenceValues {
+  theme: 'system' | 'light' | 'dark';
+  motion: 'system' | 'on' | 'off';
+}
+
+/** Opens the header display settings, picks one option, and closes it. */
+export const setPreference = async <Group extends keyof PreferenceValues>(
+  page: Page,
+  group: Group,
+  value: PreferenceValues[Group],
+) => {
+  const panel = page.locator('#prefs-panel');
+  const isOpen = () =>
+    panel.evaluate((element) => element.matches(':popover-open'));
+  if (!(await isOpen())) await page.locator('#prefs-btn').click();
+  const option = panel.locator(`input[name="pref-${group}"][value="${value}"]`);
+  await option.check();
+  await expect(option).toBeChecked();
+  await page.keyboard.press('Escape');
+  await expect.poll(isOpen).toBe(false);
+};
