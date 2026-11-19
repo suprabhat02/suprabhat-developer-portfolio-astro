@@ -178,21 +178,21 @@ for (const [locale, path] of [
         panel: box('#prefs-panel'),
         overlaps,
         scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+        // The page's laid-out width: excludes a reserved scrollbar gutter.
+        viewport: document.documentElement.getBoundingClientRect().width,
         rtl: document.documentElement.dir === 'rtl',
       };
     });
     expect(layout.overlaps).toBe(false);
-    expect(layout.scrollWidth).toBeLessThanOrEqual(320);
-    expect(layout.panel.left).toBeGreaterThanOrEqual(0);
-    expect(layout.panel.right).toBeLessThanOrEqual(320);
+    expect(layout.scrollWidth).toBeLessThanOrEqual(layout.clientWidth);
+    // A visible margin on both sides, never touching the screen edge.
+    expect(layout.panel.left).toBeGreaterThanOrEqual(7.5);
+    expect(layout.viewport - layout.panel.right).toBeGreaterThanOrEqual(7.5);
     expect(layout.panel.top).toBeGreaterThan(layout.button.bottom);
-    // The panel hangs from the trigger's inline end in both directions.
-    if (layout.rtl)
-      expect(Math.abs(layout.panel.left - layout.button.left)).toBeLessThan(2);
-    else
-      expect(Math.abs(layout.panel.right - layout.button.right)).toBeLessThan(
-        2,
-      );
+    // The panel sits at the header's inline end in both directions.
+    if (layout.rtl) expect(layout.panel.left).toBeLessThan(10);
+    else expect(layout.viewport - layout.panel.right).toBeLessThan(10);
   });
 }
 
