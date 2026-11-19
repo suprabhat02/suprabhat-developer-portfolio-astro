@@ -13,7 +13,8 @@
  */
 
 import type { ToastOptions } from './toast';
-import { motionPreference } from './motionPreference';
+import { motionPreference, type MotionChoice } from './motionPreference';
+import { isThemeChoice, themePreference } from './themePreference';
 
 type Cleanup = () => void;
 
@@ -438,23 +439,66 @@ function initLiveScenes(): Cleanup {
   };
 }
 
-function initMotionToggle(): Cleanup {
-  const buttons = Array.from(
-    document.querySelectorAll<HTMLButtonElement>('[data-motion-toggle]'),
-  );
-  if (!buttons.length) return () => undefined;
+/* ── Display settings: theme and motion radio groups in the header ── */
 
-  const sync = (paused: boolean) =>
-    buttons.forEach((button) =>
-      button.setAttribute('aria-pressed', String(paused)),
-    );
-  const unsubscribe = motionPreference.subscribe(sync);
-  const toggle = () => motionPreference.toggle();
-  buttons.forEach((button) => button.addEventListener('click', toggle));
+const MOTION_VALUES = {
+  system: null,
+  on: 'playing',
+  off: 'paused',
+} as const satisfies Record<string, MotionChoice>;
+type MotionValue = keyof typeof MOTION_VALUES;
+
+const isMotionValue = (value: string): value is MotionValue =>
+  Object.hasOwn(MOTION_VALUES, value);
+
+const motionValueOf = (choice: MotionChoice): MotionValue =>
+  choice === null ? 'system' : choice === 'playing' ? 'on' : 'off';
+
+function initPreferences(): Cleanup {
+  const themeInputs = Array.from(
+    document.querySelectorAll<HTMLInputElement>('input[name="pref-theme"]'),
+  );
+  const motionInputs = Array.from(
+    document.querySelectorAll<HTMLInputElement>('input[name="pref-motion"]'),
+  );
+  if (!themeInputs.length && !motionInputs.length) return () => undefined;
+
+  const check = (inputs: HTMLInputElement[], value: string) =>
+    inputs.forEach((input) => {
+      input.checked = input.value === value;
+    });
+
+  const unsubscribeTheme = themePreference.subscribe((choice) =>
+    check(themeInputs, choice),
+  );
+  const unsubscribeMotion = motionPreference.subscribe(() =>
+    check(motionInputs, motionValueOf(motionPreference.choice)),
+  );
+
+  const onThemeChange = (event: Event) => {
+    const { value } = event.currentTarget as HTMLInputElement;
+    if (isThemeChoice(value)) themePreference.setChoice(value);
+  };
+  const onMotionChange = (event: Event) => {
+    const { value } = event.currentTarget as HTMLInputElement;
+    if (isMotionValue(value)) motionPreference.setChoice(MOTION_VALUES[value]);
+  };
+  themeInputs.forEach((input) =>
+    input.addEventListener('change', onThemeChange),
+  );
+  motionInputs.forEach((input) =>
+    input.addEventListener('change', onMotionChange),
+  );
 
   return () => {
-    unsubscribe();
-    buttons.forEach((button) => button.removeEventListener('click', toggle));
+    unsubscribeTheme();
+    unsubscribeMotion();
+    themeInputs.forEach((input) =>
+      input.removeEventListener('change', onThemeChange),
+    );
+    motionInputs.forEach((input) =>
+      input.removeEventListener('change', onMotionChange),
+    );
   };
 }
 
@@ -588,7 +632,7 @@ function initToasts(): Cleanup {
 /* ── Boot ──────────────────────────────────────────────────────────── */
 
 const initializers: ReadonlyArray<() => Cleanup> = [
-  initMotionToggle,
+  initPreferences,
   initInViewMotion,
   initScrollState,
   initNavIndicator,

@@ -246,20 +246,39 @@ const combinedSchema = {
         <link rel="alternate" hreflang="x-default" href={alternateHref('en')} />
       )
     }
+    {
+      /* Applies the stored theme and motion choice before first paint. Keep
+         in sync with src/scripts/themePreference.ts and motionPreference.ts,
+         which take over once module scripts run. Comments here stay out of
+         the shipped HTML: this script is inlined on every page. */
+    }
     <script is:inline>
+      document.documentElement.dataset.js = '';
+      let themeChoice = 'dark';
       try {
-        document.documentElement.dataset.theme =
-          localStorage.getItem('sk-theme') || 'dark';
+        const savedTheme = localStorage.getItem('sk-theme');
+        if (
+          savedTheme === 'system' ||
+          savedTheme === 'light' ||
+          savedTheme === 'dark'
+        )
+          themeChoice = savedTheme;
       } catch {
-        document.documentElement.dataset.theme = 'dark';
+        themeChoice = 'dark';
       }
+      document.documentElement.dataset.theme =
+        themeChoice === 'system'
+          ? window.matchMedia('(prefers-color-scheme: light)').matches
+            ? 'light'
+            : 'dark'
+          : themeChoice;
       let motionChoice = null;
       try {
         const savedMotion = localStorage.getItem('sk-motion');
         if (savedMotion === 'paused' || savedMotion === 'playing')
           motionChoice = savedMotion;
       } catch {
-        // Reduced-motion preference still applies when storage is unavailable.
+        motionChoice = null;
       }
       const motionPaused =
         motionChoice === 'paused' ||
