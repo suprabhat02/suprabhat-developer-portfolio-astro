@@ -12,7 +12,8 @@
  * - Clipping wrappers use `overflow: clip` (with a `hidden` fallback): a
  *   `hidden` box is a scroll container, and animated transforms change its
  *   scrollable overflow, which RTL pages report as layout shift.
- * - Every effect is disabled under `prefers-reduced-motion: reduce`.
+ * - Every effect follows the site-wide motion preference and
+ *   `prefers-reduced-motion: reduce`.
  * - Direction-sensitive effects use logical properties or `[dir='rtl']`.
  */
 
@@ -39,8 +40,27 @@
 [data-motion-scope][data-offscreen]::after,
 [data-motion-scope][data-offscreen] *,
 [data-motion-scope][data-offscreen] *::before,
-[data-motion-scope][data-offscreen] *::after {
+[data-motion-scope][data-offscreen] *::after,
+:root[data-motion='paused'] [data-motion-scope],
+:root[data-motion='paused'] [data-motion-scope]::before,
+:root[data-motion='paused'] [data-motion-scope]::after,
+:root[data-motion='paused'] [data-motion-scope] *,
+:root[data-motion='paused'] [data-motion-scope] *::before,
+:root[data-motion='paused'] [data-motion-scope] *::after,
+:root[data-motion='paused'] .fx-live .lv-scene .k,
+:root[data-motion='paused'] .bento-visual--focus .ring,
+:root[data-motion='paused'] .oss-terminal .oss-cursor,
+:root[data-motion='paused'][data-pp-border='orbit']
+  .fx-card-gradient:is(:hover, :focus-within) {
   animation-play-state: paused !important;
+}
+
+/* Scroll-driven reveals remain controlled by the reader's scroll position.
+   Never strand a reveal at its hidden entry frame when motion is paused. */
+:root[data-motion='paused'][data-scroll-reveals]
+  [data-motion-scope]
+  :is(.fx-reveal, .fx-reveal-scale, .fx-words > span, .fx-lamp-line) {
+  animation-play-state: running !important;
 }
 
 /* ── Backdrops: Grid & Dot backgrounds, Spotlight, Aurora ───────────── */
@@ -840,45 +860,66 @@
 /* ── Reduced motion: every effect becomes static ────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
-  .fx-spotlight,
-  .fx-spotlight--accent,
-  [dir='rtl'] .fx-spotlight,
-  [dir='rtl'] .fx-spotlight--accent {
+  :root[data-motion='playing'] .hero[data-engaged] .fx-aurora-flow {
+    animation: fx-aurora-flow 70s linear infinite;
+    animation-play-state: paused;
+  }
+
+  :root[data-motion='playing']
+    .hero[data-engaged]:is(:focus-within, [data-active])
+    .fx-aurora-flow {
+    animation-play-state: running;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (hover: hover) and (pointer: fine) {
+  :root[data-motion='playing']
+    .hero[data-engaged]:has(.hero-content:hover, .hero-portrait-wrap:hover)
+    .fx-aurora-flow {
+    animation-play-state: running;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='playing']) .fx-spotlight,
+  :root:not([data-motion='playing']) .fx-spotlight--accent,
+  :root:not([data-motion='playing']) [dir='rtl'] .fx-spotlight,
+  :root:not([data-motion='playing']) [dir='rtl'] .fx-spotlight--accent {
     animation: none;
     transform: rotate(32deg);
   }
 
-  .fx-aurora span,
-  .fx-aurora-flow,
-  .fx-moving-border::before,
-  .fx-meteors span,
-  .fx-ping::after,
-  .fx-marquee-track,
-  .fx-flip-track {
+  :root:not([data-motion='playing']) .fx-aurora span,
+  :root:not([data-motion='playing']) .fx-aurora-flow,
+  :root:not([data-motion='playing']) .fx-moving-border::before,
+  :root:not([data-motion='playing']) .fx-meteors span,
+  :root:not([data-motion='playing']) .fx-ping::after,
+  :root:not([data-motion='playing']) .fx-marquee-track,
+  :root:not([data-motion='playing']) .fx-flip-track {
     animation: none;
   }
 
-  .fx-meteors {
+  :root:not([data-motion='playing']) .fx-meteors {
     display: none;
   }
 
-  .fx-focus-item,
-  .fx-hover-pill {
+  :root:not([data-motion='playing']) .fx-focus-item,
+  :root:not([data-motion='playing']) .fx-hover-pill {
     transition: none;
     transform: none;
   }
 
   /* Static marquee: wrap the originals, drop decorative clones. */
-  .fx-marquee {
+  :root:not([data-motion='playing']) .fx-marquee {
     mask-image: none;
   }
 
-  .fx-marquee-track {
+  :root:not([data-motion='playing']) .fx-marquee-track {
     width: auto;
     flex-wrap: wrap;
   }
 
-  .fx-marquee-track > [data-clone] {
+  :root:not([data-motion='playing']) .fx-marquee-track > [data-clone] {
     display: none;
   }
 }

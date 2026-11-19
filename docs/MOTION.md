@@ -12,7 +12,9 @@ server-rendered.
 ```
 src/styles/motion.css        effect primitives (fx-*), keyframes, reduced-motion fallbacks
 src/scripts/motion.ts        pointer and scroll enhancements, loaded once by BaseLayout
+src/scripts/motionPreference.ts system and visitor motion preference, shared with lazy renderers
 src/scripts/dotGlow.ts       lazy canvas renderer for the inner-page CTA field
+src/scripts/globe.ts         lazy canvas renderer for the homepage globe
 src/components/Carousel.astro  horizontal scroll-snap carousel (see "Carousel")
 src/styles/carousel.css      carousel track, controls and progress rail
 src/scripts/carousel.ts      carousel buttons and counter, loaded on demand
@@ -27,6 +29,38 @@ src/components/fx/
   Raised.astro               a scene object with a lit top face and a shaded lip
   scenes/                    visual-only expertise, approach, service, collaboration and writing scenes
 ```
+
+## Site-wide motion preference
+
+The header toggle is a pressed-state button available in every locale. With no
+saved choice, motion follows `prefers-reduced-motion`: it plays by default and
+starts paused when the system requests reduced motion. A visitor choice
+(`paused` or `playing`) in local storage key `sk-motion` overrides that
+default. The existing inline bootstrap applies the choice before first paint;
+storage failures fall back to the system preference without disabling the
+control for the current page. No preference data is sent anywhere.
+
+`motionPreference.ts` owns the effective state, publishes changes to the main
+interaction layer and its lazy canvas/carousel renderers, and reflects it on
+`<html data-motion="paused">` (or `playing` when explicitly selected). A paused
+scope keeps its current frame; canvas loops schedule no recurring frames, and
+their shared motion clock excludes paused time so resuming does not jump ahead.
+Every automatic CSS or canvas loop is inside a `[data-motion-scope]`. The same
+root pause also freezes a product scene already playing, without starting one:
+product scenes remain idle until hover, focus, or tap.
+
+| Source                                                                                                                 | Repeats automatically?                                          | Scope             | Reduced-motion / pause behavior                                                                                                               |
+| ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Homepage hero orbit, Flip Words, moving borders and availability ping (`Homepage.astro`; `homepage.css`, `motion.css`) | Yes                                                             | Hero section      | System reduction keeps them static; the site toggle pauses the scope in place.                                                                |
+| Backdrop aurora blobs (`Backdrop.astro`; `motion.css`)                                                                 | Yes                                                             | Backdrop          | Static under system reduction; scope pause retains the current frame. The wide hero aurora flow starts only after engagement.                 |
+| Keyword and recommendation marquees (`Homepage.astro`; `motion.css`)                                                   | Yes                                                             | Each marquee      | System reduction wraps originals and hides clones; pause freezes the current position.                                                        |
+| Meteor fields (`Meteors.astro`; `motion.css`)                                                                          | Yes                                                             | Meteor field      | Hidden under system reduction; scope pause freezes the field.                                                                                 |
+| Homepage globe (`Globe.astro`; `globe.ts`) and inner-page dotted CTA (`DotGlow.astro`; `dotGlow.ts`)                   | Yes                                                             | Canvas host       | Draw only while visible and motion is allowed. Reduced motion paints one static frame; pause cancels the loop and resume continues its clock. |
+| World map packets and halo (`WorldMap.astro`)                                                                          | Yes                                                             | Figure            | Packets are hidden under system reduction; pause freezes both animations.                                                                     |
+| 404 status orb (`PageContent.astro`; `global.css`)                                                                     | Yes                                                             | Orb               | Static under system reduction; scope pause retains its frame.                                                                                 |
+| Product scenes (`LiveScene.astro`; `scenes.css`)                                                                       | No; play only on hover, focus or tap                            | No per-card scope | Reduced motion shows the resting state. The site toggle freezes an already active scene; it never starts one.                                 |
+| Bento focus ring, developer palette orbit and terminal cursor (`homepage.css`, `PalettePicker.astro`, `global.css`)    | No; require hover or focus                                      | No scope          | They are interaction-triggered, not idle loops; reduced motion disables them, and the pause state freezes them if active.                     |
+| Carousels and finite timers (`carousel.ts`, `motion.ts`, `toast.ts`, `ContactForm.astro`)                              | No autoplay; timers follow user actions or dismiss transient UI | No scope          | Carousel steps use instant scrolling while paused. Nav settling, toast dismissal and form-success timing are not animation loops.             |
 
 ## Aceternity mapping
 
@@ -86,8 +120,9 @@ src/components/fx/
    Index. Line icons (`Icon.astro`) are static for every user: no draw-in and
    no hover or focus motion.
 6. **Reduced motion is honored everywhere.** `prefers-reduced-motion: reduce`
-   stops every animation, removes parallax and glide transitions, and turns
-   marquees into static wrapped lists without their decorative clones.
+   starts the site-wide motion control paused; explicit visitor choice can
+   override it. The default reduced-motion rendering removes parallax and glide
+   transitions and turns marquees into static wrapped lists without clones.
 7. **Pointer effects need a fine, hover-capable pointer.** Touch devices skip
    them entirely.
 8. **Decorative duplicates are hidden from assistive technology.** Marquee

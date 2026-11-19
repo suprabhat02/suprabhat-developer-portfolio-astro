@@ -1,3 +1,5 @@
+import type { MotionPreference } from './motionPreference';
+
 type TokenVariable = `--${string}`;
 
 interface DotGlowConfig {
@@ -86,15 +88,18 @@ const createDots = (
   return dots;
 };
 
-export function mountDotGlow(host: HTMLElement): () => void {
+export function mountDotGlow(
+  host: HTMLElement,
+  motionPreference: MotionPreference,
+): () => void {
   const canvas = host.querySelector('canvas');
   if (!canvas) throw new Error('Dotted glow canvas is missing.');
   const context = canvas.getContext('2d');
   if (!context) throw new Error('Dotted glow 2D context is unavailable.');
 
   const config = readConfig(host);
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const forcedColors = window.matchMedia('(forced-colors: active)');
+  const clock = motionPreference.createClock();
   let width = 0;
   let height = 0;
   let dpr = 1;
@@ -122,7 +127,7 @@ export function mountDotGlow(host: HTMLElement): () => void {
   };
 
   const canAnimate = () =>
-    !reducedMotion.matches &&
+    !motionPreference.isPaused &&
     !forcedColors.matches &&
     visible &&
     !document.hidden &&
@@ -141,7 +146,7 @@ export function mountDotGlow(host: HTMLElement): () => void {
     context.clearRect(0, 0, width, height);
     if (forcedColors.matches) return;
     if (
-      !reducedMotion.matches &&
+      !motionPreference.isPaused &&
       !allowOffscreen &&
       (!visible || document.hidden)
     ) {
@@ -150,9 +155,9 @@ export function mountDotGlow(host: HTMLElement): () => void {
 
     context.save();
     context.fillStyle = color;
-    const time = reducedMotion.matches
+    const time = motionPreference.isSystemReducedMotion
       ? 0
-      : (now / 1000) * Math.max(config.speedScale, 0);
+      : (clock.elapsedAt(now) / 1000) * Math.max(config.speedScale, 0);
     const radius = config.radius;
     const opacity = config.opacity;
     const { x, y, phase, speed } = dots;
@@ -216,7 +221,7 @@ export function mountDotGlow(host: HTMLElement): () => void {
     canvas.height = Math.round(height * dpr);
     context.setTransform(dpr, 0, 0, dpr, 0, 0);
     dots = createDots(width, height, config);
-    draw(reducedMotion.matches ? 0 : performance.now(), true);
+    draw(performance.now(), true);
     schedule();
   });
   resize.observe(host);
@@ -237,7 +242,7 @@ export function mountDotGlow(host: HTMLElement): () => void {
 
   const theme = new MutationObserver(() => {
     readColors();
-    draw(reducedMotion.matches ? 0 : performance.now(), true);
+    draw(performance.now(), true);
     schedule();
   });
   theme.observe(document.documentElement, {
@@ -245,18 +250,16 @@ export function mountDotGlow(host: HTMLElement): () => void {
     attributeFilter: ['data-theme'],
   });
 
-  const onReducedMotionChange = () => {
-    cancel();
-    if (forcedColors.matches) clear();
-    else draw(reducedMotion.matches ? 0 : performance.now(), true);
-    schedule();
+  const onMotionChange = (paused: boolean) => {
+    if (paused) cancel();
+    else schedule();
   };
-  reducedMotion.addEventListener('change', onReducedMotionChange);
+  const unsubscribeMotion = motionPreference.subscribe(onMotionChange);
 
   const onForcedColorsChange = () => {
     cancel();
     if (forcedColors.matches) clear();
-    else draw(reducedMotion.matches ? 0 : performance.now(), true);
+    else draw(performance.now(), true);
     schedule();
   };
   forcedColors.addEventListener('change', onForcedColorsChange);
@@ -267,7 +270,8 @@ export function mountDotGlow(host: HTMLElement): () => void {
     visibility.disconnect();
     theme.disconnect();
     document.removeEventListener('visibilitychange', onVisibilityChange);
-    reducedMotion.removeEventListener('change', onReducedMotionChange);
+    unsubscribeMotion();
+    clock.dispose();
     forcedColors.removeEventListener('change', onForcedColorsChange);
   };
 }

@@ -456,13 +456,16 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
 
     // Proximity border: every card near the pointer learns its offset.
     const fine = matchMedia('(hover: hover) and (pointer: fine)');
-    const still = matchMedia('(prefers-reduced-motion: reduce)');
     let frame = 0;
     let last = null;
     document.addEventListener(
       'pointermove',
       (event) => {
-        if (lab.border !== 'proximity' || !fine.matches || still.matches)
+        if (
+          lab.border !== 'proximity' ||
+          !fine.matches ||
+          root.dataset.motion === 'paused'
+        )
           return;
         last = event;
         if (frame) return;
@@ -856,7 +859,8 @@ const groups: Array<{ title: string; items: Palette[]; mono: boolean }> = [
   }
 
   @media (prefers-reduced-motion: reduce) {
-    :root[data-pp-border] .fx-card-gradient.fx-card-gradient {
+    :root:not([data-motion='playing'])[data-pp-border]
+      .fx-card-gradient.fx-card-gradient {
       transition: none;
       animation: none;
     }

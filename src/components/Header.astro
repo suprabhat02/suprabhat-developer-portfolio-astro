@@ -258,6 +258,33 @@ const isActive = (item: (typeof headerNav)[number]) =>
       </button>
 
       <button
+        class="hdr-dropdown-btn motion-toggle"
+        type="button"
+        aria-pressed="false"
+        aria-label={t(locale, 'motion.toggle')}
+        title={t(locale, 'motion.toggle')}
+        data-motion-toggle
+      >
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <g class="motion-icon-pause">
+            <path d="M8 5v14"></path>
+            <path d="M16 5v14"></path>
+          </g>
+          <path class="motion-icon-play" d="m8 5 12 7-12 7z"></path>
+        </svg>
+      </button>
+
+      <button
         type="button"
         class="mob-btn"
         id="mob-btn"

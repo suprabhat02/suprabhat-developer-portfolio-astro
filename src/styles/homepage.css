@@ -1974,8 +1974,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .about-photo::before,
-  .about-photo-frame {
+  :root:not([data-motion='playing']) .about-photo::before,
+  :root:not([data-motion='playing']) .about-photo-frame {
     transition: none;
   }
 }
@@ -2816,23 +2816,23 @@ textarea.f-input {
 ══════════════════════════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-orbit,
-  .bento-visual--focus .ring {
+  :root:not([data-motion='playing']) .hero-orbit,
+  :root:not([data-motion='playing']) .bento-visual--focus .ring {
     animation: none;
   }
 
-  .btn,
-  .btn:hover,
-  .hero-proof-card,
-  .hero-proof-card:hover,
-  .stat-item:hover,
-  .c-link:hover,
-  .work-card-lines span {
+  :root:not([data-motion='playing']) .btn,
+  :root:not([data-motion='playing']) .btn:hover,
+  :root:not([data-motion='playing']) .hero-proof-card,
+  :root:not([data-motion='playing']) .hero-proof-card:hover,
+  :root:not([data-motion='playing']) .stat-item:hover,
+  :root:not([data-motion='playing']) .c-link:hover,
+  :root:not([data-motion='playing']) .work-card-lines span {
     transition: none;
     transform: none;
   }
 
-  .bento-visual span {
+  :root:not([data-motion='playing']) .bento-visual span {
     transition: none;
   }
 }

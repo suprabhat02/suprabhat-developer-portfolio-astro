@@ -290,12 +290,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cx-btn,
-  .cx-btn svg {
+  :root:not([data-motion='playing']) .cx-btn,
+  :root:not([data-motion='playing']) .cx-btn svg {
     transition: none;
   }
 
-  .cx-btn:active {
+  :root:not([data-motion='playing']) .cx-btn:active {
     scale: none;
   }
 }

@@ -13,16 +13,16 @@
  */
 
 import type { ToastOptions } from './toast';
+import { motionPreference } from './motionPreference';
 
 type Cleanup = () => void;
 
 const media = {
-  reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)'),
   finePointer: window.matchMedia('(hover: hover) and (pointer: fine)'),
 } as const;
 
 const allowsPointerMotion = (): boolean =>
-  media.finePointer.matches && !media.reducedMotion.matches;
+  media.finePointer.matches && !motionPreference.isPaused;
 
 /** Coalesces bursts of events into one call per animation frame. */
 function rafThrottle<Args extends unknown[]>(
@@ -119,15 +119,15 @@ function initParallax(): Cleanup {
   });
   window.addEventListener('resize', onLeaveDocument, { passive: true });
   window.addEventListener('blur', onLeaveDocument);
-  media.reducedMotion.addEventListener('change', onLeaveDocument);
   media.finePointer.addEventListener('change', onLeaveDocument);
+  const unsubscribeMotion = motionPreference.subscribe(onLeaveDocument);
   return () => {
     onLeaveDocument();
     window.removeEventListener('scroll', onLeaveDocument, { capture: true });
     window.removeEventListener('resize', onLeaveDocument);
     window.removeEventListener('blur', onLeaveDocument);
-    media.reducedMotion.removeEventListener('change', onLeaveDocument);
     media.finePointer.removeEventListener('change', onLeaveDocument);
+    unsubscribeMotion();
     document.removeEventListener('pointermove', onMove);
     document.documentElement.removeEventListener(
       'pointerleave',
@@ -170,7 +170,7 @@ function initHoverGroups(): Cleanup {
       };
 
       const onEnter = (event: Event) => {
-        if (media.reducedMotion.matches) return;
+        if (motionPreference.isPaused) return;
         const item = findItem(event);
         if (item) moveTo(item);
       };
@@ -183,7 +183,11 @@ function initHoverGroups(): Cleanup {
       group.addEventListener('focusin', onEnter);
       group.addEventListener('pointerleave', onLeave);
       group.addEventListener('focusout', onFocusOut);
+      const unsubscribeMotion = motionPreference.subscribe((paused) => {
+        if (paused) onLeave();
+      });
       cleanups.push(() => {
+        unsubscribeMotion();
         group.removeEventListener('pointerover', onEnter);
         group.removeEventListener('focusin', onEnter);
         group.removeEventListener('pointerleave', onLeave);
@@ -203,15 +207,13 @@ function initScrollState(): Cleanup {
     backToTop?.querySelector<HTMLElement>('.fx-ring-progress');
   // Where scroll timelines are unsupported, drive the ring from
   // this handler instead (transform and a registered property: no layout).
-  const scriptProgress =
-    !CSS.supports('animation-timeline', 'scroll()') &&
-    !media.reducedMotion.matches;
+  const scriptProgress = !CSS.supports('animation-timeline', 'scroll()');
 
   const sync = rafThrottle(() => {
     const y = window.scrollY;
     header?.toggleAttribute('data-scrolled', y > 24);
     if (backToTop) backToTop.hidden = y < 600;
-    if (scriptProgress) {
+    if (scriptProgress && !motionPreference.isPaused) {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const progress = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
       progressRing?.style.setProperty('--fx-angle', `${progress * 360}deg`);
@@ -221,7 +223,7 @@ function initScrollState(): Cleanup {
   const onTopClick = () =>
     window.scrollTo({
       top: 0,
-      behavior: media.reducedMotion.matches ? 'auto' : 'smooth',
+      behavior: motionPreference.isPaused ? 'auto' : 'smooth',
     });
 
   // The markup already matches the top-of-page state, so reading scrollY at
@@ -265,7 +267,7 @@ function initNavIndicator(): Cleanup {
   };
 
   const onEnter = (event: Event) => {
-    if (media.reducedMotion.matches) return;
+    if (motionPreference.isPaused) return;
     const link = closestFromEvent<HTMLAnchorElement>(event, 'a');
     if (link && links.includes(link)) place(link);
   };
@@ -376,9 +378,6 @@ function initInViewMotion(): Cleanup {
 const INTERACTIVE = 'a, button, input, select, textarea, label, summary';
 
 function initLiveScenes(): Cleanup {
-  if (media.reducedMotion.matches) {
-    return () => undefined;
-  }
   let active: HTMLElement | null = null;
   let press: {
     pointerId: number;
@@ -415,7 +414,7 @@ function initLiveScenes(): Cleanup {
     if (
       !start ||
       event.pointerId !== start.pointerId ||
-      media.reducedMotion.matches ||
+      motionPreference.isPaused ||
       Math.hypot(event.clientX - start.clientX, event.clientY - start.clientY) >
         8 ||
       Math.abs(window.scrollY - start.scrollY) > 1
@@ -436,6 +435,26 @@ function initLiveScenes(): Cleanup {
     document.removeEventListener('pointerup', onUp);
     document.removeEventListener('pointercancel', onCancel);
     setActive(null);
+  };
+}
+
+function initMotionToggle(): Cleanup {
+  const buttons = Array.from(
+    document.querySelectorAll<HTMLButtonElement>('[data-motion-toggle]'),
+  );
+  if (!buttons.length) return () => undefined;
+
+  const sync = (paused: boolean) =>
+    buttons.forEach((button) =>
+      button.setAttribute('aria-pressed', String(paused)),
+    );
+  const unsubscribe = motionPreference.subscribe(sync);
+  const toggle = () => motionPreference.toggle();
+  buttons.forEach((button) => button.addEventListener('click', toggle));
+
+  return () => {
+    unsubscribe();
+    buttons.forEach((button) => button.removeEventListener('click', toggle));
   };
 }
 
@@ -472,7 +491,9 @@ function initLazyGlobes(): Cleanup {
         observer.unobserve(entry.target);
         import('./globe')
           .then(({ mountGlobe }) =>
-            unmounts.push(mountGlobe(entry.target as HTMLElement)),
+            unmounts.push(
+              mountGlobe(entry.target as HTMLElement, motionPreference),
+            ),
           )
           .catch((error: unknown) => console.error(error));
       }),
@@ -500,7 +521,9 @@ function initLazyDotGlows(): Cleanup {
         observer.unobserve(entry.target);
         import('./dotGlow')
           .then(({ mountDotGlow }) =>
-            unmounts.push(mountDotGlow(entry.target as HTMLElement)),
+            unmounts.push(
+              mountDotGlow(entry.target as HTMLElement, motionPreference),
+            ),
           )
           .catch((error: unknown) => console.error(error));
       }),
@@ -532,7 +555,9 @@ function initLazyCarousels(): Cleanup {
         observer.unobserve(entry.target);
         import('./carousel')
           .then(({ mountCarousels }) =>
-            unmounts.push(mountCarousels([entry.target as HTMLElement])),
+            unmounts.push(
+              mountCarousels([entry.target as HTMLElement], motionPreference),
+            ),
           )
           .catch((error: unknown) => console.error(error));
       }),
@@ -563,6 +588,7 @@ function initToasts(): Cleanup {
 /* ── Boot ──────────────────────────────────────────────────────────── */
 
 const initializers: ReadonlyArray<() => Cleanup> = [
+  initMotionToggle,
   initInViewMotion,
   initScrollState,
   initNavIndicator,

@@ -27,6 +27,7 @@ const {
 <div
   class:list={['fx-dot-glow', className]}
   data-dot-glow
+  data-motion-scope
   data-gap={gap}
   data-radius={radius}
   data-opacity={opacity}
@@ -63,7 +64,7 @@ const {
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .fx-dot-glow canvas {
+    :global(:root:not([data-motion='playing'])) .fx-dot-glow canvas {
       transition: none;
     }
   }

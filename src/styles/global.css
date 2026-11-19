@@ -370,6 +370,26 @@ textarea {
   width: 34px;
   padding: 0;
 }
+.motion-toggle {
+  width: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  padding: 0;
+  color: var(--text);
+}
+.motion-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+.motion-icon-play {
+  display: none;
+}
+:root[data-motion='paused'] .motion-icon-pause {
+  display: none;
+}
+:root[data-motion='paused'] .motion-icon-play {
+  display: block;
+}
 .theme-toggle-icon {
   width: 18px;
   height: 18px;
@@ -596,18 +616,18 @@ textarea {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .site-header,
-  .mob-menu.open,
-  .mob-menu.open > a {
+  :root:not([data-motion='playing']) .site-header,
+  :root:not([data-motion='playing']) .mob-menu.open,
+  :root:not([data-motion='playing']) .mob-menu.open > a {
     animation: none;
   }
-  .site-nav .nav-pill,
-  .site-header[data-scrolled] {
+  :root:not([data-motion='playing']) .site-nav .nav-pill,
+  :root:not([data-motion='playing']) .site-header[data-scrolled] {
     transition: none;
   }
-  .desktop-nav a,
-  .desktop-nav a::after,
-  .hdr-dropdown-btn {
+  :root:not([data-motion='playing']) .desktop-nav a,
+  :root:not([data-motion='playing']) .desktop-nav a::after,
+  :root:not([data-motion='playing']) .hdr-dropdown-btn {
     transition: none;
   }
 }
@@ -1401,11 +1421,11 @@ main {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .toast,
-  .toast[data-leaving] {
+  :root:not([data-motion='playing']) .toast,
+  :root:not([data-motion='playing']) .toast[data-leaving] {
     animation: none;
   }
-  .toast-progress {
+  :root:not([data-motion='playing']) .toast-progress {
     display: none;
   }
 }
@@ -1918,14 +1938,17 @@ main {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
+  :root:not([data-motion='playing']) {
     scroll-behavior: auto;
   }
-  *,
-  *::before,
-  *::after {
+  :root:not([data-motion='playing']) *,
+  :root:not([data-motion='playing']) *::before,
+  :root:not([data-motion='playing']) *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+  :root[data-motion='playing'] .not-found-code .not-found-orb {
+    animation: not-found-pulse 6s ease-in-out infinite;
   }
 }
 
@@ -2303,21 +2326,21 @@ main {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .grid article,
-  .quote,
-  .article-list article,
-  .tool-grid li,
-  .tool-grid li img,
-  .button,
-  .button::after,
-  .btt {
+  :root:not([data-motion='playing']) .grid article,
+  :root:not([data-motion='playing']) .quote,
+  :root:not([data-motion='playing']) .article-list article,
+  :root:not([data-motion='playing']) .tool-grid li,
+  :root:not([data-motion='playing']) .tool-grid li img,
+  :root:not([data-motion='playing']) .button,
+  :root:not([data-motion='playing']) .button::after,
+  :root:not([data-motion='playing']) .btt {
     transition: none;
   }
-  .grid article:hover,
-  .quote:hover,
-  .article-list article:hover,
-  .tool-grid li:hover,
-  .tool-grid li:hover img {
+  :root:not([data-motion='playing']) .grid article:hover,
+  :root:not([data-motion='playing']) .quote:hover,
+  :root:not([data-motion='playing']) .article-list article:hover,
+  :root:not([data-motion='playing']) .tool-grid li:hover,
+  :root:not([data-motion='playing']) .tool-grid li:hover img {
     transform: none;
   }
 }
@@ -2939,7 +2962,8 @@ main {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fx-card-gradient.fx-card-gradient::before {
+  :root:not([data-motion='playing'])
+    .fx-card-gradient.fx-card-gradient::before {
     transition: none;
   }
 }
@@ -3238,14 +3262,15 @@ main {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fx-card-gradient.fx-card-gradient:hover,
-  .fx-card-gradient.fx-card-gradient:focus-within {
+  :root:not([data-motion='playing']) .fx-card-gradient.fx-card-gradient:hover,
+  :root:not([data-motion='playing'])
+    .fx-card-gradient.fx-card-gradient:focus-within {
     animation: none;
   }
 
-  .copy-btn[data-state='copied'] .copy-check,
-  .oss-cta,
-  .oss-cta:hover {
+  :root:not([data-motion='playing']) .copy-btn[data-state='copied'] .copy-check,
+  :root:not([data-motion='playing']) .oss-cta,
+  :root:not([data-motion='playing']) .oss-cta:hover {
     transition: none;
     transform: none;
   }
