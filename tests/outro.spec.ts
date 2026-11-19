@@ -133,6 +133,16 @@ for (const locale of ['en', 'es', 'ar'] as const) {
       await page.evaluate((value) => {
         document.documentElement.dataset.theme = value;
       }, theme);
+      // Axe must not sample the header mid-fade between the two themes. Only
+      // transitions end on their own; looping animations never would.
+      await page.evaluate(() =>
+        Promise.all(
+          document
+            .getAnimations()
+            .filter((animation) => animation instanceof CSSTransition)
+            .map((animation) => animation.finished),
+        ),
+      );
       await expect(page.locator('.po-field')).toHaveCSS(
         'opacity',
         theme === 'light' ? '0.45' : '1',

@@ -393,6 +393,18 @@ textarea {
     margin-block-start: 8px;
   }
 }
+/* Narrow screens: the settings panel is wider than the space left of its
+   trigger, so anchoring would push it against the screen edge. Pin both
+   panels 8px in from the header's inline end instead. */
+@media (max-width: 480px) {
+  .hdr-menu {
+    position-area: none;
+    inset-block-start: 72px;
+    inset-inline-end: 8px;
+    margin: 0;
+    max-inline-size: calc(100vw - 16px);
+  }
+}
 /* Browsers without popovers keep the panels closed; the mobile menu still
    lists every language as plain links. */
 @supports not selector(:popover-open) {
