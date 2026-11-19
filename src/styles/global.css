@@ -402,7 +402,7 @@ textarea {
     inset-block-start: 72px;
     inset-inline-end: 8px;
     margin: 0;
-    max-inline-size: calc(100vw - 16px);
+    max-inline-size: calc(100% - 16px);
   }
 }
 /* Browsers without popovers keep the panels closed; the mobile menu still
