@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { setPreference } from './helpers';
 
 test('Lab navigation fits requested widths and respects external destinations', async ({
   page,
@@ -203,14 +204,14 @@ test('shared shell styling and controls stay consistent across locales', async (
         return getComputedStyle(element);
       };
       return {
-        controlRadius: styleFor('.theme-toggle').borderRadius,
+        controlRadius: styleFor('#prefs-btn').borderRadius,
         hasHorizontalOverflow:
           document.documentElement.scrollWidth >
           document.documentElement.clientWidth,
         headerRadius: styleFor('.site-header').borderRadius,
         navRadius: styleFor('.site-nav a').borderRadius,
-        themeIconCount: document.querySelectorAll(
-          '.theme-toggle-icon .theme-icon-sun, .theme-toggle-icon .theme-icon-moon',
+        preferenceOptionCount: document.querySelectorAll(
+          '#prefs-panel input[type="radio"]',
         ).length,
       };
     });
@@ -221,7 +222,7 @@ test('shared shell styling and controls stay consistent across locales', async (
     controlRadius: '6px',
     headerRadius: '12px',
     navRadius: '4px',
-    themeIconCount: 2,
+    preferenceOptionCount: 6,
   });
 
   for (const route of ['/es/', '/ar/', '/about/', '/es/about/', '/ar/about/']) {
@@ -257,12 +258,16 @@ test('shared shell styling and controls stay consistent across locales', async (
     'aria-label',
     'EN: Change language, current language: English',
   );
-  await expect(page.locator('.theme-toggle')).toHaveAttribute(
+  await expect(page.locator('#prefs-btn')).toHaveAttribute(
     'aria-label',
-    'Switch to light color theme',
+    'Display settings: theme and animations',
   );
   await languageButton.click();
-  await expect(languageButton).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#lang-menu')).toBeVisible();
+  await expect(page.locator('#lang-menu a[aria-current="page"]')).toHaveText(
+    'English',
+  );
+  await expect(page.locator('#lang-menu [role="menu"]')).toHaveCount(0);
   await expect(page.locator('#lang-dd .hdr-menu a[lang="en"]')).toHaveAttribute(
     'href',
     '/about/',
@@ -285,17 +290,18 @@ test('shared shell styling and controls stay consistent across locales', async (
     'aria-label',
     'ES: Cambiar idioma, idioma actual: Español',
   );
-  await expect(page.locator('#lang-dd .hdr-menu a[lang="ar"]')).toHaveAttribute(
-    'aria-label',
-    'Cambiar idioma a árabe',
+  // Language names are the link text itself (WCAG 2.5.3), never replaced.
+  await expect(page.locator('#lang-dd .hdr-menu a[lang="ar"]')).toHaveText(
+    'العربية',
   );
+  await expect(page.locator('#lang-dd .hdr-menu a[aria-label]')).toHaveCount(0);
   await expect(
     page.locator('footer nav[aria-label="Enlaces del sitio"]'),
   ).toBeVisible();
   await expect(page.locator('footer a[aria-label="Feed RSS"]')).toBeVisible();
-  await expect(page.locator('.theme-toggle')).toHaveAttribute(
+  await expect(page.locator('#prefs-btn')).toHaveAttribute(
     'aria-label',
-    'Cambiar a tema claro',
+    'Ajustes de visualización: tema y animaciones',
   );
 
   await page.locator('#lang-dd-btn').click();
@@ -309,9 +315,8 @@ test('shared shell styling and controls stay consistent across locales', async (
     'aria-label',
     'AR: تغيير اللغة، اللغة الحالية: العربية',
   );
-  await expect(page.locator('#lang-dd .hdr-menu a[lang="en"]')).toHaveAttribute(
-    'aria-label',
-    'تغيير اللغة إلى الإنجليزية',
+  await expect(page.locator('#lang-dd .hdr-menu a[lang="en"]')).toHaveText(
+    'English',
   );
   await expect(
     page.locator('footer nav[aria-label="روابط الموقع"]'),
@@ -328,25 +333,28 @@ test('shared shell styling and controls stay consistent across locales', async (
 
   await page.goto('/');
   const html = page.locator('html');
-  const themeButton = page.locator('.theme-toggle');
+  const themeOption = (value: string) =>
+    page.locator(`#prefs-panel input[name="pref-theme"][value="${value}"]`);
   await expect(html).toHaveAttribute('data-theme', 'dark');
-  await expect(themeButton).toHaveAttribute('aria-pressed', 'false');
-  await expect(themeButton).toHaveAttribute(
-    'aria-label',
-    'Switch to light color theme',
-  );
-  await themeButton.click();
+  await expect(themeOption('dark')).toBeChecked();
+  await setPreference(page, 'theme', 'light');
   await expect(html).toHaveAttribute('data-theme', 'light');
-  await expect(themeButton).toHaveAttribute('aria-pressed', 'true');
-  await expect(themeButton).toHaveAttribute(
-    'aria-label',
-    'Switch to dark color theme',
-  );
   await expect
     .poll(() => page.evaluate(() => localStorage.getItem('sk-theme')))
     .toBe('light');
   await page.reload();
   await expect(html).toHaveAttribute('data-theme', 'light');
+  await expect(themeOption('light')).toBeChecked();
+
+  // "System" follows the operating system, live, and survives a reload.
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await setPreference(page, 'theme', 'system');
+  await expect(html).toHaveAttribute('data-theme', 'dark');
+  await page.emulateMedia({ colorScheme: 'light' });
+  await expect(html).toHaveAttribute('data-theme', 'light');
+  await page.reload();
+  await expect(html).toHaveAttribute('data-theme', 'light');
+  await expect(themeOption('system')).toBeChecked();
 });
 
 test('mobile header controls sit at the inline end in every direction', async ({
