@@ -16,6 +16,46 @@ FCP. Until a dedicated performance change makes every run score 100, the gate
 can fail on `main` itself, and no change to the built site is merged under the
 strict requirement while it fails.
 
+## Homepage LCP miss: Lighthouse timestamp precision (2026-11-19 UTC)
+
+Pattern: a mobile homepage run (`/`, `/es/` or `/ar/`) occasionally scored 99
+Performance with simulated LCP about 600 ms above FCP (1801 to 1860 ms against
+1201 to 1260 ms) while TBT, Speed Index and CLS were unchanged. It appeared in
+10 of 156 local homepage runs saved between 2026-11-15 and 2026-11-19, on
+`main` and on feature branches alike.
+
+Cause: Lighthouse 13.6.0 ships `@paulirish/trace_engine` 0.0.67. Its Lantern
+LCP estimate reuses the FCP estimate for a text LCP only when the trace's FCP
+and LCP timestamps are exactly equal. In a saved failing run of `/es/`, FCP was
+at 17.307 ms and the LCP candidate (the hero `h1`, type `text`) at 17.308 ms:
+the same frame, 1 µs apart. Chromium wrote the FCP timestamp through double
+seconds, which can truncate it by 1 µs (crbug 583885865). Lantern then used its
+first-paint graph, which counts every request started before LCP; re-scoring
+that run with single requests removed showed the font preload alone worth
+about 220 ms, and no single request accounting for the whole 600 ms.
+
+Fix: trace engine 0.0.69 treats timestamps within 10 µs as the same frame. The
+`overrides` entry in `package.json` gives Lighthouse 13.6.0 that version (the
+one Lighthouse's own 13.6 development builds depend on). It changes only the
+audit tool, not the site. Re-scoring the same saved failing run in audit mode
+(`-A`) with 0.0.69: Performance 99 → 100, LCP 1829 → 1229 ms, every other
+metric unchanged. Remove the override once a stable Lighthouse release depends
+on trace engine 0.0.69 or later. PageSpeed Insights runs Google's own
+Lighthouse build, so its scores change only when Google updates it.
+
+After the fix, 24 mobile homepage runs (8 each of `/`, `/es/`, `/ar/`) gave
+no LCP above FCP. One `/ar/` run scored 97 on TBT (189 ms): every main-thread
+category in that run was about 1.6 times its usual size (style and layout
+633 ms against 368 ms in a passing run). Traced locally at 4x CPU, the layout
+script's task measured 4 to 21 ms with no forced layout, so this miss is the
+machine variance described in the next section.
+
+The full strict gate on the same build, with the Spanish and Arabic display
+settings labels updated, then passed 72 of 72 runs: 12 paths (`/`, `/es/`,
+`/ar/`, `/about/`, `/es/about/`, `/ar/about/`, `/faq/`, `/es/faq/`,
+`/ar/faq/`, `/services/`, `/ar/services/`, `/blog/`) × 3 runs × mobile and
+desktop, every run 100/100/100/100.
+
 ## Homepage mobile TBT investigation (2026-11-18 UTC)
 
 **Status: cause found, no safe code change beats the noise.** The strict gate
