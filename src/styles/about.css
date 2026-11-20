@@ -720,6 +720,11 @@
 }
 
 @media (max-width: 760px) {
+  /* Matches the 256px in the portrait's sizes attribute. */
+  .ab-portrait {
+    width: min(100%, 16rem);
+  }
+
   .ab-id,
   .ab-ch {
     grid-template-columns: minmax(0, 1fr);

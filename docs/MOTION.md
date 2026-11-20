@@ -571,7 +571,10 @@ paint and horizontal-scroll bounds.
 ## About page career path and scenes
 
 `AboutPage.astro` opens with the original hero portrait
-(`portrait-1100.webp`, eager, `fetchpriority="high"`), then the identity
+(`portrait-1100.webp`, eager, `fetchpriority="high"`; on phones it is the
+LCP element, so it renders at 256px with quality 50: at the homepage's
+quality 62 the 560w AVIF was 68 KB and mobile Performance scored 99, now the
+450w file phones load is 28 KB and every run scores 100), then the identity
 facts, then the five About paragraphs as chapters. Each chapter except
 Experience has a diagram scene beside its heading
 (`src/components/about/AboutScene.astro`, names in `aboutScenes.ts`); the

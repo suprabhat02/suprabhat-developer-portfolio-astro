@@ -26,7 +26,7 @@ import {
 import CareerPath from './about/CareerPath.astro';
 import AboutScene from './about/AboutScene.astro';
 import type { AboutSceneName } from './about/aboutScenes';
-import { heroPortraitQuality, heroPortraitWidths } from '../data/images';
+import { heroPortraitWidths } from '../data/images';
 import { getHomepageConversionContent } from '../data/homepageConversion';
 import { reactSmartCopy, reactInpChunker } from '../data/openSource';
 import portraitImage from '../../public/assets/images/portrait-1100.webp';
@@ -48,6 +48,11 @@ const prefix = localePrefix(locale);
 const href = (path: string) => `${prefix}${path}`;
 const profile = getProfile(locale);
 const listFormat = new Intl.ListFormat(localeMeta[locale].htmlLang);
+/**
+ * On phones the portrait is the LCP element, so it ships lighter than the
+ * homepage hero portrait (measured: AVIF 560w 68 KB at 62, see MOTION.md).
+ */
+const aboutPortraitQuality = 50;
 const resumeHref =
   '/assets/suprabhat-kumar-senior-frontend-engineer-resume.pdf';
 
@@ -122,14 +127,14 @@ const chapters = profile.about.map((body, index) => ({
           formats={['avif', 'webp']}
           fallbackFormat="webp"
           widths={heroPortraitWidths}
-          sizes="(max-width: 1040px) min(320px, calc(100vw - 40px)), 368px"
+          sizes="(max-width: 760px) 256px, (max-width: 1040px) 320px, 368px"
           width={800}
           height={1067}
           alt={profile.portrait.alt}
           loading="eager"
           decoding="async"
           fetchpriority="high"
-          quality={heroPortraitQuality}
+          quality={aboutPortraitQuality}
         />
       </figure>
     </PageHero>
