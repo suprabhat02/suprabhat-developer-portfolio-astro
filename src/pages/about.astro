@@ -1,0 +1,51 @@
+---
+/**
+ * About (en). It has its own route, rather than the generic `[page].astro`,
+ * so its stylesheet (about.css) ships only with the About pages.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AboutPage from '../components/AboutPage.astro';
+import { getSectionPageMeta, getSectionPageImage } from '../data/pageSeo';
+import { SITE_URL, NOINDEX_PAGES } from '../config/site';
+import { t } from '../i18n/messages';
+
+const page = 'about';
+const { title, description } = getSectionPageMeta('en', page);
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: `${SITE_URL}/`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: title,
+        item: `${SITE_URL}/${page}/`,
+      },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  {title}
+  {description}
+  image={getSectionPageImage(page)}
+  imageWidth={1200}
+  imageHeight={630}
+  imageAlt={t('en', 'seo.sectionImageAlt').replace(
+    '{title}',
+    t('en', `nav.${page}`),
+  )}
+  page={page}
+  pageType="ProfilePage"
+  schema={schema}
+  noindex={(NOINDEX_PAGES as readonly string[]).includes(page)}
+  ><AboutPage locale="en" /></BaseLayout
+>

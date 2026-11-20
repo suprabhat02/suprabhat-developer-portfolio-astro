@@ -1,0 +1,265 @@
+---
+/**
+ * The About page. Its structure follows time:
+ *   1. hero with the career route (one stop per employer, placed by its real
+ *      start date on an axis that ends at the build date);
+ *   2. identity facts beside a photo;
+ *   3. the five About paragraphs as chapters with sticky headings;
+ *   4. the design philosophy;
+ *   5. the shared outro.
+ * Every value comes from src/data or src/i18n; the page adds no new copy.
+ * Headings reuse strings that already exist in all three locales.
+ */
+import { Picture } from 'astro:assets';
+import PageHero from './PageHero.astro';
+import PageOutro from './PageOutro.astro';
+import Icon from './fx/Icon.astro';
+import {
+  getProfile,
+  profile as canonicalProfile,
+  profileVisibleAliases,
+  profileHandle,
+  profileHandlePlatforms,
+  profileStack,
+} from '../data/profile';
+import { getCareerRoute } from '../data/careerRoute';
+import { getHomepageConversionContent } from '../data/homepageConversion';
+import { reactSmartCopy, reactInpChunker } from '../data/openSource';
+import parkPortraitImage from '../../public/assets/images/portrait-park-900.webp';
+import { localePrefix, localeMeta, type Locale } from '../i18n/config';
+import { t, type MessageKey } from '../i18n/messages';
+import '../styles/pages.css';
+// A file of its own (2.2 KB gzip), loaded only by the About routes. Inlining
+// it costs ~4 KB of HTML gzip; adding it to pages.css would load it on every
+// inner page.
+import '../styles/about.css';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const tx = (key: MessageKey) => t(locale, key);
+const prefix = localePrefix(locale);
+const href = (path: string) => `${prefix}${path}`;
+const profile = getProfile(locale);
+const listFormat = new Intl.ListFormat(localeMeta[locale].htmlLang);
+const route = getCareerRoute(locale);
+const resumeHref =
+  '/assets/suprabhat-kumar-senior-frontend-engineer-resume.pdf';
+
+const identity = [
+  { label: tx('identity.name'), value: canonicalProfile.name },
+  {
+    label: tx('identity.aka'),
+    value: listFormat.format(profileVisibleAliases),
+  },
+  {
+    label: tx('home.recruiterRoleLabel'),
+    value: profile.title.replace('Front-End', 'Frontend'),
+  },
+  { label: tx('page.about.basedIn'), value: profile.eyebrow.from },
+  { label: tx('identity.stack'), value: listFormat.format(profileStack) },
+] as const;
+
+const terms = [
+  { label: tx('home.availability'), value: profile.eyebrow.availability },
+  {
+    label: tx('home.recruiterProofLabel'),
+    value: tx('home.recruiterProofValue'),
+  },
+  {
+    label: tx('home.recruiterBestForLabel'),
+    value: tx('home.recruiterBestForValue'),
+  },
+] as const;
+
+const chapterTitles = [
+  tx('home.about'),
+  tx('home.experience'),
+  tx('home.expertiseTitle'),
+  getHomepageConversionContent(locale).approach.eyebrow,
+  tx('home.availability'),
+];
+const chapters = profile.about.map((body, index) => ({
+  id: `about-chapter-${index + 1}`,
+  title: chapterTitles[index] ?? tx('home.about'),
+  body,
+}));
+---
+
+<section class="page section ip ab">
+  <div class="wrap ip-stack ab-stack">
+    <div class="ab-hero" data-tap-motion>
+      <PageHero
+        {locale}
+        eyebrow={tx('page.about.eyebrow')}
+        title={tx('page.about.title')}
+        lead={profile.lead}
+      >
+        <Fragment slot="actions">
+          <a class="button primary" href={resumeHref} download>
+            {tx('action.resume')}
+          </a>
+          <a class="button" href={href('/contact/')}>
+            {tx('action.contact')}
+          </a>
+        </Fragment>
+      </PageHero>
+
+      <div class="ab-route">
+        <div class="ab-track" aria-hidden="true">
+          <span class="ab-track-fill"></span>
+          <span class="ab-track-head"></span>
+          {
+            route.years.map((year) => (
+              <span class="ab-tick" style={`--at: ${year.at}`}>
+                <span class="ab-tick-year">{year.year}</span>
+              </span>
+            ))
+          }
+        </div>
+        <ol
+          class="ab-stops"
+          aria-label={tx('nav.experience')}
+          style={`--count: ${route.stops.length}`}
+        >
+          {
+            route.stops.map((stop, index) => (
+              <li
+                class:list={[
+                  'ab-stop',
+                  { 'ab-stop--raised': stop.row === 1 },
+                  { 'ab-stop--current': stop.current },
+                ]}
+                style={`--at: ${stop.at}; --n: ${index}`}
+              >
+                <span class="ab-stop-dot" aria-hidden="true" />
+                <span class="ab-stop-text">
+                  <bdi class="ab-stop-name">{stop.company}</bdi>
+                  <span class="ab-stop-years">
+                    {stop.startYear} – {stop.endLabel}
+                  </span>
+                </span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+
+    <section class="ab-id" aria-labelledby="about-glance-title">
+      <figure class="ab-id-photo">
+        <Picture
+          src={parkPortraitImage}
+          formats={['avif', 'webp']}
+          fallbackFormat="webp"
+          widths={[320, 440, 560, 720]}
+          sizes="(max-width: 760px) min(calc(145vw - 58px), 464px), 464px"
+          width={900}
+          height={1200}
+          alt={tx('home.parkPhotoAlt')}
+          loading="lazy"
+          decoding="async"
+          quality={72}
+        />
+      </figure>
+      <div class="ab-id-body">
+        <h2 id="about-glance-title" class="ab-heading">
+          {tx('page.about.glance')}
+        </h2>
+        <div class="ab-id-facts" data-identity-summary>
+          <p class="ab-id-summary">{tx('identity.summary')}</p>
+          <dl class="ab-spec">
+            {
+              identity.slice(0, 2).map((fact) => (
+                <div>
+                  <dt>{fact.label}</dt>
+                  <dd>{fact.value}</dd>
+                </div>
+              ))
+            }
+            <div>
+              <dt>{tx('identity.handle')}</dt>
+              <dd>
+                <span dir="ltr">{profileHandle}</span>
+                {` (${listFormat.format(profileHandlePlatforms)})`}
+              </dd>
+            </div>
+            {
+              identity.slice(2).map((fact) => (
+                <div>
+                  <dt>{fact.label}</dt>
+                  <dd>{fact.value}</dd>
+                </div>
+              ))
+            }
+            <div>
+              <dt>{tx('identity.libraries')}</dt>
+              <dd>
+                <ul class="ab-libs">
+                  {
+                    [reactSmartCopy, reactInpChunker].map((project) => (
+                      <li>
+                        <a href={project.links.docs}>{project.name}</a>
+                        <a
+                          class="ab-libs-case"
+                          href={href(`/work/${project.id}/`)}
+                        >
+                          {tx('identity.caseStudy').replace(
+                            '{name}',
+                            project.name,
+                          )}
+                        </a>
+                      </li>
+                    ))
+                  }
+                </ul>
+              </dd>
+            </div>
+          </dl>
+        </div>
+        <dl class="ab-spec ab-spec--terms">
+          {
+            terms.map((fact) => (
+              <div>
+                <dt>{fact.label}</dt>
+                <dd>{fact.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </section>
+
+    <div class="ab-story">
+      {
+        chapters.map((chapter, index) => (
+          <section class="ab-ch" aria-labelledby={chapter.id}>
+            <h2 id={chapter.id} class="ab-heading ab-ch-title">
+              {chapter.title}
+            </h2>
+            <div class="ab-ch-body">
+              <p class:list={{ 'ab-ch-lead': index === 0 }}>{chapter.body}</p>
+              {index === 1 && (
+                <a class="ab-more" href={href('/experience/')}>
+                  {tx('home.experienceCta')}
+                  <Icon name="arrow-up-right" size={16} class="ab-more-icon" />
+                </a>
+              )}
+            </div>
+          </section>
+        ))
+      }
+    </div>
+
+    <section class="ab-creed" aria-labelledby="about-philosophy-title">
+      <h2 id="about-philosophy-title" class="ab-heading">
+        {tx('page.about.philosophy')}
+      </h2>
+      <p class="ab-creed-text">{profile.philosophy}</p>
+    </section>
+
+    <PageOutro {locale} related={['experience', 'work', 'blog']} />
+  </div>
+</section>

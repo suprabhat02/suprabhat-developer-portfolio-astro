@@ -323,9 +323,12 @@ const combinedSchema = {
       class:list={['site-main', { 'site-main--page': !isHome }]}
     >
       {
-        !isHome && (
-          <Backdrop pattern="grid" spotlight aurora class="page-backdrop" />
-        )
+        !isHome &&
+          (page === 'about' ? (
+            <Backdrop pattern="grid" class="page-backdrop" />
+          ) : (
+            <Backdrop pattern="grid" spotlight aurora class="page-backdrop" />
+          ))
       }
       <slot />
     </main>

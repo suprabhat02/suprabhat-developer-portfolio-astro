@@ -1,0 +1,639 @@
+/*
+ * About page (AboutPage.astro). Time is the organizing axis: the hero
+ * carries the career route, then identity facts, chapters and the design
+ * philosophy follow as quiet editorial rows.
+ *
+ * Colors come only from role tokens. Direction-sensitive values use logical
+ * properties; the few transforms that need a sign read `--dir` (-1 in RTL).
+ * The accent marks only the route travelled and the current stop.
+ */
+
+.ab-stack {
+  gap: clamp(4rem, 9vw, 7rem);
+}
+
+.ab-hero {
+  display: grid;
+  gap: clamp(2.75rem, 6vw, 4.5rem);
+}
+
+/* Wide screens: headline on the left, its lead and actions answering it on
+   the right, both resting on the headline's last line. */
+@media (min-width: 1041px) {
+  .ab-hero .ph-copy {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+      'eyebrow eyebrow'
+      'title lead'
+      'title actions';
+    column-gap: clamp(2.5rem, 5vw, 5rem);
+  }
+
+  .ab-hero .ph-copy > .eyebrow {
+    grid-area: eyebrow;
+    justify-self: start;
+  }
+
+  .ab-hero .ph-title {
+    grid-area: title;
+    align-self: end;
+    margin-block-end: 0;
+  }
+
+  .ab-hero .ph-lead {
+    grid-area: lead;
+    align-self: end;
+  }
+
+  .ab-hero .ph-actions {
+    grid-area: actions;
+    margin-block-start: 1.6rem;
+  }
+}
+
+/* ── Career route ───────────────────────────────────────────────────
+ * Wide screens: one horizontal line from the first start date to today.
+ * Stops sit at their real position (`--at`, 0–1); labels alternate above
+ * and below so neighbouring stops never collide. Phones: a vertical list.
+ */
+
+.ab-route {
+  --dir: 1;
+  --route-dur: 2.4s;
+  position: relative;
+  --route-y: 7.25rem;
+  container-type: inline-size;
+  height: 10.25rem;
+}
+
+[dir='rtl'] .ab-route {
+  --dir: -1;
+}
+
+.ab-track {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: var(--route-y);
+  height: 2px;
+  margin-block-start: -1px;
+  border-radius: var(--radius-pill);
+  background: var(--border);
+}
+
+.ab-track-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--accent);
+  transform-origin: left center;
+}
+
+[dir='rtl'] .ab-track-fill {
+  transform-origin: right center;
+}
+
+/* The point of travel, visible only while the route replays. */
+.ab-track-head {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 0;
+  width: 10px;
+  height: 10px;
+  margin: -5px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0;
+}
+
+/* A ruler of years under the line, so the spacing reads as time. */
+.ab-tick {
+  position: absolute;
+  inset-block-start: 9px;
+  inset-inline-start: calc(var(--at) * 100%);
+  width: 1px;
+  height: 7px;
+  background: var(--border-strong);
+}
+
+.ab-tick-year {
+  position: absolute;
+  inset-block-start: 12px;
+  inset-inline-start: 0;
+  translate: calc(var(--dir) * -50%) 0;
+  color: var(--text-3);
+  font-size: 0.72rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.ab-stops {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ab-stop {
+  position: absolute;
+  inset-block-start: var(--route-y);
+  inset-inline-start: calc(var(--at) * 100%);
+  width: 0;
+  height: 0;
+}
+
+/* A station: hollow ring until reached, then filled. */
+.ab-stop-dot {
+  position: absolute;
+  inset-block-start: -7px;
+  inset-inline-start: -7px;
+  box-sizing: border-box;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--text-2);
+  border-radius: 50%;
+  background: var(--bg);
+}
+
+.ab-stop-dot::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: var(--text-2);
+}
+
+.ab-stop--current .ab-stop-dot {
+  border-color: var(--accent);
+}
+
+.ab-stop--current .ab-stop-dot::after {
+  background: var(--accent);
+}
+
+/* Where the route is today. */
+.ab-stop--current .ab-stop-dot::before {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border: 1px solid var(--accent-border);
+  border-radius: 50%;
+}
+
+.ab-stop-text {
+  position: absolute;
+  inset-block-end: 1.35rem;
+  inset-inline-start: 0;
+  display: grid;
+  gap: 0.2rem;
+  /* Latin names are isolated in <bdi>; keep them on the reading side. */
+  justify-items: start;
+  /* Painted over leader lines, so a raised neighbour's leader passes
+     behind this label instead of through it. */
+  z-index: 1;
+  background: var(--bg);
+  white-space: nowrap;
+}
+
+/* A stop whose label would touch its neighbour's moves up a row, tied to
+   its station by a leader line. */
+.ab-stop--raised .ab-stop-text {
+  inset-block-end: 4.4rem;
+}
+
+.ab-stop--raised::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset-block-end: 0.8rem;
+  inset-inline-start: 0;
+  width: 1px;
+  height: 3.35rem;
+  background: var(--border-strong);
+}
+
+.ab-stop-name {
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.ab-stop-years {
+  color: var(--text-3);
+  font-size: 0.8rem;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+
+.ab-stop--current .ab-stop-years {
+  color: var(--accent-ink);
+}
+
+/*
+ * Replay: the finished route is the resting state. Hover, keyboard focus or
+ * a tap on the hero (motion.ts sets `data-active` for `[data-tap-motion]`)
+ * draws it again from the first job to today; each stop fills as the line
+ * reaches it. Paused motion keeps the resting state.
+ */
+@keyframes ab-fill-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes ab-fill-y {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes ab-head {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+  }
+  6%,
+  92% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    translate: calc(var(--dir) * 100cqi) 0;
+  }
+}
+
+@keyframes ab-reach {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+:root:not([data-motion='paused'])
+  .ab-hero:is(:hover, :focus-within, [data-active])
+  .ab-track-fill {
+  animation: ab-fill-x var(--route-dur) linear both;
+}
+
+:root:not([data-motion='paused'])
+  .ab-hero:is(:hover, :focus-within, [data-active])
+  .ab-track-head {
+  animation: ab-head var(--route-dur) linear both;
+}
+
+:root:not([data-motion='paused'])
+  .ab-hero:is(:hover, :focus-within, [data-active])
+  .ab-stop-dot::after,
+:root:not([data-motion='paused'])
+  .ab-hero:is(:hover, :focus-within, [data-active])
+  .ab-stop--current
+  .ab-stop-dot::before {
+  animation: ab-reach 360ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  /* `--reach` is the stop's place along the drawn line (see phones). */
+  animation-delay: calc(var(--reach, var(--at)) * var(--route-dur));
+}
+
+/* ── Section headings ─────────────────────────────────────────────── */
+
+.ip .ab-heading {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+/* ── Identity ─────────────────────────────────────────────────────── */
+
+.ab-id {
+  display: grid;
+  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+  gap: 2rem clamp(2rem, 5vw, 4.5rem);
+  align-items: start;
+}
+
+/* A close crop of the park photo: the homepage shows it whole. The frame
+   clips; the image is scaled about the face, never animated. */
+.ab-id-photo {
+  margin: 0;
+  overflow: hidden;
+  overflow: clip;
+  aspect-ratio: 4 / 5;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.ab-id-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 32%;
+  transform: scale(1.45);
+  transform-origin: 50% 34%;
+}
+
+.ab-id-body {
+  display: grid;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+.ab-id-facts {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.ab-id-summary {
+  max-width: 40ch;
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.ab-spec {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(1.5rem, 3vw, 2.5rem);
+  margin: 0;
+}
+
+.ab-spec > div {
+  display: grid;
+  align-content: start;
+  gap: 0.3rem;
+  min-width: 0;
+  padding-block: 0.95rem;
+  border-block-start: 1px solid var(--divider);
+}
+
+/* The library row carries two links per project; give it the full width. */
+.ab-spec:not(.ab-spec--terms) > div:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.ab-spec dt {
+  color: var(--text-3);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.ab-spec dd {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.ab-spec--terms {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ab-spec--terms > div {
+  border-block-start-color: var(--border-strong);
+}
+
+.ab-libs {
+  display: grid;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ab-libs li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 1rem;
+}
+
+.ab-libs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 4px;
+}
+
+.ab-libs a:hover {
+  text-decoration-color: currentColor;
+}
+
+.ab-libs .ab-libs-case {
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+/* ── Chapters (sticky headings beside the text) ──────────────────── */
+
+.ab-story {
+  display: grid;
+}
+
+.ab-ch,
+.ab-creed {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  gap: 0.9rem clamp(2rem, 5vw, 4.5rem);
+  padding-block: clamp(2rem, 4vw, 3rem);
+  border-block-start: 1px solid var(--divider);
+}
+
+.ab-ch-title {
+  position: sticky;
+  inset-block-start: 7rem;
+  align-self: start;
+}
+
+.ab-ch-body {
+  min-width: 0;
+}
+
+.ab-ch-body p {
+  max-width: 66ch;
+  margin: 0;
+  color: var(--text-2);
+  line-height: 1.85;
+}
+
+.ab-ch-body .ab-ch-lead {
+  color: var(--text);
+  font-size: clamp(1.08rem, 1.6vw, 1.22rem);
+  line-height: 1.75;
+}
+
+.ab-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 24px;
+  margin-block-start: 1.25rem;
+  color: var(--accent-strong);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.ab-more:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+[dir='rtl'] .ab-more-icon {
+  scale: -1 1;
+}
+
+/* ── Design philosophy ────────────────────────────────────────────── */
+
+.ab-creed {
+  border-block-end: 1px solid var(--divider);
+}
+
+.ab-creed-text {
+  max-width: 42ch;
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(1.3rem, 2.5vw, 1.85rem);
+  line-height: 1.45;
+  letter-spacing: -0.015em;
+  text-wrap: pretty;
+}
+
+:lang(ar) :is(.ip .ab-heading, .ab-creed-text) {
+  letter-spacing: 0;
+}
+
+:lang(ar) .ab-creed-text {
+  line-height: 1.7;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────── */
+
+@media (max-width: 1040px) {
+  .ab-id {
+    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  }
+
+  .ab-spec--terms {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  /* The route becomes a vertical list: oldest at the top, today last. */
+  .ab-route {
+    container-type: normal;
+    height: auto;
+  }
+
+  .ab-track {
+    inset-block: 0.5rem;
+    inset-inline: 6px auto;
+    width: 2px;
+    height: auto;
+    margin: 0;
+  }
+
+  .ab-track-fill,
+  [dir='rtl'] .ab-track-fill {
+    transform-origin: center top;
+  }
+
+  .ab-track-head,
+  .ab-tick {
+    display: none;
+  }
+
+  .ab-stops {
+    position: relative;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .ab-stop {
+    position: relative;
+    inset: auto;
+    width: auto;
+    height: auto;
+    padding-inline-start: 2.1rem;
+  }
+
+  .ab-stop-dot {
+    inset-block-start: 0.2rem;
+    inset-inline-start: 0;
+  }
+
+  .ab-stop .ab-stop-text {
+    position: static;
+    white-space: normal;
+  }
+
+  .ab-stop--raised::before {
+    display: none;
+  }
+
+  :root:not([data-motion='paused'])
+    .ab-hero:is(:hover, :focus-within, [data-active])
+    .ab-track-fill {
+    animation-name: ab-fill-y;
+  }
+
+  /* Stops are evenly spaced here, so they fill in list order. */
+  .ab-stop {
+    --reach: calc((var(--n) + 0.5) / var(--count));
+  }
+
+  .ab-id,
+  .ab-ch,
+  .ab-creed {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ab-id-photo {
+    max-width: 20rem;
+  }
+
+  .ab-ch-title {
+    position: static;
+  }
+}
+
+@media (max-width: 520px) {
+  .ab-spec {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (forced-colors: active) {
+  .ab-track,
+  .ab-tick {
+    background: CanvasText;
+  }
+
+  .ab-track-fill,
+  .ab-track-head,
+  .ab-stop--current .ab-stop-dot::after {
+    background: Highlight;
+  }
+
+  .ab-stop-dot {
+    border-color: CanvasText;
+    background: Canvas;
+  }
+
+  .ab-stop-dot::after {
+    background: CanvasText;
+  }
+}

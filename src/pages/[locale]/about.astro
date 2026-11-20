@@ -1,0 +1,63 @@
+---
+/**
+ * About (es, ar). See `src/pages/about.astro` for why it has its own route.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AboutPage from '../../components/AboutPage.astro';
+import { localePrefix } from '../../i18n/config';
+import { t } from '../../i18n/messages';
+import { getSectionPageMeta, getSectionPageImage } from '../../data/pageSeo';
+import { SITE_URL, NOINDEX_PAGES } from '../../config/site';
+
+export function getStaticPaths() {
+  return (['es', 'ar'] as const).map((locale) => ({
+    params: { locale },
+    props: { locale },
+  }));
+}
+
+interface Props {
+  locale: 'es' | 'ar';
+}
+const { locale } = Astro.props;
+const page = 'about';
+const pageLabel = t(locale, `nav.${page}`);
+const { title, description } = getSectionPageMeta(locale, page);
+const localeRoot = `${localePrefix(locale)}/`;
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: t(locale, 'nav.home'),
+        item: `${SITE_URL}${localeRoot}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: pageLabel,
+        item: `${SITE_URL}${localeRoot}${page}/`,
+      },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  {title}
+  {description}
+  image={getSectionPageImage(page)}
+  imageWidth={1200}
+  imageHeight={630}
+  imageAlt={t(locale, 'seo.sectionImageAlt').replace('{title}', pageLabel)}
+  {locale}
+  {page}
+  pageType="ProfilePage"
+  {schema}
+  noindex={(NOINDEX_PAGES as readonly string[]).includes(page)}
+>
+  <AboutPage {locale} />
+</BaseLayout>

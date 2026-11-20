@@ -112,6 +112,8 @@ no request.
 | Infinite Moving Cards    | `.fx-marquee` + `.fx-marquee-track`                       | Keyword strip, recommendations           |
 | Bento Grid               | `.bento-card` with CSS mini-visuals                       | Problems section                         |
 | Timeline / Tracing Beam  | `ExperienceTimeline.astro` (`.xp-rail` + `.xp-rail-fill`) | Experience (homepage and `/experience/`) |
+| Timeline / Tracing Beam  | `AboutPage.astro` career route (`.ab-route`)              | `/about/` hero (horizontal, time-scaled) |
+| Sticky Scroll Reveal     | `.ab-ch` rows with sticky `.ab-ch-title` (CSS only)       | `/about/` chapters                       |
 | Text Reveal              | `TextReveal.astro`                                        | About statement                          |
 | Focus Cards              | `.fx-focus-group` + `.fx-focus-item`                      | Featured articles                        |
 | Lamp                     | `.fx-lamp` + `.fx-lamp-line`                              | Homepage CTA band                        |
@@ -565,3 +567,40 @@ CSS route packets and endpoint pulses use the existing `data-motion-scope`
 offscreen pause. Reduced motion leaves a complete static map. Hero proof
 rows reserve padding on every side so card perspective stays within their
 paint and horizontal-scroll bounds.
+
+## About page career route
+
+`AboutPage.astro` opens with the career route: one stop per employer from
+`experience.ts`, oldest first, on a time axis that runs from the first start
+date to the build date. `src/data/careerRoute.ts` computes each stop's place
+(`--at`, 0–1), the year ruler, and the label row. It adds no facts: company,
+start year and the localized "Present" label all come from `experience.ts`,
+and an unsupported date format fails the build.
+
+- **Layout.** From 761px the stops sit on one horizontal line, so the spacing
+  shows real tenure (a two-month role looks short). Labels run from the stop
+  toward the inline end; when a label would reach the next one in its row it
+  moves up a row with a leader line. The rule is computed for the narrowest
+  wide layout (about 700px of track), so it stays correct as time passes and
+  stops move closer. Labels paint over leader lines, so a leader never crosses
+  text. At 760px and below the route is a vertical list.
+- **Semantics.** The stops are an `<ol>` named by `nav.experience`; company
+  names are `<bdi>` so Latin names with punctuation stay intact in Arabic. The
+  line, ruler and head are `aria-hidden`.
+- **Colour.** The line is the accent (the path travelled); past stops are
+  neutral, the current stop is accent with a ring.
+- **Motion.** The resting frame is the finished route. Hover, focus within the
+  hero, or a tap (`data-tap-motion` → `data-active`) replays it: the line
+  scales from the first stop (`ab-fill-x`, `ab-fill-y` on phones), a head
+  travels with it (`translate` in `cqi`, signed by `--dir` for RTL), and each
+  stop fills when the line reaches it (`animation-delay` from `--at`, or from
+  list order on phones). Only `transform`, `translate` and decorative
+  `opacity` animate. `data-motion="paused"` attaches nothing, so reduced
+  motion and the Animations "Off" setting show the resting frame.
+- **Page.** About has no aurora or spotlight backdrop (only the grid), so its
+  hero no longer looks like every inner page. The park photo appears as a
+  close 4:5 crop beside the identity facts, lazy-loaded below the fold; the
+  hero has no image, so the LCP element is the heading.
+- **Tests.** `tests/about.spec.ts` checks order, labels, RTL direction, label
+  collisions at 768, 1040 and 1440px, the 320px list, and that the route
+  rests finished and replays only on engagement.
