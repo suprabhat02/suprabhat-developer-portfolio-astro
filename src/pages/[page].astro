@@ -13,7 +13,10 @@ import { SITE_URL, NOINDEX_PAGES } from '../config/site';
 import { t } from '../i18n/messages';
 
 export function getStaticPaths() {
-  return sectionPages.map((page) => ({ params: { page }, props: { page } }));
+  // About has its own route (src/pages/about.astro).
+  return sectionPages
+    .filter((page) => page !== 'about')
+    .map((page) => ({ params: { page }, props: { page } }));
 }
 
 interface Props {
@@ -104,7 +107,7 @@ const schema = [
     t('en', `nav.${page}`),
   )}
   page={page}
-  pageType={page === 'about' ? 'ProfilePage' : 'WebPage'}
+  pageType="WebPage"
   schema={schema}
   noindex={(NOINDEX_PAGES as readonly string[]).includes(page)}
   ><PageContent {page} locale="en" /></BaseLayout

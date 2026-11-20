@@ -28,6 +28,10 @@ import { reactSmartCopy, reactInpChunker } from '../data/openSource';
 import parkPortraitImage from '../../public/assets/images/portrait-park-900.webp';
 import { localePrefix, localeMeta, type Locale } from '../i18n/config';
 import { t, type MessageKey } from '../i18n/messages';
+import '../styles/pages.css';
+// A file of its own (2.2 KB gzip), loaded only by the About routes. Inlining
+// it costs ~4 KB of HTML gzip; adding it to pages.css would load it on every
+// inner page.
 import '../styles/about.css';
 
 interface Props {
