@@ -59,13 +59,28 @@
 
 /* ── Identity ─────────────────────────────────────────────────────── */
 
-.ab-id-lead {
-  display: grid;
-  align-content: start;
-  gap: 1.25rem;
+/* Heading, summary and terms on the left; the facts list on the right.
+   The facts wrapper is `display: contents` so the summary and the list can
+   sit in different columns while staying one identity block. */
+.ab-id {
+  grid-template-areas:
+    'head facts'
+    'sum facts'
+    'terms facts';
+  grid-template-rows: auto auto 1fr;
+  row-gap: 1.25rem;
+}
+
+.ab-id-title {
+  grid-area: head;
+}
+
+.ab-id-facts {
+  display: contents;
 }
 
 .ab-id-summary {
+  grid-area: sum;
   margin: 0;
   color: var(--text);
   font-size: clamp(1.1rem, 1.8vw, 1.3rem);
@@ -73,10 +88,15 @@
   text-wrap: pretty;
 }
 
-.ab-id-body {
-  display: grid;
-  gap: 1.5rem;
-  min-width: 0;
+.ab-id .ab-spec:not(.ab-spec--terms) {
+  grid-area: facts;
+  align-self: start;
+}
+
+.ab-id .ab-spec--terms {
+  grid-area: terms;
+  align-self: start;
+  margin-block-start: 0.75rem;
 }
 
 .ab-spec {
@@ -116,7 +136,7 @@
 }
 
 .ab-spec--terms {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .ab-spec--terms > div {
@@ -697,16 +717,17 @@
   .ab-ch {
     grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
   }
-
-  .ab-spec--terms {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }
 
 @media (max-width: 760px) {
   .ab-id,
   .ab-ch {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ab-id {
+    grid-template-areas: 'head' 'sum' 'facts' 'terms';
+    grid-template-rows: none;
   }
 
   .ab-ch-aside {

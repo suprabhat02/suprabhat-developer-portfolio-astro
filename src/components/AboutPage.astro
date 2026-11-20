@@ -135,13 +135,11 @@ const chapters = profile.about.map((body, index) => ({
     </PageHero>
 
     <section class="ab-id" aria-labelledby="about-glance-title">
-      <div class="ab-id-lead">
-        <h2 id="about-glance-title" class="ab-heading">
-          {tx('page.about.glance')}
-        </h2>
+      <h2 id="about-glance-title" class="ab-heading ab-id-title">
+        {tx('page.about.glance')}
+      </h2>
+      <div class="ab-id-facts" data-identity-summary>
         <p class="ab-id-summary">{tx('identity.summary')}</p>
-      </div>
-      <div class="ab-id-body" data-identity-summary>
         <dl class="ab-spec">
           {
             identity.slice(0, 2).map((fact) => (
@@ -190,17 +188,17 @@ const chapters = profile.about.map((body, index) => ({
             </dd>
           </div>
         </dl>
-        <dl class="ab-spec ab-spec--terms">
-          {
-            terms.map((fact) => (
-              <div>
-                <dt>{fact.label}</dt>
-                <dd>{fact.value}</dd>
-              </div>
-            ))
-          }
-        </dl>
       </div>
+      <dl class="ab-spec ab-spec--terms">
+        {
+          terms.map((fact) => (
+            <div>
+              <dt>{fact.label}</dt>
+              <dd>{fact.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
     </section>
 
     <div class="ab-story">
