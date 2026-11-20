@@ -1,7 +1,7 @@
 /*
- * About page (AboutPage.astro): hero with the portrait, identity facts,
- * chapters with diagram scenes, the career path inside the Experience
- * chapter, and the design philosophy.
+ * About page (AboutPage.astro): hero with the portrait, "About me" beside
+ * the identity panel, Experience as its own section with the career path,
+ * then a bento of the remaining chapters and the design philosophy.
  *
  * Colors come only from role tokens. Direction-sensitive values use logical
  * properties; the road SVG, drawn in physical x, is mirrored in RTL.
@@ -48,61 +48,57 @@
   text-wrap: balance;
 }
 
-/* ── Shared two-column row: heading (and scene) beside the content ── */
+/* ── About me beside At a glance ──────────────────────────────────────
+ * The story on one side, the spec sheet on the other: "About me" reads as
+ * prose under its scene; "At a glance" is a framed panel of facts.
+ */
 
-.ab-id,
-.ab-ch {
+.ab-intro {
   display: grid;
-  grid-template-columns: minmax(0, 19rem) minmax(0, 1fr);
-  gap: 1.5rem clamp(2rem, 5vw, 4.5rem);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 31rem);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: start;
 }
 
-/* ── Identity ─────────────────────────────────────────────────────── */
+.ab-ch--intro {
+  display: grid;
+  gap: 1.75rem;
+  align-content: start;
+}
 
-/* Heading, summary and terms on the left; the facts list on the right.
-   The facts wrapper is `display: contents` so the summary and the list can
-   sit in different columns while staying one identity block. */
+.ab-ch--intro .ab-sc {
+  max-width: 28rem;
+}
+
+/* ── Identity panel ───────────────────────────────────────────────── */
+
 .ab-id {
-  grid-template-areas:
-    'head facts'
-    'sum facts'
-    'terms facts';
-  grid-template-rows: auto auto 1fr;
-  row-gap: 1.25rem;
+  display: grid;
+  gap: 1.1rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius-card) + 4px);
+  background: var(--bg-card);
 }
 
-.ab-id-title {
-  grid-area: head;
-}
-
+/* The summary and the seven facts form one identity block for tests and
+   readers; the wrapper adds no box of its own. */
 .ab-id-facts {
   display: contents;
 }
 
 .ab-id-summary {
-  grid-area: sum;
   margin: 0;
   color: var(--text);
-  font-size: clamp(1.1rem, 1.8vw, 1.3rem);
-  line-height: 1.55;
+  font-size: clamp(1rem, 1.5vw, 1.1rem);
+  line-height: 1.6;
   text-wrap: pretty;
-}
-
-.ab-id .ab-spec:not(.ab-spec--terms) {
-  grid-area: facts;
-  align-self: start;
-}
-
-.ab-id .ab-spec--terms {
-  grid-area: terms;
-  align-self: start;
-  margin-block-start: 0.75rem;
 }
 
 .ab-spec {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: clamp(1.5rem, 3vw, 2.5rem);
+  column-gap: clamp(1.25rem, 3vw, 2rem);
   margin: 0;
 }
 
@@ -111,7 +107,7 @@
   align-content: start;
   gap: 0.3rem;
   min-width: 0;
-  padding-block: 0.95rem;
+  padding-block: 0.85rem;
   border-block-start: 1px solid var(--divider);
 }
 
@@ -135,12 +131,18 @@
   overflow-wrap: anywhere;
 }
 
+/* Working terms: label and value on one row, set apart by a stronger rule. */
 .ab-spec--terms {
   grid-template-columns: minmax(0, 1fr);
+  padding-block-start: 0.35rem;
+  border-block-start: 1px solid var(--border-strong);
 }
 
 .ab-spec--terms > div {
-  border-block-start-color: var(--border-strong);
+  grid-template-columns: minmax(0, 8rem) minmax(0, 1fr);
+  column-gap: 1rem;
+  padding-block: 0.6rem;
+  border: 0;
 }
 
 .ab-libs {
@@ -177,26 +179,7 @@
   font-weight: 500;
 }
 
-/* ── Chapters ─────────────────────────────────────────────────────── */
-
-.ab-story {
-  display: grid;
-}
-
-.ab-ch {
-  padding-block: clamp(2.5rem, 5vw, 3.75rem);
-  border-block-start: 1px solid var(--divider);
-}
-
-/* Heading and scene stay in view beside a long paragraph. */
-.ab-ch-aside {
-  position: sticky;
-  inset-block-start: 7rem;
-  display: grid;
-  align-content: start;
-  align-self: start;
-  gap: 1.75rem;
-}
+/* ── Chapter text ─────────────────────────────────────────────────── */
 
 .ab-ch-body {
   min-width: 0;
@@ -206,7 +189,7 @@
   max-width: 66ch;
   margin: 0;
   color: var(--text-2);
-  line-height: 1.85;
+  line-height: 1.8;
 }
 
 .ab-ch-body .ab-ch-lead {
@@ -236,27 +219,111 @@
   scale: -1 1;
 }
 
-/* The Experience chapter: the path runs the full width under the text. */
-.ab-ch--path .ab-ch-aside {
-  position: static;
+/* ── Experience: its own section ──────────────────────────────────── */
+
+.ab-xp {
+  padding-block: clamp(3rem, 7vw, 5.5rem);
+  border-block: 1px solid var(--divider);
 }
 
-.ab-ch--path .ab-path {
-  grid-column: 1 / -1;
+.ab-xp-head {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 1.25rem clamp(2rem, 5vw, 4.5rem);
+  align-items: start;
 }
 
-/* ── Design philosophy ────────────────────────────────────────────── */
+.ip .ab-xp-title {
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
 
-.ab-creed {
-  border-block-end: 1px solid var(--divider);
+.ab-xp .ab-path {
+  margin-block-start: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+/* Below the fold: skip style and layout until a section nears the viewport
+   (measured: the path and bento added ~70 ms of Style & Layout on a
+   throttled mobile load). `auto` remembers the real size once rendered. */
+.ab-xp {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1400px;
+}
+
+.ab-bento {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1300px;
+}
+
+/* ── Bento: expertise, approach, availability, philosophy ─────────── */
+
+.ab-bento {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(0.75rem, 1.6vw, 1.25rem);
+}
+
+.ab-card {
+  display: grid;
+  grid-column: span 6;
+  align-content: start;
+  gap: 1rem;
+  min-width: 0;
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius-card) + 4px);
+  background: var(--bg-card);
+}
+
+/* Wide and narrow cards alternate, so the two rows do not line up. */
+@media (min-width: 1041px) {
+  .ab-card--contain,
+  .ab-card--decide {
+    grid-column: span 7;
+  }
+
+  .ab-card--states,
+  .ab-card--reach {
+    grid-column: span 5;
+  }
+}
+
+/* The scene sits in a recessed well of one fixed height at the top of each
+   card, so headings line up across a row whatever the card's width. */
+.ab-card .ab-sc {
+  position: relative;
+  max-width: none;
+  block-size: clamp(10rem, 14vw, 13.5rem);
+  border-radius: var(--radius-card);
+  background: var(--bg);
+}
+
+/* Fills the well; the viewBox keeps its aspect ratio, centred (meet). */
+.ab-card .ab-sc svg {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: clamp(0.75rem, 1.6vw, 1.25rem);
+}
+
+.ab-card .ab-ch-title {
+  margin-block-start: 0.35rem;
+}
+
+.ab-card .ab-ch-body p {
+  font-size: 0.95rem;
+  line-height: 1.75;
 }
 
 .ab-creed-text {
   max-width: 42ch;
   margin: 0;
   color: var(--text);
-  font-size: clamp(1.3rem, 2.5vw, 1.85rem);
-  line-height: 1.45;
+  font-size: clamp(1.15rem, 1.9vw, 1.5rem);
+  line-height: 1.5;
   letter-spacing: -0.015em;
   text-wrap: pretty;
 }
@@ -266,7 +333,7 @@
 }
 
 :lang(ar) .ab-creed-text {
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
 /* ── Career path ──────────────────────────────────────────────────────
@@ -478,6 +545,53 @@
 
 .ab-leg--current .ab-leg-dates {
   color: var(--accent-ink);
+}
+
+/* Wide screens: a larger road and type, since the path is its own section. */
+@media (min-width: 1041px) {
+  .ab-path {
+    --rail: 13rem;
+    --swing: 5.5rem;
+    --node-y: 0.95rem;
+  }
+
+  .ab-leg {
+    min-block-size: max(10rem, calc(var(--months) * 0.62rem));
+    padding-block-end: 3rem;
+  }
+
+  .ab-leg--current {
+    min-block-size: 0;
+    padding-block-end: 5.5rem;
+  }
+
+  .ab-node {
+    inset-block-start: calc(var(--node-y) - 1.25rem);
+    inset-inline-start: calc(var(--rail-x) - 1.25rem);
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .ab-leg-year {
+    font-size: clamp(2.4rem, 4vw, 3.5rem);
+  }
+
+  .ab-leg-company {
+    font-size: 1.35rem;
+    line-height: 1.9rem;
+  }
+
+  .ab-leg-roles {
+    font-size: 1rem;
+  }
+
+  .ab-leg-dates {
+    font-size: 0.9rem;
+  }
+
+  .ab-leg-tail {
+    height: 6rem;
+  }
 }
 
 :lang(ar) .ab-leg-year {
@@ -713,9 +827,12 @@
     margin-inline-start: 0;
   }
 
-  .ab-id,
-  .ab-ch {
-    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  .ab-intro {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ab-id {
+    max-width: 40rem;
   }
 }
 
@@ -725,22 +842,20 @@
     width: min(100%, 16rem);
   }
 
-  .ab-id,
-  .ab-ch {
+  .ab-xp-head {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .ab-id {
-    grid-template-areas: 'head' 'sum' 'facts' 'terms';
-    grid-template-rows: none;
+  .ab-card {
+    grid-column: 1 / -1;
   }
 
-  .ab-ch-aside {
-    position: static;
-  }
-
-  .ab-sc {
+  .ab-ch--intro .ab-sc {
     max-width: 24rem;
+  }
+
+  .ab-spec--terms > div {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   /* The road runs along the inline start; every card follows it. */
