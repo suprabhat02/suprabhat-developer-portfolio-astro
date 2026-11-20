@@ -10,6 +10,7 @@ import PalettePicker from '../components/fx/PalettePicker.astro';
 import {
   getProfile,
   profileAlternateNames,
+  profilePageModified,
   profileStack,
 } from '../data/profile';
 import { localeMeta, localePrefix, locales, type Locale } from '../i18n/config';
@@ -99,7 +100,9 @@ const pageSchema = {
   ...(pageType === 'ProfilePage'
     ? {
         mainEntity: { '@id': `${SITE_URL}/#person` },
-        dateModified: new Date().toISOString().slice(0, 10),
+        // Full ISO 8601 with offset, like the article schemas: Google rejects
+        // a bare date here ("Invalid datetime value for dateModified").
+        dateModified: `${profilePageModified}T00:00:00+05:30`,
         // TODO(owner): Confirm the actual ProfilePage dateCreated before adding it.
       }
     : {}),
