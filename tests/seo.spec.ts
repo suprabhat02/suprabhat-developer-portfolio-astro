@@ -1231,7 +1231,14 @@ test('all generated indexable pages have crawlable links and reciprocal language
         });
       }
       if (node['@type'] === 'ProfilePage') {
-        expect(node.dateModified, document.file).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+        // A bare date makes Search Console report "Invalid datetime value for
+        // dateModified"; it needs the full datetime with an offset.
+        expect(node.dateModified, document.file).toMatch(
+          /^\d{4}-\d{2}-\d{2}T00:00:00\+05:30$/,
+        );
+        expect(Number.isFinite(Date.parse(String(node.dateModified)))).toBe(
+          true,
+        );
         expect(node, document.file).not.toHaveProperty('dateCreated');
       }
       Object.values(node).forEach(checkSchema);

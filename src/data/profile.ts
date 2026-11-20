@@ -170,6 +170,14 @@ export const profileAlternateNames = [
 ];
 
 /**
+ * Day the About page content last changed (YYYY-MM-DD, India time). Feeds the
+ * ProfilePage `dateModified`. Update it when the About page changes; never
+ * derive it from the build, which would claim a change on every deploy.
+ * 2026-11-20 is the day the redesigned About page was released.
+ */
+export const profilePageModified = '2026-11-20';
+
+/**
  * The username shared across developer profiles, read from the profile URLs
  * themselves so it can never drift from the links that are published.
  */
