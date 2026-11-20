@@ -66,7 +66,7 @@ for (const locale of locales) {
   }) => {
     const profile = getProfile(locale);
     await page.goto(pathFor(locale));
-    const chapters = page.locator('.ab-story > .ab-ch:not(.ab-creed)');
+    const chapters = page.locator('.ab-ch:not(.ab-creed)');
     await expect(chapters).toHaveCount(profile.about.length);
     const titles = [
       t(locale, 'home.about'),

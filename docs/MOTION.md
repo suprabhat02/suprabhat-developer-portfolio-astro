@@ -574,13 +574,27 @@ paint and horizontal-scroll bounds.
 (`portrait-1100.webp`, eager, `fetchpriority="high"`; on phones it is the
 LCP element, so it renders at 256px with quality 50: at the homepage's
 quality 62 the 560w AVIF was 68 KB and mobile Performance scored 99, now the
-450w file phones load is 28 KB and every run scores 100), then the identity
-facts, then the five About paragraphs as chapters. Each chapter except
-Experience has a diagram scene beside its heading
-(`src/components/about/AboutScene.astro`, names in `aboutScenes.ts`); the
-Experience chapter carries the career path
-(`src/components/about/CareerPath.astro`). The design philosophy closes the
-chapters with its own scene.
+450w file phones load is 28 KB and every run scores 100). Below the hero:
+
+1. **About me beside At a glance** (`.ab-intro`): the first paragraph under
+   the `built` scene on one side, the identity facts in a framed panel on
+   the other (`.ab-id`; the summary and seven facts stay one
+   `[data-identity-summary]` block, the working terms follow as label/value
+   rows). Stacked at 1040px and below.
+2. **Experience** as its own section (`.ab-xp`): a large heading beside the
+   paragraph, then the career path (`src/components/about/CareerPath.astro`),
+   larger from 1041px (13rem road, 1.35rem company names, 3.5rem years).
+3. **Bento** (`.ab-bento`) of Core expertise (`contain`), Engineering
+   approach (`states`), Availability (`reach`) and Design philosophy
+   (`decide`): 12 columns, 7+5 then 5+7 from 1041px, 2x2 down to 761px, one
+   column below. Each scene sits in a recessed well of one fixed height; the
+   SVG fills the well (`meet`), so headings line up across a row.
+
+`.ab-xp` and `.ab-bento` use `content-visibility: auto` with remembered
+intrinsic sizes: the bigger path and the bento added ~70 ms of Style &
+Layout on throttled mobile loads, and one cold run scored 99; skipping them
+until they near the viewport brought Style & Layout to 143–195 ms and the
+gate to 18/18. Their scroll-driven timelines still progress normally.
 
 - **Path data.** `getCareerPath()` in `src/data/careerRoute.ts` returns one
   leg per employer from `experience.ts`, oldest first: company, titles

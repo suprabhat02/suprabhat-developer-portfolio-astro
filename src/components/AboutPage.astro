@@ -2,11 +2,11 @@
 /**
  * The About page:
  *   1. hero with the portrait;
- *   2. identity facts ("At a glance");
- *   3. the five About paragraphs as chapters, each with a diagram scene
- *      beside its heading; the Experience chapter carries the career path
- *      (one station per employer, oldest first);
- *   4. the design philosophy, with its own scene;
+ *   2. "About me" beside the identity facts ("At a glance");
+ *   3. Experience as its own section with the career path (one station
+ *      per employer, oldest first);
+ *   4. a bento of the remaining chapters and the design philosophy, each
+ *      with its diagram scene;
  *   5. the shared outro.
  * Every value comes from src/data or src/i18n; the page adds no new copy.
  * Headings reuse strings that already exist in all three locales.
@@ -103,6 +103,12 @@ const chapters = profile.about.map((body, index) => ({
   body,
   scene: chapterScenes[index] ?? null,
 }));
+const [aboutMe, experienceChapter, ...bentoChapters] = chapters;
+// The layout gives the first two paragraphs their own sections; fail the
+// build rather than render an empty one if the profile data changes shape.
+if (!aboutMe || !experienceChapter || bentoChapters.length !== 3) {
+  throw new Error('AboutPage: profile.about must have exactly five paragraphs');
+}
 ---
 
 <section class="page section ip ab">
@@ -139,107 +145,129 @@ const chapters = profile.about.map((body, index) => ({
       </figure>
     </PageHero>
 
-    <section class="ab-id" aria-labelledby="about-glance-title">
-      <h2 id="about-glance-title" class="ab-heading ab-id-title">
-        {tx('page.about.glance')}
-      </h2>
-      <div class="ab-id-facts" data-identity-summary>
-        <p class="ab-id-summary">{tx('identity.summary')}</p>
-        <dl class="ab-spec">
-          {
-            identity.slice(0, 2).map((fact) => (
-              <div>
-                <dt>{fact.label}</dt>
-                <dd>{fact.value}</dd>
-              </div>
-            ))
-          }
-          <div>
-            <dt>{tx('identity.handle')}</dt>
-            <dd>
-              <span dir="ltr">{profileHandle}</span>
-              {` (${listFormat.format(profileHandlePlatforms)})`}
-            </dd>
-          </div>
-          {
-            identity.slice(2).map((fact) => (
-              <div>
-                <dt>{fact.label}</dt>
-                <dd>{fact.value}</dd>
-              </div>
-            ))
-          }
-          <div>
-            <dt>{tx('identity.libraries')}</dt>
-            <dd>
-              <ul class="ab-libs">
-                {
-                  [reactSmartCopy, reactInpChunker].map((project) => (
-                    <li>
-                      <a href={project.links.docs}>{project.name}</a>
-                      <a
-                        class="ab-libs-case"
-                        href={href(`/work/${project.id}/`)}
-                      >
-                        {tx('identity.caseStudy').replace(
-                          '{name}',
-                          project.name,
-                        )}
-                      </a>
-                    </li>
-                  ))
-                }
-              </ul>
-            </dd>
-          </div>
-        </dl>
-      </div>
-      <dl class="ab-spec ab-spec--terms">
-        {
-          terms.map((fact) => (
+    <div class="ab-intro">
+      <section class="ab-ch ab-ch--intro" aria-labelledby={aboutMe.id}>
+        <h2 id={aboutMe.id} class="ab-heading ab-ch-title">
+          {aboutMe.title}
+        </h2>
+        <AboutScene scene="built" />
+        <div class="ab-ch-body">
+          <p class="ab-ch-lead">{aboutMe.body}</p>
+        </div>
+      </section>
+
+      <section class="ab-id" aria-labelledby="about-glance-title">
+        <h2 id="about-glance-title" class="ab-heading ab-id-title">
+          {tx('page.about.glance')}
+        </h2>
+        <div class="ab-id-facts" data-identity-summary>
+          <p class="ab-id-summary">{tx('identity.summary')}</p>
+          <dl class="ab-spec">
+            {
+              identity.slice(0, 2).map((fact) => (
+                <div>
+                  <dt>{fact.label}</dt>
+                  <dd>{fact.value}</dd>
+                </div>
+              ))
+            }
             <div>
-              <dt>{fact.label}</dt>
-              <dd>{fact.value}</dd>
+              <dt>{tx('identity.handle')}</dt>
+              <dd>
+                <span dir="ltr">{profileHandle}</span>
+                {` (${listFormat.format(profileHandlePlatforms)})`}
+              </dd>
             </div>
-          ))
-        }
-      </dl>
+            {
+              identity.slice(2).map((fact) => (
+                <div>
+                  <dt>{fact.label}</dt>
+                  <dd>{fact.value}</dd>
+                </div>
+              ))
+            }
+            <div>
+              <dt>{tx('identity.libraries')}</dt>
+              <dd>
+                <ul class="ab-libs">
+                  {
+                    [reactSmartCopy, reactInpChunker].map((project) => (
+                      <li>
+                        <a href={project.links.docs}>{project.name}</a>
+                        <a
+                          class="ab-libs-case"
+                          href={href(`/work/${project.id}/`)}
+                        >
+                          {tx('identity.caseStudy').replace(
+                            '{name}',
+                            project.name,
+                          )}
+                        </a>
+                      </li>
+                    ))
+                  }
+                </ul>
+              </dd>
+            </div>
+          </dl>
+        </div>
+        <dl class="ab-spec ab-spec--terms">
+          {
+            terms.map((fact) => (
+              <div>
+                <dt>{fact.label}</dt>
+                <dd>{fact.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+    </div>
+
+    <section
+      class="ab-ch ab-ch--path ab-xp"
+      aria-labelledby={experienceChapter.id}
+    >
+      <div class="ab-xp-head">
+        <h2 id={experienceChapter.id} class="ab-heading ab-xp-title">
+          {experienceChapter.title}
+        </h2>
+        <div class="ab-ch-body">
+          <p>{experienceChapter.body}</p>
+          <a class="ab-more" href={href('/experience/')}>
+            {tx('home.experienceCta')}
+            <Icon name="arrow-up-right" size={16} class="ab-more-icon" />
+          </a>
+        </div>
+      </div>
+      <CareerPath {locale} />
     </section>
 
-    <div class="ab-story">
+    <div class="ab-bento">
       {
-        chapters.map((chapter, index) => (
+        bentoChapters.map((chapter) => (
           <section
-            class:list={['ab-ch', { 'ab-ch--path': !chapter.scene }]}
+            class:list={['ab-ch', 'ab-card', `ab-card--${chapter.scene}`]}
             aria-labelledby={chapter.id}
           >
-            <div class="ab-ch-aside">
-              <h2 id={chapter.id} class="ab-heading ab-ch-title">
-                {chapter.title}
-              </h2>
-              {chapter.scene && <AboutScene scene={chapter.scene} />}
-            </div>
+            {chapter.scene && <AboutScene scene={chapter.scene} />}
+            <h2 id={chapter.id} class="ab-heading ab-ch-title">
+              {chapter.title}
+            </h2>
             <div class="ab-ch-body">
-              <p class:list={{ 'ab-ch-lead': index === 0 }}>{chapter.body}</p>
-              {!chapter.scene && (
-                <a class="ab-more" href={href('/experience/')}>
-                  {tx('home.experienceCta')}
-                  <Icon name="arrow-up-right" size={16} class="ab-more-icon" />
-                </a>
-              )}
+              <p>{chapter.body}</p>
             </div>
-            {!chapter.scene && <CareerPath {locale} />}
           </section>
         ))
       }
-
-      <section class="ab-ch ab-creed" aria-labelledby="about-philosophy-title">
-        <div class="ab-ch-aside">
-          <h2 id="about-philosophy-title" class="ab-heading">
-            {tx('page.about.philosophy')}
-          </h2>
-          <AboutScene scene="decide" />
-        </div>
+      <section
+        class="ab-ch ab-card ab-card--decide ab-creed"
+        aria-labelledby="about-philosophy-title"
+      >
+        <AboutScene scene="decide" />
+        <h2 id="about-philosophy-title" class="ab-heading ab-ch-title">
+          {tx('page.about.philosophy')}
+        </h2>
         <p class="ab-creed-text">{profile.philosophy}</p>
       </section>
     </div>
