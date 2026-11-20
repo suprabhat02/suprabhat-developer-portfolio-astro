@@ -2,9 +2,9 @@ import type { Locale } from '../i18n/config';
 import { getExperience, type Position } from './experience';
 
 /**
- * The About hero's career route: one stop per employer, oldest first, placed
- * on a time axis from the first start date to the build date. Every value
- * comes from `experience.ts`; nothing here is a new fact.
+ * The About page's career path: one leg per employer, oldest first, from
+ * `experience.ts`. Nothing here is a new fact; the only derived value is
+ * each leg's tenure in months, which sizes the stretch of road after it.
  */
 
 const MONTHS = [
@@ -37,81 +37,56 @@ export const toMonthIndex = (value: string, now: Date): number => {
   return Number(match[2]) * 12 + month;
 };
 
-export interface RouteStop {
+export interface PathRole {
+  readonly title: string;
+  /** True when this title was reached by promotion inside the company. */
+  readonly promotion: boolean;
+}
+
+export interface PathLeg {
   readonly id: string;
   readonly company: string;
+  /** Titles held at this company, oldest first. */
+  readonly roles: readonly PathRole[];
   readonly startYear: string;
-  /** Last year, or the localized "Present" label for the current role. */
+  /** Localized "start – end" range, as the Experience page prints it. */
+  readonly dates: string;
+  /** Localized end label ("Present" for the current role). */
   readonly endLabel: string;
   readonly current: boolean;
-  /** Position on the axis, 0 (first start) to 1 (build date). */
-  readonly at: number;
-  /** Label row above the line: 0 next to it, 1 above when 0 is taken. */
-  readonly row: 0 | 1;
+  /** Whole months from start to end (at least 1); sizes the leg. */
+  readonly months: number;
 }
 
-export interface RouteYear {
-  readonly year: number;
-  readonly at: number;
-}
+const rolesOf = (position: Position): PathRole[] => {
+  if (position.roles?.length) {
+    return [...position.roles].reverse().map((role) => ({
+      title: role.title,
+      promotion: Boolean(role.promotion),
+    }));
+  }
+  return position.title ? [{ title: position.title, promotion: false }] : [];
+};
 
-export interface CareerRoute {
-  readonly stops: readonly RouteStop[];
-  /** 1 January of each year inside the axis, for the ruler. */
-  readonly years: readonly RouteYear[];
-}
-
-const endLabelOf = (position: Position): string =>
-  position.end === 'Present'
-    ? (position.endLabel ?? position.end)
-    : (position.end.split(' ')[1] ?? position.end);
-
-export const getCareerRoute = (
+export const getCareerPath = (
   locale: Locale,
   now: Date = new Date(),
-): CareerRoute => {
-  const positions = [...getExperience(locale)].sort(
-    (a, b) => toMonthIndex(a.start, now) - toMonthIndex(b.start, now),
-  );
-  const first = positions[0];
-  if (!first) return { stops: [], years: [] };
-  const from = toMonthIndex(first.start, now);
-  const span = Math.max(1, toMonthIndex('Present', now) - from);
-  const at = (month: number) =>
-    Math.round(((month - from) / span) * 10_000) / 10_000;
-
-  // A label starts at its stop and runs toward the inline end. On the
-  // narrowest wide layout (about 700px of track) a character of the company
-  // name takes ~0.0136 of the axis and one of the smaller years line ~0.0115;
-  // a label moves up a row when it would reach the next label in its row.
-  const rowEnds: [number, number] = [-1, -1];
-  const labelSpan = (position: Position) =>
-    Math.max(
-      position.company.length * 0.0136,
-      `${position.start.slice(-4)} – ${endLabelOf(position)}`.length * 0.0115,
-    ) + 0.012;
-  const stops = positions.map((position): RouteStop => {
-    const place = at(toMonthIndex(position.start, now));
-    const row: 0 | 1 = place >= rowEnds[0] ? 0 : 1;
-    rowEnds[row] = place + labelSpan(position);
-    return {
-      id: position.id,
-      company: position.company,
-      startYear: position.start.split(' ')[1] ?? position.start,
-      endLabel: endLabelOf(position),
-      current: position.end === 'Present',
-      at: place,
-      row,
-    };
-  });
-
-  const years: RouteYear[] = [];
-  for (
-    let year = Math.floor(from / 12) + 1;
-    year * 12 < from + span;
-    year += 1
-  ) {
-    years.push({ year, at: at(year * 12) });
-  }
-  return { stops, years };
-};
+): readonly PathLeg[] =>
+  [...getExperience(locale)]
+    .sort((a, b) => toMonthIndex(a.start, now) - toMonthIndex(b.start, now))
+    .map((position) => {
+      const endLabel = position.endLabel ?? position.end;
+      return {
+        id: position.id,
+        company: position.company,
+        roles: rolesOf(position),
+        startYear: position.start.split(' ')[1] ?? position.start,
+        dates: `${position.startLabel ?? position.start} – ${endLabel}`,
+        endLabel,
+        current: position.end === 'Present',
+        months: Math.max(
+          1,
+          toMonthIndex(position.end, now) - toMonthIndex(position.start, now),
+        ),
+      };
+    });

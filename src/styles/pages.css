@@ -716,7 +716,7 @@
   grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
   gap: clamp(1.5rem, 4vw, 3rem);
   padding: var(--po-cta-pad);
-  border: var(--card-border-width) solid var(--accent-border);
+  /* No outline: the surface tone alone sets the panel apart. */
   border-radius: calc(var(--radius-card) + 4px);
   background: var(--surface-strong);
 }

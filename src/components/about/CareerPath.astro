@@ -1,0 +1,113 @@
+---
+/**
+ * The career path on the About page: a road that winds from the first job
+ * to today, one station per employer (oldest first).
+ *
+ * - Each leg owns the stretch of road from its station to the next one, so
+ *   a station always sits exactly on the road, whatever the card's height.
+ *   A leg's minimum height follows its tenure (`--months`).
+ * - The road is drawn in two layers: a neutral base and the accent road
+ *   travelled. Where scroll-driven animations exist, the travelled road
+ *   draws as the reading line passes each leg and each station lights when
+ *   the road reaches it. Elsewhere, and with motion paused, the path rests
+ *   fully drawn.
+ * - Content is an `<ol>` of headings and text; every SVG is aria-hidden.
+ *   Company names are `<bdi>` so Latin names stay intact in Arabic.
+ */
+import { getCareerPath } from '../../data/careerRoute';
+import type { Locale } from '../../i18n/config';
+import { t } from '../../i18n/messages';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const legs = getCareerPath(locale);
+
+/** From this station (50,0) out toward one edge and back to the next. */
+const road = (edge: number) => `M50 0C50 22 ${edge} 24 ${edge} 50S50 78 50 100`;
+---
+
+<ol class="ab-path" aria-label={t(locale, 'nav.experience')}>
+  {
+    legs.map((leg, index) => {
+      const swing = index % 2 === 0 ? 0 : 100;
+      return (
+        <li
+          class:list={[
+            'ab-leg',
+            index % 2 === 0 ? 'ab-leg--even' : 'ab-leg--odd',
+            { 'ab-leg--current': leg.current },
+          ]}
+          style={`--months: ${leg.months}`}
+        >
+          {leg.current ? (
+            <span class="ab-leg-tail" aria-hidden="true" />
+          ) : (
+            <>
+              <svg
+                class="ab-road"
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path class="ab-road-base" d={road(swing)} />
+              </svg>
+              <svg
+                class="ab-road ab-road--lit"
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path class="ab-road-lit" d={road(swing)} />
+              </svg>
+            </>
+          )}
+          <svg
+            class="ab-node"
+            viewBox="-16 -16 32 32"
+            aria-hidden="true"
+            focusable="false"
+          >
+            {leg.current && <circle class="ab-node-halo" r="13" />}
+            <circle class="ab-node-base" r="6.5" />
+            <circle class="ab-node-lit" r="6.5" />
+          </svg>
+          <span class="ab-leg-year" aria-hidden="true">
+            {leg.startYear}
+          </span>
+          <div class="ab-leg-card">
+            <h3 class="ab-leg-company">
+              <bdi>{leg.company}</bdi>
+            </h3>
+            <ul class="ab-leg-roles">
+              {leg.roles.map((role) => (
+                <li class:list={{ 'ab-leg-role--promoted': role.promotion }}>
+                  {role.promotion && (
+                    <span class="ab-leg-promo">
+                      <svg
+                        viewBox="0 0 12 12"
+                        width="12"
+                        height="12"
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                        <path d="M6 10V2M2.5 5.5 6 2l3.5 3.5" />
+                      </svg>
+                      {t(locale, 'home.promoted')}
+                    </span>
+                  )}
+                  {role.title}
+                </li>
+              ))}
+            </ul>
+            <p class="ab-leg-dates">{leg.dates}</p>
+          </div>
+        </li>
+      );
+    })
+  }
+</ol>

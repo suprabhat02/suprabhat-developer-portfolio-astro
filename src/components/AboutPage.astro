@@ -1,11 +1,12 @@
 ---
 /**
- * The About page. Its structure follows time:
- *   1. hero with the career route (one stop per employer, placed by its real
- *      start date on an axis that ends at the build date);
- *   2. identity facts beside a photo;
- *   3. the five About paragraphs as chapters with sticky headings;
- *   4. the design philosophy;
+ * The About page:
+ *   1. hero with the portrait;
+ *   2. identity facts ("At a glance");
+ *   3. the five About paragraphs as chapters, each with a diagram scene
+ *      beside its heading; the Experience chapter carries the career path
+ *      (one station per employer, oldest first);
+ *   4. the design philosophy, with its own scene;
  *   5. the shared outro.
  * Every value comes from src/data or src/i18n; the page adds no new copy.
  * Headings reuse strings that already exist in all three locales.
@@ -22,10 +23,13 @@ import {
   profileHandlePlatforms,
   profileStack,
 } from '../data/profile';
-import { getCareerRoute } from '../data/careerRoute';
+import CareerPath from './about/CareerPath.astro';
+import AboutScene from './about/AboutScene.astro';
+import type { AboutSceneName } from './about/aboutScenes';
+import { heroPortraitQuality, heroPortraitWidths } from '../data/images';
 import { getHomepageConversionContent } from '../data/homepageConversion';
 import { reactSmartCopy, reactInpChunker } from '../data/openSource';
-import parkPortraitImage from '../../public/assets/images/portrait-park-900.webp';
+import portraitImage from '../../public/assets/images/portrait-1100.webp';
 import { localePrefix, localeMeta, type Locale } from '../i18n/config';
 import { t, type MessageKey } from '../i18n/messages';
 import '../styles/pages.css';
@@ -44,7 +48,6 @@ const prefix = localePrefix(locale);
 const href = (path: string) => `${prefix}${path}`;
 const profile = getProfile(locale);
 const listFormat = new Intl.ListFormat(localeMeta[locale].htmlLang);
-const route = getCareerRoute(locale);
 const resumeHref =
   '/assets/suprabhat-kumar-senior-frontend-engineer-resume.pdf';
 
@@ -81,144 +84,112 @@ const chapterTitles = [
   getHomepageConversionContent(locale).approach.eyebrow,
   tx('home.availability'),
 ];
+/** One scene per chapter; the Experience chapter (null) gets the path. */
+const chapterScenes: readonly (AboutSceneName | null)[] = [
+  'built',
+  null,
+  'contain',
+  'states',
+  'reach',
+];
 const chapters = profile.about.map((body, index) => ({
   id: `about-chapter-${index + 1}`,
   title: chapterTitles[index] ?? tx('home.about'),
   body,
+  scene: chapterScenes[index] ?? null,
 }));
 ---
 
 <section class="page section ip ab">
   <div class="wrap ip-stack ab-stack">
-    <div class="ab-hero" data-tap-motion>
-      <PageHero
-        {locale}
-        eyebrow={tx('page.about.eyebrow')}
-        title={tx('page.about.title')}
-        lead={profile.lead}
-      >
-        <Fragment slot="actions">
-          <a class="button primary" href={resumeHref} download>
-            {tx('action.resume')}
-          </a>
-          <a class="button" href={href('/contact/')}>
-            {tx('action.contact')}
-          </a>
-        </Fragment>
-      </PageHero>
-
-      <div class="ab-route">
-        <div class="ab-track" aria-hidden="true">
-          <span class="ab-track-fill"></span>
-          <span class="ab-track-head"></span>
-          {
-            route.years.map((year) => (
-              <span class="ab-tick" style={`--at: ${year.at}`}>
-                <span class="ab-tick-year">{year.year}</span>
-              </span>
-            ))
-          }
-        </div>
-        <ol
-          class="ab-stops"
-          aria-label={tx('nav.experience')}
-          style={`--count: ${route.stops.length}`}
-        >
-          {
-            route.stops.map((stop, index) => (
-              <li
-                class:list={[
-                  'ab-stop',
-                  { 'ab-stop--raised': stop.row === 1 },
-                  { 'ab-stop--current': stop.current },
-                ]}
-                style={`--at: ${stop.at}; --n: ${index}`}
-              >
-                <span class="ab-stop-dot" aria-hidden="true" />
-                <span class="ab-stop-text">
-                  <bdi class="ab-stop-name">{stop.company}</bdi>
-                  <span class="ab-stop-years">
-                    {stop.startYear} – {stop.endLabel}
-                  </span>
-                </span>
-              </li>
-            ))
-          }
-        </ol>
-      </div>
-    </div>
-
-    <section class="ab-id" aria-labelledby="about-glance-title">
-      <figure class="ab-id-photo">
+    <PageHero
+      {locale}
+      eyebrow={tx('page.about.eyebrow')}
+      title={tx('page.about.title')}
+      lead={profile.lead}
+    >
+      <Fragment slot="actions">
+        <a class="button primary" href={resumeHref} download>
+          {tx('action.resume')}
+        </a>
+        <a class="button" href={href('/contact/')}>
+          {tx('action.contact')}
+        </a>
+      </Fragment>
+      <figure slot="aside" class="ab-portrait">
         <Picture
-          src={parkPortraitImage}
+          src={portraitImage}
           formats={['avif', 'webp']}
           fallbackFormat="webp"
-          widths={[320, 440, 560, 720]}
-          sizes="(max-width: 760px) min(calc(145vw - 58px), 464px), 464px"
-          width={900}
-          height={1200}
-          alt={tx('home.parkPhotoAlt')}
-          loading="lazy"
+          widths={heroPortraitWidths}
+          sizes="(max-width: 1040px) min(320px, calc(100vw - 40px)), 368px"
+          width={800}
+          height={1067}
+          alt={profile.portrait.alt}
+          loading="eager"
           decoding="async"
-          quality={72}
+          fetchpriority="high"
+          quality={heroPortraitQuality}
         />
       </figure>
-      <div class="ab-id-body">
+    </PageHero>
+
+    <section class="ab-id" aria-labelledby="about-glance-title">
+      <div class="ab-id-lead">
         <h2 id="about-glance-title" class="ab-heading">
           {tx('page.about.glance')}
         </h2>
-        <div class="ab-id-facts" data-identity-summary>
-          <p class="ab-id-summary">{tx('identity.summary')}</p>
-          <dl class="ab-spec">
-            {
-              identity.slice(0, 2).map((fact) => (
-                <div>
-                  <dt>{fact.label}</dt>
-                  <dd>{fact.value}</dd>
-                </div>
-              ))
-            }
-            <div>
-              <dt>{tx('identity.handle')}</dt>
-              <dd>
-                <span dir="ltr">{profileHandle}</span>
-                {` (${listFormat.format(profileHandlePlatforms)})`}
-              </dd>
-            </div>
-            {
-              identity.slice(2).map((fact) => (
-                <div>
-                  <dt>{fact.label}</dt>
-                  <dd>{fact.value}</dd>
-                </div>
-              ))
-            }
-            <div>
-              <dt>{tx('identity.libraries')}</dt>
-              <dd>
-                <ul class="ab-libs">
-                  {
-                    [reactSmartCopy, reactInpChunker].map((project) => (
-                      <li>
-                        <a href={project.links.docs}>{project.name}</a>
-                        <a
-                          class="ab-libs-case"
-                          href={href(`/work/${project.id}/`)}
-                        >
-                          {tx('identity.caseStudy').replace(
-                            '{name}',
-                            project.name,
-                          )}
-                        </a>
-                      </li>
-                    ))
-                  }
-                </ul>
-              </dd>
-            </div>
-          </dl>
-        </div>
+        <p class="ab-id-summary">{tx('identity.summary')}</p>
+      </div>
+      <div class="ab-id-body" data-identity-summary>
+        <dl class="ab-spec">
+          {
+            identity.slice(0, 2).map((fact) => (
+              <div>
+                <dt>{fact.label}</dt>
+                <dd>{fact.value}</dd>
+              </div>
+            ))
+          }
+          <div>
+            <dt>{tx('identity.handle')}</dt>
+            <dd>
+              <span dir="ltr">{profileHandle}</span>
+              {` (${listFormat.format(profileHandlePlatforms)})`}
+            </dd>
+          </div>
+          {
+            identity.slice(2).map((fact) => (
+              <div>
+                <dt>{fact.label}</dt>
+                <dd>{fact.value}</dd>
+              </div>
+            ))
+          }
+          <div>
+            <dt>{tx('identity.libraries')}</dt>
+            <dd>
+              <ul class="ab-libs">
+                {
+                  [reactSmartCopy, reactInpChunker].map((project) => (
+                    <li>
+                      <a href={project.links.docs}>{project.name}</a>
+                      <a
+                        class="ab-libs-case"
+                        href={href(`/work/${project.id}/`)}
+                      >
+                        {tx('identity.caseStudy').replace(
+                          '{name}',
+                          project.name,
+                        )}
+                      </a>
+                    </li>
+                  ))
+                }
+              </ul>
+            </dd>
+          </div>
+        </dl>
         <dl class="ab-spec ab-spec--terms">
           {
             terms.map((fact) => (
@@ -235,30 +206,40 @@ const chapters = profile.about.map((body, index) => ({
     <div class="ab-story">
       {
         chapters.map((chapter, index) => (
-          <section class="ab-ch" aria-labelledby={chapter.id}>
-            <h2 id={chapter.id} class="ab-heading ab-ch-title">
-              {chapter.title}
-            </h2>
+          <section
+            class:list={['ab-ch', { 'ab-ch--path': !chapter.scene }]}
+            aria-labelledby={chapter.id}
+          >
+            <div class="ab-ch-aside">
+              <h2 id={chapter.id} class="ab-heading ab-ch-title">
+                {chapter.title}
+              </h2>
+              {chapter.scene && <AboutScene scene={chapter.scene} />}
+            </div>
             <div class="ab-ch-body">
               <p class:list={{ 'ab-ch-lead': index === 0 }}>{chapter.body}</p>
-              {index === 1 && (
+              {!chapter.scene && (
                 <a class="ab-more" href={href('/experience/')}>
                   {tx('home.experienceCta')}
                   <Icon name="arrow-up-right" size={16} class="ab-more-icon" />
                 </a>
               )}
             </div>
+            {!chapter.scene && <CareerPath {locale} />}
           </section>
         ))
       }
-    </div>
 
-    <section class="ab-creed" aria-labelledby="about-philosophy-title">
-      <h2 id="about-philosophy-title" class="ab-heading">
-        {tx('page.about.philosophy')}
-      </h2>
-      <p class="ab-creed-text">{profile.philosophy}</p>
-    </section>
+      <section class="ab-ch ab-creed" aria-labelledby="about-philosophy-title">
+        <div class="ab-ch-aside">
+          <h2 id="about-philosophy-title" class="ab-heading">
+            {tx('page.about.philosophy')}
+          </h2>
+          <AboutScene scene="decide" />
+        </div>
+        <p class="ab-creed-text">{profile.philosophy}</p>
+      </section>
+    </div>
 
     <PageOutro {locale} related={['experience', 'work', 'blog']} />
   </div>

@@ -568,39 +568,54 @@ offscreen pause. Reduced motion leaves a complete static map. Hero proof
 rows reserve padding on every side so card perspective stays within their
 paint and horizontal-scroll bounds.
 
-## About page career route
+## About page career path and scenes
 
-`AboutPage.astro` opens with the career route: one stop per employer from
-`experience.ts`, oldest first, on a time axis that runs from the first start
-date to the build date. `src/data/careerRoute.ts` computes each stop's place
-(`--at`, 0–1), the year ruler, and the label row. It adds no facts: company,
-start year and the localized "Present" label all come from `experience.ts`,
-and an unsupported date format fails the build.
+`AboutPage.astro` opens with the original hero portrait
+(`portrait-1100.webp`, eager, `fetchpriority="high"`), then the identity
+facts, then the five About paragraphs as chapters. Each chapter except
+Experience has a diagram scene beside its heading
+(`src/components/about/AboutScene.astro`, names in `aboutScenes.ts`); the
+Experience chapter carries the career path
+(`src/components/about/CareerPath.astro`). The design philosophy closes the
+chapters with its own scene.
 
-- **Layout.** From 761px the stops sit on one horizontal line, so the spacing
-  shows real tenure (a two-month role looks short). Labels run from the stop
-  toward the inline end; when a label would reach the next one in its row it
-  moves up a row with a leader line. The rule is computed for the narrowest
-  wide layout (about 700px of track), so it stays correct as time passes and
-  stops move closer. Labels paint over leader lines, so a leader never crosses
-  text. At 760px and below the route is a vertical list.
-- **Semantics.** The stops are an `<ol>` named by `nav.experience`; company
-  names are `<bdi>` so Latin names with punctuation stay intact in Arabic. The
-  line, ruler and head are `aria-hidden`.
-- **Colour.** The line is the accent (the path travelled); past stops are
-  neutral, the current stop is accent with a ring.
-- **Motion.** The resting frame is the finished route. Hover, focus within the
-  hero, or a tap (`data-tap-motion` → `data-active`) replays it: the line
-  scales from the first stop (`ab-fill-x`, `ab-fill-y` on phones), a head
-  travels with it (`translate` in `cqi`, signed by `--dir` for RTL), and each
-  stop fills when the line reaches it (`animation-delay` from `--at`, or from
-  list order on phones). Only `transform`, `translate` and decorative
-  `opacity` animate. `data-motion="paused"` attaches nothing, so reduced
-  motion and the Animations "Off" setting show the resting frame.
-- **Page.** About has no aurora or spotlight backdrop (only the grid), so its
-  hero no longer looks like every inner page. The park photo appears as a
-  close 4:5 crop beside the identity facts, lazy-loaded below the fold; the
-  hero has no image, so the LCP element is the heading.
-- **Tests.** `tests/about.spec.ts` checks order, labels, RTL direction, label
-  collisions at 768, 1040 and 1440px, the 320px list, and that the route
-  rests finished and replays only on engagement.
+- **Path data.** `getCareerPath()` in `src/data/careerRoute.ts` returns one
+  leg per employer from `experience.ts`, oldest first: company, titles
+  (oldest first, with the promotion flag), the localized date range and the
+  tenure in months. An unsupported date format fails the build.
+- **Path layout.** From 761px the road runs down the middle, cards alternate
+  sides and each start year sits across the road. At 760px and below the
+  road runs along the inline start. Each leg owns the road from its station
+  to the next station: the road SVG starts `--node-y` below the leg's top
+  and is exactly as tall as the leg (`height: 100%`; an SVG between two
+  insets would keep its own aspect ratio). The SVG stretches
+  (`preserveAspectRatio="none"`) with non-scaling strokes, so stations
+  always sit on the road; `tests/about.spec.ts` checks it at five widths in
+  all three locales. A leg's minimum height follows its tenure. The road
+  swings toward the year side and is mirrored in RTL (`scale: -1 1`).
+- **Path colour.** Neutral base road; the accent road is the road travelled.
+  Past stations are accent rings, today's station is filled with a halo, and
+  a dashed tail continues past it.
+- **Scenes.** `built` (six year-arcs, four kinds of product), `contain`
+  (product grows, cost curve stays low against an amber typical curve),
+  `states` (loading, error, then the result), `reach` (IST clock with
+  evening hours on a bus to six focus areas), `decide` (cluttered screen
+  zigzags the eye; the clear one leads to one action). Only "6+" and "IST"
+  are text. They use the about-only paint classes in `about.css` (`.ab-sc`),
+  not `scenes.css`, so the About page loads no extra stylesheet.
+- **Motion (owner-approved exception for this page).** Unlike card scenes,
+  these build with scroll. Everything rests finished; inside
+  `@supports (animation-timeline: view())` and only while motion is not
+  paused, each chapter is a named view timeline (`--ab-ch`) and each beat
+  (`--i`) plays over a short stretch of scroll as the chapter enters. Each
+  path leg is a view timeline narrowed to a reading band across the middle
+  of the viewport (`view-timeline-inset: 45% 45%`): the accent road is
+  revealed with `clip-path` while the band crosses the leg, and the station
+  pops in as the band reaches it. Only transforms, decorative opacity,
+  stroke dashes and `clip-path` animate; no text fades. Without support,
+  with reduced motion or with Animations off, nothing attaches and the
+  finished state shows. Longhands only (see rule 5).
+- **Tests.** `tests/about.spec.ts` checks the path content and order, the
+  promotion label, the chapters, the portrait, stations on the road at
+  1440/1040/768/390/320px in en/es/ar, no horizontal overflow, and that
+  nothing animates with motion off.

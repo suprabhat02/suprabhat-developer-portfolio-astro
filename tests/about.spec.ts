@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { getCareerRoute } from '../src/data/careerRoute';
+import { getCareerPath } from '../src/data/careerRoute';
 import { getHomepageConversionContent } from '../src/data/homepageConversion';
 import { getProfile } from '../src/data/profile';
 import { t } from '../src/i18n/messages';
@@ -9,39 +9,56 @@ const locales = ['en', 'es', 'ar'] as const;
 const pathFor = (locale: (typeof locales)[number]) =>
   locale === 'en' ? '/about/' : `/${locale}/about/`;
 
-const stopBoxes = (page: Page) =>
-  page.locator('.ab-stop').evaluateAll((items) =>
-    items.map((item) => {
-      const dot = item.querySelector('.ab-stop-dot')?.getBoundingClientRect();
-      const text = item.querySelector('.ab-stop-text')?.getBoundingClientRect();
-      if (!dot || !text) throw new Error('A route stop lost its markup');
+/** Station centres and the two ends of each leg's road, in page pixels. */
+const roadGeometry = (page: Page) =>
+  page.locator('.ab-leg').evaluateAll((legs) =>
+    legs.map((leg) => {
+      const node = leg.querySelector('.ab-node')!.getBoundingClientRect();
+      const path = leg.querySelector<SVGPathElement>('.ab-road-base');
+      const toScreen = (at: number) => {
+        if (!path) return null;
+        const point = path.getPointAtLength(at);
+        const matrix = path.getScreenCTM()!;
+        const screen = new DOMPoint(point.x, point.y).matrixTransform(matrix);
+        return { x: screen.x, y: screen.y };
+      };
       return {
-        x: dot.left + dot.width / 2,
-        text: {
-          left: text.left,
-          right: text.right,
-          top: text.top,
-          bottom: text.bottom,
-        },
+        node: { x: node.left + node.width / 2, y: node.top + node.height / 2 },
+        start: toScreen(0),
+        end: path ? toScreen(path.getTotalLength()) : null,
       };
     }),
   );
 
+const hasOverflow = (page: Page) =>
+  page.evaluate(
+    () =>
+      document.documentElement.scrollWidth >
+      document.documentElement.clientWidth,
+  );
+
 for (const locale of locales) {
-  test(`about route lists every employer in order: ${locale}`, async ({
+  test(`about path lists every employer, oldest first: ${locale}`, async ({
     page,
   }) => {
-    const route = getCareerRoute(locale);
+    const legs = getCareerPath(locale);
     await page.goto(pathFor(locale));
-    const stops = page.getByRole('list', { name: t(locale, 'nav.experience') });
-    await expect(stops.locator('li')).toHaveCount(route.stops.length);
-    for (const [index, stop] of route.stops.entries()) {
-      const item = stops.locator('li').nth(index);
-      await expect(item).toContainText(stop.company);
-      await expect(item).toContainText(stop.startYear);
-      await expect(item).toContainText(stop.endLabel);
+    const path = page.getByRole('list', { name: t(locale, 'nav.experience') });
+    const items = path.locator(':scope > li');
+    await expect(items).toHaveCount(legs.length);
+    for (const [index, leg] of legs.entries()) {
+      const item = items.nth(index);
+      await expect(item.getByRole('heading', { level: 3 })).toHaveText(
+        leg.company,
+      );
+      await expect(item.locator('.ab-leg-dates')).toHaveText(leg.dates);
+      for (const role of leg.roles)
+        await expect(item).toContainText(role.title);
     }
-    await expect(stops.locator('.ab-stop--current')).toHaveCount(1);
+    await expect(path.locator('.ab-leg--current')).toHaveCount(1);
+    await expect(path.locator('.ab-leg-promo')).toHaveText(
+      t(locale, 'home.promoted'),
+    );
   });
 
   test(`about chapters keep the published paragraphs: ${locale}`, async ({
@@ -49,7 +66,7 @@ for (const locale of locales) {
   }) => {
     const profile = getProfile(locale);
     await page.goto(pathFor(locale));
-    const chapters = page.locator('.ab-ch');
+    const chapters = page.locator('.ab-story > .ab-ch:not(.ab-creed)');
     await expect(chapters).toHaveCount(profile.about.length);
     const titles = [
       t(locale, 'home.about'),
@@ -63,90 +80,75 @@ for (const locale of locales) {
       await expect(chapter.getByRole('heading', { level: 2 })).toHaveText(
         titles[index] ?? '',
       );
-      await expect(chapter.locator('p')).toHaveText(body);
+      await expect(chapter.locator('.ab-ch-body > p')).toHaveText(body);
     }
+    // Four chapter scenes and the philosophy scene, all decorative.
+    await expect(page.locator('.ab-sc[aria-hidden="true"]')).toHaveCount(5);
     await expect(page.locator('.ab-creed-text')).toHaveText(profile.philosophy);
+  });
+
+  test(`about hero shows the portrait eagerly: ${locale}`, async ({ page }) => {
+    await page.goto(pathFor(locale));
+    const portrait = page.locator('.ab-portrait img');
+    await expect(portrait).toHaveAttribute(
+      'alt',
+      getProfile(locale).portrait.alt,
+    );
+    await expect(portrait).toHaveAttribute('loading', 'eager');
+    await expect(portrait).toHaveAttribute('src', /portrait-1100/);
   });
 }
 
-for (const width of [768, 1040, 1440]) {
+for (const width of [1440, 1040, 768, 390, 320]) {
   for (const locale of locales) {
-    test(`about route labels never collide at ${width}px: ${locale}`, async ({
+    test(`about path stations sit on the road at ${width}px: ${locale}`, async ({
       page,
     }) => {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(pathFor(locale));
-      const boxes = await stopBoxes(page);
-      const xs = boxes.map((box) => box.x);
-      // Oldest first, laid along the reading direction.
-      const sorted = [...xs].sort((a, b) => (locale === 'ar' ? b - a : a - b));
-      expect(xs).toEqual(sorted);
-      for (const [index, a] of boxes.entries()) {
-        for (const b of boxes.slice(index + 1)) {
-          const overlap =
-            a.text.left < b.text.right - 1 &&
-            b.text.left < a.text.right - 1 &&
-            a.text.top < b.text.bottom - 1 &&
-            b.text.top < a.text.bottom - 1;
-          expect(overlap).toBe(false);
-        }
+      await setPreference(page, 'motion', 'off');
+      const legs = await roadGeometry(page);
+      for (const [index, leg] of legs.entries()) {
+        const next = legs[index + 1];
+        if (!leg.start || !leg.end || !next) continue;
+        expect(Math.abs(leg.start.x - leg.node.x)).toBeLessThan(1.5);
+        expect(Math.abs(leg.start.y - leg.node.y)).toBeLessThan(1.5);
+        expect(Math.abs(leg.end.x - next.node.x)).toBeLessThan(1.5);
+        expect(Math.abs(leg.end.y - next.node.y)).toBeLessThan(1.5);
       }
-      const overflow = await page.evaluate(
-        () =>
-          document.documentElement.scrollWidth >
-          document.documentElement.clientWidth,
-      );
-      expect(overflow).toBe(false);
+      // Every leg but the last owns a stretch of road.
+      expect(legs.filter((leg) => leg.start).length).toBe(legs.length - 1);
+      expect(await hasOverflow(page)).toBe(false);
     });
   }
 }
 
-test('about route stacks vertically on a 320px phone', async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 700 });
-  for (const locale of locales) {
-    await page.goto(pathFor(locale));
-    const boxes = await stopBoxes(page);
-    for (const [index, box] of boxes.slice(1).entries())
-      expect(box.text.top).toBeGreaterThan(boxes[index]?.text.bottom ?? 0);
-    const overflow = await page.evaluate(
-      () =>
-        document.documentElement.scrollWidth >
-        document.documentElement.clientWidth,
-    );
-    expect(overflow).toBe(false);
-  }
-});
-
-test('about route rests finished and replays only on engagement', async ({
+test('about path rests drawn with motion off and builds on scroll otherwise', async ({
   page,
-  isMobile,
 }) => {
-  const engage = () =>
-    isMobile
-      ? page.locator('.ab-hero .ph-title').tap()
-      : page.locator('.ab-hero .ph-title').hover();
-  const running = () =>
+  const attached = () =>
     page.evaluate(
       () =>
         document
           .getAnimations()
           .filter((animation) =>
             (animation.effect as KeyframeEffect | null)?.target?.closest?.(
-              '.ab-route',
+              '.ab-path, .ab-sc',
             ),
           ).length,
     );
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto('/about/');
-  expect(await running()).toBe(0);
-  await expect(page.locator('.ab-track-fill')).toHaveCSS('transform', 'none');
-  await engage();
-  await expect.poll(running).toBeGreaterThan(0);
+  const scrollDriven = await page.evaluate(() =>
+    CSS.supports('animation-timeline: view()'),
+  );
+  if (scrollDriven) expect(await attached()).toBeGreaterThan(0);
 
-  if (isMobile) await engage();
-  else await page.mouse.move(5, 890);
   await setPreference(page, 'motion', 'off');
-  await engage();
-  expect(await running()).toBe(0);
-  await expect(page.locator('.ab-track-fill')).toHaveCSS('transform', 'none');
+  await page.goto('/about/');
+  expect(await attached()).toBe(0);
+  for (const lit of await page.locator('.ab-road--lit').all())
+    await expect(lit).toHaveCSS('clip-path', 'none');
+  for (const node of await page.locator('.ab-node-lit').all())
+    await expect(node).toHaveCSS('opacity', '1');
 });
