@@ -1,0 +1,499 @@
+---
+/**
+ * Diagram scenes beside the About page chapters. Each one tells the story
+ * of its chapter in shapes, with no words (the only text is "6+" and
+ * "IST"), so it reads the same in every locale:
+ *
+ * - `built`   (About me): six year-arcs fill a ring; the four kinds of
+ *             product the paragraph names (portal, dashboard, component
+ *             library, website) connect to it.
+ * - `contain` (Core expertise): a product grows; an amber "typical" cost
+ *             curve shoots up while the accent curve stays low and ends in
+ *             a green check.
+ * - `states`  (Engineering approach): loading, then error, then the ideal
+ *             result, in that order: failure states before the happy path.
+ * - `reach`   (Availability): an IST clock with its evening hours marked,
+ *             wired to the six focus areas the paragraph lists.
+ * - `decide`  (Design philosophy): a cluttered screen sends the eye on a
+ *             zigzag; the clear one leads straight to one action.
+ *
+ * Drawing rules: token colours only (see about.css `.ab-sc`), drawn left to
+ * right in every locale, decorative and aria-hidden. The resting state is
+ * the finished diagram. `--i` orders the beats when the page animates them
+ * (scroll-driven, see about.css); positions are on wrapper groups and the
+ * animation on the inner element, so the two never fight over `transform`.
+ */
+import type { AboutSceneName } from './aboutScenes';
+
+interface Props {
+  scene: AboutSceneName;
+}
+
+const { scene } = Astro.props;
+
+const round = (value: number) => Math.round(value * 10) / 10;
+/** A point at `deg` (0 = east, clockwise, as SVG draws) around a centre. */
+const polar = (cx: number, cy: number, r: number, deg: number) => {
+  const rad = (deg * Math.PI) / 180;
+  return { x: round(cx + r * Math.cos(rad)), y: round(cy + r * Math.sin(rad)) };
+};
+const arc = (cx: number, cy: number, r: number, from: number, to: number) => {
+  const a = polar(cx, cy, r, from);
+  const b = polar(cx, cy, r, to);
+  const large = to - from > 180 ? 1 : 0;
+  return `M${a.x} ${a.y}A${r} ${r} 0 ${large} 1 ${b.x} ${b.y}`;
+};
+
+/* built: six arcs of 60°, starting at the top, with a small gap. */
+const ring = { cx: 160, cy: 60, r: 40 };
+const yearArcs = Array.from({ length: 6 }, (_, index) =>
+  arc(ring.cx, ring.cy, ring.r, -90 + index * 60 + 4, -90 + index * 60 + 56),
+);
+const tiles = [
+  { x: 16, y: 0, side: 1, angle: -150 },
+  { x: 240, y: 0, side: -1, angle: -30 },
+  { x: 16, y: 76, side: 1, angle: 150 },
+  { x: 240, y: 76, side: -1, angle: 30 },
+] as const;
+const tileLinks = tiles.map((tile) => {
+  const end = polar(ring.cx, ring.cy, ring.r + 8, tile.angle);
+  const start = { x: tile.side === 1 ? tile.x + 64 : tile.x, y: tile.y + 22 };
+  return `M${start.x} ${start.y}L${end.x} ${end.y}`;
+});
+
+/* reach: a bus from the clock; six focus chips hang off it, three above
+   and three below, so no wire crosses a chip. */
+const clock = { cx: 50, cy: 58, r: 32 };
+const bus = { y: 58, from: clock.cx + clock.r + 7, to: 276 };
+const chips = [0, 1, 2, 3, 4, 5].map((index) => {
+  const x = 156 + (index % 3) * 60;
+  const above = index < 3;
+  const y = above ? 18 : 98;
+  return {
+    x,
+    y,
+    wire: `M${x} ${bus.y}V${above ? y + 17 : y - 17}`,
+  };
+});
+/** Clock-face angle (0 = 12 o'clock) to SVG degrees. */
+const face = (hour: number) => hour * 30 - 90;
+const clockTicks = Array.from({ length: 12 }, (_, hour) => ({
+  a: polar(clock.cx, clock.cy, clock.r - 4, face(hour)),
+  b: polar(clock.cx, clock.cy, clock.r - (hour % 3 === 0 ? 9 : 6), face(hour)),
+}));
+const hourHand = polar(clock.cx, clock.cy, 15, face(7));
+const minuteHand = polar(clock.cx, clock.cy, 22, face(0));
+---
+
+<div class:list={['ab-sc', `ab-sc--${scene}`]} aria-hidden="true">
+  <svg viewBox="0 -12 320 144" focusable="false">
+    {
+      scene === 'built' && (
+        <>
+          <circle class="sc-track" cx={ring.cx} cy={ring.cy} r={ring.r} />
+          {yearArcs.map((d, index) => (
+            <path
+              class="sc-arc d"
+              d={d}
+              pathLength="1"
+              style={`--i:${index}`}
+            />
+          ))}
+          <text class="sc-big" x={ring.cx} y={ring.cy + 8} text-anchor="middle">
+            6+
+          </text>
+          {tileLinks.map((d) => (
+            <path class="sc-wire d" d={d} pathLength="1" style="--i:6" />
+          ))}
+          <g transform={`translate(${tiles[0].x} ${tiles[0].y})`}>
+            <g class="pop" style="--i:7">
+              <rect class="sc-panel" width="64" height="44" rx="5" />
+              <line class="sc-rule" x1="0" y1="10" x2="64" y2="10" />
+              <circle class="sc-dot" cx="7" cy="5" r="1.6" />
+              <circle class="sc-dot" cx="12" cy="5" r="1.6" />
+              <rect class="sc-m" x="10" y="16" width="44" height="5" rx="2" />
+              <rect class="sc-m" x="10" y="24" width="44" height="5" rx="2" />
+              <rect class="sc-a" x="10" y="33" width="20" height="6" rx="3" />
+            </g>
+          </g>
+          <g transform={`translate(${tiles[1].x} ${tiles[1].y})`}>
+            <g class="pop" style="--i:8">
+              <rect class="sc-panel" width="64" height="44" rx="5" />
+              <rect class="sc-m" x="8" y="7" width="24" height="4" rx="2" />
+              <rect
+                class="sc-m2"
+                x="10"
+                y="26"
+                width="7"
+                height="12"
+                rx="1.5"
+              />
+              <rect
+                class="sc-m2"
+                x="21"
+                y="20"
+                width="7"
+                height="18"
+                rx="1.5"
+              />
+              <rect
+                class="sc-m2"
+                x="32"
+                y="24"
+                width="7"
+                height="14"
+                rx="1.5"
+              />
+              <rect class="sc-a" x="43" y="15" width="7" height="23" rx="1.5" />
+            </g>
+          </g>
+          <g transform={`translate(${tiles[2].x} ${tiles[2].y})`}>
+            <g class="pop" style="--i:9">
+              <rect class="sc-panel" width="64" height="44" rx="5" />
+              {[0, 1, 2].map((col) => (
+                <>
+                  <rect
+                    class="sc-m2"
+                    x={8 + col * 17}
+                    y="9"
+                    width="14"
+                    height="10"
+                    rx="2"
+                  />
+                  <rect
+                    class={col === 1 ? 'sc-a' : 'sc-m2'}
+                    x={8 + col * 17}
+                    y="25"
+                    width="14"
+                    height="10"
+                    rx="5"
+                  />
+                </>
+              ))}
+            </g>
+          </g>
+          <g transform={`translate(${tiles[3].x} ${tiles[3].y})`}>
+            <g class="pop" style="--i:10">
+              <rect class="sc-panel" width="64" height="44" rx="5" />
+              <rect class="sc-m2" x="6" y="6" width="52" height="15" rx="2.5" />
+              <rect class="sc-m" x="6" y="26" width="40" height="4" rx="2" />
+              <rect class="sc-m" x="6" y="32" width="30" height="4" rx="2" />
+              <rect class="sc-a" x="42" y="31" width="16" height="6" rx="3" />
+            </g>
+          </g>
+        </>
+      )
+    }
+
+    {
+      scene === 'contain' && (
+        <>
+          <path class="sc-axis" d="M24 -2V110H304" />
+          {[0, 1, 2, 3, 4, 5].map((index) => (
+            <g transform={`translate(${40 + index * 44} 110)`}>
+              <rect
+                class="sc-m gy"
+                style={`--i:${index}`}
+                x="0"
+                y={-(14 + index * 15)}
+                width="22"
+                height={14 + index * 15}
+                rx="2"
+              />
+            </g>
+          ))}
+          <path
+            class="sc-risk d"
+            style="--i:6"
+            d="M40 98C130 94 210 70 288 2"
+            pathLength="1"
+          />
+          <path
+            class="sc-line d"
+            style="--i:8"
+            d="M40 90C120 84 200 80 274 77"
+            pathLength="1"
+          />
+          <g transform="translate(288 76)">
+            <g class="pop" style="--i:10">
+              <circle class="sc-ok" r="10" />
+              <path class="sc-tick" d="M-4.5 0.5 -1.2 3.8 4.8 -3" />
+            </g>
+          </g>
+        </>
+      )
+    }
+
+    {
+      scene === 'states' && (
+        <>
+          <g transform="translate(8 14)">
+            <g class="pop" style="--i:0">
+              <rect class="sc-panel" width="84" height="90" rx="6" />
+              <rect class="sc-m" x="12" y="14" width="56" height="6" rx="3" />
+              <rect class="sc-m" x="12" y="26" width="40" height="6" rx="3" />
+              <rect class="sc-m" x="12" y="38" width="60" height="6" rx="3" />
+              <circle class="sc-track sc-track--thin" cx="42" cy="68" r="9" />
+              <path class="sc-spin" d={arc(42, 68, 9, -90, 10)} />
+            </g>
+          </g>
+          <path class="sc-wire d" style="--i:2" d="M96 59H112" pathLength="1" />
+          <path
+            class="sc-chev d"
+            style="--i:2"
+            d="M108 55 112 59 108 63"
+            pathLength="1"
+          />
+          <g transform="translate(118 14)">
+            <g class="pop" style="--i:3">
+              <rect class="sc-panel" width="84" height="90" rx="6" />
+              <rect class="sc-m" x="12" y="14" width="40" height="6" rx="3" />
+              <circle class="sc-bad" cx="42" cy="46" r="12" />
+              <path class="sc-mark" d="M42 39V48" />
+              <circle class="sc-mark-dot" cx="42" cy="53" r="1.6" />
+              <rect
+                class="sc-pill"
+                x="24"
+                y="68"
+                width="36"
+                height="12"
+                rx="6"
+              />
+            </g>
+          </g>
+          <path
+            class="sc-wire d"
+            style="--i:5"
+            d="M206 59H222"
+            pathLength="1"
+          />
+          <path
+            class="sc-chev d"
+            style="--i:5"
+            d="M218 55 222 59 218 63"
+            pathLength="1"
+          />
+          <g transform="translate(228 14)">
+            <g class="pop" style="--i:6">
+              <rect
+                class="sc-panel sc-panel--pick"
+                width="84"
+                height="90"
+                rx="6"
+              />
+              <rect class="sc-m2" x="12" y="14" width="44" height="6" rx="3" />
+              <rect class="sc-m" x="12" y="26" width="60" height="5" rx="2.5" />
+              <rect class="sc-m" x="12" y="35" width="52" height="5" rx="2.5" />
+              <rect class="sc-m2" x="12" y="50" width="16" height="26" rx="2" />
+              <rect class="sc-m2" x="32" y="58" width="16" height="18" rx="2" />
+              <rect class="sc-a" x="52" y="46" width="16" height="30" rx="2" />
+            </g>
+          </g>
+          <g transform="translate(310 16)">
+            <g class="pop" style="--i:8">
+              <circle class="sc-ok" r="9" />
+              <path class="sc-tick" d="M-4 0.5 -1 3.5 4.2 -2.6" />
+            </g>
+          </g>
+        </>
+      )
+    }
+
+    {
+      scene === 'reach' && (
+        <>
+          <g class="pop" style="--i:0">
+            <circle class="sc-face" cx={clock.cx} cy={clock.cy} r={clock.r} />
+            {clockTicks.map((tick) => (
+              <line
+                class="sc-tickmark"
+                x1={tick.a.x}
+                y1={tick.a.y}
+                x2={tick.b.x}
+                y2={tick.b.y}
+              />
+            ))}
+            <line
+              class="sc-hand"
+              x1={clock.cx}
+              y1={clock.cy}
+              x2={hourHand.x}
+              y2={hourHand.y}
+            />
+            <line
+              class="sc-hand sc-hand--thin"
+              x1={clock.cx}
+              y1={clock.cy}
+              x2={minuteHand.x}
+              y2={minuteHand.y}
+            />
+            <circle class="sc-pin" cx={clock.cx} cy={clock.cy} r="2.4" />
+          </g>
+          <path
+            class="sc-arc d"
+            style="--i:1"
+            d={arc(clock.cx, clock.cy, clock.r + 6, face(6), face(10))}
+            pathLength="1"
+          />
+          <text
+            class="sc-label"
+            x={clock.cx}
+            y={clock.cy + clock.r + 26}
+            text-anchor="middle"
+          >
+            IST
+          </text>
+          <path
+            class="sc-wire d"
+            style="--i:2"
+            d={`M${bus.from} ${bus.y}H${bus.to}`}
+            pathLength="1"
+          />
+          {chips.map((chip, index) => (
+            <path
+              class="sc-wire d"
+              style={`--i:${3 + (index % 3) * 1.2}`}
+              d={chip.wire}
+              pathLength="1"
+            />
+          ))}
+          {chips.map((chip, index) => (
+            <g transform={`translate(${chip.x} ${chip.y})`}>
+              <g class="pop" style={`--i:${3.8 + (index % 3) * 1.2}`}>
+                <circle class="sc-chip" r="15" />
+                {index === 0 && (
+                  <g class="sc-icon">
+                    <ellipse rx="9" ry="3.6" />
+                    <ellipse rx="9" ry="3.6" transform="rotate(60)" />
+                    <ellipse rx="9" ry="3.6" transform="rotate(120)" />
+                    <circle class="sc-icon-fill" r="1.8" />
+                  </g>
+                )}
+                {index === 1 && (
+                  <g class="sc-icon-solid">
+                    <rect x="-7.5" y="0" width="4" height="7" rx="1" />
+                    <rect x="-2" y="-4" width="4" height="11" rx="1" />
+                    <rect
+                      class="sc-a"
+                      x="3.5"
+                      y="-7"
+                      width="4"
+                      height="14"
+                      rx="1"
+                    />
+                  </g>
+                )}
+                {index === 2 && (
+                  <g class="sc-icon">
+                    <rect x="-3.5" y="-9" width="7" height="5" rx="1" />
+                    <rect x="-9.5" y="3" width="7" height="5" rx="1" />
+                    <rect x="2.5" y="3" width="7" height="5" rx="1" />
+                    <path d="M0 -4V0M-6 3V0H6V3" />
+                  </g>
+                )}
+                {index === 3 && (
+                  <g class="sc-icon-solid">
+                    <rect x="-7" y="-7" width="6" height="6" rx="1.2" />
+                    <rect
+                      class="sc-a"
+                      x="1"
+                      y="-7"
+                      width="6"
+                      height="6"
+                      rx="1.2"
+                    />
+                    <rect x="-7" y="1" width="6" height="6" rx="1.2" />
+                    <rect x="1" y="1" width="6" height="6" rx="1.2" />
+                  </g>
+                )}
+                {index === 4 && (
+                  <g class="sc-icon">
+                    <circle class="sc-icon-fill" cy="-7" r="2" />
+                    <path d="M-7 -2.5H7M0 -2.5V3M0 3-4 9M0 3 4 9" />
+                  </g>
+                )}
+                {index === 5 && (
+                  <g class="sc-icon">
+                    <path d="M-8.5 4A8.5 8.5 0 0 1 8.5 4" />
+                    <path class="sc-needle" d="M0 4 5 -3.5" />
+                    <circle class="sc-icon-fill" cy="4" r="1.6" />
+                  </g>
+                )}
+              </g>
+            </g>
+          ))}
+        </>
+      )
+    }
+
+    {
+      scene === 'decide' && (
+        <>
+          <rect class="sc-panel" x="6" y="-2" width="146" height="118" rx="6" />
+          {[
+            [18, 10],
+            [86, 18],
+            [40, 40],
+            [100, 52],
+            [22, 74],
+            [80, 92],
+          ].map(([x, y], index) => (
+            <g transform={`translate(${x} ${y})`}>
+              <rect
+                class="sc-m2 pop"
+                style={`--i:${index * 0.4}`}
+                width="40"
+                height="12"
+                rx="3"
+              />
+            </g>
+          ))}
+          <path
+            class="sc-gaze d"
+            style="--i:3"
+            d="M38 16 106 24 60 46 120 58 42 80 100 98"
+            pathLength="1"
+          />
+          <path class="sc-divider" d="M160 6V108" />
+          <rect
+            class="sc-panel"
+            x="168"
+            y="-2"
+            width="146"
+            height="118"
+            rx="6"
+          />
+          <g class="pop" style="--i:6">
+            <rect class="sc-m2" x="184" y="14" width="72" height="8" rx="3" />
+            <rect class="sc-m" x="184" y="30" width="108" height="5" rx="2.5" />
+            <rect class="sc-m" x="184" y="40" width="90" height="5" rx="2.5" />
+          </g>
+          <g transform="translate(184 72)">
+            <rect
+              class="sc-a pop"
+              style="--i:7"
+              width="60"
+              height="18"
+              rx="4"
+            />
+          </g>
+          <path
+            class="sc-line d"
+            style="--i:8"
+            d="M190 22 222 80"
+            pathLength="1"
+          />
+          <g transform="translate(222 81)">
+            <g class="pop" style="--i:10">
+              <circle class="sc-click" r="13" />
+              <path
+                class="sc-cursor"
+                d="M0 0V13L3.6 9.6 6.4 15.4 8.6 14.4 5.8 8.7H10.6Z"
+              />
+            </g>
+          </g>
+        </>
+      )
+    }
+  </svg>
+</div>

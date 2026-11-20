@@ -120,6 +120,9 @@ and [docs/card-illustrations.md](card-illustrations.md).
 
 - The resting frame is the finished, meaningful state. Hover, keyboard focus
   within the card, or a touch tap replays the story; scrolling never starts it.
+  Owner-approved exception: the About page scenes and career path build with
+  scroll, progressively and only while motion is on
+  ([MOTION.md](MOTION.md#about-page-career-path-and-scenes)).
 - Cause before effect, on one synchronized timeline (`.ui-story`, `--i`). No idle
   loops or fidgeting.
 - Animate only `transform`, `opacity` and stroke dashes. Packets and dashes end

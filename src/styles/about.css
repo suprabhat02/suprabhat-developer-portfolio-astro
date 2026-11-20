@@ -1,299 +1,39 @@
 /*
- * About page (AboutPage.astro). Time is the organizing axis: the hero
- * carries the career route, then identity facts, chapters and the design
- * philosophy follow as quiet editorial rows.
+ * About page (AboutPage.astro): hero with the portrait, identity facts,
+ * chapters with diagram scenes, the career path inside the Experience
+ * chapter, and the design philosophy.
  *
  * Colors come only from role tokens. Direction-sensitive values use logical
- * properties; the few transforms that need a sign read `--dir` (-1 in RTL).
- * The accent marks only the route travelled and the current stop.
+ * properties; the road SVG, drawn in physical x, is mirrored in RTL.
+ *
+ * Motion: every scene and the path rest finished. Where scroll-driven
+ * animations are supported and motion is not paused, the scenes build and
+ * the road draws as the reader scrolls (see the end of this file). Only
+ * transform, decorative opacity, stroke dashes and clip-path animate; text
+ * never fades.
  */
 
 .ab-stack {
   gap: clamp(4rem, 9vw, 7rem);
 }
 
-.ab-hero {
-  display: grid;
-  gap: clamp(2.75rem, 6vw, 4.5rem);
-}
+/* ── Portrait (hero aside) ──────────────────────────────────────────── */
 
-/* Wide screens: headline on the left, its lead and actions answering it on
-   the right, both resting on the headline's last line. */
-@media (min-width: 1041px) {
-  .ab-hero .ph-copy {
-    display: grid;
-    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-    grid-template-rows: auto 1fr auto;
-    grid-template-areas:
-      'eyebrow eyebrow'
-      'title lead'
-      'title actions';
-    column-gap: clamp(2.5rem, 5vw, 5rem);
-  }
-
-  .ab-hero .ph-copy > .eyebrow {
-    grid-area: eyebrow;
-    justify-self: start;
-  }
-
-  .ab-hero .ph-title {
-    grid-area: title;
-    align-self: end;
-    margin-block-end: 0;
-  }
-
-  .ab-hero .ph-lead {
-    grid-area: lead;
-    align-self: end;
-  }
-
-  .ab-hero .ph-actions {
-    grid-area: actions;
-    margin-block-start: 1.6rem;
-  }
-}
-
-/* ── Career route ───────────────────────────────────────────────────
- * Wide screens: one horizontal line from the first start date to today.
- * Stops sit at their real position (`--at`, 0–1); labels alternate above
- * and below so neighbouring stops never collide. Phones: a vertical list.
- */
-
-.ab-route {
-  --dir: 1;
-  --route-dur: 2.4s;
-  position: relative;
-  --route-y: 7.25rem;
-  container-type: inline-size;
-  height: 10.25rem;
-}
-
-[dir='rtl'] .ab-route {
-  --dir: -1;
-}
-
-.ab-track {
-  position: absolute;
-  inset-inline: 0;
-  inset-block-start: var(--route-y);
-  height: 2px;
-  margin-block-start: -1px;
-  border-radius: var(--radius-pill);
-  background: var(--border);
-}
-
-.ab-track-fill {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: var(--accent);
-  transform-origin: left center;
-}
-
-[dir='rtl'] .ab-track-fill {
-  transform-origin: right center;
-}
-
-/* The point of travel, visible only while the route replays. */
-.ab-track-head {
-  position: absolute;
-  inset-block-start: 50%;
-  inset-inline-start: 0;
-  width: 10px;
-  height: 10px;
-  margin: -5px;
-  border-radius: 50%;
-  background: var(--accent);
-  opacity: 0;
-}
-
-/* A ruler of years under the line, so the spacing reads as time. */
-.ab-tick {
-  position: absolute;
-  inset-block-start: 9px;
-  inset-inline-start: calc(var(--at) * 100%);
-  width: 1px;
-  height: 7px;
-  background: var(--border-strong);
-}
-
-.ab-tick-year {
-  position: absolute;
-  inset-block-start: 12px;
-  inset-inline-start: 0;
-  translate: calc(var(--dir) * -50%) 0;
-  color: var(--text-3);
-  font-size: 0.72rem;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-
-.ab-stops {
-  position: absolute;
-  inset: 0;
+.ab-portrait {
+  width: min(100%, 23rem);
   margin: 0;
-  padding: 0;
-  list-style: none;
+  margin-inline-start: auto;
 }
 
-.ab-stop {
-  position: absolute;
-  inset-block-start: var(--route-y);
-  inset-inline-start: calc(var(--at) * 100%);
-  width: 0;
-  height: 0;
-}
-
-/* A station: hollow ring until reached, then filled. */
-.ab-stop-dot {
-  position: absolute;
-  inset-block-start: -7px;
-  inset-inline-start: -7px;
-  box-sizing: border-box;
-  width: 14px;
-  height: 14px;
-  border: 2px solid var(--text-2);
-  border-radius: 50%;
-  background: var(--bg);
-}
-
-.ab-stop-dot::after {
-  content: '';
-  position: absolute;
-  inset: 2px;
-  border-radius: 50%;
-  background: var(--text-2);
-}
-
-.ab-stop--current .ab-stop-dot {
-  border-color: var(--accent);
-}
-
-.ab-stop--current .ab-stop-dot::after {
-  background: var(--accent);
-}
-
-/* Where the route is today. */
-.ab-stop--current .ab-stop-dot::before {
-  content: '';
-  position: absolute;
-  inset: -7px;
-  border: 1px solid var(--accent-border);
-  border-radius: 50%;
-}
-
-.ab-stop-text {
-  position: absolute;
-  inset-block-end: 1.35rem;
-  inset-inline-start: 0;
-  display: grid;
-  gap: 0.2rem;
-  /* Latin names are isolated in <bdi>; keep them on the reading side. */
-  justify-items: start;
-  /* Painted over leader lines, so a raised neighbour's leader passes
-     behind this label instead of through it. */
-  z-index: 1;
-  background: var(--bg);
-  white-space: nowrap;
-}
-
-/* A stop whose label would touch its neighbour's moves up a row, tied to
-   its station by a leader line. */
-.ab-stop--raised .ab-stop-text {
-  inset-block-end: 4.4rem;
-}
-
-.ab-stop--raised::before {
-  content: '';
-  position: absolute;
-  z-index: 0;
-  inset-block-end: 0.8rem;
-  inset-inline-start: 0;
-  width: 1px;
-  height: 3.35rem;
-  background: var(--border-strong);
-}
-
-.ab-stop-name {
-  color: var(--text);
-  font-size: 0.95rem;
-  font-weight: 700;
-  line-height: 1.3;
-}
-
-.ab-stop-years {
-  color: var(--text-3);
-  font-size: 0.8rem;
-  line-height: 1.3;
-  font-variant-numeric: tabular-nums;
-}
-
-.ab-stop--current .ab-stop-years {
-  color: var(--accent-ink);
-}
-
-/*
- * Replay: the finished route is the resting state. Hover, keyboard focus or
- * a tap on the hero (motion.ts sets `data-active` for `[data-tap-motion]`)
- * draws it again from the first job to today; each stop fills as the line
- * reaches it. Paused motion keeps the resting state.
- */
-@keyframes ab-fill-x {
-  from {
-    transform: scaleX(0);
-  }
-}
-
-@keyframes ab-fill-y {
-  from {
-    transform: scaleY(0);
-  }
-}
-
-@keyframes ab-head {
-  0% {
-    opacity: 0;
-    translate: 0 0;
-  }
-  6%,
-  92% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    translate: calc(var(--dir) * 100cqi) 0;
-  }
-}
-
-@keyframes ab-reach {
-  from {
-    opacity: 0;
-    transform: scale(0.3);
-  }
-}
-
-:root:not([data-motion='paused'])
-  .ab-hero:is(:hover, :focus-within, [data-active])
-  .ab-track-fill {
-  animation: ab-fill-x var(--route-dur) linear both;
-}
-
-:root:not([data-motion='paused'])
-  .ab-hero:is(:hover, :focus-within, [data-active])
-  .ab-track-head {
-  animation: ab-head var(--route-dur) linear both;
-}
-
-:root:not([data-motion='paused'])
-  .ab-hero:is(:hover, :focus-within, [data-active])
-  .ab-stop-dot::after,
-:root:not([data-motion='paused'])
-  .ab-hero:is(:hover, :focus-within, [data-active])
-  .ab-stop--current
-  .ab-stop-dot::before {
-  animation: ab-reach 360ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
-  /* `--reach` is the stop's place along the drawn line (see phones). */
-  animation-delay: calc(var(--reach, var(--at)) * var(--route-dur));
+.ab-portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: top;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
 }
 
 /* ── Section headings ─────────────────────────────────────────────── */
@@ -308,54 +48,55 @@
   text-wrap: balance;
 }
 
+/* ── Shared two-column row: heading (and scene) beside the content ── */
+
+.ab-id,
+.ab-ch {
+  display: grid;
+  grid-template-columns: minmax(0, 19rem) minmax(0, 1fr);
+  gap: 1.5rem clamp(2rem, 5vw, 4.5rem);
+}
+
 /* ── Identity ─────────────────────────────────────────────────────── */
 
+/* Heading, summary and terms on the left; the facts list on the right.
+   The facts wrapper is `display: contents` so the summary and the list can
+   sit in different columns while staying one identity block. */
 .ab-id {
-  display: grid;
-  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
-  gap: 2rem clamp(2rem, 5vw, 4.5rem);
-  align-items: start;
+  grid-template-areas:
+    'head facts'
+    'sum facts'
+    'terms facts';
+  grid-template-rows: auto auto 1fr;
+  row-gap: 1.25rem;
 }
 
-/* A close crop of the park photo: the homepage shows it whole. The frame
-   clips; the image is scaled about the face, never animated. */
-.ab-id-photo {
-  margin: 0;
-  overflow: hidden;
-  overflow: clip;
-  aspect-ratio: 4 / 5;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-}
-
-.ab-id-photo img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 32%;
-  transform: scale(1.45);
-  transform-origin: 50% 34%;
-}
-
-.ab-id-body {
-  display: grid;
-  gap: 1.5rem;
-  min-width: 0;
+.ab-id-title {
+  grid-area: head;
 }
 
 .ab-id-facts {
-  display: grid;
-  gap: 1.75rem;
+  display: contents;
 }
 
 .ab-id-summary {
-  max-width: 40ch;
+  grid-area: sum;
   margin: 0;
   color: var(--text);
-  font-size: clamp(1.15rem, 2vw, 1.45rem);
-  line-height: 1.5;
+  font-size: clamp(1.1rem, 1.8vw, 1.3rem);
+  line-height: 1.55;
   text-wrap: pretty;
+}
+
+.ab-id .ab-spec:not(.ab-spec--terms) {
+  grid-area: facts;
+  align-self: start;
+}
+
+.ab-id .ab-spec--terms {
+  grid-area: terms;
+  align-self: start;
+  margin-block-start: 0.75rem;
 }
 
 .ab-spec {
@@ -395,7 +136,7 @@
 }
 
 .ab-spec--terms {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .ab-spec--terms > div {
@@ -436,25 +177,25 @@
   font-weight: 500;
 }
 
-/* ── Chapters (sticky headings beside the text) ──────────────────── */
+/* ── Chapters ─────────────────────────────────────────────────────── */
 
 .ab-story {
   display: grid;
 }
 
-.ab-ch,
-.ab-creed {
-  display: grid;
-  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
-  gap: 0.9rem clamp(2rem, 5vw, 4.5rem);
-  padding-block: clamp(2rem, 4vw, 3rem);
+.ab-ch {
+  padding-block: clamp(2.5rem, 5vw, 3.75rem);
   border-block-start: 1px solid var(--divider);
 }
 
-.ab-ch-title {
+/* Heading and scene stay in view beside a long paragraph. */
+.ab-ch-aside {
   position: sticky;
   inset-block-start: 7rem;
+  display: grid;
+  align-content: start;
   align-self: start;
+  gap: 1.75rem;
 }
 
 .ab-ch-body {
@@ -495,6 +236,15 @@
   scale: -1 1;
 }
 
+/* The Experience chapter: the path runs the full width under the text. */
+.ab-ch--path .ab-ch-aside {
+  position: static;
+}
+
+.ab-ch--path .ab-path {
+  grid-column: 1 / -1;
+}
+
 /* ── Design philosophy ────────────────────────────────────────────── */
 
 .ab-creed {
@@ -519,94 +269,510 @@
   line-height: 1.7;
 }
 
+/* ── Career path ──────────────────────────────────────────────────────
+ * Wide screens: the road runs down the middle (`--rail-x`), cards alternate
+ * sides and each leg's start year sits across the road. Phones: the road
+ * runs along the inline start, cards follow it.
+ *
+ * Each leg owns the road from its station to the next station:
+ * `--node-y` below its top edge to `--node-y` below the next leg's top.
+ * The road's SVG stretches to that box (non-scaling strokes keep the line
+ * width even), so a station always sits on the road.
+ */
+
+.ab-path {
+  --rail: 10rem;
+  --rail-x: 50%;
+  --swing: 4.25rem;
+  --node-y: 0.8rem;
+  display: grid;
+  margin: clamp(1.5rem, 4vw, 2.75rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ab-leg {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--rail) minmax(0, 1fr);
+  align-items: start;
+  /* The stretch of road after a station follows the time spent there. */
+  min-block-size: max(8.5rem, calc(var(--months) * 0.5rem));
+  padding-block-end: 2.5rem;
+}
+
+.ab-leg--current {
+  min-block-size: 0;
+  padding-block-end: 4.5rem;
+}
+
+.ab-road {
+  position: absolute;
+  /* An SVG keeps its own aspect ratio between two insets, so the height
+     is explicit: from this station to the next leg's station. */
+  inset-block-start: var(--node-y);
+  inset-inline-start: calc(var(--rail-x) - var(--swing));
+  width: calc(2 * var(--swing));
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+[dir='rtl'] .ab-road {
+  scale: -1 1;
+}
+
+.ab-road path {
+  fill: none;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.ab-road-base {
+  stroke: var(--border-strong);
+  stroke-width: 2;
+}
+
+.ab-road-lit {
+  stroke: var(--accent);
+  stroke-width: 2.5;
+}
+
+/* Beyond today: the road continues, unwritten. */
+.ab-leg-tail {
+  position: absolute;
+  inset-block-start: var(--node-y);
+  inset-inline-start: calc(var(--rail-x) - 1px);
+  width: 0;
+  height: 5rem;
+  border-inline-start: 2px dashed var(--accent-border);
+  mask-image: linear-gradient(var(--text), transparent);
+}
+
+.ab-node {
+  position: absolute;
+  z-index: 1;
+  inset-block-start: calc(var(--node-y) - 1rem);
+  inset-inline-start: calc(var(--rail-x) - 1rem);
+  width: 2rem;
+  height: 2rem;
+  overflow: visible;
+}
+
+.ab-node-base {
+  fill: var(--bg);
+  stroke: var(--text-3);
+  stroke-width: 2;
+}
+
+.ab-node-lit {
+  fill: var(--bg);
+  stroke: var(--accent);
+  stroke-width: 2.5;
+}
+
+.ab-leg--current .ab-node-lit {
+  fill: var(--accent);
+}
+
+.ab-node-halo {
+  fill: none;
+  stroke: var(--accent-border);
+  stroke-width: 1;
+}
+
+.ab-node :is(.ab-node-lit, .ab-node-halo) {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.ab-leg-year,
+.ab-leg-card {
+  grid-row: 1;
+  min-width: 0;
+}
+
+.ab-leg-year {
+  /* Centred on the station: half its own line height above it. */
+  margin-block-start: calc(var(--node-y) - 0.5em);
+  color: var(--text-3);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.ab-leg--even .ab-leg-year {
+  grid-column: 1;
+  text-align: end;
+}
+
+.ab-leg--even .ab-leg-card {
+  grid-column: 3;
+}
+
+.ab-leg--odd .ab-leg-card {
+  grid-column: 1;
+  text-align: end;
+}
+
+.ab-leg--odd .ab-leg-year {
+  grid-column: 3;
+}
+
+.ab-leg-company {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 700;
+  /* Twice --node-y: the station sits on the middle of this line. */
+  line-height: 1.6rem;
+}
+
+.ab-leg-roles {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0.45rem 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text-2);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.ab-leg-role--promoted {
+  color: var(--text);
+}
+
+.ab-leg-promo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-inline-end: 0.5rem;
+  padding: 0.05rem 0.5rem;
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-pill);
+  color: var(--accent-ink);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.5;
+  vertical-align: 0.1em;
+}
+
+.ab-leg-promo svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ab-leg-dates {
+  margin: 0.55rem 0 0;
+  color: var(--text-3);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+
+.ab-leg--current .ab-leg-dates {
+  color: var(--accent-ink);
+}
+
+:lang(ar) .ab-leg-year {
+  letter-spacing: 0;
+}
+
+/* ── Scenes ───────────────────────────────────────────────────────── */
+
+.ab-sc {
+  width: 100%;
+  max-width: 22rem;
+}
+
+.ab-sc svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.ab-sc :is(.sc-panel, .sc-face, .sc-chip) {
+  fill: var(--bg-card);
+  stroke: var(--border-strong);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.ab-sc .sc-panel--pick {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+
+.ab-sc :is(.sc-rule, .sc-axis, .sc-divider) {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.ab-sc .sc-divider {
+  stroke-dasharray: 3 4;
+}
+
+.ab-sc .sc-dot {
+  fill: color-mix(in oklab, var(--text) 24%, transparent);
+}
+
+.ab-sc .sc-m {
+  fill: color-mix(in oklab, var(--text) 10%, transparent);
+}
+
+.ab-sc .sc-m2 {
+  fill: color-mix(in oklab, var(--text) 19%, transparent);
+}
+
+.ab-sc .sc-a {
+  fill: var(--accent-fill);
+}
+
+.ab-sc .sc-track {
+  fill: none;
+  stroke: color-mix(in oklab, var(--text) 9%, transparent);
+  stroke-width: 7;
+}
+
+.ab-sc .sc-track--thin {
+  stroke-width: 3;
+}
+
+.ab-sc .sc-arc {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 7;
+}
+
+.ab-sc .sc-spin {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.ab-sc :is(.sc-big, .sc-label) {
+  font-family: var(--font);
+  font-weight: 700;
+}
+
+.ab-sc .sc-big {
+  fill: var(--text);
+  font-size: 24px;
+  letter-spacing: -0.04em;
+}
+
+.ab-sc .sc-label {
+  fill: var(--text-2);
+  font-size: 12px;
+}
+
+.ab-sc :is(.sc-wire, .sc-chev, .sc-gaze, .sc-line, .sc-risk) {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ab-sc :is(.sc-wire, .sc-chev) {
+  stroke: var(--border-strong);
+  stroke-width: 1.5;
+}
+
+.ab-sc .sc-gaze {
+  stroke: var(--text-3);
+  stroke-width: 1.5;
+}
+
+.ab-sc .sc-line {
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.ab-sc .sc-risk {
+  stroke: var(--warning);
+  stroke-width: 2;
+}
+
+.ab-sc .sc-ok {
+  fill: var(--success);
+}
+
+.ab-sc .sc-bad {
+  fill: var(--danger);
+}
+
+.ab-sc :is(.sc-tick, .sc-mark) {
+  fill: none;
+  stroke: var(--bg);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ab-sc .sc-mark-dot {
+  fill: var(--bg);
+}
+
+.ab-sc .sc-pill {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.ab-sc .sc-tickmark {
+  stroke: var(--text-3);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+
+.ab-sc .sc-hand {
+  stroke: var(--text);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+.ab-sc .sc-hand--thin {
+  stroke-width: 1.5;
+}
+
+.ab-sc .sc-pin {
+  fill: var(--accent);
+}
+
+.ab-sc .sc-icon {
+  fill: none;
+  stroke: var(--text-2);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ab-sc .sc-icon-fill {
+  fill: var(--text-2);
+  stroke: none;
+}
+
+.ab-sc .sc-icon-solid {
+  fill: var(--text-3);
+}
+
+.ab-sc .sc-icon-solid .sc-a {
+  fill: var(--accent-fill);
+}
+
+.ab-sc .sc-needle {
+  stroke: var(--accent);
+  stroke-width: 1.8;
+}
+
+.ab-sc .sc-click {
+  fill: none;
+  stroke: var(--accent-border);
+  stroke-width: 1.5;
+}
+
+.ab-sc .sc-cursor {
+  fill: var(--text);
+  stroke: var(--bg);
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+
+/* Beat primitives. `.d` draws (pathLength 1; the hidden offset ends past
+   the path so no round-cap dot remains), `.pop` scales in about its own
+   centre, `.gy` grows from its base. */
+.ab-sc .d {
+  stroke-dasharray: 1 2;
+  stroke-dashoffset: 0;
+}
+
+.ab-sc :is(.pop, .gy) {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.ab-sc .gy {
+  transform-origin: center bottom;
+}
+
 /* ── Responsive ───────────────────────────────────────────────────── */
 
 @media (max-width: 1040px) {
-  .ab-id {
-    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  .ab-portrait {
+    width: min(100%, 20rem);
+    margin-inline-start: 0;
   }
 
-  .ab-spec--terms {
-    grid-template-columns: minmax(0, 1fr);
+  .ab-id,
+  .ab-ch {
+    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
   }
 }
 
 @media (max-width: 760px) {
-  /* The route becomes a vertical list: oldest at the top, today last. */
-  .ab-route {
-    container-type: normal;
-    height: auto;
-  }
-
-  .ab-track {
-    inset-block: 0.5rem;
-    inset-inline: 6px auto;
-    width: 2px;
-    height: auto;
-    margin: 0;
-  }
-
-  .ab-track-fill,
-  [dir='rtl'] .ab-track-fill {
-    transform-origin: center top;
-  }
-
-  .ab-track-head,
-  .ab-tick {
-    display: none;
-  }
-
-  .ab-stops {
-    position: relative;
-    display: grid;
-    gap: 1.25rem;
-  }
-
-  .ab-stop {
-    position: relative;
-    inset: auto;
-    width: auto;
-    height: auto;
-    padding-inline-start: 2.1rem;
-  }
-
-  .ab-stop-dot {
-    inset-block-start: 0.2rem;
-    inset-inline-start: 0;
-  }
-
-  .ab-stop .ab-stop-text {
-    position: static;
-    white-space: normal;
-  }
-
-  .ab-stop--raised::before {
-    display: none;
-  }
-
-  :root:not([data-motion='paused'])
-    .ab-hero:is(:hover, :focus-within, [data-active])
-    .ab-track-fill {
-    animation-name: ab-fill-y;
-  }
-
-  /* Stops are evenly spaced here, so they fill in list order. */
-  .ab-stop {
-    --reach: calc((var(--n) + 0.5) / var(--count));
+  /* Matches the 256px in the portrait's sizes attribute. */
+  .ab-portrait {
+    width: min(100%, 16rem);
   }
 
   .ab-id,
-  .ab-ch,
-  .ab-creed {
+  .ab-ch {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .ab-id-photo {
-    max-width: 20rem;
+  .ab-id {
+    grid-template-areas: 'head' 'sum' 'facts' 'terms';
+    grid-template-rows: none;
   }
 
-  .ab-ch-title {
+  .ab-ch-aside {
     position: static;
+  }
+
+  .ab-sc {
+    max-width: 24rem;
+  }
+
+  /* The road runs along the inline start; every card follows it. */
+  .ab-path {
+    --rail: 2.75rem;
+    --rail-x: 1.1rem;
+    --swing: 0.85rem;
+  }
+
+  .ab-leg {
+    grid-template-columns: var(--rail) minmax(0, 1fr);
+    min-block-size: max(6rem, calc(var(--months) * 0.3rem));
+    padding-block-end: 2rem;
+  }
+
+  .ab-leg--current {
+    min-block-size: 0;
+    padding-block-end: 3.5rem;
+  }
+
+  .ab-leg-year {
+    display: none;
+  }
+
+  .ab-leg--even .ab-leg-card,
+  .ab-leg--odd .ab-leg-card {
+    grid-column: 2;
+    text-align: start;
+  }
+
+  .ab-leg-tail {
+    height: 3.5rem;
   }
 }
 
@@ -617,23 +783,127 @@
 }
 
 @media (forced-colors: active) {
-  .ab-track,
-  .ab-tick {
-    background: CanvasText;
+  .ab-road-base {
+    stroke: GrayText;
   }
 
-  .ab-track-fill,
-  .ab-track-head,
-  .ab-stop--current .ab-stop-dot::after {
-    background: Highlight;
+  .ab-road-lit,
+  .ab-node-lit,
+  .ab-node-halo {
+    stroke: Highlight;
   }
 
-  .ab-stop-dot {
-    border-color: CanvasText;
-    background: Canvas;
+  .ab-node-base,
+  .ab-node-lit {
+    fill: Canvas;
   }
 
-  .ab-stop-dot::after {
-    background: CanvasText;
+  .ab-leg--current .ab-node-lit {
+    fill: Highlight;
+  }
+
+  .ab-leg-tail {
+    border-color: Highlight;
+  }
+}
+
+/* ── Scroll-driven build ──────────────────────────────────────────────
+ * Progressive: without `animation-timeline` support, or with motion paused
+ * (the Animations setting, reduced motion), nothing below applies and the
+ * finished state shows. Written as longhands: a minifier that folds them
+ * into an `animation` shorthand drops the timeline (docs/MOTION.md).
+ */
+
+@keyframes ab-draw {
+  from {
+    stroke-dashoffset: 1.1;
+  }
+}
+
+@keyframes ab-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+@keyframes ab-grow-y {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes ab-reveal {
+  from {
+    clip-path: inset(-4px -4px 100% -4px);
+  }
+
+  to {
+    clip-path: inset(-4px);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  /* Scenes: each beat (`--i`) plays over a short stretch of scroll while
+     its chapter enters the lower part of the viewport. */
+  :root:not([data-motion='paused']) .ab-ch {
+    view-timeline-name: --ab-ch;
+  }
+
+  :root:not([data-motion='paused']) .ab-sc :is(.d, .pop, .gy) {
+    animation-duration: 1ms;
+    animation-duration: auto;
+    animation-timing-function: cubic-bezier(0.25, 0.8, 0.3, 1);
+    animation-fill-mode: both;
+    animation-timeline: --ab-ch;
+    animation-range-start: cover calc(10vh + var(--i, 0) * 3.2vh);
+    animation-range-end: cover calc(24vh + var(--i, 0) * 3.2vh);
+  }
+
+  :root:not([data-motion='paused']) .ab-sc .d {
+    animation-name: ab-draw;
+  }
+
+  :root:not([data-motion='paused']) .ab-sc .pop {
+    animation-name: ab-pop;
+  }
+
+  :root:not([data-motion='paused']) .ab-sc .gy {
+    animation-name: ab-grow-y;
+  }
+
+  /* Path: the timeline is narrowed to a reading line across the middle of
+     the viewport. A leg's road draws while that line crosses the leg; its
+     station lights as the line reaches it. */
+  :root:not([data-motion='paused']) .ab-leg {
+    view-timeline-name: --ab-leg;
+    view-timeline-inset: 45% 45%;
+  }
+
+  :root:not([data-motion='paused'])
+    :is(.ab-road--lit, .ab-node-lit, .ab-node-halo, .ab-leg-tail) {
+    animation-duration: 1ms;
+    animation-duration: auto;
+    animation-fill-mode: both;
+    animation-timeline: --ab-leg;
+  }
+
+  :root:not([data-motion='paused']) .ab-road--lit {
+    animation-name: ab-reveal;
+    animation-timing-function: linear;
+    animation-range-start: cover 0%;
+    animation-range-end: cover 100%;
+  }
+
+  :root:not([data-motion='paused'])
+    :is(.ab-node-lit, .ab-node-halo, .ab-leg-tail) {
+    animation-name: ab-pop;
+    animation-timing-function: cubic-bezier(0.3, 1.4, 0.5, 1);
+    animation-range-start: cover 0%;
+    animation-range-end: cover 2.5rem;
+  }
+
+  :root:not([data-motion='paused']) .ab-leg-tail {
+    transform-origin: top;
   }
 }
