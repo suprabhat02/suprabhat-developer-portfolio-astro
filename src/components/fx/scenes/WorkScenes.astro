@@ -1,0 +1,649 @@
+---
+/**
+ * Internal work scenes (homepage "work" cards). Visual only: no code, no
+ * words, no figures that are not on the card, readable in a glance from
+ * shapes and motion. Each rests on its finished frame and replays its story
+ * while the card is engaged (see `.fx-live` in scenes.css).
+ *
+ * - `signals` (product screen): a role tab is picked; KPI tiles arrive; the
+ *   chart's loading skeleton gives way to real bars; a risk threshold draws
+ *   and the one bar that crosses it is flagged, while the side panel shows
+ *   every data state (loading, partial, ready) handled.
+ * - `alignment` (product screens): three screens built three different ways;
+ *   an alignment guide sweeps across and each screen becomes the same
+ *   standard layout as the guide passes, then the shared grid is confirmed.
+ * - `waterfall` (diagram): a request waterfall. The long serial requests fade
+ *   to ghosts, short parallel ones replace them, the "loaded" marker moves
+ *   earlier (the time saved is the accent span) and the page paints sooner.
+ */
+import type { SceneName } from '../scenes';
+import Surface from '../Surface.astro';
+
+interface Props {
+  scene: SceneName;
+}
+
+const { scene } = Astro.props;
+
+/* signals ------------------------------------------------------------- */
+const roleTabs = [150, 196, 242] as const;
+const activeTab = 1;
+const tabStep = roleTabs[1] - roleTabs[0];
+const kpiTiles = [14, 86, 158] as const;
+const baseline = 108;
+const threshold = 64;
+/** Bar heights; only the flagged bar rises above the threshold. */
+const barHeights = [22, 30, 26, 36, 50, 32, 40] as const;
+const flagged = 4;
+const barX = (index: number) => 26 + index * 27;
+const statusRows = [38, 68, 98] as const;
+
+/* alignment ----------------------------------------------------------- */
+const screens = [12, 116, 220] as const;
+const guideStart = 10;
+const guideTravel = 300;
+/**
+ * Beat (`--i`, 4% of the loop each) at which the sweeping guide reaches each
+ * screen's centre. The guide travels from 8% to 70% of the loop (`wk-guide`
+ * in scenes.css), so a centre at `x + 44` is reached at
+ * 8% + 62% × (x + 44 − guideStart) / guideTravel.
+ */
+const swapBeat = (index: number) =>
+  Math.round(
+    ((8 + (62 * ((screens[index] ?? 0) + 44 - guideStart)) / guideTravel) / 4) *
+      100,
+  ) / 100;
+
+/* waterfall ----------------------------------------------------------- */
+const rows = [22, 38, 54, 70, 86, 102] as const;
+/** Serial requests before: [x, width]. */
+const before = [
+  [26, 40],
+  [66, 64],
+  [130, 28],
+  [158, 22],
+  [180, 18],
+  [198, 14],
+] as const;
+/** Parallel requests after: [x, width]. Row 1 is the old heavy bundle. */
+const after = [
+  [26, 20],
+  [48, 18],
+  [48, 14],
+  [50, 16],
+  [52, 12],
+  [56, 12],
+] as const;
+const loadedBefore = 212;
+const loadedAfter = 74;
+const ticks = [30, 66, 102, 138, 174, 210] as const;
+---
+
+{
+  scene === 'signals' && (
+    <>
+      <g class="lv-l" style="--d:.35">
+        <Surface x={6} y={-6} w={308} h={132} tone="well" chrome={16}>
+          {[16, 23, 30].map((cx) => (
+            <circle class="ui-dot" cx={cx} cy="2" r="2" />
+          ))}
+          {roleTabs.map((x, index) => (
+            <g>
+              <circle
+                class={index === activeTab ? 'ui-avatar' : 'ui-dot'}
+                cx={x - 10}
+                cy="2"
+                r="3.2"
+              />
+              <rect
+                class="ui-m2"
+                x={x - 4}
+                y="0.5"
+                width="16"
+                height="3"
+                rx="1.5"
+              />
+            </g>
+          ))}
+        </Surface>
+      </g>
+      <g class="ui-story lv-l" style="--d:.6">
+        <g class="k k-shift" style={`--i:0;--sx:${-tabStep}px`}>
+          <line
+            class="ui-active"
+            x1={roleTabs[activeTab] - 16}
+            y1="9"
+            x2={roleTabs[activeTab] + 14}
+            y2="9"
+          />
+        </g>
+        {kpiTiles.map((x, index) => (
+          <Surface
+            class="k k-rise"
+            style={`--i:${index + 1}`}
+            x={x}
+            y={18}
+            w={66}
+            h={22}
+            rx={4}
+          >
+            <rect
+              class="ui-m"
+              x={x + 7}
+              y="24"
+              width="22"
+              height="3"
+              rx="1.5"
+            />
+            <rect
+              class="ui-m2"
+              x={x + 7}
+              y="30"
+              width={index === 1 ? 40 : 32}
+              height="5"
+              rx="2.5"
+            />
+          </Surface>
+        ))}
+      </g>
+      <g class="ui-story lv-l" style="--d:.8">
+        <Surface x={14} y={46} w={210} h={72} rx={4}>
+          {[62, 78, 94].map((y) => (
+            <line class="ui-ln ui-ln--soft" x1="22" y1={y} x2="216" y2={y} />
+          ))}
+          <line class="ui-ln" x1="22" y1={baseline} x2="216" y2={baseline} />
+          <g class="k k-fade-out" style="--i:1">
+            {barHeights.map((_, index) => (
+              <rect
+                class="ui-m"
+                x={barX(index)}
+                y={baseline - 18}
+                width="12"
+                height="18"
+                rx="2"
+              />
+            ))}
+          </g>
+          {barHeights.map((height, index) => (
+            <rect
+              class:list={[index === flagged ? 'ui-a' : 'ui-m2', 'k k-grow-y']}
+              style={`--i:${3 + index}`}
+              x={barX(index)}
+              y={baseline - height}
+              width="12"
+              height={height}
+              rx="2"
+            />
+          ))}
+          <path
+            class="ui-warn-stroke ui-s k k-draw"
+            style="--i:9"
+            d={`M22 ${threshold}H216`}
+            pathLength="1"
+          />
+        </Surface>
+      </g>
+      <g class="ui-story lv-l" style="--d:1">
+        <circle
+          class="sa ui-s k k-ring"
+          style="--i:11"
+          cx={barX(flagged) + 6}
+          cy="50"
+          r="3"
+        />
+        <circle
+          class="ui-a k k-pop"
+          style="--i:11"
+          cx={barX(flagged) + 6}
+          cy="50"
+          r="3"
+        />
+        <Surface
+          class="k k-rise"
+          style="--i:12"
+          x={barX(flagged) + 14}
+          y={42}
+          w={34}
+          h={15}
+          rx={3}
+        >
+          <rect
+            class="ui-as"
+            x={barX(flagged) + 19}
+            y="47"
+            width="5"
+            height="5"
+            rx="1.5"
+          />
+          <rect
+            class="ui-m2"
+            x={barX(flagged) + 27}
+            y="48"
+            width="16"
+            height="3"
+            rx="1.5"
+          />
+        </Surface>
+      </g>
+      <g class="ui-story lv-l" style="--d:.6">
+        <Surface x={232} y={18} w={74} h={100} rx={4}>
+          {statusRows.map((cy, index) => (
+            <g class="k k-rise" style={`--i:${index + 2}`}>
+              {index === 0 && (
+                <>
+                  <circle
+                    class="ui-track ui-bar"
+                    style="--bar:2"
+                    cx="246"
+                    cy={cy}
+                    r="5"
+                  />
+                  <path
+                    class="sb ui-s"
+                    d={`M246 ${cy - 5}A5 5 0 0 1 251 ${cy}`}
+                  />
+                </>
+              )}
+              {index === 1 && (
+                <>
+                  <circle class="ui-warning" cx="246" cy={cy} r="5" />
+                  <path
+                    class="ui-warn-stroke ui-s"
+                    d={`M246 ${cy - 2.4}v2.6M246 ${cy + 2.2}v.2`}
+                  />
+                </>
+              )}
+              {index === 2 && <circle class="ui-oks" cx="246" cy={cy} r="5" />}
+              <rect
+                class="ui-m2"
+                x="256"
+                y={cy - 4}
+                width="40"
+                height="3"
+                rx="1.5"
+              />
+              <rect
+                class="ui-m"
+                x="256"
+                y={cy + 2}
+                width="26"
+                height="3"
+                rx="1.5"
+              />
+            </g>
+          ))}
+          <path
+            class="ok ui-s k k-tick"
+            style="--i:14"
+            d={`M243.4 ${statusRows[2]}l1.8 1.8 3.5-3.6`}
+            pathLength="1"
+          />
+        </Surface>
+      </g>
+    </>
+  )
+}
+
+{
+  scene === 'alignment' && (
+    <>
+      <g class="lv-l" style="--d:.45">
+        {screens.map((x) => (
+          <Surface x={x} y={8} w={88} h={100} rx={5} chrome={12}>
+            <circle class="ui-dot" cx={x + 8} cy="14" r="1.6" />
+            <circle class="ui-dot" cx={x + 14} cy="14" r="1.6" />
+          </Surface>
+        ))}
+      </g>
+      <g class="ui-story lv-l" style="--d:.7">
+        {/* Before: the same screen built three different ways. */}
+        <g class="k k-swap-out" style={`--i:${swapBeat(0)}`}>
+          <rect
+            class="ui-m2"
+            x={screens[0] + 8}
+            y="25"
+            width="56"
+            height="4"
+            rx="2"
+          />
+          <rect
+            class="ui ui--well"
+            x={screens[0] + 4}
+            y="38"
+            width="60"
+            height="38"
+            rx="8"
+          />
+          <rect
+            class="ui-m"
+            x={screens[0] + 12}
+            y="48"
+            width="36"
+            height="3"
+            rx="1.5"
+          />
+          <rect
+            class="ui-m2"
+            x={screens[0] + 20}
+            y="86"
+            width="48"
+            height="12"
+            rx="6"
+          />
+        </g>
+        <g class="k k-swap-out" style={`--i:${swapBeat(1)}`}>
+          <rect
+            class="ui-m2"
+            x={screens[1] + 22}
+            y="29"
+            width="30"
+            height="4"
+            rx="2"
+          />
+          <rect
+            class="ui ui--well"
+            x={screens[1] + 12}
+            y="46"
+            width="68"
+            height="24"
+            rx="0.5"
+          />
+          <rect
+            class="ui-m"
+            x={screens[1] + 18}
+            y="55"
+            width="44"
+            height="3"
+            rx="1.5"
+          />
+          <rect
+            class="ui-as"
+            x={screens[1] + 50}
+            y="80"
+            width="30"
+            height="16"
+            rx="1"
+          />
+          <rect
+            class="ui"
+            x={screens[1] + 10}
+            y="84"
+            width="26"
+            height="12"
+            rx="6"
+          />
+        </g>
+        <g class="k k-swap-out" style={`--i:${swapBeat(2)}`}>
+          <rect
+            class="ui-m2"
+            x={screens[2] + 24}
+            y="27"
+            width="40"
+            height="4"
+            rx="2"
+          />
+          <rect
+            class="ui ui--well"
+            x={screens[2] + 8}
+            y="42"
+            width="72"
+            height="34"
+            rx="3"
+          />
+          <rect
+            class="ui-m2"
+            x={screens[2] + 64}
+            y="50"
+            width="10"
+            height="10"
+            rx="5"
+          />
+          <rect
+            class="ui-m"
+            x={screens[2] + 14}
+            y="52"
+            width="40"
+            height="3"
+            rx="1.5"
+          />
+          <rect
+            class="ui"
+            x={screens[2] + 8}
+            y="86"
+            width="72"
+            height="10"
+            rx="2"
+          />
+        </g>
+
+        {/* After: one standard layout on every screen. */}
+        {screens.map((x, index) => (
+          <g class="k k-swap-in" style={`--i:${swapBeat(index)}`}>
+            <rect class="ui-m2" x={x + 8} y="27" width="40" height="4" rx="2" />
+            <rect
+              class="ui-m"
+              x={x + 8}
+              y="35"
+              width="58"
+              height="3"
+              rx="1.5"
+            />
+            <rect
+              class="ui ui--well"
+              x={x + 8}
+              y="44"
+              width="72"
+              height="30"
+              rx="3"
+            />
+            <rect
+              class="ui-as"
+              x={x + 14}
+              y="50"
+              width="12"
+              height="12"
+              rx="3"
+            />
+            <rect
+              class="ui-m2"
+              x={x + 30}
+              y="51"
+              width="40"
+              height="3.5"
+              rx="1.75"
+            />
+            <rect
+              class="ui-m"
+              x={x + 30}
+              y="58"
+              width="28"
+              height="3"
+              rx="1.5"
+            />
+            <rect class="ui-a" x={x + 8} y="84" width="36" height="12" rx="3" />
+            <rect
+              class="ui-on"
+              x={x + 15}
+              y="88.5"
+              width="22"
+              height="3"
+              rx="1.5"
+            />
+            <rect class="ui" x={x + 48} y="84" width="32" height="12" rx="3" />
+          </g>
+        ))}
+
+        {/* The shared grid, confirmed once every screen matches. */}
+        <g class="k k-swap-in" style="--i:17">
+          <line class="ui-ln ui-ln--dash" x1="4" y1="44" x2="316" y2="44" />
+          <line class="ui-ln ui-ln--dash" x1="4" y1="96" x2="316" y2="96" />
+        </g>
+        <circle class="ui-oks" cx="160" cy="121" r="6" />
+        <path
+          class="ok ui-s k k-tick"
+          style="--i:18"
+          d="M157.2 121l2 2 3.8-3.8"
+          pathLength="1"
+        />
+      </g>
+      <g class="ui-story lv-l" style="--d:1">
+        <g class="k k-guide" style={`--gx:${guideTravel}px`}>
+          <line
+            class="sa ui-s"
+            x1={guideStart}
+            y1="-2"
+            x2={guideStart}
+            y2="114"
+          />
+          <rect
+            class="ui-handle"
+            x={guideStart - 3}
+            y="-6"
+            width="6"
+            height="6"
+            rx="1.5"
+          />
+          <rect
+            class="ui-handle"
+            x={guideStart - 3}
+            y="112"
+            width="6"
+            height="6"
+            rx="1.5"
+          />
+        </g>
+      </g>
+    </>
+  )
+}
+
+{
+  scene === 'waterfall' && (
+    <>
+      <g class="lv-l" style="--d:.4">
+        <Surface x={6} y={-4} w={212} h={128} tone="well" rx={5} chrome={14}>
+          {ticks.map((x) => (
+            <line class="ui-ln" x1={x} y1="2" x2={x} y2="7" />
+          ))}
+          {rows.map((y, index) => (
+            <rect
+              class={index === 1 ? 'ui-as' : 'ui-m'}
+              x="12"
+              y={y - 3}
+              width="6"
+              height="6"
+              rx="1.5"
+            />
+          ))}
+          <line
+            class="ui-ln ui-ln--dash"
+            x1={loadedBefore}
+            y1="12"
+            x2={loadedBefore}
+            y2="110"
+          />
+        </Surface>
+      </g>
+      <g class="ui-story lv-l" style="--d:.7">
+        <g class="k k-stale">
+          {before.map(([x, width], index) => (
+            <rect
+              class="ui"
+              x={x}
+              y={(rows[index] ?? 0) - 4}
+              width={width}
+              height="8"
+              rx="2"
+            />
+          ))}
+        </g>
+        {after.map(([x, width], index) => (
+          <rect
+            class:list={[index === 1 ? 'ui-a' : 'ui-m2', 'k k-grow-x']}
+            style={`--i:${6 + index}`}
+            x={x}
+            y={(rows[index] ?? 0) - 4}
+            width={width}
+            height="8"
+            rx="2"
+          />
+        ))}
+        <path
+          class="sa ui-s k k-draw"
+          style="--i:15"
+          d={`M${loadedAfter} 117H${loadedBefore}M${loadedAfter} 114v6M${loadedBefore} 114v6`}
+          pathLength="1"
+        />
+      </g>
+      <g class="ui-story lv-l" style="--d:.9">
+        <g
+          class="k k-shift"
+          style={`--i:11;--sx:${loadedBefore - loadedAfter}px`}
+        >
+          <line
+            class="ok ui-s"
+            x1={loadedAfter}
+            y1="14"
+            x2={loadedAfter}
+            y2="110"
+          />
+          <circle class="ui-ok" cx={loadedAfter} cy="12" r="3" />
+        </g>
+      </g>
+      <g class="lv-l" style="--d:.55">
+        <Surface x={226} y={-4} w={88} h={128} rx={5} chrome={14}>
+          <circle class="ui-dot" cx="234" cy="3" r="1.6" />
+          <circle class="ui-dot" cx="240" cy="3" r="1.6" />
+        </Surface>
+      </g>
+      <g class="ui-story lv-l" style="--d:.8">
+        <rect
+          class="ui-m2 k k-rise"
+          style="--i:7"
+          x="234"
+          y="18"
+          width="72"
+          height="34"
+          rx="3"
+        />
+        <g class="k k-rise" style="--i:8">
+          <rect class="ui-m2" x="234" y="58" width="52" height="4" rx="2" />
+          <rect class="ui-m" x="234" y="66" width="64" height="3" rx="1.5" />
+        </g>
+        <rect
+          class="ui k k-rise"
+          style="--i:9"
+          x="234"
+          y="76"
+          width="34"
+          height="20"
+          rx="3"
+        />
+        <rect
+          class="ui k k-rise"
+          style="--i:10"
+          x="272"
+          y="76"
+          width="34"
+          height="20"
+          rx="3"
+        />
+        <circle
+          class="ui-track ui-bar"
+          style="--bar:2.5"
+          cx="242"
+          cy="109"
+          r="6"
+        />
+        <path
+          class="ok ui-bar k k-progress"
+          style="--bar:2.5"
+          d="M242 103a6 6 0 1 1 0 12a6 6 0 1 1 0-12"
+          pathLength="1"
+        />
+        <path class="ui-ln" d="M242 100.5v-2" />
+        <rect class="ui-m2" x="254" y="107" width="40" height="4" rx="2" />
+      </g>
+    </>
+  )
+}

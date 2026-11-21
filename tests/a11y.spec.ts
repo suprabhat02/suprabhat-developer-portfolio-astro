@@ -172,7 +172,8 @@ test('homepage renders correct structure and passes accessibility', async ({
     );
   // The 28 tool logos plus JavaScript, Chakra UI and Headless UI.
   expect(new Set(technologyIconUrls).size).toBe(31);
-  await expect(page.locator('#skills .stack-tile')).toHaveCount(36);
+  // 33 tiles: technologies sharing a logo share a tile.
+  await expect(page.locator('#skills .stack-tile')).toHaveCount(33);
   await expect(page.locator('#skills .stack-card')).toHaveCount(6);
   for (const iconUrl of technologyIconUrls) {
     expect((await page.request.get(iconUrl)).status()).toBe(200);

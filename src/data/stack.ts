@@ -14,14 +14,15 @@ interface StackCard {
 
 /**
  * One card per technology group. Key order is card order, and the shapes
- * fill the grid row by row: narrow + wide, wide + narrow, half + half. A wide
- * card holds a longer list, so both cards in a row need the same number of
- * logo rows and end level. Typing it as a record makes a new group fail the
- * build until it has a card.
+ * fill the grid row by row: wide + narrow, wide + narrow, half + half. A wide
+ * card holds the longer list of its row (languages 7 beside data 6, styling 9
+ * beside backend 5), so both cards in a row need the same number of logo
+ * rows and end level. Typing it as a record makes a new group fail the build
+ * until it has a card.
  */
 const cards: Record<ToolGroupId, StackCard> = {
-  languages: { shape: 'narrow', scene: 'editor' },
-  data: { shape: 'wide', scene: 'store' },
+  languages: { shape: 'wide', scene: 'editor' },
+  data: { shape: 'narrow', scene: 'store' },
   styling: { shape: 'wide', scene: 'responsive' },
   backend: { shape: 'narrow', scene: 'query' },
   workflow: { shape: 'half', scene: 'review' },
@@ -56,15 +57,27 @@ export const getStack = (locale: Locale): readonly StackGroup[] => {
     if (!items || items.length === 0) {
       throw new Error(`No skills are listed for the stack group "${id}".`);
     }
+    const resolved = items.map((label) => ({
+      label,
+      logo: getSkillLogos(label)[0] ?? null,
+    }));
+    // A card shows each logo once: technologies sharing a logo are one entry
+    // in skills.ts ("Redux Toolkit & RTK Query").
+    const logos = resolved.flatMap((item) =>
+      item.logo ? [item.logo.src] : [],
+    );
+    const repeated = logos.filter((src, index) => logos.indexOf(src) !== index);
+    if (repeated.length > 0) {
+      throw new Error(
+        `The stack group "${id}" repeats a logo (${repeated.join(', ')}); list those technologies as one entry in skills.ts.`,
+      );
+    }
     return {
       id,
       ...cards[id],
       title: t(locale, `page.tools.group.${id}.title`),
       description: t(locale, `page.tools.group.${id}.description`),
-      items: items.map((label) => ({
-        label,
-        logo: getSkillLogos(label)[0] ?? null,
-      })),
+      items: resolved,
     };
   });
 

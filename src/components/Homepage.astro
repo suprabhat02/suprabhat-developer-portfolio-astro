@@ -202,7 +202,6 @@ const traits = [
 const expertiseCards = [
   {
     visual: 'layout' as SceneName,
-    icon: 'frontend',
     title: t(locale, 'expertise.frontend.title'),
     body: t(locale, 'expertise.frontend.body'),
     tags: [
@@ -220,7 +219,6 @@ const expertiseCards = [
   },
   {
     visual: 'flow' as SceneName,
-    icon: 'backend',
     title: t(locale, 'expertise.backend.title'),
     body: t(locale, 'expertise.backend.body'),
     tags: [
@@ -235,7 +233,6 @@ const expertiseCards = [
   },
   {
     visual: 'system' as SceneName,
-    icon: 'design',
     title: t(locale, 'expertise.design.title'),
     body: t(locale, 'expertise.design.body'),
     tags: [
@@ -279,14 +276,6 @@ const contactLinks: readonly ContactLink[] = [
     external: social.external,
   })),
 ];
-const expertiseIcons: Record<
-  (typeof expertiseCards)[number]['icon'],
-  IconName
-> = {
-  frontend: 'code',
-  backend: 'database',
-  design: 'layers',
-};
 const faqIndex = featured.length > 0 ? '13' : '12';
 const contactIndex = featured.length > 0 ? '14' : '13';
 ---
@@ -678,9 +667,6 @@ const contactIndex = featured.length > 0 ? '14' : '13';
               data-glow
             >
               <LiveScene scene={card.visual} />
-              <div class="expertise-icon">
-                <Icon name={expertiseIcons[card.icon]} size={24} />
-              </div>
               <h3>{card.title}</h3>
               <p>{card.body}</p>
               <div class="skill-tags">
@@ -918,7 +904,14 @@ const contactIndex = featured.length > 0 ? '14' : '13';
                       <summary>
                         {t(locale, `faq.${faq.id}.q`, faq.question)}
                         <span class="faq-icon" aria-hidden="true">
-                          +
+                          <svg
+                            viewBox="0 0 24 24"
+                            width="16"
+                            height="16"
+                            focusable="false"
+                          >
+                            <path d="m6 9 6 6 6-6" />
+                          </svg>
                         </span>
                       </summary>
                       <div class="faq-body">

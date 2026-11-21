@@ -835,80 +835,6 @@
   flex-direction: column;
 }
 
-.work-card-media {
-  position: relative;
-  height: 7.5rem;
-  margin-block-end: 1.25rem;
-  overflow: hidden;
-  overflow: clip;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-control);
-  background:
-    radial-gradient(
-      circle at 20% 0%,
-      color-mix(in oklch, var(--accent) 26%, transparent),
-      transparent 60%
-    ),
-    radial-gradient(
-      circle at 100% 100%,
-      color-mix(in oklch, var(--accent-2) 24%, transparent),
-      transparent 55%
-    ),
-    var(--bg-2);
-}
-
-.work-card-media::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(to right, var(--fx-grid-line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--fx-grid-line) 1px, transparent 1px);
-  background-size: 18px 18px;
-  mask-image: linear-gradient(to bottom, #000, transparent);
-}
-
-.work-card-index {
-  position: absolute;
-  inset-block-start: 0.75rem;
-  inset-inline-start: 0.9rem;
-  color: var(--text);
-  font-size: 2.25rem;
-  font-weight: 800;
-  letter-spacing: -0.05em;
-  opacity: 0.9;
-}
-
-.work-card-lines {
-  position: absolute;
-  inset-inline-end: 1rem;
-  inset-block-end: 1rem;
-  display: grid;
-  gap: 0.35rem;
-  width: 45%;
-}
-
-.work-card-lines span {
-  height: 6px;
-  border-radius: var(--radius-pill);
-  background: color-mix(in oklch, var(--text) 18%, transparent);
-  transform-origin: left;
-  transition: transform 520ms var(--fx-ease-out);
-}
-
-.work-card-lines span:nth-child(2) {
-  width: 70%;
-  background: color-mix(in oklch, var(--accent) 60%, transparent);
-}
-
-.work-card-lines span:nth-child(3) {
-  width: 40%;
-}
-
-.work-card:hover .work-card-lines span {
-  transform: scaleX(1.18);
-}
-
 .work-card-link {
   display: inline-flex;
   align-items: center;
@@ -2060,18 +1986,6 @@
   padding: 2rem;
 }
 
-.expertise-icon {
-  display: grid;
-  place-items: center;
-  width: 3rem;
-  height: 3rem;
-  border: 1px solid var(--accent-border);
-  border-radius: 9px;
-  background: var(--bg-card);
-  box-shadow: 0 12px 30px -10px var(--accent-glow);
-  color: var(--accent);
-}
-
 .expertise-card h3 {
   color: var(--text);
   font-size: 1.18rem;
@@ -2087,6 +2001,12 @@
 .trait-card .lv-scene,
 .expertise-card .lv-scene {
   margin-block-end: 0;
+}
+
+/* The scene is the card's only artwork: give it room above the title
+   (0.35rem plus the card's 0.9rem gap). */
+.expertise-card .lv-scene {
+  margin-block-end: 0.35rem;
 }
 
 .skill-tags {
@@ -2276,7 +2196,7 @@
 }
 
 @media (min-width: 1041px) {
-  /* Twelve columns, filled row by row as 5 + 7, 7 + 5, 6 + 6. The shapes
+  /* Twelve columns, filled row by row as 7 + 5, 7 + 5, 6 + 6. The shapes
      follow the card order in stack.ts, so the document order is unchanged. */
   .cx--grid .stack-bento {
     grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -2402,32 +2322,8 @@
   transition: color 160ms ease;
 }
 
-.homepage-shell .faq-list summary::after {
-  content: none;
-}
-
 .homepage-shell .faq-list summary:hover {
   color: var(--accent);
-}
-
-.faq-icon {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 2rem;
-  height: 2rem;
-  border: 1px solid var(--accent-border);
-  border-radius: 50%;
-  color: var(--accent);
-  font-size: 1.15rem;
-  transition:
-    transform 300ms var(--fx-ease-spring),
-    background-color 160ms ease;
-}
-
-details[open] .faq-icon {
-  background: var(--accent-subtle);
-  transform: rotate(45deg);
 }
 
 .faq-body {
@@ -2756,11 +2652,6 @@ textarea.f-input {
 }
 
 @media (max-width: 860px) {
-  /* Stacked cards: drop the decorative panel so three fit in less scroll. */
-  .work-card-media {
-    display: none;
-  }
-
   .conversion-grid--three,
   .conversion-grid--two,
   .articles-grid,
@@ -2826,8 +2717,7 @@ textarea.f-input {
   :root:not([data-motion='playing']) .hero-proof-card,
   :root:not([data-motion='playing']) .hero-proof-card:hover,
   :root:not([data-motion='playing']) .stat-item:hover,
-  :root:not([data-motion='playing']) .c-link:hover,
-  :root:not([data-motion='playing']) .work-card-lines span {
+  :root:not([data-motion='playing']) .c-link:hover {
     transition: none;
     transform: none;
   }
@@ -2898,8 +2788,7 @@ textarea.f-input {
 }
 
 /* Collaboration cards with line icons */
-.collab-icon,
-.expertise-icon {
+.collab-icon {
   display: grid;
   place-items: center;
   color: var(--accent-ink);

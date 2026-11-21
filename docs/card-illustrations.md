@@ -11,18 +11,21 @@ from design tokens (`src/styles/tokens.css` via the `--sc-*` vars in
 `src/styles/scenes.css`), so a scene automatically follows light/dark theme
 and any palette change — nothing is a baked-in color or a downloaded asset.
 
-| Section           | Card                                          | Scene     |
-| ----------------- | --------------------------------------------- | --------- |
-| Featured articles | `react-inp-benchmark`                         | `race`    |
-| Featured articles | `accessibility-in-react-what-developers-skip` | `voice`   |
-| Featured articles | Every other post slug                         | `article` |
-| About me          | Performance-first                             | `vitals`  |
-| About me          | Accessibility by default                      | `keys`    |
-| About me          | Scalable architecture                         | `branch`  |
-| About me          | Full-stack capable                            | `bridge`  |
-| Core expertise    | Front-end engineering                         | `layout`  |
-| Core expertise    | Back-end and API integration                  | `flow`    |
-| Core expertise    | Design systems and performance                | `system`  |
+| Section           | Card                                          | Scene       |
+| ----------------- | --------------------------------------------- | ----------- |
+| Featured articles | `react-inp-benchmark`                         | `race`      |
+| Featured articles | `accessibility-in-react-what-developers-skip` | `voice`     |
+| Featured articles | Every other post slug                         | `article`   |
+| About me          | Performance-first                             | `vitals`    |
+| About me          | Accessibility by default                      | `keys`      |
+| About me          | Scalable architecture                         | `branch`    |
+| About me          | Full-stack capable                            | `bridge`    |
+| Core expertise    | Front-end engineering                         | `layout`    |
+| Core expertise    | Back-end and API integration                  | `flow`      |
+| Core expertise    | Design systems and performance                | `system`    |
+| Work (homepage)   | `analytics-command-center`                    | `signals`   |
+| Work (homepage)   | `design-system-uplift`                        | `alignment` |
+| Work (homepage)   | `performance-modernization`                   | `waterfall` |
 
 The five redesigned sections live in `src/components/fx/scenes/`. Their
 visual-only stories use no code and almost no words. See

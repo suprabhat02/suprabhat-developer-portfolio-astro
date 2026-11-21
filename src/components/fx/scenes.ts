@@ -70,6 +70,12 @@ export const sceneNames = [
   'handoff',
   /** A pull request: its diff, three passing checks, approved and merged. */
   'review',
+  /** A role tab is picked, real bars replace a skeleton and the bar over a risk threshold is flagged. */
+  'signals',
+  /** An alignment guide sweeps three differently built screens into one standard layout. */
+  'alignment',
+  /** A request waterfall: serial requests become short parallel ones and the page loads earlier. */
+  'waterfall',
 ] as const;
 
 export type SceneName = (typeof sceneNames)[number];
@@ -81,3 +87,13 @@ const articleScenes = new Map<string, SceneName>([
 
 export const getArticleScene = (slug: string): SceneName =>
   articleScenes.get(slug) ?? 'article';
+
+/** Scene for an internal work card, by work id; `undefined` shows no scene. */
+const workScenes = new Map<string, SceneName>([
+  ['analytics-command-center', 'signals'],
+  ['design-system-uplift', 'alignment'],
+  ['performance-modernization', 'waterfall'],
+]);
+
+export const getWorkScene = (id: string): SceneName | undefined =>
+  workScenes.get(id);

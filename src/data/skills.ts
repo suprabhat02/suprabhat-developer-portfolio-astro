@@ -11,6 +11,11 @@ export interface SkillGroup {
 export const skillsLead =
   'Core services include SaaS frontend development, dashboard UI engineering, performance optimization, and design system delivery.';
 
+/**
+ * One entry per logo within a group: technologies that share a logo (Redux
+ * Toolkit and RTK Query, React Hooks and the Context API, Bootstrap and React
+ * Bootstrap) are listed together so a card never repeats an icon.
+ */
 const sharedGroups: readonly { id: ToolGroupId; items: readonly string[] }[] = [
   {
     id: 'languages',
@@ -27,11 +32,9 @@ const sharedGroups: readonly { id: ToolGroupId; items: readonly string[] }[] = [
   {
     id: 'data',
     items: [
-      'Redux Toolkit',
-      'RTK Query',
+      'Redux Toolkit & RTK Query',
       'Zustand',
-      'React Hooks',
-      'Context API',
+      'React Hooks & Context API',
       'TanStack Query',
       'GraphQL',
       'Zod',
@@ -46,8 +49,7 @@ const sharedGroups: readonly { id: ToolGroupId; items: readonly string[] }[] = [
       'shadcn/ui',
       'Chakra UI',
       'Headless UI',
-      'Bootstrap 5',
-      'React Bootstrap',
+      'Bootstrap 5 & React Bootstrap',
       'Ant Design',
       'Material UI',
     ],
