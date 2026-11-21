@@ -108,7 +108,7 @@ const pad = (value: number) => String(value).padStart(2, '0');
       {
         featuredWork.map(({ item, scene }) => (
           <article
-            class="conversion-card work-card fx-live fx-glow fx-reveal-scale"
+            class="conversion-card work-card fx-live fx-glow fx-card-gradient fx-reveal-scale"
             data-glow
           >
             {scene && <LiveScene {scene} />}

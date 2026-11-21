@@ -1907,7 +1907,7 @@ test('problem cards become a bento without controls on wide screens', async ({
   }
 });
 
-test('the stack becomes a 5+7, 7+5, 6+6 bento without controls on wide screens', async ({
+test('the stack becomes a 7+5, 7+5, 6+6 bento without controls on wide screens', async ({
   browser,
 }) => {
   // With and without script: the bento is CSS only.
@@ -1947,6 +1947,12 @@ test('the stack becomes a 5+7, 7+5, 6+6 bento without controls on wide screens',
                 card.querySelectorAll('.stack-tile img'),
                 (logo) => logo.getBoundingClientRect().width,
               ),
+              // Rows of technology tiles, so cards in a row can end level.
+              tileRows: new Set(
+                Array.from(card.querySelectorAll('.stack-tile'), (tile) =>
+                  Math.round(tile.getBoundingClientRect().top),
+                ),
+              ).size,
               copyBelowScene:
                 (card.querySelector('.stack-copy')?.getBoundingClientRect()
                   .top ?? 0) >= scene.bottom,
@@ -1985,6 +1991,9 @@ test('the stack becomes a 5+7, 7+5, 6+6 bento without controls on wide screens',
                   Math.abs(card.box.height - (row[0]?.box.height ?? 0)) <= 1,
               ),
             ),
+            evenTileRows: ordered.every((row) =>
+              row.every((card) => card.tileRows === row[0]?.tileRows),
+            ),
             overlaps,
             sceneFirst: cards.every((card) => card.copyBelowScene),
             // Every scene is drawn at one size, close to the size it was drawn
@@ -2012,6 +2021,7 @@ test('the stack becomes a 5+7, 7+5, 6+6 bento without controls on wide screens',
             ['workflow', 'design'],
           ],
           evenRows: true,
+          evenTileRows: true,
           overlaps: false,
           sceneFirst: true,
           scenesEven: true,
@@ -2022,8 +2032,9 @@ test('the stack becomes a 5+7, 7+5, 6+6 bento without controls on wide screens',
         expect(layout.scale, label).toBeGreaterThanOrEqual(0.9);
         expect(layout.scale, label).toBeLessThanOrEqual(1.4);
         const [first, second, third] = layout.shares;
-        // 5 of 12, 7 of 12 and 6 of 12 columns, less the gap.
-        expect(first, label).toBeLessThan(45);
+        // 7 of 12, 7 of 12 and 6 of 12 columns, less the gap: the wide
+        // card leads each of the first two rows.
+        expect(first, label).toBeGreaterThan(55);
         expect(second, label).toBeGreaterThan(55);
         expect(third, label).toBe(50);
       }
