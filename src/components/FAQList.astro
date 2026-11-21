@@ -9,10 +9,15 @@ const { locale = 'en' } = Astro.props as { locale?: Locale };
   {
     faqs.map((faq) => (
       <details>
-        <>
-          <summary>{t(locale, `faq.${faq.id}.q`, faq.question)}</summary>
-          <p>{t(locale, `faq.${faq.id}.a`, faq.answer)}</p>
-        </>
+        <summary>
+          {t(locale, `faq.${faq.id}.q`, faq.question)}
+          <span class="faq-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16" focusable="false">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </span>
+        </summary>
+        <p>{t(locale, `faq.${faq.id}.a`, faq.answer)}</p>
       </details>
     ))
   }

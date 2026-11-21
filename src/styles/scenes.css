@@ -119,17 +119,6 @@
     opacity 200ms ease;
 }
 
-/* The artwork leans in a touch when the card is engaged. */
-.lv-scene svg {
-  transition: scale 600ms var(--fx-ease-out);
-}
-
-:is(.fx-live:hover, .fx-live:focus-within, .fx-live[data-active])
-  .lv-scene
-  svg {
-  scale: 1.035;
-}
-
 .lv-scene svg {
   display: block;
   width: 100%;
@@ -990,6 +979,139 @@
   --lv-step: 240ms;
 }
 
+/* ── Work scenes (WorkScenes.astro) ───────────────────────────────── */
+/* Story beats for the internal work cards. They ride the shared visual-story
+   timeline (`.ui-story`, `--i`); the resting style of each is its finished
+   frame, so reduced motion and paused motion show the end state. */
+.lv-scene .ui-story .k-grow-y {
+  --lv-anim: wk-grow-y;
+  transform-origin: 50% 100%;
+}
+.lv-scene .ui-story .k-grow-x {
+  --lv-anim: wk-grow-x;
+  transform-origin: 0 50%;
+}
+.lv-scene .ui-story .k-shift {
+  --lv-anim: wk-shift;
+}
+.lv-scene .ui-story .k-fade-out {
+  opacity: 0;
+  --lv-anim: wk-fade-out;
+}
+/* `animation-timing-function` eases each keyframe interval, not the whole
+   loop, so a beat window (`linear()` above) only works with two keyframes.
+   The ring needs three, so it runs on plain linear timing with its beat
+   written into the keyframes: 44% is beat 11, the flagged marker's pop. */
+.lv-scene .ui-story .k-ring {
+  opacity: 0;
+  --lv-anim: wk-ring;
+  animation-timing-function: linear;
+}
+/* A quick swap at the guide's moment: an 8% window instead of 20%. */
+.lv-scene .ui-story :is(.k-swap-in, .k-swap-out) {
+  animation-timing-function: linear(
+    0,
+    0 calc(var(--i, 0) * 4%),
+    1 calc(var(--i, 0) * 4% + 8%),
+    1
+  );
+}
+.lv-scene .ui-story .k-swap-in {
+  --lv-anim: wk-fade-in;
+}
+.lv-scene .ui-story .k-swap-out {
+  opacity: 0;
+  --lv-anim: wk-fade-out;
+}
+.lv-scene .ui-story .k-guide {
+  opacity: 0;
+  --lv-anim: wk-guide;
+  animation-timing-function: linear;
+}
+.lv-scene--signals,
+.lv-scene--alignment,
+.lv-scene--waterfall {
+  --lv-dur: 4.8s;
+}
+@keyframes wk-grow-y {
+  0% {
+    transform: scaleY(0);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes wk-grow-x {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes wk-shift {
+  0% {
+    transform: translate(var(--sx, 0px), var(--sy, 0px));
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes wk-fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes wk-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes wk-ring {
+  0%,
+  44% {
+    opacity: 0;
+    transform: none;
+  }
+  47% {
+    opacity: 0.9;
+    transform: none;
+  }
+  64%,
+  100% {
+    opacity: 0;
+    transform: scale(2.8);
+  }
+}
+/* The guide's sweep is timed to the swaps: it reaches each screen's centre
+   at that screen's `--i` beat (see `swapBeat` in WorkScenes.astro). */
+@keyframes wk-guide {
+  0%,
+  4% {
+    opacity: 0;
+    transform: none;
+  }
+  8% {
+    opacity: 1;
+    transform: none;
+  }
+  70% {
+    opacity: 1;
+    transform: translateX(var(--gx));
+  }
+  78%,
+  100% {
+    opacity: 0;
+    transform: translateX(var(--gx));
+  }
+}
+
 /* ── Legacy keyframes (0% matches the resting frame) ──────────────── */
 
 @keyframes lv-tick {
@@ -1219,11 +1341,6 @@
 
   :root:not([data-motion='playing']) .fx-live .lv-l {
     translate: none;
-    transition: none;
-  }
-
-  :root:not([data-motion='playing']) .lv-scene svg {
-    scale: none !important;
     transition: none;
   }
 

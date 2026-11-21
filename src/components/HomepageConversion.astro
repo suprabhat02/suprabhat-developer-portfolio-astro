@@ -11,6 +11,7 @@ import LiveScene from './fx/LiveScene.astro';
 import WorldMap from './fx/WorldMap.astro';
 import OpenSourceSpotlight from './OpenSourceSpotlight.astro';
 import { isOpenSourceProjectId } from '../data/openSource';
+import { getWorkScene } from './fx/scenes';
 
 interface Props {
   locale: Locale;
@@ -24,7 +25,8 @@ const content = getHomepageConversionContent(locale);
 // Each open-source project has its own spotlight card above the grid.
 const featuredWork = work
   .filter((item) => item.kind !== 'open-source')
-  .slice(0, 3);
+  .slice(0, 3)
+  .map((item) => ({ item, scene: getWorkScene(item.id) }));
 const openSourceIds = work
   .map((item) => item.id)
   .filter(isOpenSourceProjectId)
@@ -104,19 +106,12 @@ const pad = (value: number) => String(value).padStart(2, '0');
   <div class="wrap work-more">
     <div class="conversion-grid conversion-grid--three">
       {
-        featuredWork.map((item, index) => (
+        featuredWork.map(({ item, scene }) => (
           <article
-            class="conversion-card work-card fx-glow fx-reveal-scale"
+            class="conversion-card work-card fx-live fx-glow fx-reveal-scale"
             data-glow
           >
-            <div class="work-card-media" aria-hidden="true">
-              <span class="work-card-index">{pad(index + 1)}</span>
-              <span class="work-card-lines">
-                <span />
-                <span />
-                <span />
-              </span>
-            </div>
+            {scene && <LiveScene {scene} />}
             <h3>{item.title}</h3>
             <p>{item.summary}</p>
             <ul

@@ -248,9 +248,13 @@ a logo in `tools.ts` would no longer be shown.
 - **Phones and tablets** show the six cards as a `Carousel`, the same
   component as the problem cards; tiles sit three to a row on most phones.
 - **From 1041px** the carousel becomes a twelve-column bento, filled row by
-  row as 5 + 7, 7 + 5, 6 + 6. The shape of each card comes from `stack.ts`, in
+  row as 7 + 5, 7 + 5, 6 + 6. The shape of each card comes from `stack.ts`, in
   card order, so the document order and the visual order stay the same. The
-  order pairs a short list with a long one, so cards in a row end level.
+  wide card of each row holds the longer list, so cards in a row end level.
+- **One tile per logo** within a card: technologies that share a logo are one
+  entry in `skills.ts` ("Redux Toolkit & RTK Query", "React Hooks & Context
+  API", "Bootstrap 5 & React Bootstrap"). `getStack` fails the build if a card
+  would repeat a logo, and `getSkillLogos` never returns the same logo twice.
 - **Scenes** are product-interface scenes; see "Product scenes" below.
 
 ## Product scenes
@@ -286,8 +290,9 @@ the same.
 
 ### Visual stories outside the stack
 
-Core expertise, Engineering approach, Services, Remote collaboration and
-Writing use diagrams or simplified product UI, not code. Their components
+Core expertise, Engineering approach, Services, Remote collaboration,
+Writing and the homepage internal work cards use diagrams or simplified
+product UI, not code. Their components
 are in `src/components/fx/scenes/` and are mounted by `LiveScene`. They reuse
 the flat `Surface` and `ui-*` paint vocabulary; no runtime or dependency is
 added. The existing card dimensions and layouts stay unchanged.
@@ -335,12 +340,31 @@ added. The existing card dimensions and layouts stay unchanged.
 | Writing       | `race`       | Diagram: relative response bars compare a blocked task with responsive chunks   |
 | Writing       | `voice`      | UI: a button gains a label and is read aloud                                    |
 | Writing       | `article`    | UI: a neutral article layout draws in                                           |
+| Work          | `signals`    | UI: a role tab, real bars replace a skeleton, the bar over a threshold flagged  |
+| Work          | `alignment`  | UI: a sweeping guide turns three differently built screens into one layout      |
+| Work          | `waterfall`  | Diagram: serial requests become parallel ones and the loaded marker moves left  |
 
 `getArticleScene(post.id)` in `src/components/fx/scenes.ts` binds
 `react-inp-benchmark` to `race` and
 `accessibility-in-react-what-developers-skip` to `voice`. Every other slug
 gets `article`, regardless of publication date or list position. The same
 mapping applies in English, Spanish and Arabic.
+
+`getWorkScene(item.id)` binds the homepage internal work cards by work id:
+`analytics-command-center` to `signals`, `design-system-uplift` to
+`alignment` and `performance-modernization` to `waterfall`. A work item with
+no scene renders no artwork rather than a placeholder. These scenes add
+their own beats in `scenes.css` ("Work scenes"): `k-grow-y`/`k-grow-x` (a bar
+grows from its base), `k-shift` (moves in from `--sx`), `k-fade-out`,
+`k-swap-in`/`k-swap-out` (an 8% swap window, timed to the alignment guide),
+`k-ring` and `k-guide`. `animation-timing-function` eases each keyframe
+interval rather than the whole loop, so a `linear()` beat window only works
+with two keyframes; `k-ring` and `k-guide` need more and use plain linear
+timing with their beats written into the keyframes.
+
+Card hover no longer scales the artwork: engagement plays the story, the
+sheen and the spotlight, and the card keeps its tilt and lift; the scene
+itself stays at its drawn size.
 
 Service content is unchanged: Spanish and Arabic currently have four cards,
 not the English eight. Architecture review, design system engineering,

@@ -1236,8 +1236,12 @@ main {
   border-bottom: 1px solid var(--line);
 }
 .faq-list summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   padding-block: 1.25rem;
-  padding-inline: 0 2rem;
+  padding-inline: 0;
   font-size: 1.15rem;
   font-weight: 700;
   cursor: pointer;
@@ -2247,24 +2251,51 @@ main {
 
 /* FAQ: animated disclosure where supported (progressive). */
 .faq-list summary {
-  position: relative;
   list-style: none;
 }
 .faq-list summary::-webkit-details-marker {
   display: none;
 }
-.faq-list summary::after {
-  content: '+';
-  position: absolute;
-  inset-inline-end: 0.25rem;
-  inset-block-start: 1.15rem;
-  color: var(--accent);
-  font-size: 1.35rem;
-  line-height: 1;
-  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+/* The disclosure mark: a drawn chevron centred in a ring (never a text
+   glyph, whose metrics sit off-centre in a monospace face). It points down
+   when closed and up when open; a vertical flip needs no RTL mirror. */
+.faq-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  inline-size: 2rem;
+  block-size: 2rem;
+  border: 1px solid var(--accent-border);
+  border-radius: 50%;
+  color: var(--accent-ink);
+  transition:
+    rotate 300ms var(--fx-ease-out),
+    background-color 160ms ease;
 }
-.faq-list details[open] summary::after {
-  transform: rotate(45deg);
+.faq-icon svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.faq-list details[open] .faq-icon {
+  background: var(--accent-subtle);
+  rotate: 180deg;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='playing']) .faq-icon {
+    transition: none;
+  }
+}
+:root[data-motion='paused'] .faq-icon {
+  transition: none;
+}
+@media (forced-colors: active) {
+  .faq-icon {
+    border-color: CanvasText;
+    color: CanvasText;
+  }
 }
 @supports (interpolate-size: allow-keywords) {
   .faq-list,

@@ -22,6 +22,7 @@ import ApproachScenes from './scenes/ApproachScenes.astro';
 import ServiceScenes from './scenes/ServiceScenes.astro';
 import CollaborationScenes from './scenes/CollaborationScenes.astro';
 import WritingScenes from './scenes/WritingScenes.astro';
+import WorkScenes from './scenes/WorkScenes.astro';
 import '../../styles/scenes.css';
 
 interface Props {
@@ -56,6 +57,7 @@ const R = { frame: 12, panel: 10, tile: 6, chip: 4 } as const;
     <ServiceScenes {scene} />
     <CollaborationScenes {scene} />
     <WritingScenes {scene} />
+    <WorkScenes {scene} />
     {
       scene === 'orbit' && (
         <>

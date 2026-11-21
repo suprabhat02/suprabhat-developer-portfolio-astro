@@ -37,16 +37,44 @@ test('article artwork follows its slug even when posts are reordered or unknown'
   }
 });
 
+test('internal work cards show the scene for their work id in every locale', async ({
+  page,
+}) => {
+  const expected: Record<string, string> = {
+    'analytics-command-center': 'signals',
+    'design-system-uplift': 'alignment',
+    'performance-modernization': 'waterfall',
+  };
+  for (const prefix of ['', '/es', '/ar']) {
+    await page.goto(`${prefix}/`);
+    const cards = page.locator('#work .work-card');
+    await expect(cards).toHaveCount(3);
+    for (const card of await cards.all()) {
+      const href = await card.locator('.work-card-link').getAttribute('href');
+      const id = href?.split('/').filter(Boolean).at(-1) ?? '';
+      expect(Object.keys(expected)).toContain(id);
+      const scene = card.locator('.lv-scene');
+      await expect(scene).toHaveCount(1);
+      await expect(scene).toHaveAttribute('aria-hidden', 'true');
+      await expect(scene).toHaveClass(
+        new RegExp(`\\blv-scene--${expected[id]}\\b`),
+      );
+      await expect(scene.locator('text')).toHaveCount(0);
+    }
+  }
+});
+
 test('visual stories stay word-light and show complete reduced-motion results in every locale', async ({
   page,
 }) => {
   test.slow();
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  const sections = '#expertise, #approach, #engagements, #collaboration, #blog';
+  const sections =
+    '#expertise, #approach, #engagements, #collaboration, #blog, #work .work-card';
   for (const prefix of ['', '/es', '/ar']) {
     await page.goto(`${prefix}/`);
     const scenes = page.locator(sections).locator('.lv-scene');
-    await expect(scenes).toHaveCount(prefix ? 16 : 20);
+    await expect(scenes).toHaveCount(prefix ? 19 : 23);
     await expect(scenes.locator('.ty-kw, .ty-type')).toHaveCount(0);
     const results = await scenes.evaluateAll((elements) =>
       elements.map((scene) => ({
@@ -62,13 +90,25 @@ test('visual stories stay word-light and show complete reduced-motion results in
         ).filter((node) => getComputedStyle(node).stroke === 'none').length,
         incomplete: Array.from(
           scene.querySelectorAll(
-            '.ui-story .k-rise, .ui-story .k-after, .ui-story .k-tick, .ui-story .k-progress',
+            '.ui-story .k-rise, .ui-story .k-after, .ui-story .k-tick, .ui-story .k-progress, .ui-story .k-swap-in',
           ),
         ).filter(
           (node) =>
             getComputedStyle(node).opacity !== '1' ||
             parseFloat(getComputedStyle(node).strokeDashoffset) !== 0,
         ).length,
+        // Grown bars and shifted markers rest at full size, in place.
+        moved: Array.from(
+          scene.querySelectorAll(
+            '.ui-story .k-grow-y, .ui-story .k-grow-x, .ui-story .k-shift',
+          ),
+        ).filter((node) => getComputedStyle(node).transform !== 'none').length,
+        // Start-state layers (skeleton, old screens, ring, guide) rest hidden.
+        leftovers: Array.from(
+          scene.querySelectorAll(
+            '.ui-story .k-fade-out, .ui-story .k-swap-out, .ui-story .k-ring, .ui-story .k-guide',
+          ),
+        ).filter((node) => getComputedStyle(node).opacity !== '0').length,
         packets: Array.from(scene.querySelectorAll('.k-hop')).map((node) =>
           parseFloat(getComputedStyle(node).strokeDashoffset),
         ),
@@ -81,6 +121,8 @@ test('visual stories stay word-light and show complete reduced-motion results in
       expect(scene.animations).toBe(0);
       expect(scene.missingPaint).toBe(0);
       expect(scene.incomplete).toBe(0);
+      expect(scene.leftovers).toBe(0);
+      expect(scene.moved).toBe(0);
       for (const offset of scene.packets) expect(offset).toBeLessThan(-1);
     }
     for (const scene of ['clarify', 'blueprint', 'quality']) {
@@ -104,7 +146,7 @@ test('visual story replays share a clock and animate only transforms, opacity an
   test.slow();
   await page.goto('/');
   const cards = page.locator(
-    '#expertise .fx-live, #approach .fx-live, #engagements .fx-live, #collaboration .fx-live, #blog .fx-live',
+    '#expertise .fx-live, #approach .fx-live, #engagements .fx-live, #collaboration .fx-live, #blog .fx-live, #work .work-card.fx-live',
   );
   for (const card of await cards.all()) {
     await page.mouse.move(-10, -10);
@@ -210,8 +252,10 @@ test('the stack keeps local logos and readable reduced-motion content in every l
         );
       }
       if (route === '/') {
-        // Skills and tools are one section: six cards, every technology once,
-        // each on its own tile (never "A + B").
+        // Skills and tools are one section: six cards, every technology once.
+        // Technologies with different logos get their own tiles (never
+        // "A + B"); those sharing a logo share one tile, so no card repeats
+        // an icon.
         await expect(page.locator('#tools')).toHaveCount(1);
         await expect(page.locator('#skills #tools')).toHaveCount(1);
         const cards = page.locator('#skills .stack-card');
@@ -220,25 +264,34 @@ test('the stack keeps local logos and readable reduced-motion content in every l
         const labels = (
           await page.locator('#skills .stack-name').allTextContents()
         ).map((label) => label.trim());
-        expect(labels).toHaveLength(36);
-        expect(new Set(labels).size).toBe(36);
+        expect(labels).toHaveLength(33);
+        expect(new Set(labels).size).toBe(33);
         expect(labels.filter((label) => label.includes(' + '))).toEqual([]);
         // The 28 tool logos plus JavaScript, Chakra UI and Headless UI; only
-        // REST APIs has no logo of its own.
+        // REST APIs has no logo of its own. React appears on two cards.
         const logos = await page
           .locator('#skills .stack-tile img')
           .evaluateAll((images) =>
             images.map((image) => image.getAttribute('src') ?? ''),
           );
-        expect(logos).toHaveLength(35);
+        expect(logos).toHaveLength(32);
         expect(new Set(logos).size).toBe(31);
+        const repeatsPerCard = await cards.evaluateAll((all) =>
+          all.flatMap((card) => {
+            const srcs = [...card.querySelectorAll('.stack-tile img')].map(
+              (image) => image.getAttribute('src') ?? '',
+            );
+            return srcs.filter((src, index) => srcs.indexOf(src) !== index);
+          }),
+        );
+        expect(repeatsPerCard).toEqual([]);
         await expect(
           page.locator('#skills .stack-tile:not(:has(img))'),
         ).toHaveText(['REST APIs']);
         for (const [group, members] of Object.entries({
           languages: ['React', 'Next.js', 'JavaScript', 'TypeScript', 'Astro'],
-          data: ['Redux Toolkit', 'RTK Query', 'React Hooks', 'Context API'],
-          styling: ['CSS3', 'Sass', 'Bootstrap 5', 'React Bootstrap'],
+          data: ['Redux Toolkit & RTK Query', 'React Hooks & Context API'],
+          styling: ['CSS3', 'Sass', 'Bootstrap 5 & React Bootstrap'],
           backend: ['FastAPI', 'PostgreSQL', 'MongoDB', 'REST APIs'],
           design: ['Figma', 'Storybook'],
           workflow: ['GitHub Actions', 'Azure', 'Git'],

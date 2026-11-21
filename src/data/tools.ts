@@ -166,6 +166,11 @@ export const getSkillLogos = (item: string) =>
         match.index >= 0 && match.tool !== undefined,
     )
     .sort((first, second) => first.index - second.index)
+    // Two names can share a logo ("React Hooks & Context API"): show it once.
+    .filter(
+      (match, position, matches) =>
+        matches.findIndex((other) => other.tool === match.tool) === position,
+    )
     .slice(0, 2)
     .map(({ tool }) => ({
       src: tool.icon,
