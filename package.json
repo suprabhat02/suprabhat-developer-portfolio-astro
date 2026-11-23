@@ -17,10 +17,10 @@
   "dependencies": {
     "@astrojs/markdown-satteri": "0.4.10",
     "@astrojs/rss": "^4.0.19",
-    "@astrojs/sitemap": "^3.7.5",
+    "@astrojs/sitemap": "^3.7.6",
     "@fontsource-variable/geist-mono": "^5.3.0",
-    "astro": "^7.4.12",
-    "react-smart-copy": "1.14.0",
+    "astro": "^7.4.13",
+    "react-smart-copy": "1.31.2",
     "sharp": "^0.35.5"
   },
   "devDependencies": {
