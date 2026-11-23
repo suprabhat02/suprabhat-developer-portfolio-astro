@@ -1210,6 +1210,10 @@ main {
   margin-top: 2.5rem;
   color: var(--muted);
 }
+.case-study-updated {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
 .meta {
   color: var(--accent-strong);
   font-size: 0.85rem;
