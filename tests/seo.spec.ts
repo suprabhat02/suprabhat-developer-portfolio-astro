@@ -498,6 +498,19 @@ test('production SEO signals and internal links are crawlable', async ({
   expect(await llms.text()).toContain(
     'https://suprabhat-dev.com/sitemap-index.xml',
   );
+  // llms.txt is hand-written: fail the build when a new English article or
+  // case study ships without its line, so the file never drifts behind the
+  // sitemap.
+  const llmsText = await llms.text();
+  const contentUrls = [
+    ...new Set(
+      sitemap.match(
+        /https:\/\/suprabhat-dev\.com\/(?:blog|work)\/[a-z0-9-]+\//g,
+      ) ?? [],
+    ),
+  ];
+  expect(contentUrls.length).toBeGreaterThan(0);
+  for (const url of contentUrls) expect(llmsText, url).toContain(url);
 
   await page.goto('/blog/');
   await expect(page.locator('.article-list article')).toHaveCount(8);

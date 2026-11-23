@@ -74,6 +74,13 @@ Based in India, Suprabhat has delivered with distributed teams in Denmark and Ch
 - [About](https://suprabhat-dev.com/about/): Career arc, global collaboration, and engineering approach.
 - [Experience](https://suprabhat-dev.com/experience/): Roles at Topsoe, Cognizant, TrueBlue, MobileCoderz, and Swaragh Technologies.
 - [Work](https://suprabhat-dev.com/work/): Anonymized and public frontend case studies.
+  - [Analytics command center](https://suprabhat-dev.com/work/analytics-command-center/): anonymized case study of a role-based analytics dashboard with accessible charts, resilient data states, performance, and scalable React UI.
+  - [Design system uplift](https://suprabhat-dev.com/work/design-system-uplift/): anonymized case study about improving a design system with reusable React components, clearer tokens, accessibility, and UI governance.
+  - [Performance modernization](https://suprabhat-dev.com/work/performance-modernization/): anonymized case study about improving perceived speed, rendering stability, asset delivery, and Core Web Vitals for a complex product UI.
+  - [Portfolio SEO and i18n system](https://suprabhat-dev.com/work/portfolio-seo-i18n-system/): how this static Astro site became localized, crawlable, accessible, and performance-focused without client-side content dependencies.
+  - [Accessible contact workflow](https://suprabhat-dev.com/work/accessible-contact-workflow/): a low-friction contact workflow with accessible labels, validation, fallback contact paths, privacy clarity, and crawlable content.
+  - [Frontend quality system](https://suprabhat-dev.com/work/frontend-quality-system/): typed content, accessibility checks, crawlable routes, responsive layout validation, and static build confidence.
+  - [react-smart-copy](https://suprabhat-dev.com/work/react-smart-copy/), [react-inp-chunker](https://suprabhat-dev.com/work/react-inp-chunker/) and [CSS Specificity Wars](https://suprabhat-dev.com/work/css-specificity-wars/): the open-source case studies listed above.
 - [Services](https://suprabhat-dev.com/services/): Service fit, deliverables, exclusions, and working durations.
 - [Blog](https://suprabhat-dev.com/blog/): Practical frontend engineering articles.
   - [React INP Benchmark: Chunking vs startTransition vs scheduler.yield](https://suprabhat-dev.com/blog/react-inp-benchmark/)

@@ -1,6 +1,6 @@
 ---
 import type { CaseStudy } from '../data/caseStudies';
-import { localePrefix, type Locale } from '../i18n/config';
+import { localeMeta, localePrefix, type Locale } from '../i18n/config';
 import { t, type MessageKey } from '../i18n/messages';
 import CopyButton from './fx/CopyButton.astro';
 import BookingLink from './BookingLink.astro';
@@ -33,6 +33,19 @@ const label = (key: MessageKey) => t(locale, key);
     <p class="eyebrow">{caseStudy.eyebrow}</p>
     <h1 style={headingFitStyle(caseStudy.title)}>{caseStudy.title}</h1>
     <p class="lead">{caseStudy.summary}</p>
+    <!-- The same date as the TechArticle dateModified, shown so readers and
+         crawlers see how current the write-up is. -->
+    <p class="case-study-updated">
+      {label('blog.updated')}{' '}
+      <time datetime={caseStudy.dateModified}>
+        {
+          new Date(`${caseStudy.dateModified}T00:00:00Z`).toLocaleDateString(
+            localeMeta[locale].htmlLang,
+            { dateStyle: 'long', timeZone: 'UTC' },
+          )
+        }
+      </time>
+    </p>
 
     <aside class="case-study-note" aria-labelledby="case-study-note-title">
       <h2 id="case-study-note-title">
