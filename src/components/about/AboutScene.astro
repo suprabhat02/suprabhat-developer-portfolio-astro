@@ -20,7 +20,8 @@
  * Drawing rules: token colours only (see about.css `.ab-sc`), drawn left to
  * right in every locale, decorative and aria-hidden. The resting state is
  * the finished diagram. `--i` orders the beats when the page animates them
- * (scroll-driven, see about.css); positions are on wrapper groups and the
+ * (once, when the scene comes into view: `data-play-on-view`, see about.css
+ * and initPlayOnView in motion.ts); positions are on wrapper groups and the
  * animation on the inner element, so the two never fight over `transform`.
  */
 import type { AboutSceneName } from './aboutScenes';
@@ -85,7 +86,11 @@ const hourHand = polar(clock.cx, clock.cy, 15, face(7));
 const minuteHand = polar(clock.cx, clock.cy, 22, face(0));
 ---
 
-<div class:list={['ab-sc', `ab-sc--${scene}`]} aria-hidden="true">
+<div
+  class:list={['ab-sc', `ab-sc--${scene}`]}
+  aria-hidden="true"
+  data-play-on-view
+>
   <svg viewBox="0 -12 320 144" focusable="false">
     {
       scene === 'built' && (

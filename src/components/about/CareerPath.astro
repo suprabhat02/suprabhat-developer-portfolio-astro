@@ -11,6 +11,13 @@
  *   draws as the reading line passes each leg and each station lights when
  *   the road reaches it. Elsewhere, and with motion paused, the path rests
  *   fully drawn.
+ * - Only `transform` and `opacity` of HTML boxes animate, so the browser can
+ *   run the scroll-linked build on the compositor, in step with the scroll.
+ *   The travelled road is revealed by a clip window sliding down while the
+ *   pane inside slides up by the same amount (it stays put on the page);
+ *   the lit station is its own `<svg>` so the whole box can pop. Animating
+ *   `clip-path` or anything inside an SVG would run on the main thread and
+ *   lag behind the scroll on phones.
  * - Each station's card carries what happened there: company, titles,
  *   dates and that employer's sentence of the career story (profile.ts).
  * - Content is an `<ol>` of headings and text; every SVG is aria-hidden.
@@ -57,15 +64,18 @@ const road = (edge: number) => `M50 0C50 22 ${edge} 24 ${edge} 50S50 78 50 100`;
               >
                 <path class="ab-road-base" d={road(swing)} />
               </svg>
-              <svg
-                class="ab-road ab-road--lit"
-                viewBox="0 0 100 100"
-                preserveAspectRatio="none"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <path class="ab-road-lit" d={road(swing)} />
-              </svg>
+              <span class="ab-road-win" aria-hidden="true">
+                <span class="ab-road-pane">
+                  <svg
+                    class="ab-road ab-road--lit"
+                    viewBox="0 0 100 100"
+                    preserveAspectRatio="none"
+                    focusable="false"
+                  >
+                    <path class="ab-road-lit" d={road(swing)} />
+                  </svg>
+                </span>
+              </span>
             </>
           )}
           <svg
@@ -74,8 +84,15 @@ const road = (edge: number) => `M50 0C50 22 ${edge} 24 ${edge} 50S50 78 50 100`;
             aria-hidden="true"
             focusable="false"
           >
-            {leg.current && <circle class="ab-node-halo" r="13" />}
             <circle class="ab-node-base" r="6.5" />
+          </svg>
+          <svg
+            class="ab-node ab-node--lit"
+            viewBox="-16 -16 32 32"
+            aria-hidden="true"
+            focusable="false"
+          >
+            {leg.current && <circle class="ab-node-halo" r="13" />}
             <circle class="ab-node-lit" r="6.5" />
           </svg>
           <span class="ab-leg-year" aria-hidden="true">

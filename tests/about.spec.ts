@@ -172,8 +172,76 @@ test('about path rests drawn with motion off and builds on scroll otherwise', as
   await setPreference(page, 'motion', 'off');
   await page.goto('/about/');
   expect(await attached()).toBe(0);
-  for (const lit of await page.locator('.ab-road--lit').all())
-    await expect(lit).toHaveCSS('clip-path', 'none');
-  for (const node of await page.locator('.ab-node-lit').all())
+  for (const pane of await page
+    .locator(':is(.ab-road-win, .ab-road-pane)')
+    .all())
+    await expect(pane).toHaveCSS('transform', 'none');
+  for (const node of await page.locator('.ab-node--lit').all())
     await expect(node).toHaveCSS('opacity', '1');
+});
+
+// Scroll-linked animations that the compositor cannot run (SVG strokes,
+// clip-path, anything inside an SVG) repaint on every scroll frame and lag
+// behind the scroll on phones. The path may only animate transform and
+// opacity of HTML boxes; the scenes play once on a clock instead.
+test('about scroll-linked motion stays on the compositor; scenes play once in view', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/about/');
+  const scrollLinked = await page.evaluate(() =>
+    document
+      .getAnimations()
+      .filter(
+        (animation) =>
+          !(animation.timeline instanceof DocumentTimeline) &&
+          (animation.effect as KeyframeEffect | null)?.target?.closest?.(
+            'main',
+          ),
+      )
+      .map((animation) => {
+        const effect = animation.effect as KeyframeEffect;
+        const target = effect.target as Element;
+        const properties = new Set(
+          effect
+            .getKeyframes()
+            .flatMap((frame) =>
+              Object.keys(frame).filter(
+                (key) =>
+                  !['offset', 'computedOffset', 'easing', 'composite'].includes(
+                    key,
+                  ),
+              ),
+            ),
+        );
+        return {
+          target: target.getAttribute('class'),
+          svgChild:
+            target instanceof SVGElement && !(target instanceof SVGSVGElement),
+          properties: [...properties],
+        };
+      }),
+  );
+  for (const animation of scrollLinked) {
+    expect(animation.svgChild, animation.target ?? '').toBe(false);
+    for (const property of animation.properties)
+      expect(['transform', 'opacity'], animation.target ?? '').toContain(
+        property,
+      );
+  }
+
+  // Scenes are armed, play once when scrolled into view, and never follow
+  // the scroll.
+  const scene = page.locator('.ab-bento .ab-sc').first();
+  await expect(scene).toHaveAttribute('data-armed', '');
+  await expect(scene).not.toHaveAttribute('data-play', '');
+  await scene.scrollIntoViewIfNeeded();
+  await expect(scene).toHaveAttribute('data-play', '');
+  const sceneTimelines = await scene.evaluate((element) =>
+    element
+      .getAnimations({ subtree: true })
+      .map((animation) => animation.timeline instanceof DocumentTimeline),
+  );
+  expect(sceneTimelines.length).toBeGreaterThan(0);
+  expect(sceneTimelines.every(Boolean)).toBe(true);
 });

@@ -7,11 +7,12 @@
  * Colors come only from role tokens. Direction-sensitive values use logical
  * properties; the road SVG, drawn in physical x, is mirrored in RTL.
  *
- * Motion: every scene and the path rest finished. Where scroll-driven
- * animations are supported and motion is not paused, the scenes build and
- * the road draws as the reader scrolls (see the end of this file). Only
- * transform, decorative opacity, stroke dashes and clip-path animate; text
- * never fades.
+ * Motion: every scene and the path rest finished. With motion not paused,
+ * each scene plays its beats once when it comes into view, and where
+ * scroll-driven animations are supported the road draws as the reader
+ * scrolls (see the end of this file). Scroll-linked parts animate only
+ * transform and opacity of HTML boxes, so they stay on the compositor;
+ * stroke dashes animate only in the once-played scenes. Text never fades.
  */
 
 .ab-stack {
@@ -20,30 +21,54 @@
 
 /* ── Portrait (hero aside) ──────────────────────────────────────────── */
 
-/* The photo sits in a mat of fine diagonal rules (the Aceternity "Scales"
-   pattern, here one CSS gradient): the frame gives a plain photo an edge and
-   a texture without a glow, and costs no request. One rule every
-   `--scale-size`, a faint mix of the text role so it reads in both themes;
-   it leans the other way in RTL. */
+/* The photo fills the hero's aside column. Behind it, offset toward the
+   inline end and the bottom, sits a plate of fine diagonal rules (the
+   Aceternity "Scales" pattern, one CSS gradient): a layered edge and some
+   texture for a plain photo, with no mat around it, no glow and no extra
+   request. One rule every `--scale-size`, a faint mix of the text role so it
+   reads in both themes; the plate and the lean mirror in RTL. */
 .ab-portrait {
   --scale-size: 9px;
   --scale-angle: 315deg;
-  width: min(100%, 20rem);
+  --plate-offset: clamp(0.75rem, 1.4vw, 1.1rem);
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 24rem);
   margin: 0;
   margin-inline-start: auto;
-  padding: clamp(0.85rem, 1.6vw, 1.15rem);
+  padding-inline-end: var(--plate-offset);
+  padding-block-end: var(--plate-offset);
+}
+
+.ab-portrait::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset-block: var(--plate-offset) 0;
+  inset-inline: var(--plate-offset) 0;
   border: 1px solid var(--border);
-  border-radius: calc(var(--radius-card) + 0.85rem);
-  background-color: var(--bg);
+  border-radius: var(--radius-card);
   background-image: repeating-linear-gradient(
     var(--scale-angle),
-    color-mix(in oklch, var(--text) 16%, transparent) 0 1px,
+    color-mix(in oklch, var(--text) 18%, transparent) 0 1px,
     transparent 1px var(--scale-size)
   );
 }
 
 [dir='rtl'] .ab-portrait {
   --scale-angle: 45deg;
+}
+
+/* The About hero gives the portrait more of the row than other heroes give
+   their aside, so the photo stands as tall as the copy beside it. */
+@media (min-width: 1041px) {
+  .ph--aside:has(.ab-portrait) {
+    grid-template-columns: minmax(0, 1.2fr) minmax(17rem, 0.8fr);
+  }
+
+  .ab-portrait {
+    width: min(100%, 27rem);
+  }
 }
 
 .ab-portrait img {
@@ -55,10 +80,11 @@
   object-position: top;
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
+  background-color: var(--bg-card);
 }
 
 @media (forced-colors: active) {
-  .ab-portrait {
+  .ab-portrait::before {
     background-image: none;
   }
 }
@@ -445,6 +471,32 @@
   stroke-width: 2.5;
 }
 
+/* The travelled road's clip window: the road's box plus `--road-bleed` on
+   every side, so the stroke's round caps and edge swings are never cut. The
+   pane fills the window, and the road sits back in place inside it. */
+.ab-road-win {
+  --road-bleed: 4px;
+  position: absolute;
+  inset-block-start: calc(var(--node-y) - var(--road-bleed));
+  inset-inline-start: calc(var(--rail-x) - var(--swing) - var(--road-bleed));
+  width: calc(2 * var(--swing) + 2 * var(--road-bleed));
+  height: calc(100% + 2 * var(--road-bleed));
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ab-road-pane {
+  position: absolute;
+  inset: 0;
+}
+
+.ab-road-win .ab-road {
+  inset-block-start: var(--road-bleed);
+  inset-inline-start: var(--road-bleed);
+  width: calc(100% - 2 * var(--road-bleed));
+  height: calc(100% - 2 * var(--road-bleed));
+}
+
 /* Beyond today: the road continues, unwritten. */
 .ab-leg-tail {
   position: absolute;
@@ -486,11 +538,6 @@
   fill: none;
   stroke: var(--accent-border);
   stroke-width: 1;
-}
-
-.ab-node :is(.ab-node-lit, .ab-node-halo) {
-  transform-box: fill-box;
-  transform-origin: center;
 }
 
 .ab-leg-year,
@@ -899,7 +946,7 @@
 
 @media (max-width: 1040px) {
   .ab-portrait {
-    width: min(100%, 18rem);
+    width: min(100%, 20rem);
     margin-inline-start: 0;
   }
 
@@ -913,9 +960,11 @@
 }
 
 @media (max-width: 760px) {
-  /* The photo inside is ~232px wide (the sizes attribute). */
+  /* On phones the photo is the LCP element: 256px wide (the sizes
+     attribute) so a 1.75x phone loads the 450w file, not the 560w one; see
+     docs/MOTION.md. 268px = 256px photo + the 12px plate offset here. */
   .ab-portrait {
-    width: min(100%, 16rem);
+    width: min(100%, 268px);
   }
 
   .ab-card {
@@ -1002,12 +1051,39 @@
   }
 }
 
-/* ── Scroll-driven build ──────────────────────────────────────────────
- * Progressive: without `animation-timeline` support, or with motion paused
- * (the Animations setting, reduced motion), nothing below applies and the
- * finished state shows. Written as longhands: a minifier that folds them
- * into an `animation` shorthand drops the timeline (docs/MOTION.md).
+/* ── Scenes: beats play once, on a clock ──────────────────────────────
+ * `initPlayOnView` (motion.ts) arms each scene (`data-armed`: every beat
+ * waits at its start) and plays it when half of it is on screen
+ * (`data-play`). Beats follow `--i`. They are not scroll-linked: drawing
+ * SVG strokes is main-thread work, and tied to the scroll it repainted on
+ * every scroll frame and lagged behind the scroll on phones. Without
+ * JavaScript, or with motion paused (the Animations setting, reduced
+ * motion), nothing here applies and the scene shows finished.
  */
+
+:root:not([data-motion='paused']) .ab-sc[data-armed] :is(.d, .pop, .gy) {
+  animation-duration: 700ms;
+  animation-timing-function: cubic-bezier(0.25, 0.8, 0.3, 1);
+  animation-delay: calc(var(--i, 0) * 90ms);
+  animation-fill-mode: both;
+  animation-play-state: paused;
+}
+
+:root:not([data-motion='paused']) .ab-sc[data-play] :is(.d, .pop, .gy) {
+  animation-play-state: running;
+}
+
+:root:not([data-motion='paused']) .ab-sc[data-armed] .d {
+  animation-name: ab-draw;
+}
+
+:root:not([data-motion='paused']) .ab-sc[data-armed] .pop {
+  animation-name: ab-pop;
+}
+
+:root:not([data-motion='paused']) .ab-sc[data-armed] .gy {
+  animation-name: ab-grow-y;
+}
 
 @keyframes ab-draw {
   from {
@@ -1028,45 +1104,29 @@
   }
 }
 
-@keyframes ab-reveal {
+/* The window slides down from above while its pane slides up by the same
+   amount, so the road stays still and appears from the top. */
+@keyframes ab-wipe-window {
   from {
-    clip-path: inset(-4px -4px 100% -4px);
-  }
-
-  to {
-    clip-path: inset(-4px);
+    transform: translateY(-100%);
   }
 }
 
+@keyframes ab-wipe-pane {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+/* ── Path: scroll-driven build ───────────────────────────────────────
+ * Progressive: without `animation-timeline` support, or with motion paused,
+ * nothing below applies and the path rests fully drawn. Only `transform`
+ * and `opacity` of HTML boxes animate, so the compositor runs it in step
+ * with the scroll. Written as longhands: a minifier that folds them into an
+ * `animation` shorthand drops the timeline (docs/MOTION.md).
+ */
+
 @supports (animation-timeline: view()) {
-  /* Scenes: each beat (`--i`) plays over a short stretch of scroll while
-     its chapter enters the lower part of the viewport. */
-  :root:not([data-motion='paused']) .ab-ch {
-    view-timeline-name: --ab-ch;
-  }
-
-  :root:not([data-motion='paused']) .ab-sc :is(.d, .pop, .gy) {
-    animation-duration: 1ms;
-    animation-duration: auto;
-    animation-timing-function: cubic-bezier(0.25, 0.8, 0.3, 1);
-    animation-fill-mode: both;
-    animation-timeline: --ab-ch;
-    animation-range-start: cover calc(10vh + var(--i, 0) * 3.2vh);
-    animation-range-end: cover calc(24vh + var(--i, 0) * 3.2vh);
-  }
-
-  :root:not([data-motion='paused']) .ab-sc .d {
-    animation-name: ab-draw;
-  }
-
-  :root:not([data-motion='paused']) .ab-sc .pop {
-    animation-name: ab-pop;
-  }
-
-  :root:not([data-motion='paused']) .ab-sc .gy {
-    animation-name: ab-grow-y;
-  }
-
   /* Path: the timeline is narrowed to a reading line across the middle of
      the viewport. A leg's road draws while that line crosses the leg; its
      station lights as the line reaches it. */
@@ -1076,22 +1136,28 @@
   }
 
   :root:not([data-motion='paused'])
-    :is(.ab-road--lit, .ab-node-lit, .ab-node-halo, .ab-leg-tail) {
+    :is(.ab-road-win, .ab-road-pane, .ab-node--lit, .ab-leg-tail) {
     animation-duration: 1ms;
     animation-duration: auto;
     animation-fill-mode: both;
     animation-timeline: --ab-leg;
   }
 
-  :root:not([data-motion='paused']) .ab-road--lit {
-    animation-name: ab-reveal;
+  :root:not([data-motion='paused']) :is(.ab-road-win, .ab-road-pane) {
     animation-timing-function: linear;
     animation-range-start: cover 0%;
     animation-range-end: cover 100%;
   }
 
-  :root:not([data-motion='paused'])
-    :is(.ab-node-lit, .ab-node-halo, .ab-leg-tail) {
+  :root:not([data-motion='paused']) .ab-road-win {
+    animation-name: ab-wipe-window;
+  }
+
+  :root:not([data-motion='paused']) .ab-road-pane {
+    animation-name: ab-wipe-pane;
+  }
+
+  :root:not([data-motion='paused']) :is(.ab-node--lit, .ab-leg-tail) {
     animation-name: ab-pop;
     animation-timing-function: cubic-bezier(0.3, 1.4, 0.5, 1);
     animation-range-start: cover 0%;

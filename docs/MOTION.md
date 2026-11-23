@@ -113,7 +113,7 @@ no request.
 | Bento Grid               | `.bento-card` with CSS mini-visuals                       | Problems section                         |
 | Timeline / Tracing Beam  | `ExperienceTimeline.astro` (`.xp-rail` + `.xp-rail-fill`) | Experience (homepage and `/experience/`) |
 | Timeline / Tracing Beam  | `CareerPath.astro` (`.ab-path`, scroll-drawn road)        | `/about/` Experience section             |
-| Scales                   | `.ab-portrait` (one `repeating-linear-gradient`)          | `/about/` hero portrait frame            |
+| Scales                   | `.ab-portrait::before` (one `repeating-linear-gradient`)  | `/about/` hero portrait plate            |
 | Text Reveal              | `TextReveal.astro`                                        | About statement                          |
 | Focus Cards              | `.fx-focus-group` + `.fx-focus-item`                      | Featured articles                        |
 | Lamp                     | `.fx-lamp` + `.fx-lamp-line`                              | Homepage CTA band                        |
@@ -596,11 +596,16 @@ paint and horizontal-scroll bounds.
 
 `AboutPage.astro` opens with the original hero portrait
 (`portrait-1100.webp`, eager, `fetchpriority="high"`; on phones it is the
-LCP element, so it renders at about 232px with quality 50: at the
-homepage's quality 62 the 560w AVIF was 68 KB and mobile Performance scored
-99). The photo sits in a mat of fine diagonal rules, the Aceternity "Scales"
-pattern drawn as one CSS gradient (`--scale-size`, `--scale-angle`, mirrored
-in RTL, dropped in forced colors). Below the hero:
+LCP element, so it renders at 256px with quality 50 and a 1.75x phone loads
+the 450w file: at 260px it took the 560w file and LCP rose from 1.66 s to
+1.80 s, and at the homepage's quality 62 the 560w AVIF was 68 KB and mobile
+Performance scored 99). On wide screens the hero gives the portrait 0.8fr of
+the row (`.ph--aside:has(.ab-portrait)`), so the photo, up to 414px, stands
+as tall as the copy. Behind it, offset toward the inline end and the bottom
+(`--plate-offset`), sits a plate of fine diagonal rules, the Aceternity
+"Scales" pattern drawn as one CSS gradient on `::before` (`--scale-size`,
+`--scale-angle`, mirrored in RTL, dropped in forced colors). The photo has
+no mat around it. Below the hero:
 
 1. **About me beside At a glance** (`.ab-intro`): the first paragraph under
    the `built` scene on one side, the identity facts in a framed panel on
@@ -651,19 +656,33 @@ render normally; see docs/LIGHTHOUSE-EVIDENCE.md for the measured cost.
   zigzags the eye; the clear one leads to one action). Only "6+" and "IST"
   are text. They use the about-only paint classes in `about.css` (`.ab-sc`),
   not `scenes.css`, so the About page loads no extra stylesheet.
-- **Motion (owner-approved exception for this page).** Unlike card scenes,
-  these build with scroll. Everything rests finished; inside
-  `@supports (animation-timeline: view())` and only while motion is not
-  paused, each chapter is a named view timeline (`--ab-ch`) and each beat
-  (`--i`) plays over a short stretch of scroll as the chapter enters. Each
-  path leg is a view timeline narrowed to a reading band across the middle
-  of the viewport (`view-timeline-inset: 45% 45%`): the accent road is
-  revealed with `clip-path` while the band crosses the leg, and the station
-  pops in as the band reaches it. Only transforms, decorative opacity,
-  stroke dashes and `clip-path` animate; no text fades. Without support,
-  with reduced motion or with Animations off, nothing attaches and the
-  finished state shows. Longhands only (see rule 5).
+- **Motion (owner-approved exception for this page).** Everything rests
+  finished, and only while motion is not paused:
+  - **Scenes play once, on a clock.** Each scene has `data-play-on-view`;
+    `initPlayOnView` in motion.ts marks it `data-armed` (every beat waits at
+    its start) and `data-play` when half of it is on screen, and the beats
+    (`--i`, 90ms apart, 700ms each) play once. Without JavaScript neither
+    attribute is set and the scene shows finished. They used to follow the
+    scroll; drawing SVG strokes is main-thread work, so the 26 stroke
+    animations repainted on every scroll frame and lagged behind the scroll
+    on phones (Lighthouse listed them as non-composited).
+  - **The path follows the scroll, on the compositor.** Inside
+    `@supports (animation-timeline: view())`, each leg is a view timeline
+    narrowed to a reading band across the middle of the viewport
+    (`view-timeline-inset: 45% 45%`). The accent road sits in a clip window
+    (`.ab-road-win`, the road's box plus `--road-bleed`) that slides down
+    from `translateY(-100%)` while the pane inside it (`.ab-road-pane`)
+    slides up from `translateY(100%)`: the road stays put and appears from
+    the top. The lit station is its own `<svg>` (`.ab-node--lit`) and pops
+    as a whole box. Only `transform` and `opacity` of HTML boxes animate;
+    `clip-path` or anything inside an SVG would run on the main thread.
+    `tests/about.spec.ts` fails if a scroll-linked animation on the page
+    animates any other property or targets an element inside an SVG.
+  - No text fades. Without support, with reduced motion or with Animations
+    off, nothing attaches and the finished state shows. Longhands only (see
+    rule 5).
 - **Tests.** `tests/about.spec.ts` checks the path content and order, the
   promotion label, the chapters, the portrait, stations on the road at
-  1440/1040/768/390/320px in en/es/ar, no horizontal overflow, and that
-  nothing animates with motion off.
+  1440/1040/768/390/320px in en/es/ar, no horizontal overflow, that nothing
+  animates with motion off, that scroll-linked motion stays on the
+  compositor, and that scenes play once in view.
