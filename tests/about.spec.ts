@@ -54,11 +54,37 @@ for (const locale of locales) {
       await expect(item.locator('.ab-leg-dates')).toHaveText(leg.dates);
       for (const role of leg.roles)
         await expect(item).toContainText(role.title);
+      // Each station carries its own sentence of the career story.
+      if (leg.story)
+        await expect(item.locator('.ab-leg-story')).toHaveText(leg.story);
+      else await expect(item.locator('.ab-leg-story')).toHaveCount(0);
     }
     await expect(path.locator('.ab-leg--current')).toHaveCount(1);
     await expect(path.locator('.ab-leg-promo')).toHaveText(
       t(locale, 'home.promoted'),
     );
+  });
+
+  test(`about career story is told along the path, every sentence once: ${locale}`, async ({
+    page,
+  }) => {
+    const { career } = getProfile(locale);
+    const legs = getCareerPath(locale);
+    // Every sentence keyed to an employer lands on that employer's station.
+    for (const [id, sentence] of Object.entries(career.byEmployer))
+      expect(legs.find((leg) => leg.id === id)?.story).toBe(sentence);
+    await page.goto(pathFor(locale));
+    const section = page.locator('.ab-xp');
+    await expect(
+      section.getByRole('heading', {
+        level: 2,
+        name: t(locale, 'home.experience'),
+      }),
+    ).toBeVisible();
+    await expect(section.locator('.ab-leg-story')).toHaveCount(
+      Object.keys(career.byEmployer).length,
+    );
+    await expect(section.locator('.ab-xp-closing')).toHaveText(career.closing);
   });
 
   test(`about chapters keep the published paragraphs: ${locale}`, async ({
@@ -70,7 +96,6 @@ for (const locale of locales) {
     await expect(chapters).toHaveCount(profile.about.length);
     const titles = [
       t(locale, 'home.about'),
-      t(locale, 'home.experience'),
       t(locale, 'home.expertiseTitle'),
       getHomepageConversionContent(locale).approach.eyebrow,
       t(locale, 'home.availability'),

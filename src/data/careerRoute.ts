@@ -1,10 +1,12 @@
 import type { Locale } from '../i18n/config';
 import { getExperience, type Position } from './experience';
+import { getProfile } from './profile';
 
 /**
  * The About page's career path: one leg per employer, oldest first, from
- * `experience.ts`. Nothing here is a new fact; the only derived value is
- * each leg's tenure in months, which sizes the stretch of road after it.
+ * `experience.ts`, each with its sentence of the career story from
+ * `profile.ts`. Nothing here is a new fact; the only derived value is each
+ * leg's tenure in months, which sizes the stretch of road after it.
  */
 
 const MONTHS = [
@@ -56,6 +58,8 @@ export interface PathLeg {
   readonly current: boolean;
   /** Whole months from start to end (at least 1); sizes the leg. */
   readonly months: number;
+  /** This employer's sentence of the career story, when it has one. */
+  readonly story: string | null;
 }
 
 const rolesOf = (position: Position): PathRole[] => {
@@ -71,8 +75,19 @@ const rolesOf = (position: Position): PathRole[] => {
 export const getCareerPath = (
   locale: Locale,
   now: Date = new Date(),
-): readonly PathLeg[] =>
-  [...getExperience(locale)]
+): readonly PathLeg[] => {
+  const positions = getExperience(locale);
+  const stories = getProfile(locale).career.byEmployer;
+  // A sentence keyed to an id that no employer has would never be shown.
+  const orphans = Object.keys(stories).filter(
+    (id) => !positions.some((position) => position.id === id),
+  );
+  if (orphans.length > 0) {
+    throw new Error(
+      `careerRoute: career story for unknown employer(s) ${orphans.join(', ')} in profile.ts (${locale})`,
+    );
+  }
+  return [...positions]
     .sort((a, b) => toMonthIndex(a.start, now) - toMonthIndex(b.start, now))
     .map((position) => {
       const endLabel = position.endLabel ?? position.end;
@@ -88,5 +103,7 @@ export const getCareerPath = (
           1,
           toMonthIndex(position.end, now) - toMonthIndex(position.start, now),
         ),
+        story: stories[position.id] ?? null,
       };
     });
+};

@@ -1,7 +1,8 @@
 /*
- * About page (AboutPage.astro): hero with the portrait, "About me" beside
- * the identity panel, Experience as its own section with the career path,
- * then a bento of the remaining chapters and the design philosophy.
+ * About page (AboutPage.astro): hero with the framed portrait, "About me"
+ * beside the identity panel, Experience as its own section (the career path,
+ * each station carrying its part of the story), then a bento of the
+ * remaining chapters and the design philosophy.
  *
  * Colors come only from role tokens. Direction-sensitive values use logical
  * properties; the road SVG, drawn in physical x, is mirrored in RTL.
@@ -19,10 +20,30 @@
 
 /* ── Portrait (hero aside) ──────────────────────────────────────────── */
 
+/* The photo sits in a mat of fine diagonal rules (the Aceternity "Scales"
+   pattern, here one CSS gradient): the frame gives a plain photo an edge and
+   a texture without a glow, and costs no request. One rule every
+   `--scale-size`, a faint mix of the text role so it reads in both themes;
+   it leans the other way in RTL. */
 .ab-portrait {
-  width: min(100%, 23rem);
+  --scale-size: 9px;
+  --scale-angle: 315deg;
+  width: min(100%, 20rem);
   margin: 0;
   margin-inline-start: auto;
+  padding: clamp(0.85rem, 1.6vw, 1.15rem);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius-card) + 0.85rem);
+  background-color: var(--bg);
+  background-image: repeating-linear-gradient(
+    var(--scale-angle),
+    color-mix(in oklch, var(--text) 16%, transparent) 0 1px,
+    transparent 1px var(--scale-size)
+  );
+}
+
+[dir='rtl'] .ab-portrait {
+  --scale-angle: 45deg;
 }
 
 .ab-portrait img {
@@ -34,6 +55,12 @@
   object-position: top;
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
+}
+
+@media (forced-colors: active) {
+  .ab-portrait {
+    background-image: none;
+  }
 }
 
 /* ── Section headings ─────────────────────────────────────────────── */
@@ -219,18 +246,18 @@
   scale: -1 1;
 }
 
-/* ── Experience: its own section ──────────────────────────────────── */
+/* ── Experience: its own section ──────────────────────────────────────
+ * The heading, then the path (each station carries its sentence of the
+ * story), then the story's closing sentence where the road runs on.
+ *
+ * No `content-visibility: auto` here or on the bento: its placeholder
+ * height never matched the rendered one in every locale and width, so the
+ * page jumped and stalled while the section rendered mid-scroll.
+ */
 
 .ab-xp {
   padding-block: clamp(3rem, 7vw, 5.5rem);
   border-block: 1px solid var(--divider);
-}
-
-.ab-xp-head {
-  display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  gap: 1.25rem clamp(2rem, 5vw, 4.5rem);
-  align-items: start;
 }
 
 .ip .ab-xp-title {
@@ -240,20 +267,29 @@
 }
 
 .ab-xp .ab-path {
-  margin-block-start: clamp(2.5rem, 6vw, 4.5rem);
+  margin-block-start: clamp(2rem, 5vw, 3.5rem);
 }
 
-/* Below the fold: skip style and layout until a section nears the viewport
-   (measured: the path and bento added ~70 ms of Style & Layout on a
-   throttled mobile load). `auto` remembers the real size once rendered. */
-.ab-xp {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 1400px;
+.ab-xp-end {
+  display: grid;
+  justify-items: center;
+  gap: 0.25rem;
+  text-align: center;
 }
 
-.ab-bento {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 1300px;
+.ab-xp-closing {
+  max-width: 40ch;
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+:lang(ar) .ab-xp-closing {
+  line-height: 1.8;
+  letter-spacing: 0;
 }
 
 /* ── Bento: expertise, approach, availability, philosophy ─────────── */
@@ -339,7 +375,9 @@
 /* ── Career path ──────────────────────────────────────────────────────
  * Wide screens: the road runs down the middle (`--rail-x`), cards alternate
  * sides and each leg's start year sits across the road. Phones: the road
- * runs along the inline start, cards follow it.
+ * runs along the inline start, cards follow it. A card is a framed panel,
+ * so its station sits level with the company line inside the frame:
+ * `--node-y` is the frame's top padding plus half that line.
  *
  * Each leg owns the road from its station to the next station:
  * `--node-y` below its top edge to `--node-y` below the next leg's top.
@@ -351,7 +389,9 @@
   --rail: 10rem;
   --rail-x: 50%;
   --swing: 4.25rem;
-  --node-y: 0.8rem;
+  --card-pad: 1rem;
+  --company-line: 1.6rem;
+  --node-y: calc(var(--card-pad) + var(--company-line) / 2);
   display: grid;
   margin: clamp(1.5rem, 4vw, 2.75rem) 0 0;
   padding: 0;
@@ -459,6 +499,21 @@
   min-width: 0;
 }
 
+.ab-leg-card {
+  /* One width for every card, so short and long stories line up. */
+  inline-size: 100%;
+  max-inline-size: 30rem;
+  box-sizing: border-box;
+  padding: var(--card-pad) calc(var(--card-pad) + 0.2rem);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--bg-card);
+}
+
+.ab-leg--current .ab-leg-card {
+  border-color: var(--accent-border);
+}
+
 .ab-leg-year {
   /* Centred on the station: half its own line height above it. */
   margin-block-start: calc(var(--node-y) - 0.5em);
@@ -477,11 +532,14 @@
 
 .ab-leg--even .ab-leg-card {
   grid-column: 3;
+  justify-self: start;
 }
 
+/* Left of the road the card hugs the road; its prose still reads from the
+   start edge. */
 .ab-leg--odd .ab-leg-card {
   grid-column: 1;
-  text-align: end;
+  justify-self: end;
 }
 
 .ab-leg--odd .ab-leg-year {
@@ -493,8 +551,8 @@
   color: var(--text);
   font-size: 1.1rem;
   font-weight: 700;
-  /* Twice --node-y: the station sits on the middle of this line. */
-  line-height: 1.6rem;
+  /* The station sits on the middle of this line (see --node-y). */
+  line-height: var(--company-line);
 }
 
 .ab-leg-roles {
@@ -547,12 +605,27 @@
   color: var(--accent-ink);
 }
 
+.ab-leg-story {
+  margin: 0.85rem 0 0;
+  padding-block-start: 0.85rem;
+  border-block-start: 1px solid var(--divider);
+  color: var(--text-2);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+
+:lang(ar) .ab-leg-story {
+  line-height: 1.85;
+}
+
 /* Wide screens: a larger road and type, since the path is its own section. */
 @media (min-width: 1041px) {
   .ab-path {
-    --rail: 13rem;
-    --swing: 5.5rem;
-    --node-y: 0.95rem;
+    --rail: 11rem;
+    --swing: 5rem;
+    --card-pad: 1.25rem;
+    --company-line: 1.9rem;
   }
 
   .ab-leg {
@@ -577,8 +650,7 @@
   }
 
   .ab-leg-company {
-    font-size: 1.35rem;
-    line-height: 1.9rem;
+    font-size: 1.3rem;
   }
 
   .ab-leg-roles {
@@ -587,6 +659,10 @@
 
   .ab-leg-dates {
     font-size: 0.9rem;
+  }
+
+  .ab-leg-story {
+    font-size: 0.95rem;
   }
 
   .ab-leg-tail {
@@ -823,7 +899,7 @@
 
 @media (max-width: 1040px) {
   .ab-portrait {
-    width: min(100%, 20rem);
+    width: min(100%, 18rem);
     margin-inline-start: 0;
   }
 
@@ -837,13 +913,9 @@
 }
 
 @media (max-width: 760px) {
-  /* Matches the 256px in the portrait's sizes attribute. */
+  /* The photo inside is ~232px wide (the sizes attribute). */
   .ab-portrait {
     width: min(100%, 16rem);
-  }
-
-  .ab-xp-head {
-    grid-template-columns: minmax(0, 1fr);
   }
 
   .ab-card {
@@ -883,6 +955,14 @@
   .ab-leg--even .ab-leg-card,
   .ab-leg--odd .ab-leg-card {
     grid-column: 2;
+    justify-self: stretch;
+    max-inline-size: none;
+  }
+
+  /* The closing line follows the cards' column, past the road's end. */
+  .ab-xp-end {
+    justify-items: start;
+    padding-inline-start: 2.75rem;
     text-align: start;
   }
 

@@ -3,8 +3,9 @@
  * The About page:
  *   1. hero with the portrait;
  *   2. "About me" beside the identity facts ("At a glance");
- *   3. Experience as its own section with the career path (one station
- *      per employer, oldest first);
+ *   3. Experience as its own section: the career path, one station per
+ *      employer (oldest first), each carrying its sentence of the career
+ *      story, closed by the story's last sentence;
  *   4. a bento of the remaining chapters and the design philosophy, each
  *      with its diagram scene;
  *   5. the shared outro.
@@ -82,33 +83,31 @@ const terms = [
   },
 ] as const;
 
-const chapterTitles = [
-  tx('home.about'),
-  tx('home.experience'),
-  tx('home.expertiseTitle'),
-  getHomepageConversionContent(locale).approach.eyebrow,
-  tx('home.availability'),
+/** Heading and scene for each paragraph of `profile.about`, in order. */
+const chapterMeta: readonly { title: string; scene: AboutSceneName }[] = [
+  { title: tx('home.about'), scene: 'built' },
+  { title: tx('home.expertiseTitle'), scene: 'contain' },
+  {
+    title: getHomepageConversionContent(locale).approach.eyebrow,
+    scene: 'states',
+  },
+  { title: tx('home.availability'), scene: 'reach' },
 ];
-/** One scene per chapter; the Experience chapter (null) gets the path. */
-const chapterScenes: readonly (AboutSceneName | null)[] = [
-  'built',
-  null,
-  'contain',
-  'states',
-  'reach',
-];
-const chapters = profile.about.map((body, index) => ({
-  id: `about-chapter-${index + 1}`,
-  title: chapterTitles[index] ?? tx('home.about'),
-  body,
-  scene: chapterScenes[index] ?? null,
-}));
-const [aboutMe, experienceChapter, ...bentoChapters] = chapters;
-// The layout gives the first two paragraphs their own sections; fail the
-// build rather than render an empty one if the profile data changes shape.
-if (!aboutMe || !experienceChapter || bentoChapters.length !== 3) {
-  throw new Error('AboutPage: profile.about must have exactly five paragraphs');
+// The first paragraph gets its own section and the other three a bento card
+// each; fail the build rather than render a section without its heading or
+// scene if the profile data changes shape.
+if (profile.about.length !== chapterMeta.length) {
+  throw new Error(
+    `AboutPage: profile.about must have exactly ${chapterMeta.length} paragraphs`,
+  );
 }
+const chapters = chapterMeta.map((meta, index) => ({
+  ...meta,
+  id: `about-chapter-${index + 1}`,
+  body: profile.about[index] ?? '',
+}));
+const [aboutMe, ...bentoChapters] = chapters;
+if (!aboutMe) throw new Error('AboutPage: no About me paragraph');
 ---
 
 <section class="page section ip ab">
@@ -133,7 +132,7 @@ if (!aboutMe || !experienceChapter || bentoChapters.length !== 3) {
           formats={['avif', 'webp']}
           fallbackFormat="webp"
           widths={heroPortraitWidths}
-          sizes="(max-width: 760px) 256px, (max-width: 1040px) 320px, 368px"
+          sizes="(max-width: 760px) 232px, (max-width: 1040px) 264px, 296px"
           width={800}
           height={1067}
           alt={profile.portrait.alt}
@@ -224,23 +223,18 @@ if (!aboutMe || !experienceChapter || bentoChapters.length !== 3) {
       </section>
     </div>
 
-    <section
-      class="ab-ch ab-ch--path ab-xp"
-      aria-labelledby={experienceChapter.id}
-    >
-      <div class="ab-xp-head">
-        <h2 id={experienceChapter.id} class="ab-heading ab-xp-title">
-          {experienceChapter.title}
-        </h2>
-        <div class="ab-ch-body">
-          <p>{experienceChapter.body}</p>
-          <a class="ab-more" href={href('/experience/')}>
-            {tx('home.experienceCta')}
-            <Icon name="arrow-up-right" size={16} class="ab-more-icon" />
-          </a>
-        </div>
-      </div>
+    <section class="ab-xp" aria-labelledby="about-experience-title">
+      <h2 id="about-experience-title" class="ab-heading ab-xp-title">
+        {tx('home.experience')}
+      </h2>
       <CareerPath {locale} />
+      <div class="ab-xp-end">
+        <p class="ab-xp-closing">{profile.career.closing}</p>
+        <a class="ab-more" href={href('/experience/')}>
+          {tx('home.experienceCta')}
+          <Icon name="arrow-up-right" size={16} class="ab-more-icon" />
+        </a>
+      </div>
     </section>
 
     <div class="ab-bento">
@@ -250,7 +244,7 @@ if (!aboutMe || !experienceChapter || bentoChapters.length !== 3) {
             class:list={['ab-ch', 'ab-card', `ab-card--${chapter.scene}`]}
             aria-labelledby={chapter.id}
           >
-            {chapter.scene && <AboutScene scene={chapter.scene} />}
+            <AboutScene scene={chapter.scene} />
             <h2 id={chapter.id} class="ab-heading ab-ch-title">
               {chapter.title}
             </h2>
