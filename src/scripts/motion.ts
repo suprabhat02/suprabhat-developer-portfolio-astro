@@ -550,6 +550,37 @@ function initLazyGlobes(): Cleanup {
   };
 }
 
+/* ── Play once in view ──────────────────────────────────────────────── */
+/*
+ * `[data-play-on-view]` artwork plays its beats once, on a clock, when half
+ * of it is on screen. It is marked `data-armed` up front (CSS holds every
+ * beat at its start) and `data-play` when it comes into view. Without
+ * JavaScript neither is set and the artwork shows finished; with motion
+ * paused, CSS ignores both. Used where scroll-linked beats would animate SVG
+ * strokes on the main thread on every scroll frame (the About scenes).
+ */
+
+function initPlayOnView(): Cleanup {
+  const hosts = document.querySelectorAll<HTMLElement>('[data-play-on-view]');
+  if (!hosts.length || !('IntersectionObserver' in window)) {
+    return () => undefined;
+  }
+  const observer = new IntersectionObserver(
+    (entries) =>
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        observer.unobserve(entry.target);
+        entry.target.setAttribute('data-play', '');
+      }),
+    { threshold: 0.5 },
+  );
+  hosts.forEach((host) => {
+    host.setAttribute('data-armed', '');
+    observer.observe(host);
+  });
+  return () => observer.disconnect();
+}
+
 /* ── Dotted CTA field: load the canvas renderer only when it approaches ─ */
 
 function initLazyDotGlows(): Cleanup {
@@ -644,6 +675,7 @@ const initializers: ReadonlyArray<() => Cleanup> = [
   initHeroEngagement,
   initLazyGlobes,
   initLazyDotGlows,
+  initPlayOnView,
   initLazyCarousels,
   initToasts,
 ];

@@ -660,3 +660,29 @@ desktop). Mobile figures across the 9 runs:
 
 The extra Style & Layout is real but stayed inside the 100 band. A future run
 with more main-thread work could put the 91 ms TBT run closer to the edge.
+
+## About page scroll on the compositor (November 2026)
+
+Scrolling past the Experience section still felt stuck on phones after
+`content-visibility` was removed. Lighthouse listed 30 non-composited
+animations on `/about/`, all scroll-linked: 4 road reveals (`clip-path`) and
+26 scene strokes (`stroke-dashoffset`). Each repainted on the main thread on
+every scroll frame, so the artwork lagged behind the scroll. The road now
+reveals with two opposite `transform`s on HTML boxes, the lit station pops as
+its own `<svg>`, and the scenes play once on a clock when they come into
+view.
+
+Strict gate on the production preview, 3 runs per page and profile: 18/18 at
+100/100/100/100 (`/about/`, `/es/about/`, `/ar/about/`, mobile and desktop).
+Mobile figures across the 9 runs:
+
+- Non-composited animations: 30 before, none after.
+- Total Blocking Time 0–28 ms (0–91 ms before).
+- LCP 1.05–1.67 s; the phone portrait stays at 256px so a 1.75x phone loads
+  the 450w file (at 260px it took the 560w file and English LCP rose to
+  1.80 s).
+
+A 4x CPU-throttled scroll trace in headless Chromium (no GPU) shows the
+Experience section now costs about what it costs with motion paused. The
+scenes' once-played beats add a short burst of paint when each scene comes
+into view; it is not tied to the scroll.
