@@ -945,9 +945,11 @@
 /* ── Responsive ───────────────────────────────────────────────────── */
 
 @media (max-width: 1040px) {
+  /* Stacked under the copy, the photo (with its plate) centres in the
+     column instead of hugging the start edge. */
   .ab-portrait {
     width: min(100%, 20rem);
-    margin-inline-start: 0;
+    margin-inline: auto;
   }
 
   .ab-intro {
