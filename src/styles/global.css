@@ -2056,6 +2056,26 @@ main {
   height: min(1000px, 130vh);
 }
 
+/* Inner-page hero grid: the cell follows the screen so a phone shows a fine
+   mesh rather than a few large boxes. Whole-pixel steps, not a fluid size:
+   a fractional tile lands the 1px lines on subpixels and some rows render
+   fainter or thicker than others. */
+.page-backdrop .fx-grid {
+  background-size: 24px 24px;
+}
+
+@media (min-width: 761px) {
+  .page-backdrop .fx-grid {
+    background-size: 32px 32px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .page-backdrop .fx-grid {
+    background-size: 40px 40px;
+  }
+}
+
 /* Back to top with a scroll-linked progress ring. */
 .btt {
   position: fixed;
