@@ -641,3 +641,22 @@ Fresh mobile Lighthouse checks of the production preview reported:
 Reports are retained in the OS temporary directory as
 `portfolio-categories-{locale}-mobile.json`. Desktop Lighthouse was not rerun
 for this follow-up. Uniform 100 Performance across locales remains unverified.
+
+## About page without `content-visibility` (November 2026)
+
+The About page's Experience section and bento no longer use
+`content-visibility: auto`: its estimated height made the page jump and
+stall mid-scroll. Each station of the career path now carries its sentence of
+the career story, and the hero portrait sits in a CSS-only "Scales" frame.
+
+Strict gate on the production preview, 3 runs per page and profile:
+18/18 at 100/100/100/100 (`/about/`, `/es/about/`, `/ar/about/`, mobile and
+desktop). Mobile figures across the 9 runs:
+
+- Style & Layout 162–273 ms (143–195 ms was recorded with
+  `content-visibility`).
+- Total Blocking Time 0 ms in 7 runs, 39 ms and 91 ms in the other two.
+- LCP 0.9–1.7 s; CLS 0 in every run.
+
+The extra Style & Layout is real but stayed inside the 100 band. A future run
+with more main-thread work could put the 91 ms TBT run closer to the edge.

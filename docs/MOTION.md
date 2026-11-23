@@ -112,8 +112,8 @@ no request.
 | Infinite Moving Cards    | `.fx-marquee` + `.fx-marquee-track`                       | Keyword strip, recommendations           |
 | Bento Grid               | `.bento-card` with CSS mini-visuals                       | Problems section                         |
 | Timeline / Tracing Beam  | `ExperienceTimeline.astro` (`.xp-rail` + `.xp-rail-fill`) | Experience (homepage and `/experience/`) |
-| Timeline / Tracing Beam  | `AboutPage.astro` career route (`.ab-route`)              | `/about/` hero (horizontal, time-scaled) |
-| Sticky Scroll Reveal     | `.ab-ch` rows with sticky `.ab-ch-title` (CSS only)       | `/about/` chapters                       |
+| Timeline / Tracing Beam  | `CareerPath.astro` (`.ab-path`, scroll-drawn road)        | `/about/` Experience section             |
+| Scales                   | `.ab-portrait` (one `repeating-linear-gradient`)          | `/about/` hero portrait frame            |
 | Text Reveal              | `TextReveal.astro`                                        | About statement                          |
 | Focus Cards              | `.fx-focus-group` + `.fx-focus-item`                      | Featured articles                        |
 | Lamp                     | `.fx-lamp` + `.fx-lamp-line`                              | Homepage CTA band                        |
@@ -596,29 +596,36 @@ paint and horizontal-scroll bounds.
 
 `AboutPage.astro` opens with the original hero portrait
 (`portrait-1100.webp`, eager, `fetchpriority="high"`; on phones it is the
-LCP element, so it renders at 256px with quality 50: at the homepage's
-quality 62 the 560w AVIF was 68 KB and mobile Performance scored 99, now the
-450w file phones load is 28 KB and every run scores 100). Below the hero:
+LCP element, so it renders at about 232px with quality 50: at the
+homepage's quality 62 the 560w AVIF was 68 KB and mobile Performance scored
+99). The photo sits in a mat of fine diagonal rules, the Aceternity "Scales"
+pattern drawn as one CSS gradient (`--scale-size`, `--scale-angle`, mirrored
+in RTL, dropped in forced colors). Below the hero:
 
 1. **About me beside At a glance** (`.ab-intro`): the first paragraph under
    the `built` scene on one side, the identity facts in a framed panel on
    the other (`.ab-id`; the summary and seven facts stay one
    `[data-identity-summary]` block, the working terms follow as label/value
    rows). Stacked at 1040px and below.
-2. **Experience** as its own section (`.ab-xp`): a large heading beside the
-   paragraph, then the career path (`src/components/about/CareerPath.astro`),
-   larger from 1041px (13rem road, 1.35rem company names, 3.5rem years).
+2. **Experience** as its own section (`.ab-xp`): a large heading, then the
+   career path (`src/components/about/CareerPath.astro`), then the story's
+   closing sentence and the link to /experience/. Each station's card is a
+   framed panel carrying that employer's sentence of the career story
+   (`profile.career.byEmployer`, keyed by experience id); the section has no
+   separate paragraph. Larger from 1041px (11rem road, 1.3rem company names,
+   3.5rem years). The station sits on the company line inside the frame:
+   `--node-y` = `--card-pad` + half of `--company-line`.
 3. **Bento** (`.ab-bento`) of Core expertise (`contain`), Engineering
    approach (`states`), Availability (`reach`) and Design philosophy
    (`decide`): 12 columns, 7+5 then 5+7 from 1041px, 2x2 down to 761px, one
    column below. Each scene sits in a recessed well of one fixed height; the
    SVG fills the well (`meet`), so headings line up across a row.
 
-`.ab-xp` and `.ab-bento` use `content-visibility: auto` with remembered
-intrinsic sizes: the bigger path and the bento added ~70 ms of Style &
-Layout on throttled mobile loads, and one cold run scored 99; skipping them
-until they near the viewport brought Style & Layout to 143–195 ms and the
-gate to 18/18. Their scroll-driven timelines still progress normally.
+`.ab-xp` and `.ab-bento` used to carry `content-visibility: auto` with
+estimated intrinsic sizes. The estimate never matched the rendered height in
+every locale and width, so the page jumped and stalled as those sections
+rendered mid-scroll, and full-page captures showed the bento blank. They now
+render normally; see docs/LIGHTHOUSE-EVIDENCE.md for the measured cost.
 
 - **Path data.** `getCareerPath()` in `src/data/careerRoute.ts` returns one
   leg per employer from `experience.ts`, oldest first: company, titles

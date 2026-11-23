@@ -11,6 +11,8 @@
  *   draws as the reading line passes each leg and each station lights when
  *   the road reaches it. Elsewhere, and with motion paused, the path rests
  *   fully drawn.
+ * - Each station's card carries what happened there: company, titles,
+ *   dates and that employer's sentence of the career story (profile.ts).
  * - Content is an `<ol>` of headings and text; every SVG is aria-hidden.
  *   Company names are `<bdi>` so Latin names stay intact in Arabic.
  */
@@ -105,6 +107,7 @@ const road = (edge: number) => `M50 0C50 22 ${edge} 24 ${edge} 50S50 78 50 100`;
               ))}
             </ul>
             <p class="ab-leg-dates">{leg.dates}</p>
+            {leg.story && <p class="ab-leg-story">{leg.story}</p>}
           </div>
         </li>
       );
