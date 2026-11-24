@@ -6,6 +6,7 @@ import { fileURLToPath, URL } from 'node:url';
 import { satteri } from '@astrojs/markdown-satteri';
 import taskListLabels from './src/lib/taskListLabels.mjs';
 import { getCaseStudies } from './src/data/caseStudies.ts';
+import { profile, profilePageModified } from './src/data/profile.ts';
 
 const siteUrl = 'https://suprabhat-dev.com';
 const nonDefaultLocalePattern = /^\/(?:es|ar)(?=\/|$)/;
@@ -51,6 +52,17 @@ const caseStudyLastmod = new Map(
     ]),
   ),
 );
+
+// About pages: the hand-kept ProfilePage date, so the sitemap and the
+// ProfilePage dateModified always agree. The headshot is listed as their image
+// (the same file as the Person schema image), since it is not in the page HTML.
+const aboutUrls = new Set(
+  Object.values(localePrefixes).map((prefix) => `${siteUrl}${prefix}/about/`),
+);
+const homeUrls = new Set(
+  Object.values(localePrefixes).map((prefix) => `${siteUrl}${prefix}/`),
+);
+const portraitSitemapImage = [{ url: `${siteUrl}${profile.portrait.src}` }];
 
 // Static pages -> date of the last commit touching the files they render
 // from. A shallow clone reports its single commit for every path, so there
@@ -197,11 +209,17 @@ export default defineConfig({
         );
       },
       serialize: (item) => {
+        const isAbout = aboutUrls.has(item.url);
         const lastmod =
+          (isAbout ? profilePageModified : undefined) ??
           postLastmod.get(item.url) ??
           caseStudyLastmod.get(item.url) ??
           staticPageLastmod.get(item.url);
-        const dated = lastmod ? { ...item, lastmod } : item;
+        const withImage =
+          isAbout || homeUrls.has(item.url)
+            ? { ...item, img: portraitSitemapImage }
+            : item;
+        const dated = lastmod ? { ...withImage, lastmod } : withImage;
         if (!dated.links?.length) return dated;
 
         return {

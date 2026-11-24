@@ -87,6 +87,8 @@ const rssAlternates = locales.map((supportedLocale) => ({
   href: getBlogFeedHref(supportedLocale),
   title: getBlogFeedMeta(supportedLocale).title,
 }));
+const portraitId = `${SITE_URL}/#portrait`;
+const portraitUrl = `${SITE_URL}${profile.portrait.src}`;
 const personKnowsAbout = isHome || page === 'about' ? profileStack : [];
 const pageSchema = {
   '@type': pageType,
@@ -103,6 +105,9 @@ const pageSchema = {
         // Full ISO 8601 with offset, like the article schemas: Google rejects
         // a bare date here ("Invalid datetime value for dateModified").
         dateModified: `${profilePageModified}T00:00:00+05:30`,
+        // The same headshot as Person.image, so search engines can pair the
+        // name on this page with one face.
+        primaryImageOfPage: { '@id': portraitId },
         // TODO(owner): Confirm the actual ProfilePage dateCreated before adding it.
       }
     : {}),
@@ -137,7 +142,15 @@ const combinedSchema = {
       },
       description: t(locale, 'home.aboutStatement'),
       url: `${SITE_URL}/`,
-      image: `${SITE_URL}${profile.portrait.src}`,
+      image: {
+        '@type': 'ImageObject',
+        '@id': portraitId,
+        url: portraitUrl,
+        contentUrl: portraitUrl,
+        width: profile.portrait.width,
+        height: profile.portrait.height,
+        caption: profile.portrait.alt,
+      },
       email: profile.email,
       sameAs: profile.social.map((item) => item.href),
       homeLocation: {

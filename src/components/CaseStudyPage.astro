@@ -36,6 +36,8 @@ const label = (key: MessageKey) => t(locale, key);
     <!-- The same date as the TechArticle dateModified, shown so readers and
          crawlers see how current the write-up is. -->
     <p class="case-study-updated">
+      <a href={href('/about/')} rel="author">Suprabhat Kumar</a>
+      <span aria-hidden="true"> · </span>
       {label('blog.updated')}{' '}
       <time datetime={caseStudy.dateModified}>
         {
