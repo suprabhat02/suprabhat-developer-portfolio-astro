@@ -137,7 +137,9 @@ test('entity graphs use supported types, unique definitions and visible identity
       // About page names that same image as its primary image.
       const portrait = people[0]?.image as Record<string, string>;
       expect(portrait['@id']).toBe('https://suprabhat-dev.com/#portrait');
-      const portraitPath = new URL(portrait.url).pathname;
+      const portraitUrl = portrait['url'];
+      expect(portraitUrl).toBeTruthy();
+      const portraitPath = new URL(portraitUrl as string).pathname;
       expect((await page.request.get(portraitPath)).ok()).toBe(true);
       if (route === '/about/') {
         const profilePage = nodes.find(
