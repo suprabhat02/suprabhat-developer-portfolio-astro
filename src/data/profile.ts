@@ -84,10 +84,13 @@ export const profile: Profile = {
   pronouns: 'he/him',
   timezone: 'IST (UTC+5:30)',
   portrait: {
-    src: '/assets/images/suprabhat.webp',
+    // Square head-and-shoulders crop of the About portrait, at a stable,
+    // descriptive URL: the Person schema image and the About page's primary
+    // image. Not rendered on the page, so it costs nothing in Lighthouse.
+    src: '/assets/images/suprabhat-kumar-headshot.webp',
     width: 640,
     height: 640,
-    alt: 'Portrait of Suprabhat Kumar, Software Engineer',
+    alt: 'Portrait of Suprabhat Kumar, Senior Front-End Engineer',
   },
   social: [
     { label: 'X', href: X_PROFILE_URL, external: true },
@@ -215,25 +218,31 @@ export const profileVisibleAliases = [
   profile.nickname,
 ].filter((name): name is string => Boolean(name));
 
-/** Person schema alternateName: visible aliases plus search-only names. */
+/**
+ * The username shared across developer profiles, read from the profile URLs
+ * themselves so it can never drift from the links that are published.
+ */
+export const profileHandle = 'suprabhat02';
+
+/**
+ * Person schema alternateName: visible aliases, search-only names, and the
+ * public handle (Google's ProfilePage docs list the handle as alternateName).
+ */
 export const profileAlternateNames = [
   ...profileVisibleAliases,
   ...profileSearchOnlyNames,
+  profileHandle,
 ];
 
 /**
  * Day the About page content last changed (YYYY-MM-DD, India time). Feeds the
  * ProfilePage `dateModified`. Update it when the About page changes; never
  * derive it from the build, which would claim a change on every deploy.
- * 2026-11-20 is the day the redesigned About page was released.
+ * The sitemap's About lastmod reads this too, so the two cannot disagree.
+ * 2026-11-24: headshot image, handle in alternateName, portrait alt text.
  */
-export const profilePageModified = '2026-11-20';
+export const profilePageModified = '2026-11-24';
 
-/**
- * The username shared across developer profiles, read from the profile URLs
- * themselves so it can never drift from the links that are published.
- */
-export const profileHandle = 'suprabhat02';
 export const profileHandlePlatforms = profile.social
   .filter(({ href }) => new RegExp(`[/~]${profileHandle}/?$`).test(href))
   .map(({ label }) => label);

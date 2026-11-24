@@ -5,7 +5,6 @@ test-results/
 playwright-report/
 lighthouse-reports/
 coverage/
-.netlify/
 suprabhat-dev-static-site.zip
 *.log
 .DS_Store

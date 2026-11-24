@@ -224,16 +224,17 @@ await mkdir('public/images/pages', { recursive: true });
 for (const section of options['case-study'] ? [] : sectionPages) {
   const { title } = getSectionPageMeta('en', section);
   const output = `public${getSectionPageImage(section)}`;
-  await sharp(
-    await render(
-      card({
-        eyebrow: 'SUPRABHAT KUMAR',
-        title,
-        detail: 'React · Next.js · TypeScript',
-      }),
-      1,
-    ),
-  )
+  // About shares his face with his name (the default card), so a shared
+  // About link and image search show the same person as the Person schema.
+  const html =
+    section === 'about'
+      ? defaultCard
+      : card({
+          eyebrow: 'SUPRABHAT KUMAR',
+          title,
+          detail: 'React · Next.js · TypeScript',
+        });
+  await sharp(await render(html, 1))
     .jpeg({ quality: 82, progressive: true, mozjpeg: true })
     .toFile(output);
   console.log(`Generated ${output} (1200x630).`);

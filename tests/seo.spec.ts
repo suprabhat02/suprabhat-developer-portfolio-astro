@@ -5,6 +5,7 @@ import {
   getProfile,
   profile,
   profileSearchOnlyNames,
+  profilePageModified,
   profileStack,
 } from '../src/data/profile';
 import { reactSmartCopy, reactInpChunker } from '../src/data/openSource';
@@ -79,6 +80,7 @@ test('entity graphs use supported types, unique definitions and visible identity
     'PostalAddress',
     'Organization',
     'ContactPoint',
+    'ImageObject',
     'WebSite',
     'WebPage',
     'ProfilePage',
@@ -124,13 +126,27 @@ test('entity graphs use supported types, unique definitions and visible identity
       expect(people[0]).toMatchObject({
         '@id': personId,
         name: profile.name,
-        alternateName: ['Suprabhat', 'Shubh', 'Suprabhat Karn'],
+        alternateName: ['Suprabhat', 'Shubh', 'Suprabhat Karn', 'suprabhat02'],
         jobTitle: getProfile(locale).title,
         sameAs: profile.social.map((social) => social.href),
       });
       await expect(
         page.getByText(getProfile(locale).title, { exact: false }).first(),
       ).toBeVisible();
+      // One face for the name: the Person image is a served file, and the
+      // About page names that same image as its primary image.
+      const portrait = people[0]?.image as Record<string, string>;
+      expect(portrait['@id']).toBe('https://suprabhat-dev.com/#portrait');
+      const portraitPath = new URL(portrait.url).pathname;
+      expect((await page.request.get(portraitPath)).ok()).toBe(true);
+      if (route === '/about/') {
+        const profilePage = nodes.find(
+          (node) => node['@type'] === 'ProfilePage',
+        );
+        expect(profilePage?.primaryImageOfPage).toEqual({
+          '@id': portrait['@id'],
+        });
+      }
       if (route === '/' || route === '/about/') {
         expect(people[0]?.knowsAbout).toEqual(profileStack);
         for (const technology of profileStack)
@@ -1018,6 +1034,25 @@ const isVerificationFile = (path: string) =>
   /^(?:yandex_[0-9a-f]+|google[0-9a-f]+|BingSiteAuth)\.(?:html|xml)$/.test(
     path,
   );
+
+test('About sitemap entries carry the headshot and the ProfilePage date', async () => {
+  const sitemap = await readFile(
+    new URL('../dist/sitemap-0.xml', import.meta.url),
+    'utf-8',
+  );
+  const headshot = `https://suprabhat-dev.com${profile.portrait.src}`;
+  for (const prefix of ['', '/es', '/ar']) {
+    const entry = sitemap.match(
+      new RegExp(
+        `<url><loc>https://suprabhat-dev\\.com${prefix}/about/</loc>.*?</url>`,
+      ),
+    )?.[0];
+    expect(entry, prefix).toContain(
+      `<lastmod>${profilePageModified}</lastmod>`,
+    );
+    expect(entry, prefix).toContain(`<image:loc>${headshot}</image:loc>`);
+  }
+});
 
 test('indexable HTML pages have unique titles and canonical sitemap entries', async () => {
   const dist = new URL('../dist/', import.meta.url);
