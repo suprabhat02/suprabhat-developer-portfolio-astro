@@ -6,7 +6,7 @@ import { reactSmartCopy, reactInpChunker } from '../data/openSource';
 
 const en = {
   'seo.homeTitle': `${profile.name} | Frontend Engineer, React & TypeScript`,
-  'seo.smartCopyDescription': `${profile.name}'s react-smart-copy: an open-source TypeScript library for React copy and paste, typed errors and screen-reader announcements.`,
+  'seo.smartCopyDescription': `${profile.name}'s react-smart-copy: an open-source React copy to clipboard and paste library with typed errors and screen-reader announcements.`,
   'seo.inpChunkerDescription': `${profile.name}'s react-inp-chunker: an open-source React and TypeScript library that splits heavy work into short slices to protect INP.`,
   'seo.designSystemDescription':
     'An anonymized frontend case study about improving a design system with reusable React components, clearer tokens, accessibility, and UI governance.',
@@ -20,7 +20,7 @@ const en = {
   'seo.workDescription': `Explore ${profile.name}'s case studies on React dashboards, design systems, accessibility, web performance, localization and browser testing.`,
   'seo.blogDescription': `Read ${profile.name}'s articles on React, frontend architecture, accessibility, performance, code review and maintainable design systems.`,
   'seo.servicesDescription':
-    'Hire Suprabhat Kumar for React performance audits, architecture reviews, SaaS dashboards, design systems, accessibility, and website delivery.',
+    'Hire Suprabhat Kumar, a senior React and TypeScript developer, for Core Web Vitals and INP audits, accessibility audits, dashboards and design systems.',
   'seo.faqDescription':
     'Answers on Suprabhat Kumar’s frontend services, project pricing, remote and international work, typical timelines, and how to start a collaboration.',
   'identity.summary': `${profile.name} is a ${profile.title}. His main stack is ${new Intl.ListFormat('en').format(profileStack)}.`,
@@ -500,7 +500,7 @@ const es: Translations = {
   'seo.sectionImageAlt': '{title} - Suprabhat Kumar',
   'identity.summary': `${profile.name} es ${getProfile('es').title}. Su stack principal incluye ${new Intl.ListFormat('es').format(profileStack)}.`,
   'seo.homeTitle': `${profile.name} | Ingeniero frontend, React y TypeScript`,
-  'seo.smartCopyDescription': `react-smart-copy de ${profile.name}: biblioteca TypeScript para copiar y pegar en React, con errores tipados y anuncios accesibles.`,
+  'seo.smartCopyDescription': `react-smart-copy de ${profile.name}: biblioteca TypeScript para copiar al portapapeles y pegar en React, con errores tipados y anuncios accesibles.`,
   'seo.inpChunkerDescription': `react-inp-chunker de ${profile.name}: biblioteca React y TypeScript que divide tareas pesadas en franjas y cede el hilo principal para cuidar el INP.`,
   'seo.designSystemDescription':
     'Caso de estudio anonimizado sobre la mejora de un sistema de diseño: componentes React reutilizables, tokens claros, accesibilidad y gobernanza de la UI.',
@@ -513,7 +513,7 @@ const es: Translations = {
   'seo.homeDescription': `${profile.name} es ingeniero frontend sénior en India. Crea interfaces con React y TypeScript, paneles SaaS y sistemas de diseño accesibles.`,
   'seo.workDescription': `Casos de estudio de ${profile.name} sobre paneles SaaS, sistemas de diseño, rendimiento React, accesibilidad y pruebas de navegador.`,
   'seo.blogDescription': `Artículos de ${profile.name} sobre React, arquitectura frontend, accesibilidad, rendimiento, revisión de código y sistemas de diseño.`,
-  'seo.servicesDescription': `Servicios de ${profile.name}: desarrollo SaaS, paneles de datos, React, arquitectura, sistemas de diseño, rendimiento y accesibilidad web.`,
+  'seo.servicesDescription': `Contrata a ${profile.name}, desarrollador React y TypeScript sénior: auditorías de Core Web Vitals e INP, accesibilidad, paneles SaaS y sistemas de diseño.`,
   'seo.faqDescription':
     'Respuestas sobre servicios, precios, colaboración remota, plazos de proyectos frontend y revisiones de arquitectura y accesibilidad.',
   'identity.name': 'Nombre',
@@ -1020,7 +1020,7 @@ const ar: Translations = {
   'identity.summary': `${profile.name} هو ${getProfile('ar').title}. تشمل تقنياته الأساسية ${new Intl.ListFormat('ar').format(profileStack)}.`,
   'seo.homeTitle': 'سوبرابهات كومار | مهندس واجهات أمامية، React وTypeScript',
   'seo.smartCopyDescription':
-    'مكتبة react-smart-copy من تطوير سوبرابهات كومار تستخدم TypeScript لإدارة النسخ واللصق في React، مع أخطاء محددة الأنواع وإعلانات لقارئات الشاشة.',
+    'مكتبة react-smart-copy من تطوير سوبرابهات كومار تستخدم TypeScript لإدارة النسخ إلى الحافظة واللصق في React، مع أخطاء محددة الأنواع وإعلانات لقارئات الشاشة.',
   'seo.inpChunkerDescription':
     'مكتبة react-inp-chunker من تطوير سوبرابهات كومار تستخدم React وTypeScript لتقسيم العمل الثقيل إلى شرائح قصيرة وإعادة التحكم للخيط الرئيسي لحماية INP.',
   'seo.designSystemDescription':
@@ -1038,7 +1038,7 @@ const ar: Translations = {
   'seo.blogDescription':
     'مقالات سوبرابهات كومار عن React ومعمارية الواجهات الأمامية وإمكانية الوصول وأداء الويب ومراجعة الشيفرة وأنظمة التصميم القابلة للصيانة.',
   'seo.servicesDescription':
-    'خدمات سوبرابهات كومار: تدقيق أداء React، ومراجعات المعمارية، ولوحات بيانات SaaS، وأنظمة التصميم، وإمكانية الوصول، وتسليم مواقع الويب.',
+    'وظّف سوبرابهات كومار، مطوّر React وTypeScript أول، لتدقيق Core Web Vitals وINP، وتدقيق إمكانية الوصول، ولوحات بيانات SaaS، وأنظمة التصميم.',
   'seo.faqDescription':
     'إجابات عن الأسئلة الشائعة حول الخدمات والأسعار والتعاون عن بُعد والجداول الزمنية وكيفية بدء مشروع واجهات أمامية مع سوبرابهات كومار.',
   'identity.name': 'الاسم',

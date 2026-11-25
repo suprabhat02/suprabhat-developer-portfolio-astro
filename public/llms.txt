@@ -16,7 +16,7 @@ Based in India, Suprabhat has delivered with distributed teams in Denmark and Ch
 
 ## Open source
 
-- [react-smart-copy](https://suprabhat02.github.io/react-smart-copy/): headless, type-safe clipboard interactions for React, authored and maintained by Suprabhat Kumar. Copies text, rich HTML, PNG images, JSON, and multi-format payloads; pastes text, HTML, and images; reports every failure as a typed error; announces results to screen readers; zero runtime dependencies; React 18 and 19; MIT license.
+- [react-smart-copy](https://suprabhat02.github.io/react-smart-copy/): headless, type-safe clipboard interactions for React, authored and maintained by Suprabhat Kumar. Copies text, rich HTML, PNG images, JSON, and multi-format payloads; pastes text, HTML, and images; separate entry points handle spreadsheet tables for Excel and Google Sheets, Markdown, code, images, links, colours, files, secret redaction, one-time codes, numbers, and e-mail recipients; reports every failure as a typed error; announces results to screen readers; zero runtime dependencies; React 18 and 19; MIT license.
   - Source: https://github.com/suprabhat02/react-smart-copy
   - Package: https://www.npmjs.com/package/react-smart-copy
   - Case study: https://suprabhat-dev.com/work/react-smart-copy/
@@ -30,6 +30,9 @@ Based in India, Suprabhat has delivered with distributed teams in Denmark and Ch
 
 - [Suprabhat Lab](https://lab.suprabhat-dev.com/): free, open frontend tools and explainers. No sign-up, tracking, or cookies. English only for now.
   - Source: https://github.com/suprabhat02/lab-suprabhat (MIT license)
+  - [Selector Playground](https://lab.suprabhat-dev.com/playground/): type a CSS selector and see each part, its specificity contribution, and warnings about deprecated or risky patterns.
+  - [Stylesheet Audit](https://lab.suprabhat-dev.com/stylesheet-audit/): audit pasted CSS with a specificity graph, a sortable selector table, layer order, and findings.
+  - [Accessible Name Wars](https://lab.suprabhat-dev.com/accessible-name/): find which label names a button, link, input, or image by following the accessible name algorithm.
 - [CSS Specificity Wars](https://lab.suprabhat-dev.com/specificity/): the lab's first tool compares CSS selectors and explains which wins. Per-selector scores and per-part breakdowns, nesting expansion, a seven-step cascade resolver that marks the deciding step, fix suggestions using :where(), @layer, and !important as a last resort, and shareable links.
   - Source: https://github.com/suprabhat02/lab-suprabhat (MIT license)
   - Case study: https://suprabhat-dev.com/work/css-specificity-wars/

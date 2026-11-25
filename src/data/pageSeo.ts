@@ -54,7 +54,7 @@ const englishMeta: Record<SectionPage, { title: string; description: string }> =
         'Recommendations for Suprabhat Kumar from colleagues in AI engineering, quality assurance, platform, UX research, SEO and regulatory affairs.',
     },
     services: {
-      title: 'React Frontend Engineering Services | Suprabhat Kumar',
+      title: 'Hire a React Developer | Frontend Services — Suprabhat Kumar',
       description: t('en', 'seo.servicesDescription'),
     },
     faq: {
@@ -62,7 +62,7 @@ const englishMeta: Record<SectionPage, { title: string; description: string }> =
       description: t('en', 'seo.faqDescription'),
     },
     contact: {
-      title: 'Contact Suprabhat Kumar | Senior React Frontend Engineer',
+      title: 'Hire a Frontend Developer | Contact Suprabhat Kumar',
       description:
         'Discuss a React dashboard, architecture review, design system, performance audit, accessibility audit, or website project with Suprabhat Kumar.',
     },

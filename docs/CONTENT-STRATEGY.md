@@ -284,18 +284,18 @@ Open Graph titles and descriptions use the route title and description below thr
 
 ### `/contact`
 
-- Title: Hire Suprabhat Kumar | Senior React Frontend Engineer
+- Title: Hire a Frontend Developer | Contact Suprabhat Kumar
 - Description: Discuss a React dashboard, architecture review, design system, performance audit, accessibility audit, or website project with Suprabhat Kumar.
-- Primary keyword: hire senior React developer remote India
+- Primary keyword: hire frontend developer (US: 140/month, KD 8; measured 26 Nov 2026)
 - Secondary keywords: React consultant; frontend contractor; dashboard developer; accessibility audit
 - Entities: Suprabhat Kumar; React; TypeScript; India; remote contract
 
 ### `/services`
 
-- Title: React Frontend Engineering Services | Suprabhat Kumar
-- Description: Hire Suprabhat Kumar for React performance audits, architecture reviews, SaaS dashboards, design systems, accessibility, and website delivery.
-- Primary keyword: React frontend engineering services
-- Secondary keywords: React performance audit; TypeScript architecture review; SaaS dashboard development; design system engineer; WCAG audit
+- Title: Hire a React Developer | Frontend Services — Suprabhat Kumar
+- Description: Hire Suprabhat Kumar, a senior React and TypeScript developer, for Core Web Vitals and INP audits, accessibility audits, dashboards and design systems.
+- Primary keyword: hire react developer (US: 720/month, KD 4; measured 26 Nov 2026)
+- Secondary keywords: web accessibility consultant; Core Web Vitals optimization; React performance optimization; React performance audit; TypeScript architecture review; SaaS dashboard development; design system engineer; WCAG audit
 - Entities: React; TypeScript; SaaS; WCAG 2.2 AA; Storybook; Core Web Vitals
 
 ## Structured data rewrite
@@ -365,3 +365,17 @@ Pending verification:
 ## AI crawler package
 
 The public `llms.txt` identifies Suprabhat Kumar and Shubh, location, current role, career timeline, global collaboration, approved services and durations, technology groups, primary URLs, contact details, timezone, and contract availability. It also explains confidentiality and localization limits. `robots.txt` and the sitemap remain the authoritative crawl-control and URL-discovery files.
+
+## Keyword targets (measured 26 Nov 2026)
+
+US English search data, keyword difficulty 0–100. Each page has one primary target; pages do not compete with each other or with the lab.
+
+| Page                                 | Primary keyword            | Volume | KD  |
+| ------------------------------------ | -------------------------- | ------ | --- |
+| `/services/`                         | hire react developer       | 720    | 4   |
+| `/contact/`                          | hire frontend developer    | 140    | 8   |
+| `/work/react-smart-copy/`            | react copy to clipboard    | 260    | 10  |
+| `/work/react-inp-chunker/`           | interaction to next paint  | 140    | 32  |
+| `lab.suprabhat-dev.com/specificity/` | css specificity calculator | 210    | 38  |
+
+Broad terms such as "digital marketing" or "website performance optimization" (KD 78) are out of scope: they do not match the site's entity and cannot be won by a personal site.
