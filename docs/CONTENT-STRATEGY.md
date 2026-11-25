@@ -293,7 +293,7 @@ Open Graph titles and descriptions use the route title and description below thr
 ### `/services`
 
 - Title: Hire a React Developer | Frontend Services — Suprabhat Kumar
-- Description: Hire Suprabhat Kumar, a senior React and TypeScript developer, for Core Web Vitals and INP audits, accessibility audits, SaaS dashboards and design systems.
+- Description: Hire Suprabhat Kumar, a senior React and TypeScript developer, for Core Web Vitals and INP audits, accessibility audits, dashboards and design systems.
 - Primary keyword: hire react developer (US: 720/month, KD 4; measured 26 Nov 2026)
 - Secondary keywords: web accessibility consultant; Core Web Vitals optimization; React performance optimization; React performance audit; TypeScript architecture review; SaaS dashboard development; design system engineer; WCAG audit
 - Entities: React; TypeScript; SaaS; WCAG 2.2 AA; Storybook; Core Web Vitals

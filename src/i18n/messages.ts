@@ -6,7 +6,7 @@ import { reactSmartCopy, reactInpChunker } from '../data/openSource';
 
 const en = {
   'seo.homeTitle': `${profile.name} | Frontend Engineer, React & TypeScript`,
-  'seo.smartCopyDescription': `${profile.name}'s react-smart-copy: an open-source React copy to clipboard and paste library in TypeScript, with typed errors and screen-reader announcements.`,
+  'seo.smartCopyDescription': `${profile.name}'s react-smart-copy: an open-source React copy to clipboard and paste library with typed errors and screen-reader announcements.`,
   'seo.inpChunkerDescription': `${profile.name}'s react-inp-chunker: an open-source React and TypeScript library that splits heavy work into short slices to protect INP.`,
   'seo.designSystemDescription':
     'An anonymized frontend case study about improving a design system with reusable React components, clearer tokens, accessibility, and UI governance.',
@@ -20,7 +20,7 @@ const en = {
   'seo.workDescription': `Explore ${profile.name}'s case studies on React dashboards, design systems, accessibility, web performance, localization and browser testing.`,
   'seo.blogDescription': `Read ${profile.name}'s articles on React, frontend architecture, accessibility, performance, code review and maintainable design systems.`,
   'seo.servicesDescription':
-    'Hire Suprabhat Kumar, a senior React and TypeScript developer, for Core Web Vitals and INP audits, accessibility audits, SaaS dashboards and design systems.',
+    'Hire Suprabhat Kumar, a senior React and TypeScript developer, for Core Web Vitals and INP audits, accessibility audits, dashboards and design systems.',
   'seo.faqDescription':
     'Answers on Suprabhat Kumar’s frontend services, project pricing, remote and international work, typical timelines, and how to start a collaboration.',
   'identity.summary': `${profile.name} is a ${profile.title}. His main stack is ${new Intl.ListFormat('en').format(profileStack)}.`,
