@@ -7,7 +7,7 @@ import type {
 
 /**
  * Open-source work. Facts are taken from each published npm package and its
- * README (react-smart-copy 1.14.0, react-inp-chunker 0.2.0); update them when
+ * README (react-smart-copy 1.31.3, react-inp-chunker 0.6.0); update them when
  * a release changes them.
  */
 
@@ -132,6 +132,7 @@ const openSourceCopy: Record<Locale, OpenSourceCopy> = {
       'Typed, classified errors instead of silent failures',
       'Keyboard-first triggers and screen-reader announcements',
       'Framework-agnostic core for plain JavaScript',
+      'Copy to clipboard and paste for tables, Markdown, code, images, links and one-time codes',
     ],
     installLabel: 'Install command',
     linksLabel: 'Project links',
@@ -152,6 +153,7 @@ const openSourceCopy: Record<Locale, OpenSourceCopy> = {
       'Errores tipados y clasificados en lugar de fallos silenciosos',
       'Controles pensados para teclado y anuncios para lectores de pantalla',
       'Núcleo independiente del framework para JavaScript sin React',
+      'Copiar al portapapeles y pegar tablas, Markdown, código, imágenes, enlaces y códigos de un solo uso',
     ],
     installLabel: 'Comando de instalación',
     linksLabel: 'Enlaces del proyecto',
@@ -172,6 +174,7 @@ const openSourceCopy: Record<Locale, OpenSourceCopy> = {
       'أخطاء مصنفة ومضبوطة الأنواع بدل الفشل الصامت',
       'عناصر تحكم تبدأ بلوحة المفاتيح وإعلانات لقارئات الشاشة',
       'نواة مستقلة عن الإطار لاستخدامها مع JavaScript فقط',
+      'النسخ إلى الحافظة واللصق للجداول وMarkdown والشيفرة والصور والروابط ورموز التحقق لمرة واحدة',
     ],
     installLabel: 'أمر التثبيت',
     linksLabel: 'روابط المشروع',
@@ -274,7 +277,7 @@ export const cssSpecificityWarsCopy = {
     ],
     docsLabel: 'Open tool (English)',
     meta: 'MIT · Astro 7 · TypeScript · CSS',
-    lab: 'Suprabhat Lab offers free, open frontend tools and explainers. No sign-up, tracking, or cookies. English only for now. CSS Specificity Wars is its first tool.',
+    lab: 'Suprabhat Lab offers free, open frontend tools and explainers. No sign-up, tracking, or cookies. English only for now. Its tools are CSS Specificity Wars, Selector Playground, Stylesheet Audit and Accessible Name Wars.',
     engine:
       'Built with Astro 7, strict TypeScript, and plain modern CSS using @layer, without a UI framework. The engine is pure TypeScript with no DOM dependency.',
     verification:
@@ -301,7 +304,7 @@ export const cssSpecificityWarsCopy = {
     ],
     docsLabel: 'Abrir herramienta (en inglés)',
     meta: 'MIT · Astro 7 · TypeScript · CSS',
-    lab: 'Suprabhat Lab ofrece herramientas frontend y explicaciones gratuitas y abiertas. Sin registro, seguimiento ni cookies. Por ahora, solo en inglés. CSS Specificity Wars es su primera herramienta.',
+    lab: 'Suprabhat Lab ofrece herramientas frontend y explicaciones gratuitas y abiertas. Sin registro, seguimiento ni cookies. Por ahora, solo en inglés. Sus herramientas son CSS Specificity Wars, Selector Playground, Stylesheet Audit y Accessible Name Wars.',
     engine:
       'Desarrollada con Astro 7, TypeScript estricto y CSS moderno con @layer, sin framework de interfaz. El motor es TypeScript puro y no depende del DOM.',
     verification:
@@ -328,7 +331,7 @@ export const cssSpecificityWarsCopy = {
     ],
     docsLabel: 'افتح الأداة (بالإنجليزية)',
     meta: 'MIT · Astro 7 · TypeScript · CSS',
-    lab: 'يقدم Suprabhat Lab أدوات وشروحات مجانية ومفتوحة للواجهات الأمامية. بلا تسجيل أو تتبع أو ملفات تعريف ارتباط. متاح بالإنجليزية فقط حاليًا. CSS Specificity Wars هي أداته الأولى.',
+    lab: 'يقدم Suprabhat Lab أدوات وشروحات مجانية ومفتوحة للواجهات الأمامية. بلا تسجيل أو تتبع أو ملفات تعريف ارتباط. متاح بالإنجليزية فقط حاليًا. أدواته هي CSS Specificity Wars وSelector Playground وStylesheet Audit وAccessible Name Wars.',
     engine:
       'بُنيت باستخدام Astro 7 وTypeScript الصارم وCSS الحديث مع \u2066@layer\u2069، دون إطار عمل للواجهة. المحرك مكتوب بلغة TypeScript الخالصة ولا يعتمد على DOM.',
     verification:
@@ -375,9 +378,9 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
   en: {
     slug: 'react-smart-copy',
     datePublished: '2026-10-03',
-    dateModified: '2026-10-19',
+    dateModified: '2026-11-26',
     title: 'react-smart-copy',
-    seoTitle: 'react-smart-copy Case Study | React Clipboard Library',
+    seoTitle: 'React Copy to Clipboard Library: react-smart-copy',
     description:
       'How react-smart-copy, an open-source TypeScript library, handles React copy and paste with typed errors, screen-reader announcements, and no dependencies.',
     eyebrow: 'Case study · Open source',
@@ -482,9 +485,9 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
   es: {
     slug: 'react-smart-copy',
     datePublished: '2026-10-03',
-    dateModified: '2026-10-19',
+    dateModified: '2026-11-26',
     title: 'react-smart-copy',
-    seoTitle: 'react-smart-copy | Biblioteca de portapapeles para React',
+    seoTitle: 'react-smart-copy | Copiar al portapapeles en React',
     description:
       'Cómo react-smart-copy, biblioteca TypeScript de código abierto, gestiona copiar y pegar en React con errores tipados, anuncios accesibles y sin dependencias.',
     eyebrow: 'Caso de estudio · Código abierto',
@@ -595,9 +598,9 @@ export const reactSmartCopyCaseStudy: Record<Locale, CaseStudyBase> = {
   ar: {
     slug: 'react-smart-copy',
     datePublished: '2026-10-03',
-    dateModified: '2026-10-19',
+    dateModified: '2026-11-26',
     title: 'react-smart-copy',
-    seoTitle: 'react-smart-copy | مكتبة حافظة لـ React تراعي إمكانية الوصول',
+    seoTitle: 'react-smart-copy | مكتبة النسخ إلى الحافظة في React',
     description:
       'كيف تدير react-smart-copy، وهي مكتبة TypeScript مفتوحة المصدر، النسخ واللصق في React بأخطاء محددة الأنواع وإعلانات لقارئات الشاشة ودون اعتماديات.',
     eyebrow: 'دراسة حالة · مفتوح المصدر',
@@ -794,14 +797,14 @@ export const reactSmartCopyProof: Record<Locale, readonly CaseStudyProof[]> = {
   ],
 };
 
-/** Facts below come from the react-inp-chunker 0.2.0 README and package.json. */
+/** Facts below come from the react-inp-chunker 0.6.0 README and package.json. */
 export const reactInpChunkerCaseStudy: Record<Locale, CaseStudyBase> = {
   en: {
     slug: 'react-inp-chunker',
     datePublished: '2026-10-30',
     dateModified: '2026-10-30',
     title: 'react-inp-chunker',
-    seoTitle: 'react-inp-chunker Case Study | React INP Library',
+    seoTitle: 'react-inp-chunker | React Interaction to Next Paint (INP)',
     description:
       'How react-inp-chunker, an open-source TypeScript library, splits heavy React work into short slices and yields to the main thread to protect INP.',
     eyebrow: 'Case study · Open source',
